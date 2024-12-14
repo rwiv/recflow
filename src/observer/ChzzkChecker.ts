@@ -1,10 +1,10 @@
 import {log} from "jslog";
 import {LiveInfo} from "../client/types.js";
 import {Notifier} from "../client/Notifier.js";
-import {StreamqClient} from "../client/StreamqClient.js";
+import {Streamq} from "../client/Streamq.js";
 import {TargetRepository} from "../repository/types.js";
-import {StdlClient} from "../client/StdlClient.js";
-import {AuthClient} from "../client/AuthClient.js";
+import {Stdl} from "../client/Stdl.js";
+import {Authed} from "../client/Authed.js";
 import {QueryConfig} from "../common/config.js";
 import {LiveInfoFilter} from "./LiveInfoFilter.js";
 
@@ -15,9 +15,9 @@ export class ChzzkChecker {
 
   constructor(
     private readonly query: QueryConfig,
-    private readonly streamq: StreamqClient,
-    private readonly stdl: StdlClient,
-    private readonly authClient: AuthClient,
+    private readonly streamq: Streamq,
+    private readonly stdl: Stdl,
+    private readonly authClient: Authed,
     private readonly notifier: Notifier,
     private readonly targetRepository: TargetRepository,
     private readonly nftyTopic: string,

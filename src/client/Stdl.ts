@@ -7,11 +7,11 @@ interface ChzzkLiveRequest {
   cookies?: string
 }
 
-export interface StdlClient {
+export interface Stdl {
   requestChzzkLive(uid: string, once: boolean, cookies: Cookie[] | undefined): Promise<void>
 }
 
-export class StdlClientImpl implements StdlClient {
+export class StdlImpl implements Stdl {
 
   constructor(private readonly stdlUrl: string) {}
 
@@ -32,7 +32,7 @@ export class StdlClientImpl implements StdlClient {
   }
 }
 
-export class MockStdlClient implements StdlClient {
+export class StdlMock implements Stdl {
   async requestChzzkLive(
     uid: string,
     once: boolean = true,

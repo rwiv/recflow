@@ -1,7 +1,7 @@
 import {ChannelInfo, LiveInfo} from "./types.js";
 import {QueryConfig} from "../common/config.js";
 
-export class StreamqClient {
+export class Streamq {
 
   constructor(
     private readonly streamqUrl: string,

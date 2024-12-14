@@ -1,10 +1,10 @@
 import {LiveInfo} from "../client/types.js";
 import {QueryConfig} from "../common/config.js";
-import {StreamqClient} from "../client/StreamqClient.js";
+import {Streamq} from "../client/Streamq.js";
 
 export class LiveInfoFilter {
 
-  constructor(private readonly streamq: StreamqClient) {}
+  constructor(private readonly streamq: Streamq) {}
 
   async getFiltered(infos: LiveInfo[], query: QueryConfig): Promise<LiveInfo[]> {
     return (await Promise.all(infos.map(async info => {

@@ -1,5 +1,5 @@
 import {it} from "vitest";
-import {StreamqClient} from "./StreamqClient.js";
+import {Streamq} from "./Streamq.js";
 import {readEnv} from "../common/env.js";
 import dotenv from "dotenv";
 
@@ -8,7 +8,7 @@ dotenv.config({ path: "dev/.env" });
 
 it("test tag", async () => {
   const {streamqUrl} = readEnv();
-  const streamq = new StreamqClient(streamqUrl);
+  const streamq = new Streamq(streamqUrl);
 
   const tag = "watchparty";
   const res = await streamq.requestChzzkByTag(tag);

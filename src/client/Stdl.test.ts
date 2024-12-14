@@ -1,15 +1,15 @@
 import {it} from "vitest";
-import {StdlClientImpl} from "./StdlClient.js";
+import {StdlImpl} from "./Stdl.js";
 import {readEnv} from "../common/env.js";
 import dotenv from "dotenv";
-import {AuthClientImpl} from "./AuthClient.js";
+import {AuthedImpl} from "./Authed.js";
 
 dotenv.config({ path: "dev/.env" });
 
 it("test", async () => {
   const {stdlUrl, authUrl} = readEnv();
-  const stdl = new StdlClientImpl(stdlUrl);
-  const authClient = new AuthClientImpl(authUrl);
+  const stdl = new StdlImpl(stdlUrl);
+  const authClient = new AuthedImpl(authUrl);
 
   const uid = "";
   const cookies = await authClient.requestChzzkCookies();

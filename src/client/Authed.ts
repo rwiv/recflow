@@ -1,11 +1,11 @@
 import {Cookie} from "./types.js";
 import {log} from "jslog";
 
-export interface AuthClient {
+export interface Authed {
   requestChzzkCookies(): Promise<Cookie[] | undefined>;
 }
 
-export class AuthClientImpl implements AuthClient {
+export class AuthedImpl implements Authed {
 
   constructor(private readonly authUrl: string) {}
 
@@ -26,7 +26,7 @@ export class AuthClientImpl implements AuthClient {
   }
 }
 
-export class MockAuthClient implements AuthClient {
+export class AuthedMock implements Authed {
   requestChzzkCookies(): Promise<Cookie[] | undefined> {
     log.info("MockAuthClient.requestChzzkCookies");
     return Promise.resolve(undefined);

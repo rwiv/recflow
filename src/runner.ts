@@ -14,7 +14,7 @@ export async function run() {
   const dep = new DepManager(env);
 
   const chzzkChecker = new ChzzkChecker(
-    query, dep.streamq, dep.stdl, dep.auth, dep.notifier, dep.targetRepository, env.ntfyTopic,
+    query, dep.streamq, dep.stdl, dep.authed, dep.notifier, dep.targetRepository, env.ntfyTopic,
   );
 
   // start observing

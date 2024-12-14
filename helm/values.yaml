@@ -18,7 +18,7 @@ externals:
   stdlUrl: http://webhook-eventsource-svc.media.svc.cluster.local:12000/stdl
   authUrl: http://authed-server.media.svc.cluster.local
   streamqUrl: http://streamq.media.svc.cluster.local
-  querySize: "1000"
+  querySize: 1000
 
 configMap:
   name: stmgr-conf

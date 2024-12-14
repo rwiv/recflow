@@ -1,0 +1,26 @@
+{
+  "name": "stmgr",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "npx tsc && node ./dist/index.js",
+    "build": "npx tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0",
+    "jslog": "git+https://github.com/rwiv/jslog.git#v0.0.1"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
+  }
+}

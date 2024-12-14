@@ -1,0 +1,30 @@
+global:
+  name: stmgr
+  namespace: media
+
+image:
+  repository: ghcr.io/rwiv/stmgr
+  tag: 0.1.7
+
+externals:
+  ntfyEndpoint: http://ntfy.common.svc.cluster.local
+  ntfyTopic: stmgr
+  streamqUrl: http://streamq.media.svc.cluster.local
+  stdlUrl: http://webhook-eventsource-svc.media.svc.cluster.local:12000/stdl
+  authUrl: http://authed-server.media.svc.cluster.local
+
+configMap:
+  name: stmgr-conf
+  mountPath: /app/conf
+
+subscribeChannelIds: []
+minUserCnt: 100
+minFollowerCnt: 1000
+tags: []
+keywords: []
+sufficientTags: []
+ignoredCategories: []
+ignoredTags: []
+ignoredKeywords: []
+whiteListChannels: []
+ignoredChannels: []

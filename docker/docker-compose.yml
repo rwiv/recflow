@@ -1,0 +1,14 @@
+services:
+  stmgr:
+    image: stmgr:latest
+    container_name: stmgr
+    environment:
+      CONFIG_PATH: /app/conf.yaml
+      STREAMQ_URL: "${STREAMQ_URL}"
+      STDL_URL: "${STDL_URL}"
+      AUTH_URL: "${AUTH_URL}"
+      NTFY_ENDPOINT: "${NTFY_ENDPOINT}"
+      NTFY_TOPIC: "${NTFY_TOPIC}"
+      NODE_ENV: dev
+    volumes:
+      - ../dev/conf.yaml:/app/conf.yaml

@@ -3,7 +3,7 @@ import {Streamq} from "../client/Streamq.js";
 import {readEnv} from "../common/env.js";
 import {readQueryConfig} from "../common/config.js";
 import dotenv from "dotenv";
-import {LiveInfoFilter} from "./LiveInfoFilter.js";
+import {SoopLiveFilter} from "./SoopLiveFilter.js";
 
 dotenv.config({ path: "dev/.env" });
 
@@ -11,13 +11,13 @@ it("test filtered", async () => {
   const {configPath, streamqUrl} = readEnv();
   const query = await readQueryConfig(configPath);
   const streamq = new Streamq(streamqUrl);
-  const filter = new LiveInfoFilter(streamq);
+  const filter = new SoopLiveFilter(streamq);
 
-  const infos = await streamq.requestChzzkByQuery(query);
+  const infos = await streamq.getSoopLive(query);
   const filtered = await filter.getFiltered(infos, query);
 
   for (const info of filtered) {
-    const url = `https://chzzk.naver.com/live/${info.channelId}`;
-    console.log(`${url} - ${info.channelName} (${info.concurrentUserCount}): ${info.liveTitle}`);
+    const url = `https://play.sooplive.co.kr/${info.userId}`;
+    console.log(`${url} - ${info.userNick} (${info.totalViewCnt}): ${info.broadTitle}`);
   }
 });

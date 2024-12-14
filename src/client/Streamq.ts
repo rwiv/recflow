@@ -1,5 +1,6 @@
-import {ChannelInfo, LiveInfo} from "./types.js";
+import {ChzzkChannelInfo, ChzzkLiveInfo} from "./types_chzzk.js";
 import {QueryConfig} from "../common/config.js";
+import {SoopChannelInfo, SoopLiveInfo} from "./types_soop.js";
 
 export class Streamq {
 
@@ -8,20 +9,20 @@ export class Streamq {
     private readonly size: number = 1000,
   ) {}
 
-  async requestChzzkByQuery(query: QueryConfig): Promise<LiveInfo[]> {
-    const infoMap = new Map<string, LiveInfo>();
+  async getChzzkLive(query: QueryConfig): Promise<ChzzkLiveInfo[]> {
+    const infoMap = new Map<string, ChzzkLiveInfo>();
     for (const keyword of query.keywords) {
-      const res = await this.requestChzzkByKeyword(keyword);
+      const res = await this.getChzzkLiveByKeyword(keyword);
       res.forEach(info => infoMap.set(info.channelId, info));
     }
     for (const tag of query.tags) {
-      const res = await this.requestChzzkByTag(tag);
+      const res = await this.getChzzkLiveByTag(tag);
       res.forEach(info => infoMap.set(info.channelId, info));
     }
     return Array.from(infoMap.values());
   }
 
-  async requestChzzkChannel(channelId: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
+  async getChzzkChannel(channelId: string, hasLiveInfo: boolean): Promise<ChzzkChannelInfo> {
     let url = `${this.streamqUrl}/chzzk/channel/v1/${channelId}`;
     if (hasLiveInfo) {
       url += "?hasLiveInfo=true";
@@ -30,14 +31,38 @@ export class Streamq {
     return await res.json();
   }
 
-  async requestChzzkByTag(tag: string): Promise<LiveInfo[]> {
+  private async getChzzkLiveByTag(tag: string): Promise<ChzzkLiveInfo[]> {
     let url = `${this.streamqUrl}/chzzk/live/v1/tag?size=${this.size}&tag=${encodeURIComponent(tag)}`;
     const res = await fetch(url, { method: "GET" });
     return await res.json();
   }
 
-  async requestChzzkByKeyword(keyword: string): Promise<LiveInfo[]> {
+  private async getChzzkLiveByKeyword(keyword: string): Promise<ChzzkLiveInfo[]> {
     let url = `${this.streamqUrl}/chzzk/live/v1/keyword?size=${this.size}&keyword=${encodeURIComponent(keyword)}`;
+    const res = await fetch(url, { method: "GET" });
+    return await res.json();
+  }
+
+  async getSoopLive(query: QueryConfig): Promise<SoopLiveInfo[]> {
+    const infoMap = new Map<string, SoopLiveInfo>();
+    for (const cateNo of query.soopCateNoList) {
+      const res = await this.getSoopLiveByCategory(cateNo);
+      res.forEach(info => infoMap.set(info.userId, info));
+    }
+    return Array.from(infoMap.values());
+  }
+
+  async getSoopChannel(userId: string, hasLiveInfo: boolean): Promise<SoopChannelInfo> {
+    let url = `${this.streamqUrl}/soop/channel/v1/${userId}`;
+    if (hasLiveInfo) {
+      url += "?hasLiveInfo=true";
+    }
+    const res = await fetch(url, { method: "GET" });
+    return await res.json();
+  }
+
+  private async getSoopLiveByCategory(cateNo: string): Promise<SoopLiveInfo[]> {
+    let url = `${this.streamqUrl}/soop/live/v1/category?size=${this.size}&cateNo=${encodeURIComponent(cateNo)}`;
     const res = await fetch(url, { method: "GET" });
     return await res.json();
   }

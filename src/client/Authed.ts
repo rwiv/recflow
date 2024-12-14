@@ -1,5 +1,5 @@
-import {Cookie} from "./types.js";
 import {log} from "jslog";
+import {Cookie} from "./types_common.js";
 
 export interface Authed {
   requestChzzkCookies(): Promise<Cookie[] | undefined>;

@@ -1,4 +1,4 @@
-export interface LiveInfo {
+export interface ChzzkLiveInfo {
   channelId: string;
   channelName: string;
   channelImageUrl: string;
@@ -15,7 +15,7 @@ export interface LiveInfo {
   liveCategoryValue: string;
 }
 
-export interface ChannelInfo {
+export interface ChzzkChannelInfo {
   channelId: string;
   channelName: string;
   channelImageUrl: string;
@@ -24,16 +24,5 @@ export interface ChannelInfo {
   followerCount: number;
   openLive: boolean;
 
-  liveInfo: LiveInfo | null;
-}
-
-export interface Cookie {
-  domain: string;
-  expirationDate: number;
-  httpOnly: boolean;
-  name: string;
-  path: string;
-  sameSite: string;
-  secure: boolean;
-  value: string;
+  liveInfo: ChzzkLiveInfo | null;
 }

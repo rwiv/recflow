@@ -1,4 +1,5 @@
 import {ChzzkChecker} from "./ChzzkChecker.js";
+import {SoopChecker} from "./SoopChecker.js";
 
 export class Observer {
 
@@ -7,6 +8,8 @@ export class Observer {
 
   constructor(
     private readonly chzzkChacker: ChzzkChecker,
+    private readonly soopChecker: SoopChecker,
+
     private readonly checkCycle: number = 5 * 1000,
   ) {}
 
@@ -15,9 +18,11 @@ export class Observer {
       throw Error("already observing");
     }
 
-    this.chzzkChacker.check()
+    this.chzzkChacker.check();
+    this.soopChecker.check();
     this.curInterval = setInterval(async () => {
       await this.chzzkChacker.check();
+      await this.soopChecker.check();
     }, this.checkCycle);
 
     this.isObserving = true;

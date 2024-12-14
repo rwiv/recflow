@@ -1,12 +1,12 @@
-import {LiveInfo} from "../client/types.js";
+import {ChzzkLiveInfo} from "../client/types_chzzk.js";
 import {QueryConfig} from "../common/config.js";
 import {Streamq} from "../client/Streamq.js";
 
-export class LiveInfoFilter {
+export class ChzzkLiveFilter {
 
   constructor(private readonly streamq: Streamq) {}
 
-  async getFiltered(infos: LiveInfo[], query: QueryConfig): Promise<LiveInfo[]> {
+  async getFiltered(infos: ChzzkLiveInfo[], query: QueryConfig): Promise<ChzzkLiveInfo[]> {
     return (await Promise.all(infos.map(async info => {
       // ignore
       for (const ignoredCategory of query.ignoredCategories) {
@@ -38,19 +38,12 @@ export class LiveInfoFilter {
         return this.checkFollowerCnt(info, query.minFollowerCnt);
       }
 
-      // by tags
-      for (const tag of info.tags) {
-        if (query.sufficientTags.includes(tag)) {
-          return this.checkFollowerCnt(info, query.minFollowerCnt);
-        }
-      }
-
       return null;
     }))).filter(info => info !== null);
   }
 
-  private async checkFollowerCnt(info: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const {followerCount} = await this.streamq.requestChzzkChannel(info.channelId, false);
+  private async checkFollowerCnt(info: ChzzkLiveInfo, minFollowerCnt: number): Promise<ChzzkLiveInfo | null> {
+    const {followerCount} = await this.streamq.getChzzkChannel(info.channelId, false);
     if (followerCount >= minFollowerCnt) {
       return info;
     } else {

@@ -10,9 +10,7 @@ export interface QueryConfig {
 
   tags: string[];
   keywords: string[];
-  soopCategories: string[];
-
-  sufficientTags: string[];
+  soopCateNoList: string[];
 
   ignoredCategories: string[];
   ignoredTags: string[];
@@ -20,6 +18,9 @@ export interface QueryConfig {
 
   whiteListChannels: string[];
   ignoredChannels: string[];
+
+  whiteListUserIds: string[];
+  ignoredUserIds: string[];
 }
 
 export async function readQueryConfig(filePath: string): Promise<QueryConfig> {

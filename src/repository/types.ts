@@ -1,8 +1,16 @@
-import {LiveInfo} from "../client/types.js";
+import {ChzzkLiveInfo} from "../client/types_chzzk.js";
+import {SoopLiveInfo} from "../client/types_soop.js";
 
-export interface TargetRepository {
-  set(id: string, info: LiveInfo): void;
-  get(id: string): LiveInfo | undefined;
+export interface ChzzkTargetRepository {
+  set(id: string, info: ChzzkLiveInfo): void;
+  get(id: string): ChzzkLiveInfo | undefined;
   delete(id: string): void;
-  values(): LiveInfo[];
+  values(): ChzzkLiveInfo[];
+}
+
+export interface SoopTargetRepository {
+  set(id: string, info: SoopLiveInfo): void;
+  get(id: string): SoopLiveInfo | undefined;
+  delete(id: string): void;
+  values(): SoopLiveInfo[];
 }

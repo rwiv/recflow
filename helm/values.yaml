@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.1.0
+  tag: 0.1.1
   pullSecret: image-pull-secret
 
 affinity: {}
@@ -15,22 +15,26 @@ tolerations:
 externals:
   ntfyEndpoint: http://ntfy.common.svc.cluster.local
   ntfyTopic: stmgr
-  streamqUrl: http://streamq.media.svc.cluster.local
   stdlUrl: http://webhook-eventsource-svc.media.svc.cluster.local:12000/stdl
   authUrl: http://authed-server.media.svc.cluster.local
+  streamqUrl: http://streamq.media.svc.cluster.local
+  querySize: "1000"
 
 configMap:
   name: stmgr-conf
   mountPath: /app/conf
 
 subscribeChannelIds: []
-minUserCnt: 100
-minFollowerCnt: 1000
+subscribeUserIds: []
+minUserCnt: 0
+minFollowerCnt: 0
 tags: []
 keywords: []
-sufficientTags: []
+soopCateNoList: []
 ignoredCategories: []
 ignoredTags: []
 ignoredKeywords: []
 whiteListChannels: []
 ignoredChannels: []
+whiteListUserIds: []
+ignoredUserIds: []

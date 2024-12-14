@@ -29,6 +29,8 @@ spec:
               value: {{ .Values.externals.ntfyEndpoint }}
             - name: NTFY_TOPIC
               value: {{ .Values.externals.ntfyTopic }}
+            - name: QUERY_SIZE
+              value: {{ .Values.externals.querySize }}
             - name: NODE_ENV
               value: prod
           volumeMounts:

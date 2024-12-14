@@ -3,8 +3,12 @@ import {Streamq} from "../client/Streamq.js";
 import {StdlMock, StdlImpl} from "../client/Stdl.js";
 import {AuthedImpl, AuthedMock} from "../client/Authed.js";
 import {MockNotifier, Notifier, NtfyNotifier} from "../client/Notifier.js";
-import {TargetRepositoryMem} from "../repository/TargetRepositoryMem.js";
-import {TargetRepository} from "../repository/types.js";
+import {ChzzkTargetRepositoryMem} from "../repository/ChzzkTargetRepositoryMem.js";
+import {ChzzkTargetRepository} from "../repository/types.js";
+import {SoopTargetRepositoryMem} from "../repository/SoopTargetRepositoryMem.js";
+import {ChzzkChecker} from "../observer/ChzzkChecker.js";
+import {QueryConfig} from "./config.js";
+import {SoopChecker} from "../observer/SoopChecker.js";
 
 export class DepManager {
 
@@ -12,18 +16,34 @@ export class DepManager {
   readonly stdl: StdlImpl | StdlMock;
   readonly authed: AuthedImpl | AuthedMock;
   readonly notifier: Notifier;
-  readonly targetRepository: TargetRepository;
+  readonly chzzkTargetRepository: ChzzkTargetRepository;
+  readonly soopTargetRepository: SoopTargetRepositoryMem;
+  readonly chzzkChecker: ChzzkChecker;
+  readonly soopChecker: SoopChecker;
 
-  constructor(private readonly env: Env) {
+  constructor(
+    private readonly env: Env,
+    private readonly query: QueryConfig,
+  ) {
     this.streamq = this.createStreamqClient();
     this.stdl = this.createStdlClient();
     this.authed = this.createAuthClient();
     this.notifier = this.createNotifier();
-    this.targetRepository = this.createTargetRepository();
+    this.chzzkTargetRepository = this.createChzzkTargetRepository();
+    this.soopTargetRepository = this.createSoopTargetRepository();
+
+    this.chzzkChecker = new ChzzkChecker(
+      this.query, this.streamq, this.stdl, this.authed, this.notifier,
+      this.chzzkTargetRepository, env.ntfyTopic,
+    );
+    this.soopChecker = new SoopChecker(
+      this.query, this.streamq, this.stdl, this.authed, this.notifier,
+      this.soopTargetRepository, env.ntfyTopic,
+    );
   }
 
   private createStreamqClient() {
-    return new Streamq(this.env.streamqUrl);
+    return new Streamq(this.env.streamqUrl, this.env.querySize);
   }
 
   private createStdlClient() {
@@ -50,7 +70,11 @@ export class DepManager {
     }
   }
 
-  private createTargetRepository() {
-    return new TargetRepositoryMem();
+  private createChzzkTargetRepository() {
+    return new ChzzkTargetRepositoryMem();
+  }
+
+  private createSoopTargetRepository() {
+    return new SoopTargetRepositoryMem();
   }
 }

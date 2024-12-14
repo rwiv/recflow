@@ -4,17 +4,18 @@ import {readEnv} from "../common/env.js";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "dev/.env" });
+const {streamqUrl, querySize} = readEnv();
+const streamq = new Streamq(streamqUrl, querySize);
 
-
-it("test tag", async () => {
-  const {streamqUrl} = readEnv();
-  const streamq = new Streamq(streamqUrl);
-
-  const tag = "watchparty";
-  const res = await streamq.requestChzzkByTag(tag);
-  console.log(res.map((info) => info.channelName).length);
-
+it("test chzzk", async () => {
   const channelId = "";
-  const res2 = await streamq.requestChzzkChannel(channelId, false);
+  const res2 = await streamq.getChzzkChannel(channelId, false);
   console.log(res2);
+});
+
+it("test soop channel", async () => {
+  const userId = "";
+  const hasLiveInfo = true;
+  const res = await streamq.getSoopChannel(userId, hasLiveInfo);
+  console.log(res);
 });

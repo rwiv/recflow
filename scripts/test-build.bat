@@ -1,0 +1,2 @@
+cd ..
+pnpm build

@@ -3,8 +3,13 @@ global:
   namespace: media
 
 image:
-  repository: ghcr.io/rwiv/stmgr
-  tag: 0.1.7
+  repository: harbor.rwiv.xyz/private/stmgr
+  tag: 0.0.0
+
+affinity: {}
+tolerations:
+  - key: cpu
+    operator: Exists
 
 externals:
   ntfyEndpoint: http://ntfy.common.svc.cluster.local

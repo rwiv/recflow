@@ -12,7 +12,7 @@ export async function run() {
   const env = readEnv();
   const query = await readQueryConfig(env.configPath);
   log.info("Env", env);
-  log.info("Config", query);
+  // log.info("Config", query);
 
   const observer = new ChzzkObserver(
     query,

@@ -3,12 +3,14 @@ import yaml from "js-yaml";
 
 export interface QueryConfig {
   subscribeChannelIds: string[];
+  subscribeUserIds: string[];
 
   minUserCnt: number;
   minFollowerCnt: number;
 
   tags: string[];
   keywords: string[];
+  soopCategories: string[];
 
   sufficientTags: string[];
 

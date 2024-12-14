@@ -1,14 +1,24 @@
 import {log} from "jslog";
 
-export interface Notifier {
-  notify(topic: string, message: string): Promise<void>;
+export abstract class Notifier {
+
+  abstract notify(topic: string, message: string): Promise<void>;
+
+  async sendLiveInfo(topic: string, channelName: string, userCnt: number, title: string) {
+    const msg = { channelName, userCnt, title };
+    log.info("New Live", msg);
+    const notifyMsg = `${msg.channelName} (${msg.userCnt}): ${msg.title}`
+    await this.notify(topic, notifyMsg);
+  }
 }
 
-export class NtfyNotifier implements Notifier {
+export class NtfyNotifier extends Notifier {
 
   constructor(
     private readonly ntfyEndpoint: string,
-  ) {}
+  ) {
+    super();
+  }
 
   async notify(topic: string, message: string): Promise<void> {
     const url = `${this.ntfyEndpoint}/${topic}`;
@@ -19,7 +29,7 @@ export class NtfyNotifier implements Notifier {
   }
 }
 
-export class MockNotifier implements Notifier {
+export class MockNotifier extends Notifier {
   notify(topic: string, message: string): Promise<void> {
     log.info(`MockNotifier.notify(${topic}, ${message})`);
     return Promise.resolve();

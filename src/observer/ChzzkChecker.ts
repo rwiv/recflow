@@ -8,10 +8,8 @@ import {AuthClient} from "../client/AuthClient.js";
 import {QueryConfig} from "../common/config.js";
 import {LiveInfoFilter} from "./LiveInfoFilter.js";
 
-export class ChzzkObserver {
+export class ChzzkChecker {
 
-  private curInterval: NodeJS.Timeout | undefined;
-  private isObserving: boolean = false;
   private isChecking: boolean = false;
   private filter: LiveInfoFilter;
 
@@ -23,31 +21,11 @@ export class ChzzkObserver {
     private readonly notifier: Notifier,
     private readonly targetRepository: TargetRepository,
     private readonly nftyTopic: string,
-    private readonly checkCycle: number = 5 * 1000,
   ) {
     this.filter = new LiveInfoFilter(streamq);
   }
 
-  observe() {
-    if (this.isObserving) {
-      throw Error("already observing");
-    }
-
-    this.check()
-    this.curInterval = setInterval(async () => {
-      await this.check();
-    }, this.checkCycle);
-
-    this.isObserving = true;
-  }
-
-  stop() {
-    clearInterval(this.curInterval);
-    this.curInterval = undefined;
-    this.isObserving = false;
-  }
-
-  private async check() {
+  async check() {
     if (this.isChecking) {
       log.info("Already checking");
       return;
@@ -106,7 +84,7 @@ export class ChzzkObserver {
       cookies = await this.authClient.requestChzzkCookies();
     }
     await this.stdl.requestChzzkLive(info.channelId, true, cookies);
-    await this.sendNotification(this.nftyTopic, liveInfo);
+    await this.notifier.sendLiveInfo(this.nftyTopic, liveInfo.channelName, liveInfo.concurrentUserCount, liveInfo.liveTitle);
   }
 
   private async isToBeAdded(newInfo: LiveInfo) {
@@ -129,16 +107,5 @@ export class ChzzkObserver {
       return null;
     }
     return existingInfo;
-  }
-
-  private async sendNotification(topic: string, info: LiveInfo) {
-    const msg = {
-      channel: info.channelName,
-      userCnt: info.concurrentUserCount,
-      title: info.liveTitle,
-    }
-    log.info("New Live", msg);
-    const notifyMsg = `${msg.channel} (${msg.userCnt}): ${msg.title}`
-    await this.notifier.notify(topic, notifyMsg);
   }
 }

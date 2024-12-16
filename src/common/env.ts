@@ -25,13 +25,13 @@ export function readEnv(): Env {
     throw Error("streamqUrl is undefined");
   }
   // STREAMQ_QSIZE
-  const qsizeStr = process.env.QSIZE;
+  const qsizeStr = process.env.STREAMQ_QSIZE;
   if (qsizeStr === undefined) {
-    throw Error("querySize is undefined");
+    throw Error("streamqQsize is undefined");
   }
   const streamqQsize = parseInt(qsizeStr);
   if (isNaN(streamqQsize)) {
-    throw Error("querySize is NaN");
+    throw Error("streamqQsize is NaN");
   }
 
   // STDL_URL

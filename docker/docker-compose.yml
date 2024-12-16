@@ -5,8 +5,10 @@ services:
     environment:
       CONFIG_PATH: /app/conf.yaml
       STREAMQ_URL: "${STREAMQ_URL}"
+      STREAMQ_QSIZE: "${STREAMQ_QSIZE}"
       STDL_URL: "${STDL_URL}"
-      AUTH_URL: "${AUTH_URL}"
+      AUTHED_URL: "${AUTHED_URL}"
+      AUTHED_ENCKEY: "${AUTHED_ENCKEY}"
       NTFY_ENDPOINT: "${NTFY_ENDPOINT}"
       NTFY_TOPIC: "${NTFY_TOPIC}"
       NODE_ENV: dev

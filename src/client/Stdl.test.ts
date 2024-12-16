@@ -7,9 +7,9 @@ import {AuthedImpl} from "./Authed.js";
 dotenv.config({ path: "dev/.env" });
 
 it("test", async () => {
-  const {stdlUrl, authUrl} = readEnv();
+  const {stdlUrl, authedUrl, authedEncKey} = readEnv();
   const stdl = new StdlImpl(stdlUrl);
-  const authClient = new AuthedImpl(authUrl);
+  const authClient = new AuthedImpl(authedUrl, authedEncKey);
 
   const uid = "";
   const cookies = await authClient.requestChzzkCookies();

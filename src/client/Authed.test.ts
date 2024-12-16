@@ -6,8 +6,12 @@ import dotenv from "dotenv";
 dotenv.config({ path: "dev/.env" });
 
 it("test", async () => {
-  const {authUrl} = readEnv();
-  const client = new AuthedImpl(authUrl);
+  const {authedUrl, authedEncKey} = readEnv();
+  const client = new AuthedImpl(authedUrl, authedEncKey);
+
   const cookies = await client.requestChzzkCookies();
   console.log(cookies);
+
+  const soopCred = await client.requestSoopCred();
+  console.log(soopCred);
 });

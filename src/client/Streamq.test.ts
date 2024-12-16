@@ -4,8 +4,8 @@ import {readEnv} from "../common/env.js";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "dev/.env" });
-const {streamqUrl, querySize} = readEnv();
-const streamq = new Streamq(streamqUrl, querySize);
+const {streamqUrl, streamqQsize} = readEnv();
+const streamq = new Streamq(streamqUrl, streamqQsize);
 
 it("test chzzk", async () => {
   const channelId = "";

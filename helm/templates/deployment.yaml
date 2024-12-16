@@ -20,17 +20,22 @@ spec:
             - name: CONFIG_PATH
               value: {{ .Values.configMap.mountPath }}/conf.yaml
             - name: STREAMQ_URL
-              value: {{ .Values.externals.streamqUrl }}
+              value: {{ .Values.externals.streamq.url }}
+            - name: STREAMQ_QSIZE
+              value: "{{ .Values.externals.streamq.qsize }}"
             - name: STDL_URL
-              value: {{ .Values.externals.stdlUrl }}
-            - name: AUTH_URL
-              value: {{ .Values.externals.authUrl }}
+              value: {{ .Values.externals.stdl.url }}
+            - name: AUTHED_URL
+              value: {{ .Values.externals.authed.url }}
+            - name: AUTHED_ENCKEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externals.authed.secretName }}
+                  key: {{ .Values.externals.authed.enckeyKey }}
             - name: NTFY_ENDPOINT
-              value: {{ .Values.externals.ntfyEndpoint }}
+              value: {{ .Values.externals.ntfy.endpoint }}
             - name: NTFY_TOPIC
-              value: {{ .Values.externals.ntfyTopic }}
-            - name: QUERY_SIZE
-              value: "{{ .Values.externals.querySize }}"
+              value: {{ .Values.externals.ntfy.topic }}
             - name: NODE_ENV
               value: prod
           volumeMounts:

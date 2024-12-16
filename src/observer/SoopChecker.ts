@@ -78,10 +78,9 @@ export class SoopChecker {
     }
     this.targets.set(channel.userId, live);
     let cred = undefined;
-    // TODO: implement authed-server api
-    // if (liveInfo.adult) {
-    //   cred = await this.authClient.requestSoopCred();
-    // }
+    if (live.adult) {
+      cred = await this.authClient.requestSoopCred();
+    }
     await this.stdl.requestSoopLive(channel.userId, true, cred);
     await this.notifier.sendLiveInfo(this.nftyTopic, live.userNick, parseInt(live.totalViewCnt), live.broadTitle);
   }

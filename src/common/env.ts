@@ -2,12 +2,13 @@ import {DEFAULT_NTFY_TOPIC} from "./defaults.js";
 
 export interface Env {
   configPath: string;
+  streamqUrl: string;
+  streamqQsize: number;
   stdlUrl: string;
-  authUrl: string;
+  authedUrl: string;
+  authedEncKey: string;
   ntfyEndpoint: string | undefined;
   ntfyTopic: string;
-  streamqUrl: string;
-  querySize: number;
   nodeEnv: string;
 }
 
@@ -18,37 +19,45 @@ export function readEnv(): Env {
     throw Error("configPath is undefined");
   }
 
+  // STREAMQ_URL
+  const streamqUrl = process.env.STREAMQ_URL;
+  if (streamqUrl === undefined) {
+    throw Error("streamqUrl is undefined");
+  }
+  // STREAMQ_QSIZE
+  const qsizeStr = process.env.QSIZE;
+  if (qsizeStr === undefined) {
+    throw Error("querySize is undefined");
+  }
+  const streamqQsize = parseInt(qsizeStr);
+  if (isNaN(streamqQsize)) {
+    throw Error("querySize is NaN");
+  }
+
   // STDL_URL
   const stdlUrl = process.env.STDL_URL;
   if (stdlUrl === undefined) {
     throw Error("stdlUrl is undefined");
   }
 
-  // AUTH_URL
-  const authUrl = process.env.AUTH_URL;
-  if (authUrl === undefined) {
+  // AUTHED_URL
+  const authedUrl = process.env.AUTHED_URL;
+  if (authedUrl === undefined) {
     throw Error("authUrl is undefined");
+  }
+  // AUTHED_ENCKEY
+  const authedEncKey = process.env.AUTHED_ENCKEY;
+  if (authedEncKey === undefined) {
+    throw Error("authedEncKey is undefined");
+  }
+  if (authedEncKey.length !== 32) {
+    throw new Error("Key must be 32 bytes");
   }
 
   // NTFY_ENDPOINT
   const ntfyEndpoint = process.env.NTFY_ENDPOINT;
   // NTFY_TOPIC
   const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
-
-  // STREAMQ_URL
-  const streamqUrl = process.env.STREAMQ_URL;
-  if (streamqUrl === undefined) {
-    throw Error("streamqUrl is undefined");
-  }
-  // QUERY_SIZE
-  const querySizeStr = process.env.QUERY_SIZE;
-  if (querySizeStr === undefined) {
-    throw Error("querySize is undefined");
-  }
-  const querySize = parseInt(querySizeStr);
-  if (isNaN(querySize)) {
-    throw Error("querySize is NaN");
-  }
 
   // NODE_ENV
   let nodeEnv = process.env.NODE_ENV;
@@ -58,9 +67,10 @@ export function readEnv(): Env {
 
   return {
     configPath,
-    stdlUrl, authUrl,
+    streamqUrl, streamqQsize,
+    stdlUrl,
+    authedUrl, authedEncKey,
     ntfyEndpoint, ntfyTopic,
-    streamqUrl, querySize,
     nodeEnv,
   };
 }

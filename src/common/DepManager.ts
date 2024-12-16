@@ -43,7 +43,7 @@ export class DepManager {
   }
 
   private createStreamqClient() {
-    return new Streamq(this.env.streamqUrl, this.env.querySize);
+    return new Streamq(this.env.streamqUrl, this.env.streamqQsize);
   }
 
   private createStdlClient() {
@@ -55,8 +55,8 @@ export class DepManager {
   }
 
   private createAuthClient() {
-    if (this.env.nodeEnv === "prod" && this.env.authUrl !== undefined) {
-      return new AuthedImpl(this.env.authUrl);
+    if (this.env.nodeEnv === "prod" && this.env.authedUrl !== undefined) {
+      return new AuthedImpl(this.env.authedUrl, this.env.authedEncKey);
     } else {
       return new AuthedMock();
     }

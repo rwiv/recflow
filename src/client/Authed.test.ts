@@ -10,7 +10,7 @@ it("test", async () => {
   const client = new AuthedImpl(authedUrl, authedEncKey);
 
   const cookies = await client.requestChzzkCookies();
-  console.log(cookies);
+  console.log(JSON.stringify(cookies));
 
   const soopCred = await client.requestSoopCred();
   console.log(soopCred);

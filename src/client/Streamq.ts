@@ -52,13 +52,17 @@ export class Streamq {
     return Array.from(infoMap.values());
   }
 
-  async getSoopChannel(userId: string, hasLiveInfo: boolean): Promise<SoopChannelInfo> {
+  async getSoopChannel(userId: string, hasLiveInfo: boolean): Promise<SoopChannelInfo | null> {
     let url = `${this.streamqUrl}/soop/channel/v1/${userId}`;
     if (hasLiveInfo) {
       url += "?hasLiveInfo=true";
     }
-    const res = await fetch(url, { method: "GET" });
-    return await res.json();
+    try {
+      const res = await fetch(url, { method: "GET" });
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
   }
 
   private async getSoopLiveByCategory(cateNo: string): Promise<SoopLiveInfo[]> {

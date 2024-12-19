@@ -37,7 +37,9 @@ export class SoopChecker {
       this.query.subscribeUserIds
         .filter(userId => !this.targets.get(userId))
         .map(userId => this.streamq.getSoopChannel(userId, false))
-    )).filter(info => info.openLive);
+    ))
+      .filter(info => info !== null)
+      .filter(info => info.openLive);
     for (const channel of filteredChannels) {
       if (!this.targets.get(channel.userId)) {
         await this.addInfo(channel.userId);
@@ -72,6 +74,9 @@ export class SoopChecker {
 
   private async addInfo(channelId: string) {
     const channel = await this.streamq.getSoopChannel(channelId, true);
+    if (!channel) {
+      throw Error("Not found channel");
+    }
     const live = channel.liveInfo;
     if (!live) {
       throw Error("No liveInfo");
@@ -92,16 +97,16 @@ export class SoopChecker {
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음
     // 따라서 queried LiveInfo 뿐만 아니라 ChannelInfo를 같이 확인하여 방송중인지 확인한 뒤 리스트에 추가한다
-    const {openLive} = await this.streamq.getSoopChannel(newInfo.userId, false);
-    if (!openLive) {
+    const channel = await this.streamq.getSoopChannel(newInfo.userId, false);
+    if (!channel?.openLive) {
       return null;
     }
     return newInfo;
   }
 
   private async isToBeDeleted(existingInfo: SoopLiveInfo) {
-    const {openLive} = await this.streamq.getSoopChannel(existingInfo.userId, false);
-    if (openLive) {
+    const channel = await this.streamq.getSoopChannel(existingInfo.userId, false);
+    if (channel?.openLive) {
       return null;
     }
     return existingInfo;

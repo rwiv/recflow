@@ -30,8 +30,11 @@ export class SoopLiveFilter {
   }
 
   private async checkFollowerCnt(info: SoopLiveInfo, minFollowerCnt: number): Promise<SoopLiveInfo | null> {
-    const {fanCnt} = await this.streamq.getSoopChannel(info.userId, false);
-    if (fanCnt >= minFollowerCnt) {
+    const channel = await this.streamq.getSoopChannel(info.userId, false);
+    if (channel === null) {
+      return null;
+    }
+    if (channel.fanCnt >= minFollowerCnt) {
       return info;
     } else {
       return null;

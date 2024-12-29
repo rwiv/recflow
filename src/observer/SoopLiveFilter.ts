@@ -9,10 +9,10 @@ export class SoopLiveFilter {
   async getFiltered(infos: SoopLiveInfo[], query: QueryConfig): Promise<SoopLiveInfo[]> {
     return (await Promise.all(infos.map(async info => {
       // by userId
-      if (query.whiteListUserIds.includes(info.userId)) {
+      if (query.allowedSoopUserIds.includes(info.userId)) {
         return info;
       }
-      if (query.ignoredUserIds.includes(info.userId)) {
+      if (query.excludedSoopUserIds.includes(info.userId)) {
         return null;
       }
 
@@ -21,8 +21,8 @@ export class SoopLiveFilter {
       if (isNaN(userCnt)) {
         throw new Error(`Invalid totalViewCnt: ${info.totalViewCnt}`);
       }
-      if (userCnt >= query.minUserCnt) {
-        return this.checkFollowerCnt(info, query.minFollowerCnt);
+      if (userCnt >= query.soopMinUserCnt) {
+        return this.checkFollowerCnt(info, query.soopMinFollowerCnt);
       }
 
       return null;

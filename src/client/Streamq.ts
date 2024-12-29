@@ -11,11 +11,11 @@ export class Streamq {
 
   async getChzzkLive(query: QueryConfig): Promise<ChzzkLiveInfo[]> {
     const infoMap = new Map<string, ChzzkLiveInfo>();
-    for (const keyword of query.keywords) {
+    for (const keyword of query.chzzkKeywords) {
       const res = await this.getChzzkLiveByKeyword(keyword);
       res.forEach(info => infoMap.set(info.channelId, info));
     }
-    for (const tag of query.tags) {
+    for (const tag of query.chzzkTags) {
       const res = await this.getChzzkLiveByTag(tag);
       res.forEach(info => infoMap.set(info.channelId, info));
     }

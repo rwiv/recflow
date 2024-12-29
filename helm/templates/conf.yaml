@@ -5,30 +5,32 @@ metadata:
   namespace: {{ .Values.global.namespace }}
 data:
   conf.yaml: |
-    {{- with .Values.subscribeChannelIds }}
-    subscribeChannelIds:
+    {{- with .Values.subsChzzkChanIds }}
+    subsChzzkChanIds:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.subscribeUserIds }}
-    subscribeUserIds:
+    {{- with .Values.subsSoopUserIds }}
+    subsSoopUserIds:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
 
-    minUserCnt: {{ .Values.minUserCnt }}
-    minFollowerCnt: {{ .Values.minFollowerCnt }}
+    chzzkMinUserCnt: {{ .Values.chzzkMinUserCnt }}
+    chzzkMinFollowerCnt: {{ .Values.chzzkMinFollowerCnt }}
+    soopMinUserCnt: {{ .Values.soopMinUserCnt }}
+    soopMinFollowerCnt: {{ .Values.soopMinFollowerCnt }}
 
-    {{- with .Values.tags }}
-    tags:
+    {{- with .Values.chzzkTags }}
+    chzzkTags:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.keywords }}
-    keywords:
+    {{- with .Values.chzzkKeywords }}
+    chzzkKeywords:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
@@ -40,45 +42,52 @@ data:
     {{- end }}
     {{- end }}
 
-    {{- with .Values.ignoredCategories}}
-    ignoredCategories:
+    {{- with .Values.excludedChzzkCates}}
+    excludedChzzkCates:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.ignoredTags }}
-    ignoredTags:
+    {{- with .Values.excludedChzzkTags }}
+    excludedChzzkTags:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.ignoredKeywords }}
-    ignoredKeywords:
+    {{- with .Values.excludedChzzkKeywords }}
+    excludedChzzkKeywords:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
 
-    {{- with .Values.whiteListChannels}}
-    whiteListChannels:
+    {{- with .Values.allowedSoopUserIds }}
+    allowedSoopUserIds:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.ignoredChannels }}
-    ignoredChannels:
+    {{- with .Values.excludedSoopUserIds }}
+    excludedSoopUserIds:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.whiteListUserIds }}
-    whiteListUserIds:
+
+    {{- with .Values.allowedChzzkChanNames}}
+    allowedChzzkChanNames:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}
     {{- end }}
-    {{- with .Values.ignoredUserIds }}
-    ignoredUserIds:
+    {{- with .Values.excludedChzzkChanNames }}
+    excludedChzzkChanNames:
+    {{- range . }}
+      - {{ . | quote }}
+    {{- end }}
+    {{- end }}
+    {{- with .Values.excludedChzzkChanIds }}
+    excludedChzzkChanIds:
     {{- range . }}
       - {{ . | quote }}
     {{- end }}

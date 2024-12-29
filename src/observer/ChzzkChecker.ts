@@ -34,7 +34,7 @@ export class ChzzkChecker {
 
     // --------------- check by subscriptions -------------------------------
     const filteredChannels = (await Promise.all(
-      this.query.subscribeChannelIds
+      this.query.subsChzzkChanIds
         .filter(channelId => !this.targets.get(channelId))
         .map(channelId => this.streamq.getChzzkChannel(channelId, false))
     )).filter(info => info.openLive);

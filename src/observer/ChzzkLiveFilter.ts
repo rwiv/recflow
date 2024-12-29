@@ -9,33 +9,36 @@ export class ChzzkLiveFilter {
   async getFiltered(infos: ChzzkLiveInfo[], query: QueryConfig): Promise<ChzzkLiveInfo[]> {
     return (await Promise.all(infos.map(async info => {
       // ignore
-      for (const ignoredCategory of query.ignoredCategories) {
+      for (const ignoredCategory of query.excludedChzzkCates) {
         if (info.liveCategory === ignoredCategory) {
           return null;
         }
       }
-      for (const ignoredTag of query.ignoredTags) {
+      for (const ignoredTag of query.excludedChzzkTags) {
         if (info.tags.includes(ignoredTag)) {
           return null;
         }
       }
-      for (const ignoredKeyword of query.ignoredKeywords) {
+      for (const ignoredKeyword of query.excludedChzzkKeywords) {
         if (info.liveTitle.includes(ignoredKeyword)) {
           return null;
         }
       }
 
       // by channel
-      if (query.whiteListChannels.includes(info.channelName)) {
+      if (query.allowedChzzkChanNames.includes(info.channelName)) {
         return info;
       }
-      if (query.ignoredChannels.includes(info.channelName)) {
+      if (query.excludedChzzkChanNames.includes(info.channelName)) {
+        return null;
+      }
+      if (query.excludedChzzkChanIds.includes(info.channelId)) {
         return null;
       }
 
       // by user count
-      if (info.concurrentUserCount >= query.minUserCnt) {
-        return this.checkFollowerCnt(info, query.minFollowerCnt);
+      if (info.concurrentUserCount >= query.chzzkMinUserCnt) {
+        return this.checkFollowerCnt(info, query.chzzkMinFollowerCnt);
       }
 
       return null;

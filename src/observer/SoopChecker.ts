@@ -34,7 +34,7 @@ export class SoopChecker {
 
     // --------------- check by subscriptions -------------------------------
     const filteredChannels = (await Promise.all(
-      this.query.subscribeUserIds
+      this.query.subsSoopUserIds
         .filter(userId => !this.targets.get(userId))
         .map(userId => this.streamq.getSoopChannel(userId, false))
     ))

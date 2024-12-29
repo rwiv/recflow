@@ -2,25 +2,28 @@ import {readFile} from "node:fs/promises";
 import yaml from "js-yaml";
 
 export interface QueryConfig {
-  subscribeChannelIds: string[];
-  subscribeUserIds: string[];
+  subsChzzkChanIds: string[];
+  subsSoopUserIds: string[];
 
-  minUserCnt: number;
-  minFollowerCnt: number;
+  chzzkMinUserCnt: number;
+  chzzkMinFollowerCnt: number;
+  soopMinUserCnt: number;
+  soopMinFollowerCnt: number;
 
-  tags: string[];
-  keywords: string[];
+  chzzkTags: string[];
+  chzzkKeywords: string[];
   soopCateNoList: string[];
 
-  ignoredCategories: string[];
-  ignoredTags: string[];
-  ignoredKeywords: string[];
+  excludedChzzkCates: string[];
+  excludedChzzkTags: string[];
+  excludedChzzkKeywords: string[];
 
-  whiteListChannels: string[];
-  ignoredChannels: string[];
+  allowedSoopUserIds: string[];
+  excludedSoopUserIds: string[];
 
-  whiteListUserIds: string[];
-  ignoredUserIds: string[];
+  allowedChzzkChanNames: string[];
+  excludedChzzkChanNames: string[];
+  excludedChzzkChanIds: string[];
 }
 
 export async function readQueryConfig(filePath: string): Promise<QueryConfig> {

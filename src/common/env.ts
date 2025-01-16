@@ -60,7 +60,7 @@ export function readEnv(): Env {
   const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
 
   // NODE_ENV
-  let nodeEnv = process.env.NODE_ENV;
+  let nodeEnv = process.env.NODE_ENV as string | undefined;
   if (nodeEnv !== "prod") {
     nodeEnv = "dev";
   }

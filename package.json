@@ -13,13 +13,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.10.5",
+    "express": "^4.21.2",
     "js-yaml": "^4.1.0",
-    "jslog": "git+https://github.com/rwiv/jslog.git#v1.0.0"
+    "jslog": "git+https://github.com/rwiv/jslog.git#v1.0.0",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.6",
+    "@types/express": "^5.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.14.9",
-	"dotenv": "^16.4.5",
+    "dotenv": "^16.4.5",
     "typescript": "^5.5.3",
     "vitest": "^1.6.0"
   }

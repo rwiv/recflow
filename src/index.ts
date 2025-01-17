@@ -1,4 +1,4 @@
-import {run} from "./runner.js"
 import {log} from "jslog";
+import {startServer} from "./server.js";
 
-run().catch(err => log.error(err));
+startServer().catch(err => log.error(err));

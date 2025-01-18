@@ -33,15 +33,19 @@ export class SoopChecker {
     this.isChecking = true;
 
     // --------------- check by subscriptions -------------------------------
+    const newUserIds: string[] = [];
+    for (const userId of this.query.subsSoopUserIds) {
+      if (!await this.targets.get(userId)) {
+        newUserIds.push(userId);
+      }
+    }
     const filteredChannels = (await Promise.all(
-      this.query.subsSoopUserIds
-        .filter(userId => !this.targets.get(userId))
-        .map(userId => this.streamq.getSoopChannel(userId, false))
+      newUserIds.map(userId => this.streamq.getSoopChannel(userId, false))
     ))
       .filter(info => info !== null)
       .filter(info => info.openLive);
     for (const channel of filteredChannels) {
-      if (!this.targets.get(channel.userId)) {
+      if (!await this.targets.get(channel.userId)) {
         await this.addInfo(channel.userId);
       }
     }
@@ -61,11 +65,11 @@ export class SoopChecker {
 
     // delete LiveInfos
     const toBeDeletedInfos: SoopLiveInfo[] = (await Promise.all(
-      this.targets.values().map(async info => this.isToBeDeleted(info))
+      (await this.targets.all()).map(async info => this.isToBeDeleted(info))
     )).filter(info => info !== null)
 
     for (const toBeDeleted of toBeDeletedInfos) {
-      this.targets.delete(toBeDeleted.userId);
+      await this.targets.delete(toBeDeleted.userId);
       log.info(`Delete: ${toBeDeleted.userNick}`)
     }
 
@@ -81,7 +85,7 @@ export class SoopChecker {
     if (!live) {
       throw Error("No liveInfo");
     }
-    this.targets.set(channel.userId, live);
+    await this.targets.set(channel.userId, live);
     let cred = undefined;
     if (live.adult) {
       cred = await this.authClient.requestSoopCred();
@@ -91,7 +95,7 @@ export class SoopChecker {
   }
 
   private async isToBeAdded(newInfo: SoopLiveInfo) {
-    if (this.targets.get(newInfo.userId)) {
+    if (await this.targets.get(newInfo.userId)) {
       return null;
     }
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음

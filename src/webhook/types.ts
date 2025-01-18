@@ -2,6 +2,7 @@ import {ChzzkLiveInfo} from "../client/types_chzzk.js";
 import {SoopLiveInfo} from "../client/types_soop.js";
 
 export type WebhookType = "main" | "sub" | "extra";
+export type WebhookMode = "mode1" | "mode2" | "mode3" | "mode4";
 
 export interface WebhookInfo {
   name: string;
@@ -11,15 +12,18 @@ export interface WebhookInfo {
   soopCapacity: number;
 }
 
-export interface WebhookState extends WebhookInfo {
+export interface ChzzkWebhookState extends WebhookInfo {
   chzzkAssignedCnt: number;
+}
+
+export interface SoopWebhookState extends WebhookInfo {
   soopAssignedCnt: number;
 }
 
-export interface ChzzkWebhookAllocator {
-  allocate(live: ChzzkLiveInfo, whStates: WebhookState[]): WebhookState | null;
+export interface ChzzkWebhookMatcher {
+  match(live: ChzzkLiveInfo, whStates: ChzzkWebhookState[]): ChzzkWebhookState | null;
 }
 
-export interface SoopWebhookAllocator {
-  allocate(live: SoopLiveInfo, whStates: WebhookState[]): WebhookState | null;
+export interface SoopWebhookMatcher {
+  match(live: SoopLiveInfo, whStates: SoopWebhookState[]): SoopWebhookState | null;
 }

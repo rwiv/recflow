@@ -5,22 +5,22 @@ export class SoopTargetRepositoryMem implements SoopTargetRepository {
 
   private readonly map: Map<string, SoopLiveInfo> = new Map();
 
-  set(id: string, info: SoopLiveInfo) {
-    if (this.get(id)) {
+  async set(id: string, info: SoopLiveInfo) {
+    if (this.map.get(id)) {
       throw Error(`${id} is already exists`);
     }
     this.map.set(id, info);
   }
 
-  get(id: string): SoopLiveInfo | undefined {
+  async get(id: string) {
     return this.map.get(id);
   }
 
-  delete(id: string) {
+  async delete(id: string) {
     this.map.delete(id);
   }
 
-  values(): SoopLiveInfo[] {
+  async all() {
     return Array.from(this.map.values());
   }
 }

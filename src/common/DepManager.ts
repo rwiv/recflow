@@ -9,6 +9,12 @@ import {SoopTargetRepositoryMem} from "../repository/SoopTargetRepositoryMem.js"
 import {ChzzkChecker} from "../observer/ChzzkChecker.js";
 import {QueryConfig} from "./query.js";
 import {SoopChecker} from "../observer/SoopChecker.js";
+import {ChzzkAllocator} from "../observer/ChzzkAllocator.js";
+import {ChzzkWebhookMatcher} from "../webhook/types.js";
+import {ChzzkWebhookMatcherMode1} from "../webhook/chzzk/ChzzkWebhookMatcherMode1.js";
+import {ChzzkWebhookMatcherMode4} from "../webhook/chzzk/ChzzkWebhookMatcherMode4.js";
+import {ChzzkWebhookMatcherMode3} from "../webhook/chzzk/ChzzkWebhookMatcherMode3.js";
+import {ChzzkWebhookMatcherMode2} from "../webhook/chzzk/ChzzkWebhookMatcherMode2.js";
 
 export class DepManager {
 
@@ -20,6 +26,8 @@ export class DepManager {
   readonly soopTargetRepository: SoopTargetRepositoryMem;
   readonly chzzkChecker: ChzzkChecker;
   readonly soopChecker: SoopChecker;
+  readonly chzzkAllocator: ChzzkAllocator;
+  readonly chzzkWebhookMatcher: ChzzkWebhookMatcher;
 
   constructor(
     private readonly env: Env,
@@ -32,14 +40,31 @@ export class DepManager {
     this.chzzkTargetRepository = this.createChzzkTargetRepository();
     this.soopTargetRepository = this.createSoopTargetRepository();
 
+    this.chzzkWebhookMatcher = this.createChzzkWebhookMatcher();
+    this.chzzkAllocator = new ChzzkAllocator(
+      this.stdl, this.authed, this.notifier, env.ntfyTopic,
+      this.chzzkTargetRepository, this.chzzkWebhookMatcher,
+    );
     this.chzzkChecker = new ChzzkChecker(
-      this.query, this.streamq, this.stdl, this.authed, this.notifier,
-      this.chzzkTargetRepository, env.ntfyTopic,
+      this.query, this.streamq, this.chzzkTargetRepository, this.chzzkAllocator,
     );
     this.soopChecker = new SoopChecker(
       this.query, this.streamq, this.stdl, this.authed, this.notifier,
       this.soopTargetRepository, env.ntfyTopic,
     );
+  }
+
+  private createChzzkWebhookMatcher() {
+    switch (this.query.webhookMode) {
+      case "mode1":
+        return new ChzzkWebhookMatcherMode1();
+      case "mode2":
+        return new ChzzkWebhookMatcherMode2(this.query);
+      case "mode3":
+        return new ChzzkWebhookMatcherMode3(this.query);
+      case "mode4":
+        return new ChzzkWebhookMatcherMode4(this.query);
+    }
   }
 
   private createStreamqClient() {
@@ -71,7 +96,7 @@ export class DepManager {
   }
 
   private createChzzkTargetRepository() {
-    return new ChzzkTargetRepositoryMem();
+    return new ChzzkTargetRepositoryMem(this.query);
   }
 
   private createSoopTargetRepository() {

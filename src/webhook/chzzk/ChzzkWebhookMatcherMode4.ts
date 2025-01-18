@@ -1,13 +1,13 @@
 import {ChzzkLiveInfo} from "../../client/types_chzzk.js";
-import {ChzzkWebhookAllocator, WebhookState, WebhookType} from "../types.js";
+import {ChzzkWebhookMatcher, ChzzkWebhookState, WebhookType} from "../types.js";
 import {QueryConfig} from "../../common/query.js";
-import {findCandidateAddCnt} from "../utils.js";
+import {findChzzkCandidate} from "../utils.js";
 
-export class ChzzkWebhookAllocatorMode4 implements ChzzkWebhookAllocator {
+export class ChzzkWebhookMatcherMode4 implements ChzzkWebhookMatcher {
 
   constructor(private readonly query: QueryConfig) {}
 
-  allocate(live: ChzzkLiveInfo, whStates: WebhookState[]): WebhookState | null {
+  match(live: ChzzkLiveInfo, whStates: ChzzkWebhookState[]): ChzzkWebhookState | null {
     let type: WebhookType = "sub";
     if (this.query.subsChzzkChanIds.includes(live.channelId)) {
       type = "main";
@@ -20,7 +20,7 @@ export class ChzzkWebhookAllocatorMode4 implements ChzzkWebhookAllocator {
     }
 
     if (type === "main") {
-      const candidate = findCandidateAddCnt(whStates, "main");
+      const candidate = findChzzkCandidate(whStates, "main");
       if (!candidate) {
         type = "sub";
       } else {
@@ -29,13 +29,13 @@ export class ChzzkWebhookAllocatorMode4 implements ChzzkWebhookAllocator {
     }
 
     if (type === "sub") {
-      const candidate = findCandidateAddCnt(whStates, "sub");
+      const candidate = findChzzkCandidate(whStates, "sub");
       if (candidate) {
         return candidate;
       }
     }
 
     // type === "extra"
-    return findCandidateAddCnt(whStates, "extra");
+    return findChzzkCandidate(whStates, "extra");
   }
 }

@@ -1,10 +1,10 @@
 import express, {Request, Response, NextFunction} from "express";
 import {log} from "jslog";
-import {readEnv} from "./common/env.js";
-import {readQueryConfig} from "./common/config.js";
-import {DepManager} from "./common/DepManager.js";
-import {Observer} from "./observer/Observer.js";
-import {MainRouter} from "./route/main.js";
+import {readEnv} from "../common/env.js";
+import {readQueryConfig} from "../common/query.js";
+import {DepManager} from "../common/DepManager.js";
+import {Observer} from "../observer/Observer.js";
+import {MainRouter} from "./main_router.js";
 import path from "path";
 
 export async function startServer() {

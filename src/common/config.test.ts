@@ -1,6 +1,6 @@
 import {it} from "vitest";
 import path from "node:path";
-import {readQueryConfig} from "./config.js";
+import {readQueryConfig} from "./query";
 
 it("test", async () => {
   const filePath = path.resolve(import.meta.dirname, "..", "..", "dev", "conf.yaml");

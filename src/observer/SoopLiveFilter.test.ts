@@ -1,7 +1,7 @@
 import {it} from "vitest";
 import {Streamq} from "../client/Streamq.js";
 import {readEnv} from "../common/env.js";
-import {readQueryConfig} from "../common/config.js";
+import {readQueryConfig} from "../common/query";
 import dotenv from "dotenv";
 import {SoopLiveFilter} from "./SoopLiveFilter.js";
 

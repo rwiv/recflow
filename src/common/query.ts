@@ -19,9 +19,11 @@ export interface QueryConfig {
   excludedChzzkKeywords: string[];
 
   allowedSoopUserIds: string[];
+  extraSoopUserIds: string[];
   excludedSoopUserIds: string[];
 
   allowedChzzkChanNames: string[];
+  extraChzzkChanNames: string[];
   excludedChzzkChanNames: string[];
   excludedChzzkChanIds: string[];
 }

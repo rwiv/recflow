@@ -7,7 +7,7 @@ import {ChzzkTargetRepositoryMem} from "../repository/ChzzkTargetRepositoryMem.j
 import {ChzzkTargetRepository} from "../repository/types.js";
 import {SoopTargetRepositoryMem} from "../repository/SoopTargetRepositoryMem.js";
 import {ChzzkChecker} from "../observer/ChzzkChecker.js";
-import {QueryConfig} from "./config.js";
+import {QueryConfig} from "./query.js";
 import {SoopChecker} from "../observer/SoopChecker.js";
 
 export class DepManager {

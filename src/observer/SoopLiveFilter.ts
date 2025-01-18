@@ -1,4 +1,4 @@
-import {QueryConfig} from "../common/config.js";
+import {QueryConfig} from "../common/query.js";
 import {Streamq} from "../client/Streamq.js";
 import {SoopLiveInfo} from "../client/types_soop.js";
 

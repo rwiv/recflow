@@ -1,5 +1,5 @@
 import {ChzzkChannelInfo, ChzzkLiveInfo} from "./types_chzzk.js";
-import {QueryConfig} from "../common/config.js";
+import {QueryConfig} from "../common/query.js";
 import {SoopChannelInfo, SoopLiveInfo} from "./types_soop.js";
 
 export class Streamq {

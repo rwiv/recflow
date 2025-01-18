@@ -1,5 +1,5 @@
 import {ChzzkLiveInfo} from "../client/types_chzzk.js";
-import {QueryConfig} from "../common/config.js";
+import {QueryConfig} from "../common/query.js";
 import {Streamq} from "../client/Streamq.js";
 
 export class ChzzkLiveFilter {

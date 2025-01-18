@@ -1,4 +1,4 @@
-import {QueryConfig} from "../common/config.js";
+import {QueryConfig} from "../common/query.js";
 import {Streamq} from "../client/Streamq.js";
 import {Stdl} from "../client/Stdl.js";
 import {Authed} from "../client/Authed.js";

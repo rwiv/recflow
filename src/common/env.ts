@@ -1,6 +1,8 @@
 import {DEFAULT_NTFY_TOPIC} from "./defaults.js";
+import {AmqpConfig, RedisConfig} from "./configs.js";
 
 export interface Env {
+  nodeEnv: string;
   configPath: string;
   streamqUrl: string;
   streamqQsize: number;
@@ -9,68 +11,77 @@ export interface Env {
   authedEncKey: string;
   ntfyEndpoint: string | undefined;
   ntfyTopic: string;
-  nodeEnv: string;
+  redis: RedisConfig;
+  amqp: AmqpConfig;
 }
 
 export function readEnv(): Env {
-  // CONFIG_PATH
-  const configPath = process.env.CONFIG_PATH;
-  if (configPath === undefined) {
-    throw Error("configPath is undefined");
-  }
-
-  // STREAMQ_URL
-  const streamqUrl = process.env.STREAMQ_URL;
-  if (streamqUrl === undefined) {
-    throw Error("streamqUrl is undefined");
-  }
-  // STREAMQ_QSIZE
-  const qsizeStr = process.env.STREAMQ_QSIZE;
-  if (qsizeStr === undefined) {
-    throw Error("streamqQsize is undefined");
-  }
-  const streamqQsize = parseInt(qsizeStr);
-  if (isNaN(streamqQsize)) {
-    throw Error("streamqQsize is NaN");
-  }
-
-  // STDL_URL
-  const stdlUrl = process.env.STDL_URL;
-  if (stdlUrl === undefined) {
-    throw Error("stdlUrl is undefined");
-  }
-
-  // AUTHED_URL
-  const authedUrl = process.env.AUTHED_URL;
-  if (authedUrl === undefined) {
-    throw Error("authUrl is undefined");
-  }
-  // AUTHED_ENCKEY
-  const authedEncKey = process.env.AUTHED_ENCKEY;
-  if (authedEncKey === undefined) {
-    throw Error("authedEncKey is undefined");
-  }
-  if (authedEncKey.length !== 32) {
-    throw new Error("Key must be 32 bytes");
-  }
-
-  // NTFY_ENDPOINT
-  const ntfyEndpoint = process.env.NTFY_ENDPOINT;
-  // NTFY_TOPIC
-  const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
-
   // NODE_ENV
   let nodeEnv = process.env.NODE_ENV;
   if (nodeEnv !== "prod") {
     nodeEnv = "dev";
   }
 
+  // CONFIG_PATH
+  const configPath = process.env.CONFIG_PATH;
+  if (configPath === undefined) throw Error("configPath is undefined");
+
+  // streamq
+  const streamqUrl = process.env.STREAMQ_URL;
+  const qsizeStr = process.env.STREAMQ_QSIZE;
+  if (streamqUrl === undefined || qsizeStr === undefined) throw Error("streamq data is undefined");
+  const streamqQsize = parseInt(qsizeStr);
+  if (isNaN(streamqQsize)) throw Error("streamqQsize is NaN");
+
+  // stdl
+  const stdlUrl = process.env.STDL_URL;
+  if (stdlUrl === undefined) throw Error("stdlUrl is undefined");
+
+  // authed
+  const authedUrl = process.env.AUTHED_URL;
+  const authedEncKey = process.env.AUTHED_ENCKEY;
+  if (authedUrl === undefined || authedEncKey === undefined) throw Error("authed data is undefined");
+  if (authedEncKey.length !== 32) throw new Error("Key must be 32 bytes");
+
+  // ntfy
+  const ntfyEndpoint = process.env.NTFY_ENDPOINT;
+  const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
+  if (ntfyEndpoint === undefined || ntfyTopic === undefined) throw Error("ntfy data is undefined");
+
+  // redis
+  const redisHost = process.env.REDIS_HOST;
+  const redisPortStr = process.env.REDIS_PORT;
+  const redisPassword = process.env.REDIS_PASSWORD;
+  if (redisHost === undefined || redisPortStr === undefined || redisPassword === undefined) {
+    throw Error("redis data is undefined");
+  }
+  const redisPort = parseInt(redisPortStr);
+  if (isNaN(redisPort)) throw Error("redisPort is NaN");
+  const redis: RedisConfig = {
+    host: redisHost, port: redisPort, password: redisPassword,
+  }
+
+  // amqp
+  const amqpHost = process.env.AMQP_HOST;
+  const amqpPortStr = process.env.AMQP_PORT;
+  const amqpUsername = process.env.AMQP_USERNAME;
+  const amqpPassword = process.env.AMQP_PASSWORD;
+  if (amqpHost === undefined || amqpPortStr === undefined || amqpUsername === undefined || amqpPassword === undefined) {
+    throw Error("amqp data is undefined");
+  }
+  const amqpPort = parseInt(amqpPortStr);
+  if (isNaN(amqpPort)) throw Error("amqpPort is NaN");
+  const amqp: AmqpConfig = {
+    host: amqpHost, port: amqpPort, username: amqpUsername, password: amqpPassword,
+  }
+
   return {
+    nodeEnv,
     configPath,
     streamqUrl, streamqQsize,
     stdlUrl,
     authedUrl, authedEncKey,
     ntfyEndpoint, ntfyTopic,
-    nodeEnv,
+    redis, amqp,
   };
 }

@@ -1,6 +1,6 @@
 import {Env} from "./env.js";
 import {Streamq} from "../client/Streamq.js";
-import {StdlMock, StdlImpl} from "../client/Stdl.js";
+import {StdlMock, StdlImpl, Stdl} from "../client/Stdl.js";
 import {AuthedImpl, AuthedMock} from "../client/Authed.js";
 import {MockNotifier, Notifier, NtfyNotifier} from "../client/Notifier.js";
 import {ChzzkTargetRepositoryMem} from "../repository/ChzzkTargetRepositoryMem.js";
@@ -10,16 +10,18 @@ import {ChzzkChecker} from "../observer/ChzzkChecker.js";
 import {QueryConfig} from "./query.js";
 import {SoopChecker} from "../observer/SoopChecker.js";
 import {ChzzkAllocator} from "../observer/ChzzkAllocator.js";
-import {ChzzkWebhookMatcher} from "../webhook/types.js";
+import {ChzzkWebhookMatcher, SoopWebhookMatcher} from "../webhook/types.js";
 import {ChzzkWebhookMatcherMode1} from "../webhook/chzzk/ChzzkWebhookMatcherMode1.js";
 import {ChzzkWebhookMatcherMode4} from "../webhook/chzzk/ChzzkWebhookMatcherMode4.js";
 import {ChzzkWebhookMatcherMode3} from "../webhook/chzzk/ChzzkWebhookMatcherMode3.js";
 import {ChzzkWebhookMatcherMode2} from "../webhook/chzzk/ChzzkWebhookMatcherMode2.js";
+import {SoopWebhookMatcherMode1} from "../webhook/soop/SoopWebhookMatcherMode1.js";
+import {SoopAllocator} from "../observer/SoopAllocator.js";
 
 export class DepManager {
 
   readonly streamq: Streamq;
-  readonly stdl: StdlImpl | StdlMock;
+  readonly stdl: Stdl;
   readonly authed: AuthedImpl | AuthedMock;
   readonly notifier: Notifier;
   readonly chzzkTargetRepository: ChzzkTargetRepository;
@@ -27,7 +29,9 @@ export class DepManager {
   readonly chzzkChecker: ChzzkChecker;
   readonly soopChecker: SoopChecker;
   readonly chzzkAllocator: ChzzkAllocator;
+  readonly soopAllocator: SoopAllocator;
   readonly chzzkWebhookMatcher: ChzzkWebhookMatcher;
+  readonly soopWebhookMatcher: SoopWebhookMatcher;
 
   constructor(
     private readonly env: Env,
@@ -41,6 +45,8 @@ export class DepManager {
     this.soopTargetRepository = this.createSoopTargetRepository();
 
     this.chzzkWebhookMatcher = this.createChzzkWebhookMatcher();
+    this.soopWebhookMatcher = this.createSoopWebhookMatcher();
+
     this.chzzkAllocator = new ChzzkAllocator(
       this.stdl, this.authed, this.notifier, env.ntfyTopic,
       this.chzzkTargetRepository, this.chzzkWebhookMatcher,
@@ -48,9 +54,13 @@ export class DepManager {
     this.chzzkChecker = new ChzzkChecker(
       this.query, this.streamq, this.chzzkTargetRepository, this.chzzkAllocator,
     );
+
+    this.soopAllocator = new SoopAllocator(
+      this.stdl, this.authed, this.notifier, env.ntfyTopic,
+      this.soopTargetRepository, this.soopWebhookMatcher,
+    );
     this.soopChecker = new SoopChecker(
-      this.query, this.streamq, this.stdl, this.authed, this.notifier,
-      this.soopTargetRepository, env.ntfyTopic,
+      this.query, this.streamq, this.soopTargetRepository, this.soopAllocator,
     );
   }
 
@@ -67,13 +77,22 @@ export class DepManager {
     }
   }
 
+  private createSoopWebhookMatcher() {
+    switch (this.query.webhookMode) {
+      case "mode1":
+        return new SoopWebhookMatcherMode1();
+      default:
+        throw Error("Unsupported webhook mode");
+    }
+  }
+
   private createStreamqClient() {
     return new Streamq(this.env.streamqUrl, this.env.streamqQsize);
   }
 
   private createStdlClient() {
     if (this.env.nodeEnv === "prod" && this.env.stdlUrl !== undefined) {
-      return new StdlImpl(this.env.stdlUrl);
+      return new StdlImpl();
     } else {
       return new StdlMock();
     }
@@ -100,6 +119,6 @@ export class DepManager {
   }
 
   private createSoopTargetRepository() {
-    return new SoopTargetRepositoryMem();
+    return new SoopTargetRepositoryMem(this.query);
   }
 }

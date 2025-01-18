@@ -1,6 +1,6 @@
 import {ChzzkLiveInfo} from "../client/types_chzzk.js";
 import {SoopLiveInfo} from "../client/types_soop.js";
-import {ChzzkWebhookState} from "../webhook/types.js";
+import {ChzzkWebhookState, SoopWebhookState} from "../webhook/types.js";
 
 export interface ChzzkTargetRepository {
   set(id: string, info: ChzzkLiveInfo, wh: ChzzkWebhookState): Promise<void>;
@@ -11,12 +11,17 @@ export interface ChzzkTargetRepository {
 }
 
 export interface SoopTargetRepository {
-  set(id: string, info: SoopLiveInfo): Promise<void>;
+  set(id: string, info: SoopLiveInfo, wh: SoopWebhookState): Promise<void>;
   get(id: string): Promise<SoopLiveInfo | undefined>;
   delete(id: string): Promise<void>;
   all(): Promise<SoopLiveInfo[]>;
+  whStates(): Promise<SoopWebhookState[]>;
 }
 
 export interface ChzzkLiveState extends ChzzkLiveInfo {
+  assignedWebhookName: string;
+}
+
+export interface SoopLiveState extends SoopLiveInfo {
   assignedWebhookName: string;
 }

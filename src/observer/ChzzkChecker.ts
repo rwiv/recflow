@@ -28,22 +28,18 @@ export class ChzzkChecker {
     this.isChecking = true;
 
     // --------------- check by subscriptions -------------------------------
-    const newChannelIds: string[] = [];
-    for (const channelId of this.query.subsChzzkChanIds) {
-      if (!await this.targets.get(channelId)) {
-        newChannelIds.push(channelId);
-      }
-    }
-    const liveSubsChannels = (await Promise.all(
-      newChannelIds.map(channelId => this.streamq.getChzzkChannel(channelId, false))
+    const newSubsChannelIds = (await Promise.all(this.query.subsChzzkChanIds.map(async channelId => ({
+      channelId, live: await this.targets.get(channelId),
+    })))).filter(({live}) => !live).map(({channelId}) => channelId);
+
+    const newLiveSubsChannels = (await Promise.all(
+      newSubsChannelIds.map(channelId => this.streamq.getChzzkChannel(channelId, false))
     )).filter(info => info.openLive);
 
-    for (const channel of liveSubsChannels) {
-      if (!await this.targets.get(channel.channelId)) {
-        const live = (await this.streamq.getChzzkChannel(channel.channelId, true)).liveInfo;
-        if (!live) throw Error("No liveInfo");
-        await this.allocator.allocate(live);
-      }
+    for (const newChannel of newLiveSubsChannels) {
+      const live = (await this.streamq.getChzzkChannel(newChannel.channelId, true)).liveInfo;
+      if (!live) throw Error("Not found chzzkChannel.liveInfo");
+      await this.allocator.allocate(live);
     }
 
     // --------------- check by query --------------------------------------

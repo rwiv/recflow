@@ -1,12 +1,10 @@
 import {QueryConfig} from "../common/query.js";
 import {Streamq} from "../client/Streamq.js";
-import {Stdl} from "../client/Stdl.js";
-import {Authed} from "../client/Authed.js";
-import {Notifier} from "../client/Notifier.js";
 import {SoopTargetRepository} from "../repository/types.js";
 import {log} from "jslog";
 import {SoopLiveFilter} from "./SoopLiveFilter.js";
 import {SoopLiveInfo} from "../client/types_soop.js";
+import {SoopAllocator} from "./SoopAllocator.js";
 
 export class SoopChecker {
 
@@ -16,11 +14,8 @@ export class SoopChecker {
   constructor(
     private readonly query: QueryConfig,
     private readonly streamq: Streamq,
-    private readonly stdl: Stdl,
-    private readonly authClient: Authed,
-    private readonly notifier: Notifier,
     private readonly targets: SoopTargetRepository,
-    private readonly nftyTopic: string,
+    private readonly allocator: SoopAllocator,
   ) {
     this.filter = new SoopLiveFilter(streamq);
   }
@@ -33,21 +28,20 @@ export class SoopChecker {
     this.isChecking = true;
 
     // --------------- check by subscriptions -------------------------------
-    const newUserIds: string[] = [];
-    for (const userId of this.query.subsSoopUserIds) {
-      if (!await this.targets.get(userId)) {
-        newUserIds.push(userId);
-      }
-    }
-    const filteredChannels = (await Promise.all(
-      newUserIds.map(userId => this.streamq.getSoopChannel(userId, false))
-    ))
-      .filter(info => info !== null)
-      .filter(info => info.openLive);
-    for (const channel of filteredChannels) {
-      if (!await this.targets.get(channel.userId)) {
-        await this.addInfo(channel.userId);
-      }
+    const newSubsChannelIds = (await Promise.all(this.query.subsSoopUserIds.map(async userId => ({
+      userId, live: await this.targets.get(userId),
+    })))).filter(({live}) => !live).map(({userId}) => userId);
+
+    const newLiveSubsChannels = (await Promise.all(
+      newSubsChannelIds.map(userId => this.streamq.getSoopChannel(userId, false))
+    )).filter(info => info !== null).filter(info => info.openLive);
+
+    for (const newChannel of newLiveSubsChannels) {
+      const channel = await this.streamq.getSoopChannel(newChannel.userId, true);
+      if (!channel) throw Error("Not found soop channel");
+      const live = channel.liveInfo;
+      if (!live) throw Error("Not found soopChannel.liveInfo");
+      await this.allocator.allocate(live);
     }
 
     // --------------- check by query --------------------------------------
@@ -60,7 +54,7 @@ export class SoopChecker {
     )).filter(info => info !== null)
 
     for (const newInfo of toBeAddedInfos) {
-      await this.addInfo(newInfo.userId);
+      await this.allocator.allocate(newInfo);
     }
 
     // delete LiveInfos
@@ -76,43 +70,19 @@ export class SoopChecker {
     this.isChecking = false;
   }
 
-  private async addInfo(channelId: string) {
-    const channel = await this.streamq.getSoopChannel(channelId, true);
-    if (!channel) {
-      throw Error("Not found channel");
-    }
-    const live = channel.liveInfo;
-    if (!live) {
-      throw Error("No liveInfo");
-    }
-    await this.targets.set(channel.userId, live);
-    let cred = undefined;
-    if (live.adult) {
-      cred = await this.authClient.requestSoopCred();
-    }
-    await this.stdl.requestSoopLive(channel.userId, true, cred);
-    await this.notifier.sendLiveInfo(this.nftyTopic, live.userNick, parseInt(live.totalViewCnt), live.broadTitle);
-  }
-
   private async isToBeAdded(newInfo: SoopLiveInfo) {
-    if (await this.targets.get(newInfo.userId)) {
-      return null;
-    }
+    if (await this.targets.get(newInfo.userId)) return null;
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음
     // 따라서 queried LiveInfo 뿐만 아니라 ChannelInfo를 같이 확인하여 방송중인지 확인한 뒤 리스트에 추가한다
     const channel = await this.streamq.getSoopChannel(newInfo.userId, false);
-    if (!channel?.openLive) {
-      return null;
-    }
+    if (!channel?.openLive) return null;
     return newInfo;
   }
 
   private async isToBeDeleted(existingInfo: SoopLiveInfo) {
     const channel = await this.streamq.getSoopChannel(existingInfo.userId, false);
-    if (channel?.openLive) {
-      return null;
-    }
+    if (channel?.openLive) return null;
     return existingInfo;
   }
 }

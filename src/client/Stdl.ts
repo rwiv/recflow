@@ -20,16 +20,15 @@ export interface SoopCred {
 }
 
 export interface Stdl {
-  requestChzzkLive(uid: string, once: boolean, cookies: Cookie[] | undefined): Promise<void>
-  requestSoopLive(userId: string, once: boolean, cred: SoopCred | undefined): Promise<void>
+  requestChzzkLive(url: string, uid: string, once: boolean, cookies: Cookie[] | undefined): Promise<void>
+  requestSoopLive(url: string, userId: string, once: boolean, cred: SoopCred | undefined): Promise<void>
 }
 
 export class StdlImpl implements Stdl {
 
-  constructor(private readonly stdlUrl: string) {}
-
   async requestChzzkLive(
-    uid: string, once: boolean = true, cookies: Cookie[] | undefined = undefined,
+    url: string, uid: string,
+    once: boolean = true, cookies: Cookie[] | undefined = undefined,
   ): Promise<void> {
     let chzzkLive: ChzzkLiveRequest = { uid, once };
     if (cookies) {
@@ -37,13 +36,14 @@ export class StdlImpl implements Stdl {
     }
 
     const body = JSON.stringify({ reqType: "chzzk_live", chzzkLive });
-    await fetch(this.stdlUrl, {
+    await fetch(url, {
       method: "POST", headers: { "content-type": "application/json" }, body,
     });
   }
 
   async requestSoopLive(
-    userId: string, once: boolean = true, cred: SoopCred | undefined = undefined,
+    url: string, userId: string,
+    once: boolean = true, cred: SoopCred | undefined = undefined,
   ): Promise<void> {
     // TODO: Rename to soopLive, SoopLiveRequest
     let afreecaLive: AfreecaLiveRequest = { userId, once };
@@ -53,21 +53,24 @@ export class StdlImpl implements Stdl {
 
     // TODO: Rename to soop_live
     const body = JSON.stringify({ reqType: "afreeca_live", afreecaLive });
-    await fetch(this.stdlUrl, {
+    await fetch(url, {
       method: "POST", headers: { "content-type": "application/json" }, body,
     });
   }
 }
 
 export class StdlMock implements Stdl {
+
   async requestChzzkLive(
-    uid: string, once: boolean = true, cookies: Cookie[] | undefined = undefined,
+    url: string, uid: string,
+    once: boolean = true, cookies: Cookie[] | undefined = undefined,
   ): Promise<void> {
     log.info(`MockStdlClient.requestChzzkLive(${uid}, ${once}, ${cookies})`);
   }
 
   async requestSoopLive(
-    uid: string, once: boolean = true, cred: SoopCred | undefined = undefined,
+    url: string, uid: string,
+    once: boolean = true, cred: SoopCred | undefined = undefined,
   ): Promise<void> {
     log.info(`MockStdlClient.requestSoopLive(${uid}, ${once}, ${cred})`);
   }

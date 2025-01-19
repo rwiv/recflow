@@ -13,4 +13,4 @@ services:
       NTFY_TOPIC: "${NTFY_TOPIC}"
       NODE_ENV: dev
     volumes:
-      - ../dev/conf.yaml:/app/conf.yaml
+      - ../helm/conf.yaml:/app/conf.yaml

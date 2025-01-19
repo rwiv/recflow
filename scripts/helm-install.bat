@@ -1,3 +1,3 @@
 cd ..
-helm install stmgr ./helm -f ./dev/conf.yaml -n media
+helm install stmgr ./helm -n media
 pause

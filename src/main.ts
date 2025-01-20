@@ -9,7 +9,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const env = app.get<Env>(ENV);
-  log.info('Env', env);
+  if (env.nodeEnv === 'dev') {
+    log.info('Env', env);
+  }
 
   const observer = app.get(Observer);
   observer.observe();

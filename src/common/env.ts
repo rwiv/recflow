@@ -8,7 +8,6 @@ export interface Env {
   appPort: number;
   streamqUrl: string;
   streamqQsize: number;
-  stdlUrl: string;
   authedUrl: string;
   authedEncKey: string;
   ntfyEndpoint: string | undefined;
@@ -44,10 +43,6 @@ export function readEnv(): Env {
     throw Error('streamq data is undefined');
   const streamqQsize = parseInt(qsizeStr);
   if (isNaN(streamqQsize)) throw Error('streamqQsize is NaN');
-
-  // stdl
-  const stdlUrl = process.env.STDL_URL;
-  if (stdlUrl === undefined) throw Error('stdlUrl is undefined');
 
   // authed
   const authedUrl = process.env.AUTHED_URL;
@@ -106,7 +101,6 @@ export function readEnv(): Env {
   return {
     nodeEnv, appPort, configPath,
     streamqUrl, streamqQsize,
-    stdlUrl,
     authedUrl, authedEncKey,
     ntfyEndpoint, ntfyTopic,
     redis,

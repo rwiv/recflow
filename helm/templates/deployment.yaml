@@ -27,8 +27,6 @@ spec:
               value: {{ .Values.externals.streamq.url }}
             - name: STREAMQ_QSIZE
               value: "{{ .Values.externals.streamq.qsize }}"
-            - name: STDL_URL
-              value: {{ .Values.externals.stdl.url }}
             - name: AUTHED_URL
               value: {{ .Values.externals.authed.url }}
             - name: AUTHED_ENCKEY

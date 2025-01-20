@@ -1,13 +1,22 @@
 import {ChzzkChannelInfo, ChzzkLiveInfo} from "./types_chzzk.js";
 import {QueryConfig} from "../common/query.js";
 import {SoopChannelInfo, SoopLiveInfo} from "./types_soop.js";
+import {Inject, Injectable} from "@nestjs/common";
+import {ENV} from "../common/common.module.js";
+import {Env} from "../common/env.js";
 
+@Injectable()
 export class Streamq {
 
+  private readonly streamqUrl: string;
+  private readonly size: number = 1000;
+
   constructor(
-    private readonly streamqUrl: string,
-    private readonly size: number = 1000,
-  ) {}
+    @Inject(ENV) private readonly env: Env,
+  ) {
+    this.streamqUrl = this.env.streamqUrl;
+    this.size = this.env.streamqQsize;
+  }
 
   async getChzzkLive(query: QueryConfig): Promise<ChzzkLiveInfo[]> {
     const infoMap = new Map<string, ChzzkLiveInfo>();

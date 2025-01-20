@@ -1,7 +1,7 @@
 import {Env} from "./env.js";
 import {Streamq} from "../client/Streamq.js";
 import {StdlMock, StdlImpl, Stdl} from "../client/Stdl.js";
-import {AuthedImpl, AuthedMock} from "../client/Authed.js";
+import {AuthedImpl, AuthedMock} from "../client/authed.js";
 import {MockNotifier, Notifier, NtfyNotifier} from "../client/Notifier.js";
 import {ChzzkTargetRepositoryMem} from "../repository/ChzzkTargetRepositoryMem.js";
 import {ChzzkTargetRepository} from "../repository/types.js";
@@ -95,7 +95,7 @@ export class DepManager {
   }
 
   private createStreamqClient() {
-    return new Streamq(this.env.streamqUrl, this.env.streamqQsize);
+    return new Streamq(this.env);
   }
 
   private createStdlClient() {

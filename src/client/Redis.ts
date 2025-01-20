@@ -1,13 +1,10 @@
-import {createClient, RedisClientType} from "redis";
-import {RedisConfig} from "../common/configs.js";
+import { createClient, RedisClientType } from 'redis';
+import { RedisConfig } from '../common/configs.js';
 
 export class Redis {
-
   private client: RedisClientType | undefined = undefined;
 
-  constructor(
-    private readonly conf: RedisConfig,
-  ) {}
+  constructor(private readonly conf: RedisConfig) {}
 
   async init() {
     this.client = await this.createClient();
@@ -33,7 +30,7 @@ export class Redis {
       throw new Error('CacheRepository not initialized');
     }
     if (expire) {
-      return this.client.set(key, value, {EX: expire});
+      return this.client.set(key, value, { EX: expire });
     } else {
       return this.client.set(key, value);
     }
@@ -49,7 +46,7 @@ export class Redis {
   private async createClient(): Promise<RedisClientType> {
     const url = `redis://${this.conf.host}:${this.conf.port}`;
     const client = await createClient({ url, password: this.conf.password })
-      .on('error', err => console.log('Redis Client Error', err))
+      .on('error', (err) => console.log('Redis Client Error', err))
       .connect();
     return client as RedisClientType;
   }

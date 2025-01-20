@@ -1,5 +1,6 @@
 import {DEFAULT_NTFY_TOPIC} from "./defaults.js";
 import {AmqpConfig, RedisConfig} from "./configs.js";
+import dotenv from "dotenv";
 
 export interface Env {
   nodeEnv: string;
@@ -20,6 +21,9 @@ export function readEnv(): Env {
   let nodeEnv = process.env.NODE_ENV;
   if (nodeEnv !== "prod") {
     nodeEnv = "dev";
+  }
+  if (nodeEnv === "dev") {
+    dotenv.config({ path: "dev/.env" });
   }
 
   // CONFIG_PATH

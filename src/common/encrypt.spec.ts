@@ -1,4 +1,3 @@
-import {it} from "vitest";
 import {encrypt, decrypt} from "./encrypt.js";
 
 it("test", () => {

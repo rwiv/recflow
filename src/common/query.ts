@@ -1,6 +1,6 @@
-import {readFile} from "node:fs/promises";
-import yaml from "js-yaml";
-import {WebhookInfo, WebhookMode} from "../webhook/types.js";
+import fs from 'fs';
+import yaml from 'js-yaml';
+import { WebhookInfo, WebhookMode } from '../webhook/types.js';
 
 export interface QueryConfig {
   subsChzzkChanIds: string[];
@@ -32,25 +32,25 @@ export interface QueryConfig {
   webhooks: WebhookInfo[];
 }
 
-export async function readQueryConfig(filePath: string): Promise<QueryConfig> {
-  const text = await readFile(filePath, "utf-8");
+export function readQueryConfig(filePath: string): QueryConfig {
+  const text = fs.readFileSync(filePath, 'utf-8');
   const query = yaml.load(text) as QueryConfig;
   validate(query);
-  return query
+  return query;
 }
 
 function validate(query: QueryConfig) {
   if (!query.webhookMode) {
-    throw new Error("webhookMode is required");
+    throw new Error('webhookMode is required');
   }
   if (!query.webhooks || query.webhooks.length === 0) {
-    throw new Error("webhooks is required");
+    throw new Error('webhooks is required');
   }
-  if (query.webhooks.filter(wh => wh.type === "main").length === 0) {
-    throw new Error("webhooks must have at least one main webhook");
+  if (query.webhooks.filter((wh) => wh.type === 'main').length === 0) {
+    throw new Error('webhooks must have at least one main webhook');
   }
-  for (const whName of query.webhooks.map(wh => wh.name)) {
-    if (query.webhooks.filter(wh => wh.name === whName).length > 1) {
+  for (const whName of query.webhooks.map((wh) => wh.name)) {
+    if (query.webhooks.filter((wh) => wh.name === whName).length > 1) {
       throw new Error(`webhook name must be unique: ${whName}`);
     }
   }

@@ -1,5 +1,5 @@
 import {Stdl} from "../client/Stdl.js";
-import {Authed} from "../client/Authed.js";
+import {Authed} from "../client/authed.js";
 import {Notifier} from "../client/Notifier.js";
 import {SoopTargetRepository} from "../repository/types.js";
 import {SoopWebhookMatcher} from "../webhook/types.js";

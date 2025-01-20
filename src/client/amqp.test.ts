@@ -1,12 +1,8 @@
-import {it} from "vitest";
-import {readEnv} from "../common/env.js";
-import dotenv from "dotenv";
-import {Amqp} from "./Amqp.js";
+import { Amqp } from './amqp.js';
+import { readEnv } from '../common/env.js';
 
-dotenv.config({ path: "dev/.env" });
-
-it("test all", async () => {
-  const queue = "tasks";
+it('test all', async () => {
+  const queue = 'tasks';
   const amqp = new Amqp(readEnv().amqp);
   await amqp.connect();
   await amqp.assertQueue(queue);
@@ -14,7 +10,7 @@ it("test all", async () => {
   const newChannel = await amqp.createChannel();
   await newChannel.consume(queue, (msg) => {
     if (msg !== null) {
-      const content = JSON.parse(msg.content.toString());
+      const content = JSON.parse(msg.content.toString()) as { msg: string };
       console.log(content);
       newChannel.ack(msg);
     } else {
@@ -23,27 +19,27 @@ it("test all", async () => {
   });
 
   setInterval(() => {
-    amqp.publish(queue, {msg: "Hello World!"});
+    amqp.publish(queue, { msg: 'Hello World!' });
   }, 1000);
 
-  await new Promise((resolve, reject) => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       resolve(null);
     }, 3500);
   });
 });
 
-it("test publish", async () => {
-  const queue = "tasks";
+it('test publish', async () => {
+  const queue = 'tasks';
   const amqp = new Amqp(readEnv().amqp);
   await amqp.connect();
   await amqp.assertQueue(queue);
 
   setInterval(() => {
-    amqp.publish(queue, {msg: "Hello World!"});
+    amqp.publish(queue, { msg: 'Hello World!' });
   }, 1000);
 
-  await new Promise((resolve, reject) => {
+  await new Promise((resolve) => {
     setTimeout(() => {
       resolve(null);
     }, 3500);

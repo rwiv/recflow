@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { Streamq } from './streamq.js';
 import { ConfigModule } from '../common/common.module.js';
-import { Amqp } from './amqp.js';
+import { AmqpImpl } from './amqp.service.js';
 import { MockNotifier, NtfyNotifier } from './notifier.js';
 import { Redis } from './redis.js';
 import { StdlImpl, StdlMock } from './stdl.js';
@@ -14,7 +14,7 @@ export const NOTIFIER = 'Notifier';
 @Module({
   imports: [ConfigModule],
   providers: [
-    Amqp,
+    AmqpImpl,
     Redis,
     Streamq,
     {
@@ -30,6 +30,6 @@ export const NOTIFIER = 'Notifier';
       useClass: process.env.NODE_ENV === 'prod' ? NtfyNotifier : MockNotifier,
     },
   ],
-  exports: [Amqp, Redis, Streamq, STDL, AUTHED, NOTIFIER],
+  exports: [AmqpImpl, Redis, Streamq, STDL, AUTHED, NOTIFIER],
 })
 export class ClientModule {}

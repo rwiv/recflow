@@ -1,9 +1,9 @@
-import { ChzzkWebhookState, SoopWebhookState, WebhookType } from './types.js';
+import { WebhookState, WebhookType } from './types.js';
 
 export function findChzzkCandidate(
-  whStates: ChzzkWebhookState[],
+  whStates: WebhookState[],
   type: WebhookType,
-): ChzzkWebhookState | null {
+): WebhookState | null {
   const candidates = whStates
     .filter((wh) => wh.type === type)
     .filter((wh) => wh.chzzkCapacity > wh.chzzkAssignedCnt);
@@ -16,9 +16,9 @@ export function findChzzkCandidate(
 }
 
 export function findSoopCandidate(
-  whStates: SoopWebhookState[],
+  whStates: WebhookState[],
   type: WebhookType,
-): SoopWebhookState | null {
+): WebhookState | null {
   const candidates = whStates
     .filter((wh) => wh.type === type)
     .filter((wh) => wh.soopCapacity > wh.soopAssignedCnt);

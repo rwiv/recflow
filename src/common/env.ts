@@ -99,10 +99,15 @@ export function readEnv(): Env {
   };
 
   return {
-    nodeEnv, appPort, configPath,
-    streamqUrl, streamqQsize,
-    authedUrl, authedEncKey,
-    ntfyEndpoint, ntfyTopic,
+    nodeEnv,
+    appPort,
+    configPath,
+    streamqUrl,
+    streamqQsize,
+    authedUrl,
+    authedEncKey,
+    ntfyEndpoint,
+    ntfyTopic,
     redis,
     amqp,
   };

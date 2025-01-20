@@ -1,4 +1,4 @@
-export interface SoopLiveInfo {
+export interface SoopLiveInfoReq {
   userId: string;
   userNick: string;
   stationName: string;
@@ -17,7 +17,7 @@ export interface SoopLiveInfo {
   locked: boolean;
 }
 
-export interface SoopChannelInfo {
+export interface SoopChannelInfoReq {
   userId: string;
   userNick: string;
   stationName: string;
@@ -26,5 +26,5 @@ export interface SoopChannelInfo {
   fanCnt: number;
   openLive: boolean;
 
-  liveInfo?: SoopLiveInfo | null;
+  liveInfo?: SoopLiveInfoReq | null;
 }

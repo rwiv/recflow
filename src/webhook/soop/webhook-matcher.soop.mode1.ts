@@ -1,12 +1,9 @@
-import { SoopWebhookMatcher, SoopWebhookState } from '../types.js';
+import { SoopWebhookMatcher, WebhookState } from '../types.js';
 import { findSoopCandidate } from '../utils.js';
-import { SoopLiveInfo } from '../../client/types.soop.js';
+import { LiveInfo } from '../../platform/wrapper.live.js';
 
 export class WebhookMatcherSoopMode1 implements SoopWebhookMatcher {
-  match(
-    live: SoopLiveInfo,
-    whStates: SoopWebhookState[],
-  ): SoopWebhookState | null {
+  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null {
     // type === "main"
     const candidate = findSoopCandidate(whStates, 'main');
     if (candidate) {

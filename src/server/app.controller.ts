@@ -1,29 +1,18 @@
 import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
-import {
-  ChzzkLiveState,
-  ChzzkTargetRepository,
-  SoopLiveState,
-  SoopTargetRepository,
-} from '../storage/types.js';
-import {
-  TARGET_REPOSITORY_CHZZK,
-  TARGET_REPOSITORY_SOOP,
-} from '../storage/stroage.module.js';
-import { AllocatorChzzk } from '../observer/allocator.chzzk.js';
-import { AllocatorSoop } from '../observer/allocator.soop.js';
-import { ChzzkWebhookState, SoopWebhookState } from '../webhook/types.js';
+import { TargetRepository } from '../storage/types.js';
+import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
+import { WebhookState } from '../webhook/types.js';
+import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
+import { Allocator } from '../observer/allocator.js';
 
 @Controller('/api')
 export class AppController {
   constructor(
     private readonly streamq: Streamq,
-    @Inject(TARGET_REPOSITORY_CHZZK)
-    private readonly chzzkTargets: ChzzkTargetRepository,
-    private readonly chzzkAllocator: AllocatorChzzk,
-    @Inject(TARGET_REPOSITORY_SOOP)
-    private readonly soopTargets: SoopTargetRepository,
-    private readonly soopAllocator: AllocatorSoop,
+    @Inject(TARGET_REPOSITORY)
+    private readonly targets: TargetRepository,
+    private readonly allocator: Allocator,
   ) {}
 
   @Get('/health')
@@ -32,49 +21,39 @@ export class AppController {
   }
 
   @Get('/chzzk/webhooks')
-  whStates(): Promise<ChzzkWebhookState[]> {
-    return this.chzzkTargets.whStates();
+  whStates(): Promise<WebhookState[]> {
+    return this.targets.whStates();
   }
 
-  @Get('/soop/webhooks')
-  whStatesSoop(): Promise<SoopWebhookState[]> {
-    return this.soopTargets.whStates();
-  }
-
-  @Get('/chzzk/lives')
-  all(): Promise<ChzzkLiveState[]> {
-    return this.chzzkTargets.all();
-  }
-
-  @Get('/soop/lives')
-  allSoop(): Promise<SoopLiveState[]> {
-    return this.soopTargets.all();
+  @Get('/lives')
+  all(): Promise<LiveInfo[]> {
+    return this.targets.all();
   }
 
   @Post('/chzzk/:channelId')
-  async Add(@Param('channelId') channelId: string): Promise<ChzzkLiveState> {
-    return this.chzzkAllocator.allocate(await this.getChzzkLive(channelId));
+  async Add(@Param('channelId') channelId: string) {
+    return this.allocator.allocate(await this.getChzzkLive(channelId));
   }
 
   @Post('/soop/:userId')
-  async AddSoop(@Param('userId') userId: string): Promise<SoopLiveState> {
-    return this.soopAllocator.allocate(await this.getSoopLive(userId));
+  async AddSoop(@Param('userId') userId: string) {
+    return this.allocator.allocate(await this.getSoopLive(userId));
   }
 
   @Delete('/chzzk/:channelId')
-  async delete(@Param('channelId') channelId: string): Promise<ChzzkLiveState> {
-    return this.chzzkAllocator.deallocate(await this.getChzzkLive(channelId));
+  async delete(@Param('channelId') channelId: string) {
+    return this.allocator.deallocate(await this.getChzzkLive(channelId));
   }
 
   @Delete('/soop/:userId')
-  async deleteSoop(@Param('userId') userId: string): Promise<SoopLiveState> {
-    return this.soopAllocator.deallocate(await this.getSoopLive(userId));
+  async deleteSoop(@Param('userId') userId: string) {
+    return this.allocator.deallocate(await this.getSoopLive(userId));
   }
 
   private async getChzzkLive(channelId: string) {
     const live = (await this.streamq.getChzzkChannel(channelId, true)).liveInfo;
     if (!live) throw Error('Not found chzzkChannel.liveInfo');
-    return live;
+    return LiveInfoWrapper.fromChzzkReq(live);
   }
 
   private async getSoopLive(userId: string) {
@@ -82,6 +61,6 @@ export class AppController {
     if (!channel) throw Error('Not found soop channel');
     const live = channel.liveInfo;
     if (!live) throw Error('Not found soopChannel.liveInfo');
-    return live;
+    return LiveInfoWrapper.fromSoopReq(live);
   }
 }

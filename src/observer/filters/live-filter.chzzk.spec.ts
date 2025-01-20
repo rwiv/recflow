@@ -1,6 +1,6 @@
-import { Streamq } from '../client/streamq.js';
-import { readEnv } from '../common/env.js';
-import { readQueryConfig } from '../common/query.js';
+import { Streamq } from '../../client/streamq.js';
+import { readEnv } from '../../common/env.js';
+import { readQueryConfig } from '../../common/query.js';
 import { LiveFilterChzzk } from './live-filter.chzzk.js';
 import { it } from 'vitest';
 

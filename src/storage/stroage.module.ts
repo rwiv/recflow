@@ -1,23 +1,17 @@
 import { Module } from '@nestjs/common';
-import { TargetRepositoryMemChzzk } from './target-repository.mem.chzzk.js';
 import { ConfigModule } from '../common/common.module.js';
-import { TargetRepositoryMemSoop } from './target-repository.mem.soop.js';
+import { TargetRepositoryMem } from './target-repository.mem.js';
 
-export const TARGET_REPOSITORY_CHZZK = 'ChzzkTargetRepository';
-export const TARGET_REPOSITORY_SOOP = 'SoopTargetRepository';
+export const TARGET_REPOSITORY = 'TargetRepository';
 
 @Module({
   imports: [ConfigModule],
   providers: [
     {
-      provide: TARGET_REPOSITORY_CHZZK,
-      useClass: TargetRepositoryMemChzzk,
-    },
-    {
-      provide: TARGET_REPOSITORY_SOOP,
-      useClass: TargetRepositoryMemSoop,
+      provide: TARGET_REPOSITORY,
+      useClass: TargetRepositoryMem,
     },
   ],
-  exports: [TARGET_REPOSITORY_CHZZK, TARGET_REPOSITORY_SOOP],
+  exports: [TARGET_REPOSITORY],
 })
 export class StorageModule {}

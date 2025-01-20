@@ -1,6 +1,6 @@
-import { ChzzkLiveInfo } from '../client/types.chzzk.js';
-import { QueryConfig } from '../common/query.js';
-import { Streamq } from '../client/streamq.js';
+import { ChzzkLiveInfoReq } from '../../platform/chzzk.req.js';
+import { QueryConfig } from '../../common/query.js';
+import { Streamq } from '../../client/streamq.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -8,9 +8,9 @@ export class LiveFilterChzzk {
   constructor(private readonly streamq: Streamq) {}
 
   async getFiltered(
-    infos: ChzzkLiveInfo[],
+    infos: ChzzkLiveInfoReq[],
     query: QueryConfig,
-  ): Promise<ChzzkLiveInfo[]> {
+  ): Promise<ChzzkLiveInfoReq[]> {
     return (
       await Promise.all(
         infos.map(async (info) => {
@@ -54,9 +54,9 @@ export class LiveFilterChzzk {
   }
 
   private async checkFollowerCnt(
-    info: ChzzkLiveInfo,
+    info: ChzzkLiveInfoReq,
     minFollowerCnt: number,
-  ): Promise<ChzzkLiveInfo | null> {
+  ): Promise<ChzzkLiveInfoReq | null> {
     const { followerCount } = await this.streamq.getChzzkChannel(
       info.channelId,
       false,

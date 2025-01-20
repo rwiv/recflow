@@ -1,13 +1,14 @@
 import { QueryConfig } from '../common/query.js';
 import { Streamq } from '../client/streamq.js';
-import { SoopTargetRepository } from '../storage/types.js';
+import { TargetRepository } from '../storage/types.js';
 import { log } from 'jslog';
-import { LiveFilterSoop } from './live-filter.soop.js';
-import { SoopLiveInfo } from '../client/types.soop.js';
-import { AllocatorSoop } from './allocator.soop.js';
+import { LiveFilterSoop } from './filters/live-filter.soop.js';
+import { SoopLiveInfoReq } from '../platform/soop.req.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../common/common.module.js';
-import { TARGET_REPOSITORY_SOOP } from '../storage/stroage.module.js';
+import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
+import { Allocator } from './allocator.js';
+import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
 
 @Injectable()
 export class CheckerSoop {
@@ -16,9 +17,9 @@ export class CheckerSoop {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly streamq: Streamq,
-    @Inject(TARGET_REPOSITORY_SOOP)
-    private readonly targets: SoopTargetRepository,
-    private readonly allocator: AllocatorSoop,
+    @Inject(TARGET_REPOSITORY)
+    private readonly targets: TargetRepository,
+    private readonly allocator: Allocator,
     private readonly filter: LiveFilterSoop,
   ) {}
 
@@ -59,7 +60,7 @@ export class CheckerSoop {
       if (!channel) throw Error('Not found soop channel');
       const live = channel.liveInfo;
       if (!live) throw Error('Not found soopChannel.liveInfo');
-      await this.allocator.allocate(live);
+      await this.allocator.allocate(LiveInfoWrapper.fromSoopReq(live));
     }
 
     // --------------- check by query --------------------------------------
@@ -67,16 +68,16 @@ export class CheckerSoop {
     const filtered = await this.filter.getFiltered(queriedInfos, this.query);
 
     // add new LiveInfos
-    const toBeAddedInfos: SoopLiveInfo[] = (
+    const toBeAddedInfos: SoopLiveInfoReq[] = (
       await Promise.all(filtered.map(async (info) => this.isToBeAdded(info)))
     ).filter((info) => info !== null);
 
     for (const newInfo of toBeAddedInfos) {
-      await this.allocator.allocate(newInfo);
+      await this.allocator.allocate(LiveInfoWrapper.fromSoopReq(newInfo));
     }
 
     // delete LiveInfos
-    const toBeDeletedInfos: SoopLiveInfo[] = (
+    const toBeDeletedInfos = (
       await Promise.all(
         (await this.targets.all()).map(async (info) =>
           this.isToBeDeleted(info),
@@ -85,14 +86,14 @@ export class CheckerSoop {
     ).filter((info) => info !== null);
 
     for (const toBeDeleted of toBeDeletedInfos) {
-      await this.targets.delete(toBeDeleted.userId);
-      log.info(`Delete: ${toBeDeleted.userNick}`);
+      await this.targets.delete(toBeDeleted.channelId);
+      log.info(`Delete: ${toBeDeleted.channelName}`);
     }
 
     this.isChecking = false;
   }
 
-  private async isToBeAdded(newInfo: SoopLiveInfo) {
+  private async isToBeAdded(newInfo: SoopLiveInfoReq) {
     if (await this.targets.get(newInfo.userId)) return null;
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음
@@ -102,9 +103,9 @@ export class CheckerSoop {
     return newInfo;
   }
 
-  private async isToBeDeleted(existingInfo: SoopLiveInfo) {
+  private async isToBeDeleted(existingInfo: LiveInfo) {
     const channel = await this.streamq.getSoopChannel(
-      existingInfo.userId,
+      existingInfo.channelId,
       false,
     );
     if (channel?.openLive) return null;

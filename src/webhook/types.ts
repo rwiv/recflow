@@ -1,5 +1,4 @@
-import { ChzzkLiveInfo } from '../client/types.chzzk.js';
-import { SoopLiveInfo } from '../client/types.soop.js';
+import { LiveInfo } from '../platform/wrapper.live.js';
 
 export type WebhookType = 'main' | 'sub' | 'extra';
 export type WebhookMode = 'mode1' | 'mode2' | 'mode3' | 'mode4';
@@ -12,24 +11,19 @@ export interface WebhookInfo {
   soopCapacity: number;
 }
 
-export interface ChzzkWebhookState extends WebhookInfo {
+export interface WebhookState extends WebhookInfo {
   chzzkAssignedCnt: number;
-}
-
-export interface SoopWebhookState extends WebhookInfo {
   soopAssignedCnt: number;
 }
 
-export interface ChzzkWebhookMatcher {
-  match(
-    live: ChzzkLiveInfo,
-    whStates: ChzzkWebhookState[],
-  ): ChzzkWebhookState | null;
+export interface WebhookMatcher {
+  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null;
 }
 
-export interface SoopWebhookMatcher {
-  match(
-    live: SoopLiveInfo,
-    whStates: SoopWebhookState[],
-  ): SoopWebhookState | null;
+export interface ChzzkWebhookMatcher extends WebhookMatcher {
+  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null;
+}
+
+export interface SoopWebhookMatcher extends WebhookMatcher {
+  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null;
 }

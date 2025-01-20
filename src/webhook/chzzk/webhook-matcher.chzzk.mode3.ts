@@ -1,19 +1,12 @@
-import { ChzzkLiveInfo } from '../../client/types.chzzk.js';
-import {
-  ChzzkWebhookMatcher,
-  ChzzkWebhookState,
-  WebhookType,
-} from '../types.js';
+import { ChzzkWebhookMatcher, WebhookState, WebhookType } from '../types.js';
 import { QueryConfig } from '../../common/query.js';
 import { findChzzkCandidate } from '../utils.js';
+import { LiveInfo } from '../../platform/wrapper.live.js';
 
 export class WebhookMatcherChzzkMode3 implements ChzzkWebhookMatcher {
   constructor(private readonly query: QueryConfig) {}
 
-  match(
-    live: ChzzkLiveInfo,
-    whStates: ChzzkWebhookState[],
-  ): ChzzkWebhookState | null {
+  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null {
     let type: WebhookType = 'main';
     if (this.query.extraChzzkChanNames.includes(live.channelName)) {
       type = 'extra';

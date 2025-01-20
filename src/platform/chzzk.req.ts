@@ -1,4 +1,4 @@
-export interface ChzzkLiveInfo {
+export interface ChzzkLiveInfoReq {
   channelId: string;
   channelName: string;
   channelImageUrl: string;
@@ -15,7 +15,7 @@ export interface ChzzkLiveInfo {
   liveCategoryValue: string;
 }
 
-export interface ChzzkChannelInfo {
+export interface ChzzkChannelInfoReq {
   channelId: string;
   channelName: string;
   channelImageUrl: string;
@@ -24,5 +24,5 @@ export interface ChzzkChannelInfo {
   followerCount: number;
   openLive: boolean;
 
-  liveInfo: ChzzkLiveInfo | null;
+  liveInfo: ChzzkLiveInfoReq | null;
 }

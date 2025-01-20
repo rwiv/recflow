@@ -1,10 +1,10 @@
-import { Amqp } from './amqp.js';
+import { AmqpImpl } from './amqp.service.js';
 import { readEnv } from '../common/env.js';
 import { it } from 'vitest';
 
 it('test all', async () => {
   const queue = 'tasks';
-  const amqp = new Amqp(readEnv());
+  const amqp = new AmqpImpl(readEnv());
   await amqp.connect();
   await amqp.assertQueue(queue);
 
@@ -32,7 +32,7 @@ it('test all', async () => {
 
 it('test publish', async () => {
   const queue = 'tasks';
-  const amqp = new Amqp(readEnv());
+  const amqp = new AmqpImpl(readEnv());
   await amqp.connect();
   await amqp.assertQueue(queue);
 

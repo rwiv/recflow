@@ -1,0 +1,53 @@
+import { PlatformLiveInfo, PlatformType } from './common.js';
+import { ChzzkLiveInfoReq } from './chzzk.req.js';
+import { SoopLiveInfoReq } from './soop.req.js';
+import { ChzzkLiveInfo } from './chzzk.dto.js';
+import { SoopLiveInfo } from './soop.dto.js';
+
+export type LiveInfo = LiveInfoWrapper<PlatformLiveInfo>;
+
+export class LiveInfoWrapper<T> {
+  public assignedWebhookName: string | undefined = undefined;
+
+  constructor(
+    public readonly type: PlatformType,
+    public readonly channelId: string,
+    public readonly channelName: string,
+    public readonly liveTitle: string,
+    public readonly viewCnt: number,
+    public readonly adult: boolean,
+    public readonly content: T,
+  ) {}
+
+  static fromChzzk(info: ChzzkLiveInfo): LiveInfoWrapper<ChzzkLiveInfoReq> {
+    return new LiveInfoWrapper(
+      'chzzk',
+      info.channelId,
+      info.channelName,
+      info.liveTitle,
+      info.accumulateCount,
+      info.adult,
+      info,
+    );
+  }
+
+  static fromSoop(info: SoopLiveInfo): LiveInfoWrapper<SoopLiveInfo> {
+    return new LiveInfoWrapper(
+      'soop',
+      info.userId,
+      info.userNick,
+      info.broadTitle,
+      info.totalViewCnt,
+      info.adult,
+      info,
+    );
+  }
+
+  static fromChzzkReq(info: ChzzkLiveInfoReq): LiveInfoWrapper<ChzzkLiveInfo> {
+    return LiveInfoWrapper.fromChzzk(ChzzkLiveInfo.fromReq(info));
+  }
+
+  static fromSoopReq(info: SoopLiveInfoReq): LiveInfoWrapper<SoopLiveInfo> {
+    return LiveInfoWrapper.fromSoop(SoopLiveInfo.fromReq(info));
+  }
+}

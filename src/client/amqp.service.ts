@@ -4,8 +4,16 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
 
+interface Amqp {
+  connect(): Promise<void>;
+  createChannel(): Promise<Channel>;
+  assertQueue(queue: string): Promise<amqplib.Replies.AssertQueue>;
+  publish(queue: string, content: object): boolean;
+  close(): Promise<void>;
+}
+
 @Injectable()
-export class Amqp {
+export class AmqpImpl implements Amqp {
   private conn: Connection | undefined = undefined;
   private ch: Channel | undefined = undefined;
   private readonly conf: AmqpConfig;
@@ -48,6 +56,6 @@ export class Amqp {
   }
 
   close() {
-    this.conn?.close();
+    return this.conn?.close();
   }
 }

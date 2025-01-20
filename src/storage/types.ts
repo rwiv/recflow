@@ -10,3 +10,8 @@ export interface TargetRepository {
   allSoop(): Promise<LiveInfo[]>;
   whStates(): Promise<WebhookState[]>;
 }
+
+export interface WebhookCntState {
+  chzzk: number;
+  soop: number;
+}

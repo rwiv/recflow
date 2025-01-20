@@ -1,15 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../common/common.module.js';
-import { TargetRepositoryMem } from './target-repository.mem.js';
+import { StorageFactory } from './storage.factory.js';
 
 export const TARGET_REPOSITORY = 'TargetRepository';
 
 @Module({
   imports: [ConfigModule],
   providers: [
+    StorageFactory,
     {
       provide: TARGET_REPOSITORY,
-      useClass: TargetRepositoryMem,
+      useFactory: (factory: StorageFactory) => {
+        return factory.createTargetRepository();
+      },
+      inject: [StorageFactory],
     },
   ],
   exports: [TARGET_REPOSITORY],

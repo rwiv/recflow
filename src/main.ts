@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const env = app.get<Env>(ENV);
-  if (env.nodeEnv === 'dev') {
+  if (env.nodeEnv !== 'prod') {
     log.info('Env', env);
   }
 

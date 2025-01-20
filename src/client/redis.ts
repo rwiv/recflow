@@ -50,7 +50,7 @@ export class Redis {
     return this.client.del(key);
   }
 
-  private async createClient(): Promise<RedisClientType> {
+  private async createClient() {
     const url = `redis://${this.conf.host}:${this.conf.port}`;
     const client = await createClient({ url, password: this.conf.password })
       .on('error', (err) => console.log('Redis Client Error', err))

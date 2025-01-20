@@ -52,7 +52,7 @@ export class AppController {
 
   private async getChzzkLive(channelId: string) {
     const live = (await this.streamq.getChzzkChannel(channelId, true)).liveInfo;
-    if (!live) throw Error('Not found chzzkChannel.liveInfo');
+    if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
     return LiveInfoWrapper.fromChzzkReq(live);
   }
 

@@ -20,10 +20,11 @@ export function readEnv(): Env {
   // NODE_ENV
   let nodeEnv = process.env.NODE_ENV;
   if (nodeEnv !== 'prod') {
-    nodeEnv = 'dev';
-  }
-  if (nodeEnv === 'dev') {
     dotenv.config({ path: 'dev/.env' });
+  }
+  nodeEnv = process.env.NODE_ENV;
+  if (!nodeEnv) {
+    nodeEnv = 'dev';
   }
 
   // CONFIG_PATH

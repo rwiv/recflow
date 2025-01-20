@@ -19,25 +19,42 @@ export class LiveInfoWrapper<T> {
     public readonly content: T,
   ) {}
 
-  static fromChzzk(info: ChzzkLiveInfo): LiveInfoWrapper<ChzzkLiveInfoReq> {
+  static fromObject(obj: LiveInfo): LiveInfo {
+    let liveInfo: LiveInfo = null;
+    if (obj.type === 'chzzk') {
+      liveInfo = LiveInfoWrapper.fromChzzkReq(obj.content as ChzzkLiveInfoReq);
+    } else if (obj.type === 'soop') {
+      liveInfo = LiveInfoWrapper.fromSoopReq(obj.content as SoopLiveInfoReq);
+    }
+    if (!liveInfo) throw Error('Unknown type');
+
+    liveInfo.assignedWebhookName = obj.assignedWebhookName;
+    return liveInfo;
+  }
+
+  static fromChzzk(info: ChzzkLiveInfo): LiveInfoWrapper<ChzzkLiveInfo> {
     return new LiveInfoWrapper(
       'chzzk',
       info.channelId,
       info.channelName,
       info.liveTitle,
-      info.accumulateCount,
+      info.concurrentUserCount,
       info.adult,
       info,
     );
   }
 
   static fromSoop(info: SoopLiveInfo): LiveInfoWrapper<SoopLiveInfo> {
+    const viewCnt = parseInt(info.totalViewCnt);
+    if (isNaN(viewCnt)) {
+      throw new Error('Invalid view count');
+    }
     return new LiveInfoWrapper(
       'soop',
       info.userId,
       info.userNick,
       info.broadTitle,
-      info.totalViewCnt,
+      viewCnt,
       info.adult,
       info,
     );

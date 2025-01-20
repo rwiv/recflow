@@ -3,5 +3,5 @@ import { it } from 'vitest';
 
 it('test', () => {
   const env = readEnv();
-  console.log(env.nodeEnv == 'dev');
+  console.log(env);
 });

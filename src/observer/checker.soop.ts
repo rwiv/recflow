@@ -79,15 +79,14 @@ export class CheckerSoop {
     // delete LiveInfos
     const toBeDeletedInfos = (
       await Promise.all(
-        (await this.targets.all()).map(async (info) =>
+        (await this.targets.allSoop()).map(async (info) =>
           this.isToBeDeleted(info),
         ),
       )
     ).filter((info) => info !== null);
 
     for (const toBeDeleted of toBeDeletedInfos) {
-      await this.targets.delete(toBeDeleted.channelId);
-      log.info(`Delete: ${toBeDeleted.channelName}`);
+      await this.allocator.deallocate(toBeDeleted);
     }
 
     this.isChecking = false;

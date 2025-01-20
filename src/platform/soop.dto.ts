@@ -12,7 +12,7 @@ export class SoopLiveInfo {
     public broadBps: string,
     public broadResolution: string,
     public broadCateNo: string,
-    public totalViewCnt: number,
+    public totalViewCnt: string,
     public categoryTags: string[],
     public hashTags: string[],
     public adult: boolean,
@@ -20,10 +20,6 @@ export class SoopLiveInfo {
   ) {}
 
   static fromReq(info: SoopLiveInfoReq): SoopLiveInfo {
-    const viewCnt = parseInt(info.totalViewCnt);
-    if (isNaN(viewCnt)) {
-      throw new Error('Invalid view count');
-    }
     return new SoopLiveInfo(
       info.userId,
       info.userNick,
@@ -36,7 +32,7 @@ export class SoopLiveInfo {
       info.broadBps,
       info.broadResolution,
       info.broadCateNo,
-      viewCnt,
+      info.totalViewCnt,
       info.categoryTags,
       info.hashTags,
       info.adult,

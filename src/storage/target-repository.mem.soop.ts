@@ -36,7 +36,9 @@ export class TargetRepositoryMemSoop implements SoopTargetRepository {
       throw Error('curCnt is undefined');
     }
     this.whMap.set(wh.name, curCnt + 1);
-    this.map.set(id, { ...info, assignedWebhookName: wh.name });
+    const liveState: SoopLiveState = { ...info, assignedWebhookName: wh.name };
+    this.map.set(id, liveState);
+    return liveState;
   }
 
   async get(id: string) {
@@ -44,16 +46,17 @@ export class TargetRepositoryMemSoop implements SoopTargetRepository {
   }
 
   async delete(id: string) {
-    const state = this.map.get(id);
-    if (!state) {
+    const liveState = this.map.get(id);
+    if (!liveState) {
       throw Error(`${id} is not found`);
     }
-    const curCnt = this.whMap.get(state.assignedWebhookName);
+    const curCnt = this.whMap.get(liveState.assignedWebhookName);
     if (curCnt === undefined) {
       throw Error('curCnt is undefined');
     }
-    this.whMap.set(state.assignedWebhookName, curCnt - 1);
+    this.whMap.set(liveState.assignedWebhookName, curCnt - 1);
     this.map.delete(id);
+    return liveState;
   }
 
   async all() {

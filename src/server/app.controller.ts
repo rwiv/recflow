@@ -2,7 +2,7 @@ import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
 import {
   ChzzkLiveState,
-  ChzzkTargetRepository,
+  ChzzkTargetRepository, SoopLiveState,
   SoopTargetRepository,
 } from '../storage/types.js';
 import {
@@ -34,9 +34,19 @@ export class AppController {
     return this.chzzkTargets.all();
   }
 
+  @Get('/soop/lives')
+  allSoop(): Promise<SoopLiveState[]> {
+    return this.soopTargets.all();
+  }
+
   @Post('/chzzk/:channelId')
   async Add(@Param('channelId') channelId: string): Promise<ChzzkLiveState> {
     return this.chzzkAllocator.allocate(await this.getChzzkLive(channelId));
+  }
+
+  @Post('/soop/:userId')
+  async AddSoop(@Param('userId') userId: string): Promise<SoopLiveState> {
+    return this.soopAllocator.allocate(await this.getSoopLive(userId));
   }
 
   @Delete('/chzzk/:channelId')
@@ -44,9 +54,22 @@ export class AppController {
     return this.chzzkAllocator.deallocate(await this.getChzzkLive(channelId));
   }
 
+  @Delete('/soop/:userId')
+  async deleteSoop(@Param('userId') userId: string): Promise<SoopLiveState> {
+    return this.soopAllocator.deallocate(await this.getSoopLive(userId));
+  }
+
   private async getChzzkLive(channelId: string) {
     const live = (await this.streamq.getChzzkChannel(channelId, true)).liveInfo;
     if (!live) throw Error('Not found chzzkChannel.liveInfo');
+    return live;
+  }
+
+  private async getSoopLive(userId: string) {
+    const channel = await this.streamq.getSoopChannel(userId, true);
+    if (!channel) throw Error('Not found soop channel');
+    const live = channel.liveInfo;
+    if (!live) throw Error('Not found soopChannel.liveInfo');
     return live;
   }
 }

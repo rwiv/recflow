@@ -15,10 +15,10 @@ export interface ChzzkTargetRepository {
 }
 
 export interface SoopTargetRepository {
-  set(id: string, info: SoopLiveInfo, wh: SoopWebhookState): Promise<void>;
+  set(id: string, info: SoopLiveInfo, wh: SoopWebhookState): Promise<SoopLiveState>;
   get(id: string): Promise<SoopLiveInfo | undefined>;
-  delete(id: string): Promise<void>;
-  all(): Promise<SoopLiveInfo[]>;
+  delete(id: string): Promise<SoopLiveState>;
+  all(): Promise<SoopLiveState[]>;
   whStates(): Promise<SoopWebhookState[]>;
 }
 

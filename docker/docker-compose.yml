@@ -3,7 +3,9 @@ services:
     image: stmgr:latest
     container_name: stmgr
     environment:
+      NODE_ENV: dev
       CONFIG_PATH: /app/conf.yaml
+      APP_PORT: "${APP_PORT}"
       STREAMQ_URL: "${STREAMQ_URL}"
       STREAMQ_QSIZE: "${STREAMQ_QSIZE}"
       STDL_URL: "${STDL_URL}"
@@ -11,6 +13,12 @@ services:
       AUTHED_ENCKEY: "${AUTHED_ENCKEY}"
       NTFY_ENDPOINT: "${NTFY_ENDPOINT}"
       NTFY_TOPIC: "${NTFY_TOPIC}"
-      NODE_ENV: dev
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      REDIS_PASSWORD: "${REDIS_PORT}"
+      AMQP_HOST: "${AMQP_HOST}"
+      AMQP_PORT: "${AMQP_PORT}"
+      AMQP_USERNAME: "${AMQP_USERNAME}"
+      AMQP_PASSWORD: "${AMQP_USERNAME}"
     volumes:
       - ../helm/conf.yaml:/app/conf.yaml

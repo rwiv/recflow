@@ -4,7 +4,6 @@ import { Notifier } from '../client/notifier.js';
 import { SoopTargetRepository } from '../storage/types.js';
 import { SoopWebhookMatcher } from '../webhook/types.js';
 import { log } from 'jslog';
-import { ChzzkLiveInfo } from '../client/types.chzzk.js';
 import { SoopLiveInfo } from '../client/types.soop.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
@@ -37,7 +36,7 @@ export class AllocatorSoop {
       log.warn('No webhook');
       return;
     }
-    await this.targets.set(live.userId, live, wh);
+    const ls = await this.targets.set(live.userId, live, wh);
 
     // stdl
     let cred: SoopCredential | undefined = undefined;
@@ -53,10 +52,12 @@ export class AllocatorSoop {
       parseInt(live.totalViewCnt),
       live.broadTitle,
     );
+    return ls;
   }
 
-  async deallocate(live: ChzzkLiveInfo) {
-    await this.targets.delete(live.channelId);
-    log.info(`Delete: ${live.channelName}`);
+  async deallocate(live: SoopLiveInfo) {
+    const ls = await this.targets.delete(live.userId);
+    log.info(`Delete: ${live.userId}`);
+    return ls;
   }
 }

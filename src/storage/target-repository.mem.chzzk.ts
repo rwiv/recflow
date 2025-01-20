@@ -46,17 +46,17 @@ export class TargetRepositoryMemChzzk implements ChzzkTargetRepository {
   }
 
   async delete(id: string) {
-    const ls = this.map.get(id);
-    if (!ls) {
+    const liveState = this.map.get(id);
+    if (!liveState) {
       throw Error(`${id} is not found`);
     }
-    const curCnt = this.whMap.get(ls.assignedWebhookName);
+    const curCnt = this.whMap.get(liveState.assignedWebhookName);
     if (curCnt === undefined) {
       throw Error('curCnt is undefined');
     }
-    this.whMap.set(ls.assignedWebhookName, curCnt - 1);
+    this.whMap.set(liveState.assignedWebhookName, curCnt - 1);
     this.map.delete(id);
-    return ls;
+    return liveState;
   }
 
   async all() {

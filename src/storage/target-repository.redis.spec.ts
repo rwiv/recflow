@@ -13,9 +13,6 @@ it('print', async () => {
   console.log(await repo.getWhcMap());
   const chzzk = await repo.allChzzk();
   console.log(chzzk.map((info) => info.channelName));
-  for (const info of chzzk) {
-    console.log(info);
-  }
   const soop = await repo.allSoop();
   console.log(soop.map((info) => info.channelName));
 });

@@ -47,13 +47,13 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.redis.secretName }}
                   key: {{ .Values.app.redis.passwordKey }}
-            - name: RABBITMQ_HOST
+            - name: AMQP_HOST
               value: {{ .Values.app.rabbitmq.host }}
-            - name: RABBITMQ_PORT
+            - name: AMQP_PORT
               value: "{{ .Values.app.rabbitmq.port }}"
-            - name: RABBITMQ_USERNAME
+            - name: AMQP_USERNAME
               value: {{ .Values.app.rabbitmq.username }}
-            - name: RABBITMQ_PASSWORD
+            - name: AMQP_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.app.rabbitmq.secretName }}

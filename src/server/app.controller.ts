@@ -20,7 +20,7 @@ export class AppController {
     return 'hello';
   }
 
-  @Get('/chzzk/webhooks')
+  @Get('/webhooks')
   whStates(): Promise<WebhookState[]> {
     return this.targets.whStates();
   }
@@ -31,17 +31,17 @@ export class AppController {
   }
 
   @Post('/chzzk/:channelId')
-  async Add(@Param('channelId') channelId: string) {
+  async addChzzk(@Param('channelId') channelId: string) {
     return this.allocator.allocate(await this.getChzzkLive(channelId));
   }
 
   @Post('/soop/:userId')
-  async AddSoop(@Param('userId') userId: string) {
+  async addSoop(@Param('userId') userId: string) {
     return this.allocator.allocate(await this.getSoopLive(userId));
   }
 
   @Delete('/chzzk/:channelId')
-  async delete(@Param('channelId') channelId: string) {
+  async deleteChzzk(@Param('channelId') channelId: string) {
     return this.allocator.deallocate(await this.getChzzkLive(channelId));
   }
 

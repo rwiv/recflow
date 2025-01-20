@@ -1,9 +1,9 @@
-import {describe, it, beforeAll, afterAll} from "vitest";
-import request from "supertest";
-import {Test} from "@nestjs/testing";
-import {AppModule} from "../src/app.module.js";
-import {INestApplication} from "@nestjs/common";
-import {App} from "supertest/types.js";
+import { describe, it, beforeAll, afterAll } from 'vitest';
+import request from 'supertest';
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module.js';
+import { INestApplication } from '@nestjs/common';
+import { App } from 'supertest/types.js';
 
 describe('AppController', () => {
   let app: INestApplication<App>;

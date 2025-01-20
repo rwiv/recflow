@@ -1,4 +1,4 @@
-import {Controller, Delete, Get, Inject, Param, Post} from '@nestjs/common';
+import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
 import {
   ChzzkLiveState,

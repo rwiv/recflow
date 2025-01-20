@@ -1,12 +1,12 @@
 import fs from 'fs/promises';
-import {it} from "vitest";
+import { it } from 'vitest';
 
-it("test", async () => {
+it('test', async () => {
   const channelIds = (await fs.readFile('./dev/test_chzzk.txt', 'utf-8')).split('\n');
   for (const url of channelIds) {
     const res = await req(url);
   }
-  console.log("complete");
+  console.log('complete');
 });
 
 async function req(channelId: string) {

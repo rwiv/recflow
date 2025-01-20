@@ -1,49 +1,59 @@
 import express, {Request, Response, NextFunction} from "express";
 import {log} from "jslog";
-import {readEnv} from "../common/env.js";
-import {readQueryConfig} from "../common/query.js";
+import {Env} from "../common/env.js";
+import {QueryConfig} from "../common/query.js";
 import {DepManager} from "../common/DepManager.js";
 import {Observer} from "../observer/Observer.js";
-import {MainRouter} from "./main_router.js";
 import path from "path";
 
-export async function startServer() {
-  const app = express();
+export class AppRunner {
 
-  app.use(express.static("public"));
-  app.use("/api", new MainRouter().router);
+  private dep: DepManager;
+  private observer: Observer;
+  private server: Server;
 
-  app.get("/", (req: Request, res: Response) => {
-    res.sendFile(path.join(path.resolve(), "public", "index.html"));
-  });
+  constructor(
+    private readonly env: Env,
+    private readonly query: QueryConfig,
+  ) {
+    this.dep = new DepManager(this.env, this.query);
+    this.observer = new Observer(this.dep.chzzkChecker, this.dep.soopChecker);
+    this.server = new Server(this.dep);
+  }
 
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    res.status(404).send("Not Found");
-  });
-
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
-    res.status(500).send("Something broke!");
-  });
-
-  app.listen(8081, () => {
-    log.info("Server started at http://localhost:8080");
-  });
-
-  const observer = await runObserver();
-
-  return app;
+  async run() {
+    this.observer.observe();
+    await this.server.start();
+  }
 }
 
-export async function runObserver() {
-  const env = readEnv();
-  const query = await readQueryConfig(env.configPath);
-  log.info("Env", env);
-  // log.info("Config", query);
+class Server {
 
-  // start observing
-  const dep = new DepManager(env, query);
-  const observer = new Observer(dep.chzzkChecker, dep.soopChecker);
-  observer.observe();
-  return observer;
+  constructor(private readonly dep: DepManager) {}
+
+  async start() {
+    const app = express();
+
+    app.use(express.static("public"));
+    app.use("/api", this.dep.mainRouter.router);
+
+    app.get("/", (req: Request, res: Response) => {
+      res.sendFile(path.join(path.resolve(), "public", "index.html"));
+    });
+
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      res.status(404).send("Not Found");
+    });
+
+    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      console.error(err.stack);
+      res.status(500).send("Something broke!");
+    });
+
+    app.listen(8080, () => {
+      log.info("Server started at http://localhost:8080");
+    });
+
+    return app;
+  }
 }

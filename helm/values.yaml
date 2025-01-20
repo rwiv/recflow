@@ -12,6 +12,19 @@ tolerations:
   - key: cpu
     operator: Exists
 
+app:
+  redis:
+    host: redis-master.infra.svc.cluster.local
+    port: 6379
+    secretName: redis-main
+    passwordKey: password
+  rabbitmq:
+    host: rabbitmq.infra.svc.cluster.local
+    port: 5672
+    username: admin
+    secretName: rabbitmq-main
+    passwordKey: password
+
 externals:
   streamq:
     url: http://streamq.media.svc.cluster.local

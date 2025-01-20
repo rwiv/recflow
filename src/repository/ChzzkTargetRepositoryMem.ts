@@ -34,7 +34,9 @@ export class ChzzkTargetRepositoryMem implements ChzzkTargetRepository {
       throw Error("curCnt is undefined");
     }
     this.whMap.set(wh.name, curCnt + 1);
-    this.map.set(id, { ...info, assignedWebhookName: wh.name });
+    const liveState: ChzzkLiveState = { ...info, assignedWebhookName: wh.name };
+    this.map.set(id, liveState);
+    return liveState;
   }
 
   async get(id: string) {
@@ -42,16 +44,17 @@ export class ChzzkTargetRepositoryMem implements ChzzkTargetRepository {
   }
 
   async delete(id: string) {
-    const state = this.map.get(id);
-    if (!state) {
+    const ls = this.map.get(id);
+    if (!ls) {
       throw Error(`${id} is not found`);
     }
-    const curCnt = this.whMap.get(state.assignedWebhookName);
+    const curCnt = this.whMap.get(ls.assignedWebhookName);
     if (curCnt === undefined) {
       throw Error("curCnt is undefined");
     }
-    this.whMap.set(state.assignedWebhookName, curCnt - 1);
+    this.whMap.set(ls.assignedWebhookName, curCnt - 1);
     this.map.delete(id);
+    return ls;
   }
 
   async all() {

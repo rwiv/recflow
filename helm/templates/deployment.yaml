@@ -17,6 +17,8 @@ spec:
         - name: {{ .Values.global.name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           env:
+            - name: NODE_ENV
+              value: prod
             - name: CONFIG_PATH
               value: {{ .Values.configMap.mountPath }}/conf.yaml
             - name: STREAMQ_URL
@@ -36,8 +38,26 @@ spec:
               value: {{ .Values.externals.ntfy.endpoint }}
             - name: NTFY_TOPIC
               value: {{ .Values.externals.ntfy.topic }}
-            - name: NODE_ENV
-              value: prod
+            - name: REDIS_HOST
+              value: {{ .Values.app.redis.host }}
+            - name: REDIS_PORT
+              value: "{{ .Values.app.redis.port }}"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.redis.secretName }}
+                  key: {{ .Values.app.redis.passwordKey }}
+            - name: RABBITMQ_HOST
+              value: {{ .Values.app.rabbitmq.host }}
+            - name: RABBITMQ_PORT
+              value: "{{ .Values.app.rabbitmq.port }}"
+            - name: RABBITMQ_USERNAME
+              value: {{ .Values.app.rabbitmq.username }}
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.rabbitmq.secretName }}
+                  key: {{ .Values.app.rabbitmq.passwordKey }}
           volumeMounts:
             - name: conf
               mountPath: {{ .Values.configMap.mountPath }}

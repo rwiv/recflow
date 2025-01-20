@@ -24,7 +24,7 @@ export class ChzzkAllocator {
       log.warn("No webhook");
       return;
     }
-    await this.targets.set(live.channelId, live, wh);
+    const ls = await this.targets.set(live.channelId, live, wh);
 
     // stdl
     let cookies = undefined;
@@ -35,10 +35,12 @@ export class ChzzkAllocator {
 
     // ntfy
     await this.notifier.sendLiveInfo(this.nftyTopic, live.channelName, live.concurrentUserCount, live.liveTitle);
+    return ls;
   }
 
   async deallocate(live: ChzzkLiveInfo) {
-    await this.targets.delete(live.channelId);
+    const ls = await this.targets.delete(live.channelId);
     log.info(`Delete: ${live.channelName}`)
+    return ls;
   }
 }

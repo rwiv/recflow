@@ -17,6 +17,7 @@ import {ChzzkWebhookMatcherMode3} from "../webhook/chzzk/ChzzkWebhookMatcherMode
 import {ChzzkWebhookMatcherMode2} from "../webhook/chzzk/ChzzkWebhookMatcherMode2.js";
 import {SoopWebhookMatcherMode1} from "../webhook/soop/SoopWebhookMatcherMode1.js";
 import {SoopAllocator} from "../observer/SoopAllocator.js";
+import {MainRouter} from "../server/main_router.js";
 
 export class DepManager {
 
@@ -32,6 +33,8 @@ export class DepManager {
   readonly soopAllocator: SoopAllocator;
   readonly chzzkWebhookMatcher: ChzzkWebhookMatcher;
   readonly soopWebhookMatcher: SoopWebhookMatcher;
+
+  readonly mainRouter: MainRouter;
 
   constructor(
     private readonly env: Env,
@@ -61,6 +64,11 @@ export class DepManager {
     );
     this.soopChecker = new SoopChecker(
       this.query, this.streamq, this.soopTargetRepository, this.soopAllocator,
+    );
+
+    this.mainRouter = new MainRouter(
+      this.streamq, this.chzzkTargetRepository, this.soopTargetRepository,
+      this.chzzkAllocator, this.soopAllocator,
     );
   }
 

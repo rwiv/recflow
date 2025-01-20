@@ -1,5 +1,6 @@
 import { log } from 'jslog';
 import { Cookie } from './types.common.js';
+import { Injectable } from '@nestjs/common';
 
 interface ChzzkLiveRequest {
   uid: string;
@@ -34,6 +35,7 @@ export interface Stdl {
   ): Promise<void>;
 }
 
+@Injectable()
 export class StdlImpl implements Stdl {
   async requestChzzkLive(
     url: string,
@@ -76,6 +78,7 @@ export class StdlImpl implements Stdl {
   }
 }
 
+@Injectable()
 export class StdlMock implements Stdl {
   async requestChzzkLive(
     url: string,

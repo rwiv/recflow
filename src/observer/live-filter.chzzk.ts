@@ -1,7 +1,9 @@
 import { ChzzkLiveInfo } from '../client/types.chzzk.js';
 import { QueryConfig } from '../common/query.js';
 import { Streamq } from '../client/streamq.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class LiveFilterChzzk {
   constructor(private readonly streamq: Streamq) {}
 

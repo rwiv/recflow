@@ -2,12 +2,15 @@ import { SoopLiveState, SoopTargetRepository } from './types.js';
 import { SoopLiveInfo } from '../client/types.soop.js';
 import { QueryConfig } from '../common/query.js';
 import { SoopWebhookState } from '../webhook/types.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { QUERY } from '../common/common.module.js';
 
+@Injectable()
 export class TargetRepositoryMemSoop implements SoopTargetRepository {
   private readonly map: Map<string, SoopLiveState> = new Map();
   private readonly whMap: Map<string, number> = new Map();
 
-  constructor(private readonly query: QueryConfig) {
+  constructor(@Inject(QUERY) private readonly query: QueryConfig) {
     const names = query.webhooks.map((wh) => wh.name);
     for (const name of names) {
       this.whMap.set(name, 0);

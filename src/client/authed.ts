@@ -1,6 +1,9 @@
 import { log } from 'jslog';
 import { Cookie } from './types.common.js';
 import { decrypt } from '../common/encrypt.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV } from '../common/common.module.js';
+import { Env } from '../common/env.js';
 
 export interface Authed {
   requestChzzkCookies(): Promise<Cookie[] | undefined>;
@@ -11,17 +14,20 @@ interface EncryptedResponse {
   encrypted: string;
 }
 
-interface SoopCredential {
+export interface SoopCredential {
   username: string;
   password: string;
 }
 
+@Injectable()
 export class AuthedImpl implements Authed {
-  constructor(
-    private readonly authUrl: string,
-    private readonly enckey: string,
-  ) {
-    if (enckey.length !== 32) {
+  private readonly authUrl: string;
+  private readonly enckey: string;
+
+  constructor(@Inject(ENV) private readonly env: Env) {
+    this.authUrl = this.env.authedUrl;
+    this.enckey = this.env.authedEncKey;
+    if (this.enckey.length !== 32) {
       throw new Error('enckey must be 32 bytes');
     }
   }
@@ -60,6 +66,7 @@ export class AuthedImpl implements Authed {
   }
 }
 
+@Injectable()
 export class AuthedMock implements Authed {
   requestChzzkCookies(): Promise<Cookie[] | undefined> {
     log.info('MockAuthClient.requestChzzkCookies');

@@ -2,12 +2,15 @@ import { ChzzkLiveInfo } from '../client/types.chzzk.js';
 import { ChzzkLiveState, ChzzkTargetRepository } from './types.js';
 import { QueryConfig } from '../common/query.js';
 import { ChzzkWebhookState } from '../webhook/types.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { QUERY } from '../common/common.module.js';
 
+@Injectable()
 export class TargetRepositoryMemChzzk implements ChzzkTargetRepository {
   private readonly map: Map<string, ChzzkLiveState> = new Map();
   private readonly whMap: Map<string, number> = new Map();
 
-  constructor(private readonly query: QueryConfig) {
+  constructor(@Inject(QUERY) private readonly query: QueryConfig) {
     const names = query.webhooks.map((wh) => wh.name);
     for (const name of names) {
       this.whMap.set(name, 0);

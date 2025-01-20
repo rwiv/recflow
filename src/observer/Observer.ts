@@ -1,15 +1,16 @@
 import { CheckerChzzk } from './checker.chzzk.js';
 import { CheckerSoop } from './checker.soop.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class Observer {
   private curInterval: NodeJS.Timeout | undefined;
   private isObserving: boolean = false;
+  private readonly checkCycle: number = 5 * 1000;
 
   constructor(
     private readonly chzzkChacker: CheckerChzzk,
     private readonly soopChecker: CheckerSoop,
-
-    private readonly checkCycle: number = 5 * 1000,
   ) {}
 
   observe() {

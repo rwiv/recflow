@@ -5,19 +5,22 @@ import { log } from 'jslog';
 import { LiveFilterSoop } from './live-filter.soop.js';
 import { SoopLiveInfo } from '../client/types.soop.js';
 import { AllocatorSoop } from './allocator.soop.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { QUERY } from '../common/common.module.js';
+import { TARGET_REPOSITORY_SOOP } from '../repository/stroage.module.js';
 
+@Injectable()
 export class CheckerSoop {
   private isChecking: boolean = false;
-  private filter: LiveFilterSoop;
 
   constructor(
-    private readonly query: QueryConfig,
+    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly streamq: Streamq,
+    @Inject(TARGET_REPOSITORY_SOOP)
     private readonly targets: SoopTargetRepository,
     private readonly allocator: AllocatorSoop,
-  ) {
-    this.filter = new LiveFilterSoop(streamq);
-  }
+    private readonly filter: LiveFilterSoop,
+  ) {}
 
   async check() {
     if (this.isChecking) {

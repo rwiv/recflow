@@ -1,7 +1,9 @@
 import { QueryConfig } from '../common/query.js';
 import { Streamq } from '../client/streamq.js';
 import { SoopLiveInfo } from '../client/types.soop.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class LiveFilterSoop {
   constructor(private readonly streamq: Streamq) {}
 

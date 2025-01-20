@@ -1,10 +1,17 @@
 import { createClient, RedisClientType } from 'redis';
 import { RedisConfig } from '../common/configs.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV } from '../common/common.module.js';
+import { Env } from '../common/env.js';
 
+@Injectable()
 export class Redis {
   private client: RedisClientType | undefined = undefined;
+  private readonly conf: RedisConfig;
 
-  constructor(private readonly conf: RedisConfig) {}
+  constructor(@Inject(ENV) private readonly env: Env) {
+    this.conf = this.env.redis;
+  }
 
   async init() {
     this.client = await this.createClient();

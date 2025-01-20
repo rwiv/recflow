@@ -1,4 +1,7 @@
 import { log } from 'jslog';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV } from '../common/common.module.js';
+import { Env } from '../common/env.js';
 
 export abstract class Notifier {
   abstract notify(topic: string, message: string): Promise<void>;
@@ -16,9 +19,13 @@ export abstract class Notifier {
   }
 }
 
+@Injectable()
 export class NtfyNotifier extends Notifier {
-  constructor(private readonly ntfyEndpoint: string) {
+  private readonly ntfyEndpoint: string;
+
+  constructor(@Inject(ENV) private readonly env: Env) {
     super();
+    this.ntfyEndpoint = this.env.ntfyEndpoint;
   }
 
   async notify(topic: string, message: string): Promise<void> {
@@ -30,6 +37,7 @@ export class NtfyNotifier extends Notifier {
   }
 }
 
+@Injectable()
 export class MockNotifier extends Notifier {
   notify(topic: string, message: string): Promise<void> {
     log.info(`MockNotifier.notify(${topic}, ${message})`);

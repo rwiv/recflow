@@ -4,12 +4,12 @@ import { AuthedImpl } from './authed.js';
 import { it } from 'vitest';
 
 it('test', async () => {
-  const { stdlUrl, authedUrl, authedEncKey } = readEnv();
+  const env = readEnv();
   const stdl = new StdlImpl();
-  const authClient = new AuthedImpl(authedUrl, authedEncKey);
+  const authClient = new AuthedImpl(env);
 
   const uid = '';
   const cookies = await authClient.requestChzzkCookies();
   // const cookies = undefined;
-  await stdl.requestChzzkLive(stdlUrl, uid, true, cookies);
+  await stdl.requestChzzkLive(env.stdlUrl, uid, true, cookies);
 });

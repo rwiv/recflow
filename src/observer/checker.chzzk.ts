@@ -5,19 +5,22 @@ import { ChzzkTargetRepository } from '../repository/types.js';
 import { QueryConfig } from '../common/query.js';
 import { LiveFilterChzzk } from './live-filter.chzzk.js';
 import { AllocatorChzzk } from './allocator.chzzk.js';
+import { QUERY } from '../common/common.module.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { TARGET_REPOSITORY_CHZZK } from '../repository/stroage.module.js';
 
+@Injectable()
 export class CheckerChzzk {
   private isChecking: boolean = false;
-  private filter: LiveFilterChzzk;
 
   constructor(
-    private readonly query: QueryConfig,
+    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly streamq: Streamq,
+    @Inject(TARGET_REPOSITORY_CHZZK)
     private readonly targets: ChzzkTargetRepository,
     private readonly allocator: AllocatorChzzk,
-  ) {
-    this.filter = new LiveFilterChzzk(streamq);
-  }
+    private readonly filter: LiveFilterChzzk,
+  ) {}
 
   async check() {
     if (this.isChecking) {

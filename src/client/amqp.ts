@@ -1,12 +1,18 @@
 import amqplib, { Channel, Connection } from 'amqplib';
 import { AmqpConfig } from '../common/configs.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV } from '../common/common.module.js';
+import { Env } from '../common/env.js';
 
+@Injectable()
 export class Amqp {
-  constructor(
-    private readonly conf: AmqpConfig,
-    private conn: Connection | undefined = undefined,
-    private ch: Channel | undefined = undefined,
-  ) {}
+  private conn: Connection | undefined = undefined;
+  private ch: Channel | undefined = undefined;
+  private readonly conf: AmqpConfig;
+
+  constructor(@Inject(ENV) private readonly env: Env) {
+    this.conf = this.env.amqp;
+  }
 
   async connect() {
     const { host, port, username, password } = this.conf;

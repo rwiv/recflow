@@ -12,7 +12,14 @@ tolerations:
   - key: cpu
     operator: Exists
 
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30220
+
 app:
+  server:
+    port: 8080
   redis:
     host: redis-master.infra.svc.cluster.local
     port: 6379

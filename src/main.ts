@@ -14,6 +14,6 @@ async function bootstrap() {
   const observer = app.get(Observer);
   observer.observe();
 
-  await app.listen(3000);
+  await app.listen(env.appPort);
 }
 bootstrap();

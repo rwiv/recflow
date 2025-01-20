@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 export interface Env {
   nodeEnv: string;
   configPath: string;
+  appPort: number;
   streamqUrl: string;
   streamqQsize: number;
   stdlUrl: string;
@@ -29,6 +30,12 @@ export function readEnv(): Env {
   // CONFIG_PATH
   const configPath = process.env.CONFIG_PATH;
   if (configPath === undefined) throw Error('configPath is undefined');
+
+  // APP_PORT
+  const appPortStr = process.env.APP_PORT;
+  if (appPortStr === undefined) throw Error('appPort is undefined');
+  const appPort = parseInt(appPortStr);
+  if (isNaN(appPort)) throw Error('appPort is NaN');
 
   // streamq
   const streamqUrl = process.env.STREAMQ_URL;
@@ -97,15 +104,11 @@ export function readEnv(): Env {
   };
 
   return {
-    nodeEnv,
-    configPath,
-    streamqUrl,
-    streamqQsize,
+    nodeEnv, appPort, configPath,
+    streamqUrl, streamqQsize,
     stdlUrl,
-    authedUrl,
-    authedEncKey,
-    ntfyEndpoint,
-    ntfyTopic,
+    authedUrl, authedEncKey,
+    ntfyEndpoint, ntfyTopic,
     redis,
     amqp,
   };

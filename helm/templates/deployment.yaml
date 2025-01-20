@@ -21,6 +21,8 @@ spec:
               value: prod
             - name: CONFIG_PATH
               value: {{ .Values.configMap.mountPath }}/conf.yaml
+            - name: APP_PORT
+              value: "{{ .Values.app.server.port }}"
             - name: STREAMQ_URL
               value: {{ .Values.externals.streamq.url }}
             - name: STREAMQ_QSIZE

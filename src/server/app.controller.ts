@@ -4,11 +4,11 @@ import { Streamq } from '../client/streamq.js';
 import {
   ChzzkTargetRepository,
   SoopTargetRepository,
-} from '../repository/types.js';
+} from '../storage/types.js';
 import {
   TARGET_REPOSITORY_CHZZK,
   TARGET_REPOSITORY_SOOP,
-} from '../repository/stroage.module.js';
+} from '../storage/stroage.module.js';
 import { AllocatorChzzk } from '../observer/allocator.chzzk.js';
 import { AllocatorSoop } from '../observer/allocator.soop.js';
 

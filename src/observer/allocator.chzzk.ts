@@ -1,7 +1,7 @@
 import { Stdl } from '../client/stdl.js';
 import { Authed } from '../client/authed.js';
 import { Notifier } from '../client/notifier.js';
-import { ChzzkTargetRepository } from '../repository/types.js';
+import { ChzzkTargetRepository } from '../storage/types.js';
 import { ChzzkWebhookMatcher } from '../webhook/types.js';
 import { log } from 'jslog';
 import { ChzzkLiveInfo } from '../client/types.chzzk.js';
@@ -9,7 +9,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
-import { TARGET_REPOSITORY_CHZZK } from '../repository/stroage.module.js';
+import { TARGET_REPOSITORY_CHZZK } from '../storage/stroage.module.js';
 import { WEBHOOK_MATCHER_CHZZK } from '../webhook/webhook.module.js';
 
 @Injectable()

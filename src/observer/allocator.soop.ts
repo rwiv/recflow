@@ -1,7 +1,7 @@
 import { Stdl } from '../client/stdl.js';
 import { Authed, SoopCredential } from '../client/authed.js';
 import { Notifier } from '../client/notifier.js';
-import { SoopTargetRepository } from '../repository/types.js';
+import { SoopTargetRepository } from '../storage/types.js';
 import { SoopWebhookMatcher } from '../webhook/types.js';
 import { log } from 'jslog';
 import { ChzzkLiveInfo } from '../client/types.chzzk.js';
@@ -10,7 +10,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
-import { TARGET_REPOSITORY_SOOP } from '../repository/stroage.module.js';
+import { TARGET_REPOSITORY_SOOP } from '../storage/stroage.module.js';
 import { WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.module.js';
 
 @Injectable()

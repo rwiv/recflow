@@ -2,7 +2,8 @@ import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
 import {
   ChzzkLiveState,
-  ChzzkTargetRepository, SoopLiveState,
+  ChzzkTargetRepository,
+  SoopLiveState,
   SoopTargetRepository,
 } from '../storage/types.js';
 import {
@@ -11,6 +12,7 @@ import {
 } from '../storage/stroage.module.js';
 import { AllocatorChzzk } from '../observer/allocator.chzzk.js';
 import { AllocatorSoop } from '../observer/allocator.soop.js';
+import { ChzzkWebhookState, SoopWebhookState } from '../webhook/types.js';
 
 @Controller('/api')
 export class AppController {
@@ -27,6 +29,16 @@ export class AppController {
   @Get('/health')
   health(): string {
     return 'hello';
+  }
+
+  @Get('/chzzk/webhooks')
+  whStates(): Promise<ChzzkWebhookState[]> {
+    return this.chzzkTargets.whStates();
+  }
+
+  @Get('/soop/webhooks')
+  whStatesSoop(): Promise<SoopWebhookState[]> {
+    return this.soopTargets.whStates();
   }
 
   @Get('/chzzk/lives')

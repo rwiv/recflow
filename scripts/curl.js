@@ -4,7 +4,7 @@ async function main() {
     throw new Error("Invalid type");
   }
   console.log(type, userId);
-  const res = await fetch(`http://localhost:8080/api/${type}/${userId}`, {
+  const res = await fetch(`http://localhost:3000/api/${type}/${userId}`, {
     "method": "POST",
   });
   console.log(await res.json());

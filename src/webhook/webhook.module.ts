@@ -23,11 +23,15 @@ export const WEBHOOK_MATCHER_SOOP = 'WebhookMatcherSoop';
     },
     {
       provide: WEBHOOK_MATCHER_SOOP,
-      useFactory: (factory: WebhookFactory) => {
-        return factory.createSoopWebhookMatcher();
-      },
-      inject: [WebhookFactory],
+      useClass: WebhookMatcherSoopMode1,
     },
+    // {
+    //   provide: WEBHOOK_MATCHER_SOOP,
+    //   useFactory: (factory: WebhookFactory) => {
+    //     return factory.createSoopWebhookMatcher();
+    //   },
+    //   inject: [WebhookFactory],
+    // },
   ],
   exports: [WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP],
 })

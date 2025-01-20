@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { it, expect } from 'vitest';
 import { ConfigModule } from '../common/common.module.js';
 import { ClientModule } from '../client/client.module.js';
+import {StorageModule} from "../storage/stroage.module.js";
+import {ObserverModule} from "../observer/observer.module.js";
 
 it('AppController', async () => {
   const app: TestingModule = await Test.createTestingModule({
-    imports: [ConfigModule, ClientModule],
+    imports: [ConfigModule, ClientModule, StorageModule, ObserverModule],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [],
   }).compile();
   const appController = app.get(AppController);
-  console.log('hello');
-  expect(appController.getHello()).toBe('Hello World!');
+  expect(appController.health()).toBe('hello');
 });

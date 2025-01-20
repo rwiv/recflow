@@ -1,7 +1,7 @@
-import { Controller, Get, Inject, Post } from '@nestjs/common';
-import { AppService } from './app.service.js';
+import {Controller, Delete, Get, Inject, Param, Post} from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
 import {
+  ChzzkLiveState,
   ChzzkTargetRepository,
   SoopTargetRepository,
 } from '../storage/types.js';
@@ -12,10 +12,9 @@ import {
 import { AllocatorChzzk } from '../observer/allocator.chzzk.js';
 import { AllocatorSoop } from '../observer/allocator.soop.js';
 
-@Controller()
+@Controller('/api')
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private readonly streamq: Streamq,
     @Inject(TARGET_REPOSITORY_CHZZK)
     private readonly chzzkTargets: ChzzkTargetRepository,
@@ -25,23 +24,29 @@ export class AppController {
     private readonly soopAllocator: AllocatorSoop,
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   @Get('/health')
   health(): string {
     return 'hello';
   }
 
   @Get('/chzzk/lives')
-  async chzzkLives(): Promise<string> {
-    return 'hello';
+  all(): Promise<ChzzkLiveState[]> {
+    return this.chzzkTargets.all();
   }
 
   @Post('/chzzk/:channelId')
-  async chzzkPost(): Promise<string> {
-    return 'hello';
+  async Add(@Param('channelId') channelId: string): Promise<ChzzkLiveState> {
+    return this.chzzkAllocator.allocate(await this.getChzzkLive(channelId));
+  }
+
+  @Delete('/chzzk/:channelId')
+  async delete(@Param('channelId') channelId: string): Promise<ChzzkLiveState> {
+    return this.chzzkAllocator.deallocate(await this.getChzzkLive(channelId));
+  }
+
+  private async getChzzkLive(channelId: string) {
+    const live = (await this.streamq.getChzzkChannel(channelId, true)).liveInfo;
+    if (!live) throw Error('Not found chzzkChannel.liveInfo');
+    return live;
   }
 }

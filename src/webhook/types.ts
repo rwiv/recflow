@@ -1,8 +1,8 @@
-import {ChzzkLiveInfo} from "../client/types_chzzk.js";
-import {SoopLiveInfo} from "../client/types_soop.js";
+import { ChzzkLiveInfo } from '../client/types.chzzk.js';
+import { SoopLiveInfo } from '../client/types.soop.js';
 
-export type WebhookType = "main" | "sub" | "extra";
-export type WebhookMode = "mode1" | "mode2" | "mode3" | "mode4";
+export type WebhookType = 'main' | 'sub' | 'extra';
+export type WebhookMode = 'mode1' | 'mode2' | 'mode3' | 'mode4';
 
 export interface WebhookInfo {
   name: string;
@@ -21,9 +21,15 @@ export interface SoopWebhookState extends WebhookInfo {
 }
 
 export interface ChzzkWebhookMatcher {
-  match(live: ChzzkLiveInfo, whStates: ChzzkWebhookState[]): ChzzkWebhookState | null;
+  match(
+    live: ChzzkLiveInfo,
+    whStates: ChzzkWebhookState[],
+  ): ChzzkWebhookState | null;
 }
 
 export interface SoopWebhookMatcher {
-  match(live: SoopLiveInfo, whStates: SoopWebhookState[]): SoopWebhookState | null;
+  match(
+    live: SoopLiveInfo,
+    whStates: SoopWebhookState[],
+  ): SoopWebhookState | null;
 }

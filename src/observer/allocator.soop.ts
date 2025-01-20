@@ -1,14 +1,13 @@
-import {Stdl} from "../client/Stdl.js";
-import {Authed} from "../client/authed.js";
-import {Notifier} from "../client/Notifier.js";
-import {SoopTargetRepository} from "../repository/types.js";
-import {SoopWebhookMatcher} from "../webhook/types.js";
-import {log} from "jslog";
-import {ChzzkLiveInfo} from "../client/types_chzzk.js";
-import {SoopLiveInfo} from "../client/types_soop.js";
+import { Stdl } from '../client/stdl.js';
+import { Authed } from '../client/authed.js';
+import { Notifier } from '../client/notifier.js';
+import { SoopTargetRepository } from '../repository/types.js';
+import { SoopWebhookMatcher } from '../webhook/types.js';
+import { log } from 'jslog';
+import { ChzzkLiveInfo } from '../client/types.chzzk.js';
+import { SoopLiveInfo } from '../client/types.soop.js';
 
-export class SoopAllocator {
-
+export class AllocatorSoop {
   constructor(
     private readonly stdl: Stdl,
     private readonly authClient: Authed,
@@ -22,7 +21,7 @@ export class SoopAllocator {
     const wh = this.matcher.match(live, await this.targets.whStates());
     if (!wh) {
       // TODO: use ntfy
-      log.warn("No webhook");
+      log.warn('No webhook');
       return;
     }
     await this.targets.set(live.userId, live, wh);
@@ -35,11 +34,16 @@ export class SoopAllocator {
     await this.stdl.requestSoopLive(wh.url, live.userId, true, cred);
 
     // ntfy
-    await this.notifier.sendLiveInfo(this.nftyTopic, live.userNick, parseInt(live.totalViewCnt), live.broadTitle);
+    await this.notifier.sendLiveInfo(
+      this.nftyTopic,
+      live.userNick,
+      parseInt(live.totalViewCnt),
+      live.broadTitle,
+    );
   }
 
   async deallocate(live: ChzzkLiveInfo) {
     await this.targets.delete(live.channelId);
-    log.info(`Delete: ${live.channelName}`)
+    log.info(`Delete: ${live.channelName}`);
   }
 }

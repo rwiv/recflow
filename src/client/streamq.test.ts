@@ -1,8 +1,9 @@
-import { Streamq } from './Streamq.js';
+import { Streamq } from './streamq.js';
 import { readEnv } from '../common/env.js';
 
 const env = readEnv();
 const streamq = new Streamq(env);
+import { it } from 'vitest';
 
 it('test chzzk', async () => {
   const channelId = '';

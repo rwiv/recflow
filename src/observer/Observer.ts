@@ -1,21 +1,20 @@
-import {ChzzkChecker} from "./ChzzkChecker.js";
-import {SoopChecker} from "./SoopChecker.js";
+import { CheckerChzzk } from './checker.chzzk.js';
+import { CheckerSoop } from './checker.soop.js';
 
 export class Observer {
-
   private curInterval: NodeJS.Timeout | undefined;
   private isObserving: boolean = false;
 
   constructor(
-    private readonly chzzkChacker: ChzzkChecker,
-    private readonly soopChecker: SoopChecker,
+    private readonly chzzkChacker: CheckerChzzk,
+    private readonly soopChecker: CheckerSoop,
 
     private readonly checkCycle: number = 5 * 1000,
   ) {}
 
   observe() {
     if (this.isObserving) {
-      throw Error("already observing");
+      throw Error('already observing');
     }
 
     this.chzzkChacker.check();

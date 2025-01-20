@@ -1,5 +1,6 @@
 import { Amqp } from './amqp.js';
 import { readEnv } from '../common/env.js';
+import { it } from 'vitest';
 
 it('test all', async () => {
   const queue = 'tasks';

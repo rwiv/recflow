@@ -1,9 +1,8 @@
-import { Module } from "@nestjs/common";
-import {AppService} from "./server/app.service.js";
-import {AppController} from "./server/app.controller.js";
-import {Streamq} from "./client/Streamq.js";
-import {ConfigModule} from "./common/common.module.js";
-import {ClientModule} from "./client/client.module.js";
+import { Module } from '@nestjs/common';
+import { AppService } from './server/app.service.js';
+import { AppController } from './server/app.controller.js';
+import { ConfigModule } from './common/common.module.js';
+import { ClientModule } from './client/client.module.js';
 
 @Module({
   imports: [ConfigModule, ClientModule],

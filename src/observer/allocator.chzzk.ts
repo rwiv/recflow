@@ -1,13 +1,12 @@
-import {Stdl} from "../client/Stdl.js";
-import {Authed} from "../client/authed.js";
-import {Notifier} from "../client/Notifier.js";
-import {ChzzkTargetRepository} from "../repository/types.js";
-import {ChzzkWebhookMatcher} from "../webhook/types.js";
-import {log} from "jslog";
-import {ChzzkLiveInfo} from "../client/types_chzzk.js";
+import { Stdl } from '../client/stdl.js';
+import { Authed } from '../client/authed.js';
+import { Notifier } from '../client/notifier.js';
+import { ChzzkTargetRepository } from '../repository/types.js';
+import { ChzzkWebhookMatcher } from '../webhook/types.js';
+import { log } from 'jslog';
+import { ChzzkLiveInfo } from '../client/types.chzzk.js';
 
-export class ChzzkAllocator {
-
+export class AllocatorChzzk {
   constructor(
     private readonly stdl: Stdl,
     private readonly authClient: Authed,
@@ -21,7 +20,7 @@ export class ChzzkAllocator {
     const wh = this.matcher.match(live, await this.targets.whStates());
     if (!wh) {
       // TODO: use ntfy
-      log.warn("No webhook");
+      log.warn('No webhook');
       return;
     }
     const ls = await this.targets.set(live.channelId, live, wh);
@@ -34,13 +33,18 @@ export class ChzzkAllocator {
     await this.stdl.requestChzzkLive(wh.url, live.channelId, true, cookies);
 
     // ntfy
-    await this.notifier.sendLiveInfo(this.nftyTopic, live.channelName, live.concurrentUserCount, live.liveTitle);
+    await this.notifier.sendLiveInfo(
+      this.nftyTopic,
+      live.channelName,
+      live.concurrentUserCount,
+      live.liveTitle,
+    );
     return ls;
   }
 
   async deallocate(live: ChzzkLiveInfo) {
     const ls = await this.targets.delete(live.channelId);
-    log.info(`Delete: ${live.channelName}`)
+    log.info(`Delete: ${live.channelName}`);
     return ls;
   }
 }

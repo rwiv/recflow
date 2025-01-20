@@ -1,5 +1,5 @@
 import { log } from 'jslog';
-import { Cookie } from './types_common.js';
+import { Cookie } from './types.common.js';
 
 interface ChzzkLiveRequest {
   uid: string;

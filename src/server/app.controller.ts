@@ -1,8 +1,8 @@
-import {Controller, Get, Inject, Post} from "@nestjs/common";
-import {AppService} from "./app.service.js";
-import {Streamq} from "../client/Streamq.js";
-import {ENV} from "../common/common.module.js";
-import {Env} from "../common/env.js";
+import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { AppService } from './app.service.js';
+import { Streamq } from '../client/streamq.js';
+import { ENV } from '../common/common.module.js';
+import { Env } from '../common/env.js';
 
 @Controller()
 export class AppController {
@@ -17,18 +17,18 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get("/health")
+  @Get('/health')
   health(): string {
-    return "hello";
+    return 'hello';
   }
 
-  @Get("/chzzk/lives")
+  @Get('/chzzk/lives')
   async chzzkLives(): Promise<string> {
-    return "hello";
+    return 'hello';
   }
 
-  @Post("/chzzk/:channelId")
+  @Post('/chzzk/:channelId')
   async chzzkPost(): Promise<string> {
-    return "hello";
+    return 'hello';
   }
 }

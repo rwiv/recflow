@@ -1,6 +1,7 @@
-import { StdlImpl } from './Stdl.js';
+import { StdlImpl } from './stdl.js';
 import { readEnv } from '../common/env.js';
 import { AuthedImpl } from './authed.js';
+import { it } from 'vitest';
 
 it('test', async () => {
   const { stdlUrl, authedUrl, authedEncKey } = readEnv();

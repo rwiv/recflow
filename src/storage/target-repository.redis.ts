@@ -49,17 +49,12 @@ export class TargetRepositoryRedis implements TargetRepository {
   }
 
   async whcMap(): Promise<WhcMap> {
-    const client = this.getClient();
-    let whcMap: WhcMap | null = await this.getWhcMap();
-    if (whcMap) return whcMap;
-
-    whcMap = {};
-    const names = this.query.webhooks.map((wh) => wh.name);
-    for (const name of names) {
-      whcMap[name] = { chzzk: 0, soop: 0 };
+    const whcMap: WhcMap | null = await this.getWhcMap();
+    if (whcMap) {
+      return this.checkWhc(whcMap);
+    } else {
+      return this.createNewWhcMap();
     }
-    await client.set(WHC_KEY, JSON.stringify(whcMap));
-    return whcMap;
   }
 
   async whStates(): Promise<WebhookState[]> {
@@ -145,7 +140,7 @@ export class TargetRepositoryRedis implements TargetRepository {
     const whcMap = await this.whcMap();
     const whc = whcMap[whName];
     if (whc === undefined) {
-      throw Error('whcState is undefined');
+      throw Error('whc is undefined');
     }
     if (type === 'chzzk') {
       whcMap[whName] = {
@@ -159,5 +154,30 @@ export class TargetRepositoryRedis implements TargetRepository {
       };
     }
     await this.getClient().set(WHC_KEY, JSON.stringify(whcMap));
+  }
+
+  private async checkWhc(whcMap: WhcMap) {
+    const client = this.getClient();
+    let changed = false;
+    for (const name of this.query.webhooks.map((wh) => wh.name)) {
+      if (whcMap[name] === undefined) {
+        whcMap[name] = { chzzk: 0, soop: 0 };
+        changed = true;
+      }
+    }
+    if (changed) {
+      await client.set(WHC_KEY, JSON.stringify(whcMap));
+    }
+    return whcMap;
+  }
+
+  private async createNewWhcMap() {
+    const whcMap = {};
+    const names = this.query.webhooks.map((wh) => wh.name);
+    for (const name of names) {
+      whcMap[name] = { chzzk: 0, soop: 0 };
+    }
+    await this.getClient().set(WHC_KEY, JSON.stringify(whcMap));
+    return whcMap;
   }
 }

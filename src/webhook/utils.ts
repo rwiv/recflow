@@ -11,7 +11,7 @@ export function findChzzkCandidate(
   if (candidates.length === 0) {
     return null;
   } else {
-    return candidates[0];
+    return findMinCandidate(candidates);
   }
 }
 
@@ -26,6 +26,19 @@ export function findSoopCandidate(
   if (candidates.length === 0) {
     return null;
   } else {
-    return candidates[0];
+    return findMinCandidate(candidates);
   }
+}
+
+function findMinCandidate(candidates: WebhookState[]): WebhookState {
+  if (candidates.length === 0) {
+    throw new Error('No candidate');
+  }
+  let candidate = candidates[0];
+  for (const cur of candidates) {
+    if (cur.chzzkAssignedCnt < candidate.chzzkAssignedCnt) {
+      candidate = cur;
+    }
+  }
+  return candidate;
 }

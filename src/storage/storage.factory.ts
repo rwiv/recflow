@@ -4,9 +4,10 @@ import { QueryConfig } from '../common/query.js';
 import { TargetRepositoryRedis } from './target-repository.redis.js';
 import { TargetRepositoryMem } from './target-repository.mem.js';
 import { Env } from '../common/env.js';
-import { createClient, RedisClientType } from "redis";
-import { log } from "jslog";
-import { WhcRepository } from "./whc-repository.js";
+import { createClient, RedisClientType } from 'redis';
+import { log } from 'jslog';
+import { WhcRepository } from './whc-repository.js';
+import { RedisConfig } from '../common/configs.js';
 
 @Injectable()
 export class StorageFactory {
@@ -29,7 +30,7 @@ export class StorageFactory {
   }
 
   async createTargetRepositoryRedis() {
-    const client = await this.createRedisClient();
+    const client = await createRedisClient(this.env.redis);
     const whcMap = new WhcRepository(client, this.query);
     return new TargetRepositoryRedis(client, whcMap);
   }
@@ -37,14 +38,13 @@ export class StorageFactory {
   createTargetRepositoryMem() {
     return new TargetRepositoryMem(this.query);
   }
+}
 
-  async createRedisClient() {
-    const conf = this.env.redis;
-    const url = `redis://${conf.host}:${conf.port}`;
-    const client = await createClient({ url, password: conf.password })
-      .on('error', (err) => console.error('Redis Client Error', err))
-      .connect();
-    log.info('Redis Client Connected');
-    return client as RedisClientType;
-  }
+export async function createRedisClient(conf: RedisConfig) {
+  const url = `redis://${conf.host}:${conf.port}`;
+  const client = await createClient({ url, password: conf.password })
+    .on('error', (err) => console.error('Redis Client Error', err))
+    .connect();
+  log.info('Redis Client Connected');
+  return client as RedisClientType;
 }

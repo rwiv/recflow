@@ -2,13 +2,18 @@ import { it } from 'vitest';
 import { readEnv } from '../common/env.js';
 import { TargetRepositoryRedis } from './target-repository.redis.js';
 import { readQueryConfig } from '../common/query.js';
+import { createRedisClient } from './storage.factory.js';
+import { WhcRepository } from './whc-repository.js';
 
 const env = readEnv();
 const query = readQueryConfig(env.configPath);
-const repo = new TargetRepositoryRedis(env, query);
 
 it('print', async () => {
-  await repo.init();
+  const redis = await createRedisClient(env.redis);
+  const repo = new TargetRepositoryRedis(
+    redis,
+    new WhcRepository(redis, query),
+  );
   console.log(await repo.keys());
   console.log(await repo.whcMap.getWhcMap());
   const chzzk = await repo.allChzzk();
@@ -18,6 +23,10 @@ it('print', async () => {
 });
 
 it('clear', async () => {
-  await repo.init();
+  const redis = await createRedisClient(env.redis);
+  const repo = new TargetRepositoryRedis(
+    redis,
+    new WhcRepository(redis, query),
+  );
   await repo.clear();
 });

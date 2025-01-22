@@ -15,7 +15,7 @@ export class TargetRepositoryRedis implements TargetRepository {
 
   constructor(
     private readonly client: RedisClientType,
-    private readonly whcMap: WhcRepository,
+    public readonly whcMap: WhcRepository,
   ) {}
 
   async clear() {

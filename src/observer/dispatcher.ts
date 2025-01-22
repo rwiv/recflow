@@ -19,7 +19,7 @@ export class Dispatcher {
 
   async send(cmd: ExitCmd, platform: PlatformType, uid: string) {
     const queue = `${QUEUE_PREFIX}:${platform}:${uid}`;
-    if (!await this.amqp.checkQueue(queue)) {
+    if (!(await this.amqp.checkQueue(queue))) {
       throw new Error(`Not found queue: ${queue}`);
     }
     const message: ExitMessage = { cmd, platform, uid };

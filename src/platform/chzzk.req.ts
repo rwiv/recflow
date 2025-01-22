@@ -12,7 +12,9 @@ export interface ChzzkLiveInfoReq {
   tags: string[];
   categoryType?: string | null;
   liveCategory?: string | null;
-  liveCategoryValue: string;
+  liveCategoryValue: string | null;
+  watchPartyNo: number | null;
+  watchPartyTag: string | null;
 }
 
 export interface ChzzkChannelInfoReq {

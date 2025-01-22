@@ -14,8 +14,10 @@ export class ChzzkLiveInfo {
     public adult: boolean,
     public tags: string[],
     public liveCategoryValue: string,
-    public categoryType?: string | null,
-    public liveCategory?: string | null,
+    public categoryType: string | null,
+    public liveCategory: string | null,
+    public watchPartyNo: number | null,
+    public watchPartyTag: string | null,
   ) {}
 
   static fromReq(info: ChzzkLiveInfoReq): ChzzkLiveInfo {
@@ -34,6 +36,8 @@ export class ChzzkLiveInfo {
       info.liveCategoryValue,
       info.categoryType,
       info.liveCategory,
+      info.watchPartyNo,
+      info.watchPartyTag,
     );
   }
 }

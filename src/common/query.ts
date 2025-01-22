@@ -13,6 +13,7 @@ export interface QueryConfig {
 
   chzzkTags: string[];
   chzzkKeywords: string[];
+  chzzkWatchPartyNoList: number[];
   soopCateNoList: string[];
 
   excludedChzzkCates: string[];

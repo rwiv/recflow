@@ -21,6 +21,7 @@ import { LiveInfo } from '../platform/wrapper.live.js';
 import { ChzzkLiveInfo } from '../platform/chzzk.dto.js';
 import { SoopLiveInfo } from '../platform/soop.dto.js';
 import { Cookie } from '../client/types.common.js';
+import { Dispatcher, ExitCmd } from './dispatcher.js';
 
 @Injectable()
 export class Allocator {
@@ -37,6 +38,7 @@ export class Allocator {
     private readonly chzzkMatcher: ChzzkWebhookMatcher,
     @Inject(WEBHOOK_MATCHER_SOOP)
     private readonly soopMatcher: SoopWebhookMatcher,
+    private readonly dispatcher: Dispatcher,
   ) {
     this.nftyTopic = this.env.ntfyTopic;
   }
@@ -49,25 +51,28 @@ export class Allocator {
       log.warn('No webhook');
       return;
     }
-    const ret = await this.targets.set(live.channelId, live, wh);
+    const created = await this.targets.set(live.channelId, live, wh);
 
     // stdl
-    await this.requestStdl(wh.url, live);
+    await this.requestStdl(wh.url, created);
 
     // ntfy
     await this.notifier.sendLiveInfo(
       this.nftyTopic,
-      live.channelName,
-      live.viewCnt,
-      live.liveTitle,
+      created.channelName,
+      created.viewCnt,
+      created.liveTitle,
     );
-    return ret;
+    return created;
   }
 
-  async deallocate(live: LiveInfo) {
-    const ls = await this.targets.delete(live.channelId);
+  async deallocate(live: LiveInfo, cmd: ExitCmd = 'delete') {
+    const deleted = await this.targets.delete(live.channelId);
+    if (cmd !== 'delete') {
+      await this.dispatcher.send(cmd, live.type, live.channelId);
+    }
     log.info(`Delete: ${live.channelName}`);
-    return ls;
+    return deleted;
   }
 
   private getWebhookMatcher(live: LiveInfo): WebhookMatcher {

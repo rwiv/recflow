@@ -1,10 +1,19 @@
-import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
 import { TargetRepository } from '../storage/types.js';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { WebhookState } from '../webhook/types.js';
 import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
 import { Allocator } from '../observer/allocator.js';
+import { ExitCmd } from '../observer/dispatcher.js';
 
 @Controller('/api')
 export class AppController {
@@ -41,13 +50,32 @@ export class AppController {
   }
 
   @Delete('/chzzk/:channelId')
-  async deleteChzzk(@Param('channelId') channelId: string) {
-    return this.allocator.deallocate(await this.getChzzkLive(channelId));
+  async deleteChzzk(
+    @Param('channelId') channelId: string,
+    @Query('cmd') cmd: string = 'delete',
+  ) {
+    return this.allocator.deallocate(
+      await this.getChzzkLive(channelId),
+      this.checkCmd(cmd),
+    );
   }
 
   @Delete('/soop/:userId')
-  async deleteSoop(@Param('userId') userId: string) {
-    return this.allocator.deallocate(await this.getSoopLive(userId));
+  async deleteSoop(
+    @Param('userId') userId: string,
+    @Query('cmd') cmd: string = 'delete',
+  ) {
+    return this.allocator.deallocate(
+      await this.getSoopLive(userId),
+      this.checkCmd(cmd),
+    );
+  }
+
+  private checkCmd(cmd: string) {
+    if (!['delete', 'cancel', 'finish'].includes(cmd)) {
+      throw Error(`Invalid cmd: ${cmd}`);
+    }
+    return cmd as ExitCmd;
   }
 
   private async getChzzkLive(channelId: string) {

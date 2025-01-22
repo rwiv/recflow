@@ -3,9 +3,10 @@ import { AmqpConfig } from '../common/configs.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
+import { log } from 'jslog';
 
-interface Amqp {
-  connect(): Promise<void>;
+export interface Amqp {
+  init(): Promise<void>;
   createChannel(): Promise<Channel>;
   assertQueue(queue: string): Promise<amqplib.Replies.AssertQueue>;
   publish(queue: string, content: object): boolean;
@@ -22,7 +23,7 @@ export class AmqpImpl implements Amqp {
     this.conf = this.env.amqp;
   }
 
-  async connect() {
+  async init() {
     const { host, port, username, password } = this.conf;
     this.conn = await amqplib.connect(
       `amqp://${username}:${password}@${host}:${port}`,
@@ -57,5 +58,33 @@ export class AmqpImpl implements Amqp {
 
   close() {
     return this.conn?.close();
+  }
+}
+
+@Injectable()
+export class AmqpMock implements Amqp {
+  async init() {
+    log.info('AmqpMock.connect()');
+    return;
+  }
+
+  createChannel() {
+    log.info('AmqpMock.createChannel()');
+    return Promise.resolve({} as Channel);
+  }
+
+  async assertQueue(queue: string) {
+    log.info(`AmqpMock.assertQueue(${queue})`);
+    return {} as amqplib.Replies.AssertQueue;
+  }
+
+  publish(queue: string, content: object) {
+    log.info(`AmqpMock.publish(${queue}, ${content})`);
+    return true;
+  }
+
+  async close() {
+    log.info('AmqpMock.close()');
+    return;
   }
 }

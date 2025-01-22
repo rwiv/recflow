@@ -9,6 +9,7 @@ import { Observer } from './Observer.js';
 import { LiveFilterChzzk } from './filters/live-filter.chzzk.js';
 import { LiveFilterSoop } from './filters/live-filter.soop.js';
 import { Allocator } from './allocator.js';
+import { Dispatcher } from './dispatcher.js';
 
 @Module({
   imports: [ConfigModule, ClientModule, StorageModule, WebhookModule],
@@ -19,6 +20,7 @@ import { Allocator } from './allocator.js';
     Allocator,
     LiveFilterChzzk,
     LiveFilterSoop,
+    Dispatcher,
   ],
   exports: [
     Observer,
@@ -27,6 +29,7 @@ import { Allocator } from './allocator.js';
     Allocator,
     LiveFilterChzzk,
     LiveFilterSoop,
+    Dispatcher,
   ],
 })
 export class ObserverModule {}

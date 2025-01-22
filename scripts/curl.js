@@ -1,17 +1,38 @@
+const commands = {
+  create: "create",
+  delete: "delete",
+  cancel: "cancel",
+  finish: "finish",
+};
+
+const types = {
+    chzzk: "chzzk",
+    soop: "soop",
+}
+
+function isExitCommand(cmd) {
+    return cmd === commands.delete || cmd === commands.cancel || cmd === commands.finish;
+}
+
 async function main() {
   const [endpoint, cmd, type, userId] = process.argv.slice(2);
-  if (["add", "del"].includes(cmd) === false) {
+
+  // Validate input
+  if (Object.values(commands).includes(cmd) === false) {
     throw new Error("Invalid command");
   }
-  let method = "POST";
-  if (cmd === "del") {
-    method = "DELETE";
-  }
-  if (["chzzk", "soop"].includes(type) === false) {
+  if (Object.values(types).includes(type) === false) {
     throw new Error("Invalid type");
   }
-  console.log(type, userId);
-  const res = await fetch(`${endpoint}/api/${type}/${userId}`, {method});
+
+  // Send request
+  let method = "POST";
+  let qs = "";
+  if (isExitCommand(cmd)) {
+    method = "DELETE";
+    qs = `?cmd=${cmd}`;
+  }
+  const res = await fetch(`${endpoint}/api/${type}/${userId}${qs}`, {method});
   console.log(await res.json());
 }
 

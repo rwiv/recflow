@@ -4,6 +4,9 @@ import { QueryConfig } from '../common/query.js';
 import { TargetRepositoryRedis } from './target-repository.redis.js';
 import { TargetRepositoryMem } from './target-repository.mem.js';
 import { Env } from '../common/env.js';
+import { createClient, RedisClientType } from "redis";
+import { log } from "jslog";
+import { WhcRepository } from "./whc-repository.js";
 
 @Injectable()
 export class StorageFactory {
@@ -26,12 +29,22 @@ export class StorageFactory {
   }
 
   async createTargetRepositoryRedis() {
-    const targets = new TargetRepositoryRedis(this.env, this.query);
-    await targets.init();
-    return targets;
+    const client = await this.createRedisClient();
+    const whcMap = new WhcRepository(client, this.query);
+    return new TargetRepositoryRedis(client, whcMap);
   }
 
   createTargetRepositoryMem() {
     return new TargetRepositoryMem(this.query);
+  }
+
+  async createRedisClient() {
+    const conf = this.env.redis;
+    const url = `redis://${conf.host}:${conf.port}`;
+    const client = await createClient({ url, password: conf.password })
+      .on('error', (err) => console.error('Redis Client Error', err))
+      .connect();
+    log.info('Redis Client Connected');
+    return client as RedisClientType;
   }
 }

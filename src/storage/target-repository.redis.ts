@@ -1,13 +1,9 @@
 import { TargetRepository } from './types.js';
-import { QueryConfig } from '../common/query.js';
 import { WebhookState } from '../webhook/types.js';
-import { Inject, Injectable } from '@nestjs/common';
-import { ENV, QUERY } from '../common/common.module.js';
+import { Injectable } from '@nestjs/common';
 import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
-import { createClient, RedisClientType } from 'redis';
+import { RedisClientType } from 'redis';
 import { RedisConfig } from '../common/configs.js';
-import { Env } from '../common/env.js';
-import { log } from 'jslog';
 import { WhcRepository } from './whc-repository.js';
 
 const KEYS_KEY = 'stdl:targets:keys:';
@@ -15,17 +11,12 @@ const KEY_PREFIX = 'stdl:targets:live:';
 
 @Injectable()
 export class TargetRepositoryRedis implements TargetRepository {
-  private client: RedisClientType | undefined = undefined;
   private readonly conf: RedisConfig;
-  public readonly whcMap: WhcRepository;
 
   constructor(
-    @Inject(ENV) private readonly env: Env,
-    @Inject(QUERY) private readonly query: QueryConfig,
-  ) {
-    this.conf = this.env.redis;
-    this.whcMap = new WhcRepository(this.getClient(), this.query);
-  }
+    private readonly client: RedisClientType,
+    private readonly whcMap: WhcRepository,
+  ) {}
 
   async clear() {
     const client = this.getClient();
@@ -63,13 +54,12 @@ export class TargetRepositoryRedis implements TargetRepository {
   }
 
   async delete(id: string) {
-    const client = this.getClient();
     const live = await this.get(id);
     if (!live) throw Error(`${id} is not found`);
 
     const key = KEY_PREFIX + id;
-    await client.del(key);
-    await client.sRem(KEYS_KEY, key);
+    await this.client.del(key);
+    await this.client.sRem(KEYS_KEY, key);
     await this.whcMap.updateWebhookCnt(live.assignedWebhookName, live.type, -1);
 
     return live;
@@ -88,16 +78,6 @@ export class TargetRepositoryRedis implements TargetRepository {
 
   async allSoop(): Promise<LiveInfo[]> {
     return (await this.all()).filter((info) => info.type === 'soop');
-  }
-
-  async init() {
-    const url = `redis://${this.conf.host}:${this.conf.port}`;
-    const client = await createClient({ url, password: this.conf.password })
-      .on('error', (err) => console.error('Redis Client Error', err))
-      .connect();
-    log.info('Redis Client Connected');
-    this.client = client as RedisClientType;
-    await this.whcMap.whcSync(await this.all());
   }
 
   private getClient() {

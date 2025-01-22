@@ -8,6 +8,7 @@ import { log } from 'jslog';
 export interface Amqp {
   init(): Promise<void>;
   createChannel(): Promise<Channel>;
+  checkQueue(queue: string): Promise<boolean>;
   assertQueue(queue: string): Promise<amqplib.Replies.AssertQueue>;
   publish(queue: string, content: object): boolean;
   close(): Promise<void>;
@@ -36,6 +37,18 @@ export class AmqpImpl implements Amqp {
       throw new Error('Connection is not initialized');
     }
     return this.conn.createChannel();
+  }
+
+  async checkQueue(queue: string): Promise<boolean> {
+    if (this.ch === undefined) {
+      throw new Error('Channel is not initialized');
+    }
+    try {
+      await this.ch.checkQueue(queue);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   async assertQueue(queue: string) {
@@ -71,6 +84,10 @@ export class AmqpMock implements Amqp {
   createChannel() {
     log.info('AmqpMock.createChannel()');
     return Promise.resolve({} as Channel);
+  }
+
+  checkQueue(queue: string): Promise<boolean> {
+    return Promise.resolve(false);
   }
 
   async assertQueue(queue: string) {

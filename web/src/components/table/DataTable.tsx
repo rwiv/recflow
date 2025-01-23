@@ -9,7 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { columns } from '@/components/table/columns.tsx';
+import { columns, emailCid } from '@/components/table/columns.tsx';
 import { data } from '@/components/table/test_data.ts';
 import { TableContent } from '@/components/table/TableContent.tsx';
 import { FilterInput } from '@/components/table/FilterInput.tsx';
@@ -45,15 +45,19 @@ export function DataTable() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <FilterInput table={table} columnId="email"/>
-        <ColumnSelector table={table}/>
+        <FilterInput
+          table={table}
+          columnId={emailCid}
+          placeholder="Filter emails..."
+        />
+        <ColumnSelector table={table} />
       </div>
       <div className="rounded-md border">
-        <TableContent table={table}/>
+        <TableContent table={table} />
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <SelectedRowCount table={table}/>
-        <PageNavigation table={table}/>
+        <SelectedRowCount table={table} />
+        <PageNavigation table={table} />
       </div>
     </div>
   );

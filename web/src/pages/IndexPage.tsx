@@ -1,17 +1,10 @@
 import { css } from '@emotion/react';
 import { Button } from '@/components/ui/button.tsx';
-import { DataTable } from '@/components/table/DataTable.tsx';
+import { LiveTable } from '@/components/table/LiveTable.tsx';
 import { LiveInfo, WebhookState } from '@/components/client/types.ts';
 import { mockLiveInfo, mockWebhookState } from '@/components/client/mocks.ts';
-import {
-  assignedWebhookNameCid,
-  liveColumns,
-} from '@/components/table/live_columns.tsx';
-import {
-  webhookColumns,
-  webhookTypeCid,
-} from '@/components/table/webhook_columns.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { WebhookTable } from '@/components/table/WebhookTable.tsx';
 
 const style = css`
   color: hotpink;
@@ -43,22 +36,12 @@ function Content() {
       </TabsList>
       <TabsContent value="lives">
         <div>
-          <DataTable
-            data={infos}
-            columns={liveColumns}
-            filterCid={assignedWebhookNameCid}
-            filterPlaceholder="Filter webhooks..."
-          />
+          <LiveTable data={infos} />
         </div>
       </TabsContent>
       <TabsContent value="webhooks">
         <div>
-          <DataTable
-            data={webhooks}
-            columns={webhookColumns}
-            filterCid={webhookTypeCid}
-            filterPlaceholder="Filter webhooks..."
-          />
+          <WebhookTable data={webhooks} />
         </div>
       </TabsContent>
     </Tabs>

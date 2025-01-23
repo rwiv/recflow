@@ -1,4 +1,4 @@
-import { env } from '@/configures/env.ts';
+import { env } from '@/common/env.ts';
 
 const isDev = env.MODE === 'development';
 const isProd = env.MODE === 'production';
@@ -9,10 +9,9 @@ const host = env.VITE_HOST;
 const port = env.VITE_PORT;
 const domain = isDev ? `${host}:${port}` : window.location.host;
 
-const apiPrefix = isDev ? '' : '/api';
-const endpoint = `${protocol}://${domain}${apiPrefix}`;
+const endpoint = `${protocol}://${domain}`;
 
-export const consts = {
+export const configs = {
   isDev,
   isProd,
   isStage,
@@ -21,5 +20,4 @@ export const consts = {
   port,
   domain,
   endpoint,
-  apiPrefix,
 };

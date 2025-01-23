@@ -1,5 +1,6 @@
 export type PlatformType = 'chzzk' | 'soop' | 'twitch';
 export type WebhookType = 'main' | 'sub' | 'extra';
+export type ExitCmd = 'delete' | 'cancel' | 'finish';
 
 export interface LiveInfo {
   type: PlatformType;

@@ -1,7 +1,6 @@
 import { Table } from '@tanstack/react-table';
-import { Payment } from '@/components/table/types.ts';
 
-export function SelectedRowCount({ table }: { table: Table<Payment> }) {
+export function SelectedRowCount<T>({ table }: { table: Table<T> }) {
   return (
     <div className="flex-1 text-sm text-muted-foreground">
       {table.getFilteredSelectedRowModel().rows.length} of{' '}

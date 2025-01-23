@@ -1,18 +1,17 @@
 import { Table } from '@tanstack/react-table';
-import { Payment } from '@/components/table/types.ts';
 import { Input } from '@/components/ui/input.tsx';
 
-interface FilterInputProps {
-  table: Table<Payment>;
+interface FilterInputProps<T> {
+  table: Table<T>;
   columnId: string;
   placeholder: string;
 }
 
-export function FilterInput({
+export function FilterInput<T>({
   table,
   columnId,
   placeholder,
-}: FilterInputProps) {
+}: FilterInputProps<T>) {
   return (
     <Input
       placeholder={placeholder}

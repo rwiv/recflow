@@ -1,5 +1,4 @@
 import { Table } from '@tanstack/react-table';
-import { Payment } from '@/components/table/types.ts';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 import { ChevronDown } from 'lucide-react';
 
-export function ColumnSelector({ table }: { table: Table<Payment> }) {
+export function ColumnSelector<T>({ table }: { table: Table<T> }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

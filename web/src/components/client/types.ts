@@ -1,4 +1,5 @@
-export type PlatformType = 'chzzk' | 'soop';
+export type PlatformType = 'chzzk' | 'soop' | 'twitch';
+export type WebhookType = 'main' | 'sub' | 'extra';
 
 export interface LiveInfo {
   type: PlatformType;
@@ -8,4 +9,14 @@ export interface LiveInfo {
   viewCnt: number;
   adult: boolean;
   assignedWebhookName: string;
+}
+
+export interface WebhookState {
+  name: string;
+  type: WebhookType;
+  url: string;
+  chzzkCapacity: number;
+  soopCapacity: number;
+  chzzkAssignedCnt: number;
+  soopAssignedCnt: number;
 }

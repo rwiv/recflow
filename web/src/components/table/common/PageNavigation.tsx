@@ -1,8 +1,7 @@
 import { Table } from '@tanstack/react-table';
-import { Payment } from '@/components/table/types.ts';
 import { Button } from '@/components/ui/button.tsx';
 
-export function PageNavigation({ table }: { table: Table<Payment> }) {
+export function PageNavigation<T>({ table }: { table: Table<T> }) {
   return (
     <div className="space-x-2">
       <Button

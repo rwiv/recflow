@@ -7,10 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table.tsx';
-import { Payment } from '@/components/table/types.ts';
-import { columns } from '@/components/table/columns.tsx';
 
-export function TableContent({ table }: { table: TableType<Payment> }) {
+interface TableContentProps<T> {
+  table: TableType<T>;
+  columnLength: number;
+}
+
+export function TableContent<T>({ table, columnLength }: TableContentProps<T>) {
   return (
     <Table>
       <TableHeader>
@@ -47,7 +50,7 @@ export function TableContent({ table }: { table: TableType<Payment> }) {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={columns.length} className="h-24 text-center">
+            <TableCell colSpan={columnLength} className="h-24 text-center">
               No results.
             </TableCell>
           </TableRow>

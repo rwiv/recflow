@@ -8,16 +8,27 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  ColumnDef,
 } from '@tanstack/react-table';
-import { columns, emailCid } from '@/components/table/columns.tsx';
-import { data } from '@/components/table/test_data.ts';
-import { TableContent } from '@/components/table/TableContent.tsx';
-import { FilterInput } from '@/components/table/FilterInput.tsx';
-import { ColumnSelector } from '@/components/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@/components/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@/components/table/PageNavigation.tsx';
+import { TableContent } from '@/components/table/common/TableContent.tsx';
+import { FilterInput } from '@/components/table/common/FilterInput.tsx';
+import { ColumnSelector } from '@/components/table/common/ColumnSelector.tsx';
+import { SelectedRowCount } from '@/components/table/common/SelectedRowCount.tsx';
+import { PageNavigation } from '@/components/table/common/PageNavigation.tsx';
 
-export function DataTable() {
+interface DataTableProps<T> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  filterCid: string;
+  filterPlaceholder: string;
+}
+
+export function DataTable<T>({
+  data,
+  columns,
+  filterCid,
+  filterPlaceholder,
+}: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -47,13 +58,13 @@ export function DataTable() {
       <div className="flex items-center py-4">
         <FilterInput
           table={table}
-          columnId={emailCid}
-          placeholder="Filter emails..."
+          columnId={filterCid}
+          placeholder={filterPlaceholder}
         />
         <ColumnSelector table={table} />
       </div>
       <div className="rounded-md border">
-        <TableContent table={table} />
+        <TableContent table={table} columnLength={columns.length} />
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <SelectedRowCount table={table} />

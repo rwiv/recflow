@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Amqp } from '../client/amqp.js';
 import { AMQP } from '../client/client.module.js';
-import { PlatformType } from '../platform/common.js';
+import { PlatformType } from '../platform/types.js';
 
 export const QUEUE_PREFIX = 'stdl:exit';
 

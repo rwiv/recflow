@@ -1,6 +1,6 @@
 import { QueryConfig } from '../common/query.js';
 import { Streamq } from '../client/streamq.js';
-import { TargetRepository } from '../storage/types.js';
+import { TargetRepository } from '../storage/target/types.js';
 import { log } from 'jslog';
 import { LiveFilterSoop } from './filters/live-filter.soop.js';
 import { SoopLiveInfoReq } from '../platform/soop.req.js';
@@ -8,7 +8,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../common/common.module.js';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { Allocator } from './allocator.js';
-import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
+import { LiveInfo, LiveInfoWrapper } from '../platform/live.wrapper.js';
 
 @Injectable()
 export class CheckerSoop {

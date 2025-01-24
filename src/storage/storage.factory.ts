@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../common/common.module.js';
 import { QueryConfig } from '../common/query.js';
-import { TargetRepositoryRedis } from './target-repository.redis.js';
-import { TargetRepositoryMem } from './target-repository.mem.js';
+import { TargetRepositoryRedis } from './target/target.repository.redis.js';
+import { TargetRepositoryMem } from './target/target.repository.mem.js';
 import { Env } from '../common/env.js';
 import { createClient, RedisClientType } from 'redis';
 import { log } from 'jslog';
-import { WhcRepository } from './whc-repository.js';
+import { WhcRepository } from './webhook/whc.repository.js';
 import { RedisConfig } from '../common/configs.js';
 
 @Injectable()

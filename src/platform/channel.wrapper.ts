@@ -1,4 +1,4 @@
-import { PlatformType } from './common.js';
+import { PlatformType } from './types.js';
 import { ChzzkChannelInfoReq } from './chzzk.req.js';
 import { SoopChannelInfoReq } from './soop.req.js';
 

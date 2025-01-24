@@ -1,5 +1,5 @@
 import { log } from 'jslog';
-import { Cookie } from './types.common.js';
+import { Cookie } from './types.js';
 import { decrypt } from '../common/encrypt.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../common/common.module.js';

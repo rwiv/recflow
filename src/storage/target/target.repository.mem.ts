@@ -1,10 +1,11 @@
-import { TargetRepository, WebhookCntState } from './types.js';
-import { QueryConfig } from '../common/query.js';
-import { WebhookState } from '../webhook/types.js';
+import { TargetRepository } from './types.js';
+import { QueryConfig } from '../../common/query.js';
+import { WebhookState } from '../../webhook/types.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { QUERY } from '../common/common.module.js';
-import { LiveInfo } from '../platform/wrapper.live.js';
-import { PlatformType } from '../platform/common.js';
+import { QUERY } from '../../common/common.module.js';
+import { LiveInfo } from '../../platform/live.wrapper.js';
+import { PlatformType } from '../../platform/types.js';
+import { WebhookCntState } from '../webhook/types.js';
 
 @Injectable()
 export class TargetRepositoryMem implements TargetRepository {

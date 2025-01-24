@@ -8,10 +8,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
-import { TargetRepository } from '../storage/types.js';
+import { TargetRepository } from '../storage/target/types.js';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { WebhookState } from '../webhook/types.js';
-import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
+import { LiveInfo, LiveInfoWrapper } from '../platform/live.wrapper.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 

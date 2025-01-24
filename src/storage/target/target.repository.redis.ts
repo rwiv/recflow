@@ -1,10 +1,10 @@
 import { TargetRepository } from './types.js';
-import { WebhookState } from '../webhook/types.js';
+import { WebhookState } from '../../webhook/types.js';
 import { Injectable } from '@nestjs/common';
-import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
+import { LiveInfo, LiveInfoWrapper } from '../../platform/live.wrapper.js';
 import { RedisClientType } from 'redis';
-import { RedisConfig } from '../common/configs.js';
-import { WhcRepository } from './whc-repository.js';
+import { RedisConfig } from '../../common/configs.js';
+import { WhcRepository } from '../webhook/whc.repository.js';
 
 const KEYS_KEY = 'stdl:targets:keys:';
 const KEY_PREFIX = 'stdl:targets:live:';

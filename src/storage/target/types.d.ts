@@ -1,5 +1,5 @@
-import { WebhookState } from '../webhook/types.js';
-import { LiveInfo } from '../platform/wrapper.live.js';
+import { WebhookState } from '../../webhook/types.js';
+import { LiveInfo } from '../../platform/live.wrapper.js';
 
 export interface TargetRepository {
   set(id: string, info: LiveInfo, wh: WebhookState): Promise<LiveInfo>;
@@ -9,9 +9,4 @@ export interface TargetRepository {
   allChzzk(): Promise<LiveInfo[]>;
   allSoop(): Promise<LiveInfo[]>;
   whStates(): Promise<WebhookState[]>;
-}
-
-export interface WebhookCntState {
-  chzzk: number;
-  soop: number;
 }

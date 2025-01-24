@@ -1,7 +1,7 @@
 import { Stdl } from '../client/stdl.js';
 import { Authed, SoopCredential } from '../client/authed.js';
 import { Notifier } from '../client/notifier.js';
-import { TargetRepository } from '../storage/types.js';
+import { TargetRepository } from '../storage/target/types.js';
 import {
   ChzzkWebhookMatcher,
   SoopWebhookMatcher,
@@ -17,10 +17,10 @@ import {
   WEBHOOK_MATCHER_CHZZK,
   WEBHOOK_MATCHER_SOOP,
 } from '../webhook/webhook.module.js';
-import { LiveInfo } from '../platform/wrapper.live.js';
+import { LiveInfo } from '../platform/live.wrapper.js';
 import { ChzzkLiveInfo } from '../platform/chzzk.dto.js';
 import { SoopLiveInfo } from '../platform/soop.dto.js';
-import { Cookie } from '../client/types.common.js';
+import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';
 
 @Injectable()

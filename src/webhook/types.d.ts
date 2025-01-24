@@ -1,4 +1,4 @@
-import { LiveInfo } from '../platform/wrapper.live.js';
+import { LiveInfo } from '../platform/live.wrapper.js';
 
 export type WebhookType = 'main' | 'sub' | 'extra';
 export type WebhookMode = 'mode1' | 'mode2' | 'mode3' | 'mode4';

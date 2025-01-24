@@ -1,13 +1,13 @@
 import { log } from 'jslog';
 import { ChzzkLiveInfoReq } from '../platform/chzzk.req.js';
 import { Streamq } from '../client/streamq.js';
-import { TargetRepository } from '../storage/types.js';
+import { TargetRepository } from '../storage/target/types.js';
 import { QueryConfig } from '../common/query.js';
 import { LiveFilterChzzk } from './filters/live-filter.chzzk.js';
 import { QUERY } from '../common/common.module.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
-import { LiveInfo, LiveInfoWrapper } from '../platform/wrapper.live.js';
+import { LiveInfo, LiveInfoWrapper } from '../platform/live.wrapper.js';
 import { Allocator } from './allocator.js';
 
 @Injectable()

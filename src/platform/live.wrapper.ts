@@ -1,4 +1,4 @@
-import { PlatformLiveInfo, PlatformType } from './common.js';
+import { PlatformLiveInfo, PlatformType } from './types.js';
 import { ChzzkLiveInfoReq } from './chzzk.req.js';
 import { SoopLiveInfoReq } from './soop.req.js';
 import { ChzzkLiveInfo } from './chzzk.dto.js';

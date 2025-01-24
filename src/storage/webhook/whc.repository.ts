@@ -1,9 +1,9 @@
-import { WebhookState } from '../webhook/types.js';
-import { WebhookCntState } from './types.js';
+import { WebhookState } from '../../webhook/types.js';
 import { RedisClientType } from 'redis';
-import { QueryConfig } from '../common/query.js';
-import { LiveInfo } from '../platform/wrapper.live.js';
-import { PlatformType } from '../platform/common.js';
+import { QueryConfig } from '../../common/query.js';
+import { LiveInfo } from '../../platform/live.wrapper.js';
+import { PlatformType } from '../../platform/types.js';
+import { WebhookCntState } from './types.js';
 
 export const WHC_KEY = 'stdl:targets:whc:';
 

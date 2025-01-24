@@ -1,9 +1,9 @@
 import { it } from 'vitest';
-import { readEnv } from '../common/env.js';
-import { TargetRepositoryRedis } from './target-repository.redis.js';
-import { readQueryConfig } from '../common/query.js';
-import { createRedisClient } from './storage.factory.js';
-import { WhcRepository } from './whc-repository.js';
+import { readEnv } from '../../common/env.js';
+import { TargetRepositoryRedis } from './target.repository.redis.js';
+import { readQueryConfig } from '../../common/query.js';
+import { createRedisClient } from '../storage.factory.js';
+import { WhcRepository } from '../webhook/whc.repository.js';
 
 const env = readEnv();
 const query = readQueryConfig(env.configPath);

@@ -1,5 +1,5 @@
 import { log } from 'jslog';
-import { Cookie } from './types.common.js';
+import { Cookie } from './types.js';
 import { Injectable } from '@nestjs/common';
 
 interface ChzzkLiveRequest {

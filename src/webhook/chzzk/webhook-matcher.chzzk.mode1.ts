@@ -1,7 +1,7 @@
 import { ChzzkWebhookMatcher, WebhookState } from '../types.js';
-import { findChzzkCandidate } from '../utils.js';
+import { findChzzkCandidate } from '../webhook.utils.js';
 import { Injectable } from '@nestjs/common';
-import { LiveInfo } from '../../platform/wrapper.live.js';
+import { LiveInfo } from '../../platform/live.wrapper.js';
 
 @Injectable()
 export class WebhookMatcherChzzkMode1 implements ChzzkWebhookMatcher {

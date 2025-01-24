@@ -1,7 +1,7 @@
-import { LiveTable } from '@/components/table/LiveTable.tsx';
+import { LiveTable } from '@/components/table/live/LiveTable.tsx';
 import { LiveInfo, WebhookState } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { WebhookTable } from '@/components/table/WebhookTable.tsx';
+import { WebhookTable } from '@/components/table/webhook/WebhookTable.tsx';
 import { fetchLives, fetchWebhooks } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 

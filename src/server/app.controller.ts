@@ -79,15 +79,14 @@ export class AppController {
   }
 
   private async getChzzkLive(channelId: string) {
-    const live = (await this.streamq.getChzzkChannel(channelId, true)).liveInfo;
+    const live = (await this.streamq.getChzzkChannel(channelId, true))
+      ?.liveInfo;
     if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
     return LiveInfo.fromChzzk(live);
   }
 
   private async getSoopLive(userId: string) {
-    const channel = await this.streamq.getSoopChannel(userId, true);
-    if (!channel) throw Error('Not found soop channel');
-    const live = channel.liveInfo;
+    const live = (await this.streamq.getSoopChannel(userId, true))?.liveInfo;
     if (!live) throw Error('Not found soopChannel.liveInfo');
     return LiveInfo.fromSoop(live);
   }

@@ -3,3 +3,9 @@ dist
 docker
 scripts
 dev
+secret
+
+tsconfig.node.tsbuildinfo
+tsconfig.tsbuildinfo
+vite.config.d.ts
+vite.config.js

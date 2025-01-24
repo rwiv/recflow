@@ -19,5 +19,7 @@ services:
       AMQP_PORT: "${AMQP_PORT}"
       AMQP_USERNAME: "${AMQP_USERNAME}"
       AMQP_PASSWORD: "${AMQP_USERNAME}"
+    ports:
+      - 3000:3000
     volumes:
       - ../helm/conf.yaml:/app/conf.yaml

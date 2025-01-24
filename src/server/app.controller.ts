@@ -11,7 +11,7 @@ import { Streamq } from '../client/streamq.js';
 import { TargetRepository } from '../storage/target/types.js';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { WebhookState } from '../webhook/types.js';
-import { LiveInfo, LiveInfoWrapper } from '../platform/live.wrapper.js';
+import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 
@@ -81,7 +81,7 @@ export class AppController {
   private async getChzzkLive(channelId: string) {
     const live = (await this.streamq.getChzzkChannel(channelId, true)).liveInfo;
     if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
-    return LiveInfoWrapper.fromChzzkReq(live);
+    return LiveInfo.fromChzzk(live);
   }
 
   private async getSoopLive(userId: string) {
@@ -89,6 +89,6 @@ export class AppController {
     if (!channel) throw Error('Not found soop channel');
     const live = channel.liveInfo;
     if (!live) throw Error('Not found soopChannel.liveInfo');
-    return LiveInfoWrapper.fromSoopReq(live);
+    return LiveInfo.fromSoop(live);
   }
 }

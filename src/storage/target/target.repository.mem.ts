@@ -3,7 +3,7 @@ import { QueryConfig } from '../../common/query.js';
 import { WebhookState } from '../../webhook/types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../common/common.module.js';
-import { LiveInfo } from '../../platform/live.wrapper.js';
+import { LiveInfo } from '../../platform/live.js';
 import { PlatformType } from '../../platform/types.js';
 import { WebhookCntState } from '../webhook/types.js';
 
@@ -52,6 +52,9 @@ export class TargetRepositoryMem implements TargetRepository {
     if (!live) throw Error(`${id} is not found`);
 
     this.map.delete(id);
+    if (!live.assignedWebhookName) {
+      throw Error('live.assignedWebhookName is undefined');
+    }
     this.updateWebhookCnt(live.assignedWebhookName, live.type, -1);
     return Promise.resolve(live);
   }

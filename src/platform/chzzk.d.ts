@@ -1,4 +1,4 @@
-export interface ChzzkLiveInfoReq {
+export interface ChzzkLiveInfo {
   channelId: string;
   channelName: string;
   channelImageUrl: string;
@@ -17,7 +17,7 @@ export interface ChzzkLiveInfoReq {
   watchPartyTag: string | null;
 }
 
-export interface ChzzkChannelInfoReq {
+export interface ChzzkChannelInfo {
   channelId: string;
   channelName: string;
   channelImageUrl: string;
@@ -26,5 +26,5 @@ export interface ChzzkChannelInfoReq {
   followerCount: number;
   openLive: boolean;
 
-  liveInfo: ChzzkLiveInfoReq | null;
+  liveInfo: ChzzkLiveInfo | null;
 }

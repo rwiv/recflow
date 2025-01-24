@@ -1,6 +1,6 @@
 import { QueryConfig } from '../../common/query.js';
 import { Streamq } from '../../client/streamq.js';
-import { SoopLiveInfoReq } from '../../platform/soop.req.js';
+import { SoopLiveInfo } from '../../platform/soop.js';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -8,9 +8,9 @@ export class LiveFilterSoop {
   constructor(private readonly streamq: Streamq) {}
 
   async getFiltered(
-    infos: SoopLiveInfoReq[],
+    infos: SoopLiveInfo[],
     query: QueryConfig,
-  ): Promise<SoopLiveInfoReq[]> {
+  ): Promise<SoopLiveInfo[]> {
     return (
       await Promise.all(
         infos.map(async (info) => {
@@ -38,9 +38,9 @@ export class LiveFilterSoop {
   }
 
   private async checkFollowerCnt(
-    info: SoopLiveInfoReq,
+    info: SoopLiveInfo,
     minFollowerCnt: number,
-  ): Promise<SoopLiveInfoReq | null> {
+  ): Promise<SoopLiveInfo | null> {
     const channel = await this.streamq.getSoopChannel(info.userId, false);
     if (channel === null) {
       return null;

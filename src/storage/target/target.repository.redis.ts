@@ -1,9 +1,8 @@
 import { TargetRepository } from './types.js';
 import { WebhookState } from '../../webhook/types.js';
 import { Injectable } from '@nestjs/common';
-import { LiveInfo, LiveInfoWrapper } from '../../platform/live.wrapper.js';
+import { LiveInfo } from '../../platform/live.js';
 import { RedisClientType } from 'redis';
-import { RedisConfig } from '../../common/configs.js';
 import { WhcRepository } from '../webhook/whc.repository.js';
 
 const KEYS_KEY = 'stdl:targets:keys:';
@@ -11,8 +10,6 @@ const KEY_PREFIX = 'stdl:targets:live:';
 
 @Injectable()
 export class TargetRepositoryRedis implements TargetRepository {
-  private readonly conf: RedisConfig;
-
   constructor(
     private readonly client: RedisClientType,
     public readonly whcMap: WhcRepository,
@@ -37,7 +34,7 @@ export class TargetRepositoryRedis implements TargetRepository {
     const client = this.getClient();
     const value = await client.get(KEY_PREFIX + id);
     if (!value) return undefined;
-    return LiveInfoWrapper.fromObject(JSON.parse(value));
+    return LiveInfo.fromObject(JSON.parse(value));
   }
 
   async set(id: string, info: LiveInfo, wh: WebhookState) {
@@ -60,6 +57,9 @@ export class TargetRepositoryRedis implements TargetRepository {
     const key = KEY_PREFIX + id;
     await this.client.del(key);
     await this.client.sRem(KEYS_KEY, key);
+    if (!live.assignedWebhookName) {
+      throw Error('live.assignedWebhookName is undefined');
+    }
     await this.whcMap.updateWebhookCnt(live.assignedWebhookName, live.type, -1);
 
     return live;
@@ -69,7 +69,7 @@ export class TargetRepositoryRedis implements TargetRepository {
     const promises = (await this.keys()).map((key) =>
       this.get(key.replace(KEY_PREFIX, '')),
     );
-    return Promise.all(promises);
+    return (await Promise.all(promises)).filter((info) => info !== undefined);
   }
 
   async allChzzk(): Promise<LiveInfo[]> {

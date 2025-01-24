@@ -5,11 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:stage": "vite -m stage",
-    "dev:prod": "vite -m production",
-    "build:dev": "tsc -b && vite build -m development",
-    "build:stage": "tsc -b && vite build -m stage",
-    "build:prod": "tsc -b && vite build -m production",
+    "build": "tsc -b && vite build -m production",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "preview": "vite preview"

@@ -3,12 +3,12 @@ import { Streamq } from '../client/streamq.js';
 import { TargetRepository } from '../storage/target/types.js';
 import { log } from 'jslog';
 import { LiveFilterSoop } from './filters/live-filter.soop.js';
-import { SoopLiveInfoReq } from '../platform/soop.req.js';
+import { SoopLiveInfo } from '../platform/soop.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../common/common.module.js';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { Allocator } from './allocator.js';
-import { LiveInfo, LiveInfoWrapper } from '../platform/live.wrapper.js';
+import { LiveInfo } from '../platform/live.js';
 
 @Injectable()
 export class CheckerSoop {
@@ -60,7 +60,7 @@ export class CheckerSoop {
       if (!channel) throw Error('Not found soop channel');
       const live = channel.liveInfo;
       if (!live) throw Error('Not found soopChannel.liveInfo');
-      await this.allocator.allocate(LiveInfoWrapper.fromSoopReq(live));
+      await this.allocator.allocate(LiveInfo.fromSoop(live));
     }
 
     // --------------- check by query --------------------------------------
@@ -68,12 +68,12 @@ export class CheckerSoop {
     const filtered = await this.filter.getFiltered(queriedInfos, this.query);
 
     // add new LiveInfos
-    const toBeAddedInfos: SoopLiveInfoReq[] = (
+    const toBeAddedInfos: SoopLiveInfo[] = (
       await Promise.all(filtered.map(async (info) => this.isToBeAdded(info)))
     ).filter((info) => info !== null);
 
     for (const newInfo of toBeAddedInfos) {
-      await this.allocator.allocate(LiveInfoWrapper.fromSoopReq(newInfo));
+      await this.allocator.allocate(LiveInfo.fromSoop(newInfo));
     }
 
     // delete LiveInfos
@@ -92,7 +92,7 @@ export class CheckerSoop {
     this.isChecking = false;
   }
 
-  private async isToBeAdded(newInfo: SoopLiveInfoReq) {
+  private async isToBeAdded(newInfo: SoopLiveInfo) {
     if (await this.targets.get(newInfo.userId)) return null;
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음

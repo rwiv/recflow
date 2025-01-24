@@ -1,7 +1,7 @@
 import { ChzzkWebhookMatcher, WebhookState, WebhookType } from '../types.js';
 import { QueryConfig } from '../../common/query.js';
 import { findChzzkCandidate } from '../webhook.utils.js';
-import { LiveInfo } from '../../platform/live.wrapper.js';
+import { LiveInfo } from '../../platform/live.js';
 
 export class WebhookMatcherChzzkMode4 implements ChzzkWebhookMatcher {
   constructor(private readonly query: QueryConfig) {}

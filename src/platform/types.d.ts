@@ -1,5 +1,5 @@
-import { ChzzkLiveInfo } from './chzzk.dto.js';
-import { SoopLiveInfo } from './soop.dto.js';
+import { ChzzkLiveInfo } from './chzzk.js';
+import { SoopLiveInfo } from './soop.js';
 
 export type PlatformType = 'chzzk' | 'soop';
 export type PlatformLiveInfo = ChzzkLiveInfo | SoopLiveInfo;

@@ -1,5 +1,5 @@
 import { log } from 'jslog';
-import { ChzzkLiveInfoReq } from '../platform/chzzk.req.js';
+import { ChzzkLiveInfo } from '../platform/chzzk.js';
 import { Streamq } from '../client/streamq.js';
 import { TargetRepository } from '../storage/target/types.js';
 import { QueryConfig } from '../common/query.js';
@@ -7,7 +7,7 @@ import { LiveFilterChzzk } from './filters/live-filter.chzzk.js';
 import { QUERY } from '../common/common.module.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
-import { LiveInfo, LiveInfoWrapper } from '../platform/live.wrapper.js';
+import { LiveInfo } from '../platform/live.js';
 import { Allocator } from './allocator.js';
 
 @Injectable()
@@ -55,7 +55,7 @@ export class CheckerChzzk {
         await this.streamq.getChzzkChannel(newChannel.channelId, true)
       ).liveInfo;
       if (!live) throw Error('Not found chzzkChannel.liveInfo');
-      await this.allocator.allocate(LiveInfoWrapper.fromChzzkReq(live));
+      await this.allocator.allocate(LiveInfo.fromChzzk(live));
     }
 
     // --------------- check by query --------------------------------------
@@ -63,12 +63,12 @@ export class CheckerChzzk {
     const filtered = await this.filter.getFiltered(queriedInfos, this.query);
 
     // add new LiveInfos
-    const toBeAddedInfos: ChzzkLiveInfoReq[] = (
+    const toBeAddedInfos: ChzzkLiveInfo[] = (
       await Promise.all(filtered.map(async (info) => this.isToBeAdded(info)))
     ).filter((info) => info !== null);
 
     for (const newInfo of toBeAddedInfos) {
-      await this.allocator.allocate(LiveInfoWrapper.fromChzzkReq(newInfo));
+      await this.allocator.allocate(LiveInfo.fromChzzk(newInfo));
     }
 
     // delete LiveInfos
@@ -87,7 +87,7 @@ export class CheckerChzzk {
     this.isChecking = false;
   }
 
-  private async isToBeAdded(newInfo: ChzzkLiveInfoReq) {
+  private async isToBeAdded(newInfo: ChzzkLiveInfo) {
     if (await this.targets.get(newInfo.channelId)) return null;
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음

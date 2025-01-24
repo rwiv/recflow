@@ -1,5 +1,5 @@
 import { WebhookState } from '../../webhook/types.js';
-import { LiveInfo } from '../../platform/live.wrapper.js';
+import { LiveInfo } from '../../platform/live.js';
 
 export interface TargetRepository {
   set(id: string, info: LiveInfo, wh: WebhookState): Promise<LiveInfo>;

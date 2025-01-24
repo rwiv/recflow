@@ -1,6 +1,6 @@
 import { PlatformType } from './types.js';
-import { ChzzkChannelInfoReq } from './chzzk.req.js';
-import { SoopChannelInfoReq } from './soop.req.js';
+import { ChzzkChannelInfo } from './chzzk.js';
+import { SoopChannelInfo } from './soop.js';
 
 export class ChannelInfo<T> {
   constructor(
@@ -12,9 +12,7 @@ export class ChannelInfo<T> {
     public readonly content: T,
   ) {}
 
-  static fromChzzk(
-    info: ChzzkChannelInfoReq,
-  ): ChannelInfo<ChzzkChannelInfoReq> {
+  static fromChzzk(info: ChzzkChannelInfo): ChannelInfo<ChzzkChannelInfo> {
     return new ChannelInfo(
       'chzzk',
       info.channelId,
@@ -25,7 +23,7 @@ export class ChannelInfo<T> {
     );
   }
 
-  static fromSoop(info: SoopChannelInfoReq): ChannelInfo<SoopChannelInfoReq> {
+  static fromSoop(info: SoopChannelInfo): ChannelInfo<SoopChannelInfo> {
     return new ChannelInfo(
       'soop',
       info.userId,

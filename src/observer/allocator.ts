@@ -17,9 +17,7 @@ import {
   WEBHOOK_MATCHER_CHZZK,
   WEBHOOK_MATCHER_SOOP,
 } from '../webhook/webhook.module.js';
-import { LiveInfo } from '../platform/live.wrapper.js';
-import { ChzzkLiveInfo } from '../platform/chzzk.dto.js';
-import { SoopLiveInfo } from '../platform/soop.dto.js';
+import { LiveInfo } from '../platform/live.js';
 import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';
 
@@ -76,9 +74,9 @@ export class Allocator {
   }
 
   private getWebhookMatcher(live: LiveInfo): WebhookMatcher {
-    if (live.content instanceof ChzzkLiveInfo) {
+    if (live.type === 'chzzk') {
       return this.chzzkMatcher;
-    } else if (live.content instanceof SoopLiveInfo) {
+    } else if (live.type === 'soop') {
       return this.soopMatcher;
     } else {
       console.error(typeof live);
@@ -88,13 +86,13 @@ export class Allocator {
   }
 
   private async requestStdl(whUrl: string, live: LiveInfo) {
-    if (live.content instanceof ChzzkLiveInfo) {
+    if (live.type === 'chzzk') {
       let cookies: Cookie[] | undefined = undefined;
       if (live.adult) {
         cookies = await this.authClient.requestChzzkCookies();
       }
       await this.stdl.requestChzzkLive(whUrl, live.channelId, true, cookies);
-    } else if (live.content instanceof SoopLiveInfo) {
+    } else if (live.type === 'soop') {
       let cred: SoopCredential | undefined = undefined;
       if (live.adult) {
         cred = await this.authClient.requestSoopCred();

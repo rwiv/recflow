@@ -1,7 +1,7 @@
 import { WebhookState } from '../../webhook/types.js';
 import { RedisClientType } from 'redis';
 import { QueryConfig } from '../../common/query.js';
-import { LiveInfo } from '../../platform/live.wrapper.js';
+import { LiveInfo } from '../../platform/live.js';
 import { PlatformType } from '../../platform/types.js';
 import { WebhookCntState } from './types.js';
 
@@ -64,6 +64,9 @@ export class WhcRepository {
       return whcMap;
     }
     for (const live of lives) {
+      if (!live.assignedWebhookName) {
+        throw Error('live.assignedWebhookName is undefined');
+      }
       const whc = whcMap[live.assignedWebhookName];
       if (whc === undefined) {
         throw Error('whc is undefined');
@@ -114,7 +117,7 @@ export class WhcRepository {
   }
 
   private newWhcMap() {
-    const whcMap = {};
+    const whcMap: { [name: string]: WebhookCntState } = {};
     const names = this.query.webhooks.map((wh) => wh.name);
     for (const name of names) {
       whcMap[name] = { chzzk: 0, soop: 0 };

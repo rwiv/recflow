@@ -1,9 +1,6 @@
-import {
-  ChzzkChannelInfoReq,
-  ChzzkLiveInfoReq,
-} from '../platform/chzzk.req.js';
+import { ChzzkChannelInfo, ChzzkLiveInfo } from '../platform/chzzk.js';
 import { QueryConfig } from '../common/query.js';
-import { SoopChannelInfoReq, SoopLiveInfoReq } from '../platform/soop.req.js';
+import { SoopChannelInfo, SoopLiveInfo } from '../platform/soop.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
@@ -18,8 +15,8 @@ export class Streamq {
     this.size = this.env.streamqQsize;
   }
 
-  async getChzzkLive(query: QueryConfig): Promise<ChzzkLiveInfoReq[]> {
-    const infoMap = new Map<string, ChzzkLiveInfoReq>();
+  async getChzzkLive(query: QueryConfig): Promise<ChzzkLiveInfo[]> {
+    const infoMap = new Map<string, ChzzkLiveInfo>();
     for (const tag of query.chzzkTags) {
       const res = await this.getChzzkLiveByTag(tag);
       res.forEach((info) => infoMap.set(info.channelId, info));
@@ -42,7 +39,7 @@ export class Streamq {
     }
     const res = await fetch(url, { method: 'GET' });
     await this.checkResponse(res);
-    return (await res.json()) as ChzzkChannelInfoReq;
+    return (await res.json()) as ChzzkChannelInfo;
   }
 
   private async checkResponse(res: Response) {
@@ -56,25 +53,25 @@ export class Streamq {
     const url = `${this.streamqUrl}/chzzk/live/v1/tag?size=${this.size}&tag=${encodeURIComponent(tag)}`;
     const res = await fetch(url, { method: 'GET' });
     await this.checkResponse(res);
-    return (await res.json()) as ChzzkLiveInfoReq[];
+    return (await res.json()) as ChzzkLiveInfo[];
   }
 
   private async getChzzkLiveByKeyword(keyword: string) {
     const url = `${this.streamqUrl}/chzzk/live/v1/keyword?size=${this.size}&keyword=${encodeURIComponent(keyword)}`;
     const res = await fetch(url, { method: 'GET' });
     await this.checkResponse(res);
-    return (await res.json()) as ChzzkLiveInfoReq[];
+    return (await res.json()) as ChzzkLiveInfo[];
   }
 
   private async getChzzkLiveByWatchParty(watchPartyNo: number) {
     const url = `${this.streamqUrl}/chzzk/live/v1/watchparty?size=${this.size}&watchPartyNo=${watchPartyNo}`;
     const res = await fetch(url, { method: 'GET' });
     await this.checkResponse(res);
-    return (await res.json()) as ChzzkLiveInfoReq[];
+    return (await res.json()) as ChzzkLiveInfo[];
   }
 
   async getSoopLive(query: QueryConfig) {
-    const infoMap = new Map<string, SoopLiveInfoReq>();
+    const infoMap = new Map<string, SoopLiveInfo>();
     for (const cateNo of query.soopCateNoList) {
       const res = await this.getSoopLiveByCategory(cateNo);
       res.forEach((info) => infoMap.set(info.userId, info));
@@ -90,7 +87,7 @@ export class Streamq {
     try {
       const res = await fetch(url, { method: 'GET' });
       await this.checkResponse(res);
-      return (await res.json()) as SoopChannelInfoReq | null;
+      return (await res.json()) as SoopChannelInfo | null;
     } catch (e) {
       return null;
     }
@@ -100,6 +97,6 @@ export class Streamq {
     const url = `${this.streamqUrl}/soop/live/v1/category?size=${this.size}&cateNo=${encodeURIComponent(cateNo)}`;
     const res = await fetch(url, { method: 'GET' });
     await this.checkResponse(res);
-    return (await res.json()) as SoopLiveInfoReq[];
+    return (await res.json()) as SoopLiveInfo[];
   }
 }

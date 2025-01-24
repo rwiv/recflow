@@ -69,16 +69,16 @@ export class AmqpImpl implements Amqp {
     return this.ch.sendToQueue(queue, Buffer.from(JSON.stringify(content)));
   }
 
-  close() {
-    return this.conn?.close();
+  async close() {
+    await this.conn?.close();
   }
 }
 
 @Injectable()
 export class AmqpMock implements Amqp {
-  async init() {
+  init() {
     log.info('AmqpMock.connect()');
-    return;
+    return Promise.resolve();
   }
 
   createChannel() {
@@ -96,7 +96,8 @@ export class AmqpMock implements Amqp {
   }
 
   publish(queue: string, content: object) {
-    log.info(`AmqpMock.publish(${queue}, ${content})`);
+    log.info(`AmqpMock.publish(${queue})`);
+    log.info('AmqpMock.publish content:', content);
     return true;
   }
 

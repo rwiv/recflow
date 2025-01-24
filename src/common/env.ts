@@ -10,7 +10,7 @@ export interface Env {
   streamqQsize: number;
   authedUrl: string;
   authedEncKey: string;
-  ntfyEndpoint: string | undefined;
+  ntfyEndpoint: string;
   ntfyTopic: string;
   redis: RedisConfig;
   amqp: AmqpConfig;

@@ -1,6 +1,6 @@
 import { SoopWebhookMatcher, WebhookState } from '../types.js';
 import { findSoopCandidate } from '../webhook.utils.js';
-import { LiveInfo } from '../../platform/live.wrapper.js';
+import { LiveInfo } from '../../platform/live.js';
 
 export class WebhookMatcherSoopMode1 implements SoopWebhookMatcher {
   match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null {

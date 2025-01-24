@@ -4,7 +4,7 @@ import { ColumnSelector } from '@/components/table/common/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/table/common/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/table/common/PageNavigation.tsx';
 import { useTable } from '@/components/table/common/useTable.ts';
-import { WebhookState } from '@/components/client/types.ts';
+import { WebhookState } from '@/client/types.ts';
 import {
   webhookColumns,
   webhookTypeCid,

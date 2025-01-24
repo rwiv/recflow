@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { WebhookState } from '@/components/client/types.ts';
+import { WebhookState } from '@/client/types.ts';
 import {
   baseColumnDef,
   createSelectColumn,
@@ -15,7 +15,7 @@ const chzzkColumn: ColumnDef<WebhookState> = {
   cell: ({ row }) => {
     const wh = row.original;
     const content = `${wh.chzzkAssignedCnt} (${wh.chzzkCapacity})`;
-    return <div>{content}</div>;
+    return <div className="m-1">{content}</div>;
   },
 };
 
@@ -25,7 +25,7 @@ const soopColumn: ColumnDef<WebhookState> = {
   cell: ({ row }) => {
     const wh = row.original;
     const content = `${wh.soopAssignedCnt} (${wh.soopCapacity})`;
-    return <div>{content}</div>;
+    return <div className="m-1">{content}</div>;
   },
 };
 

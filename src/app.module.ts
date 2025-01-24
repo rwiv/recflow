@@ -10,7 +10,7 @@ import { join } from 'path';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(import.meta.dirname, '..', '..', 'public'),
+      rootPath: join(import.meta.dirname, '..', 'public'),
     }),
     ConfigModule,
     ClientModule,

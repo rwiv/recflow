@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { LiveInfo, WebhookState } from '@/components/client/types.ts';
+import { LiveInfo, WebhookState } from '@/client/types.ts';
 import { randomElem } from '@/lib/list.ts';
 
 export function mockLiveInfo(): LiveInfo {

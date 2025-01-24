@@ -11,6 +11,7 @@ async function bootstrap() {
   const env = app.get<Env>(ENV);
   if (env.nodeEnv !== 'prod') {
     log.info('Env', env);
+    app.enableCors();
   }
 
   const observer = app.get(Observer);

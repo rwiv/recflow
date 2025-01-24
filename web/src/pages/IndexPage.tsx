@@ -1,33 +1,33 @@
-import { css } from '@emotion/react';
-import { Button } from '@/components/ui/button.tsx';
 import { LiveTable } from '@/components/table/LiveTable.tsx';
-import { LiveInfo, WebhookState } from '@/components/client/types.ts';
-import { mockLiveInfo, mockWebhookState } from '@/components/client/mocks.ts';
+import { LiveInfo, WebhookState } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WebhookTable } from '@/components/table/WebhookTable.tsx';
-
-const style = css`
-  color: hotpink;
-`;
-
-const infos: LiveInfo[] = Array.from({ length: 15 }, () => mockLiveInfo());
-const webhooks: WebhookState[] = Array.from({ length: 15 }, () =>
-  mockWebhookState(),
-);
+import { fetchLives, fetchWebhooks } from '@/client/client.ts';
+import { useQuery } from '@tanstack/react-query';
 
 export function IndexPage() {
+  const { data: lives } = useQuery<LiveInfo[]>({
+    queryKey: ['lives'],
+    queryFn: fetchLives,
+  });
+  const { data: webhooks } = useQuery<WebhookState[]>({
+    queryKey: ['webhooks'],
+    queryFn: fetchWebhooks,
+  });
+
   return (
     <div>
-      <Content />
-      <div className="m-3" css={style}>
-        hello
-      </div>
-      <Button>Click me</Button>
+      {lives && webhooks && <TableContent lives={lives} webhooks={webhooks} />}
     </div>
   );
 }
 
-function Content() {
+interface TestPageProps {
+  lives: LiveInfo[];
+  webhooks: WebhookState[];
+}
+
+function TableContent({ lives, webhooks }: TestPageProps) {
   return (
     <Tabs defaultValue="lives" className="mx-10 my-3">
       <TabsList className="my-3">
@@ -36,7 +36,7 @@ function Content() {
       </TabsList>
       <TabsContent value="lives">
         <div>
-          <LiveTable data={infos} />
+          <LiveTable data={lives} />
         </div>
       </TabsContent>
       <TabsContent value="webhooks">

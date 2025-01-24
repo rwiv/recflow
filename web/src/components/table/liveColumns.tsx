@@ -4,21 +4,39 @@ import {
   createSelectColumn,
   sortableColumnDef,
 } from '@/components/table/common/column_utils.tsx';
-import { LiveInfo } from '@/components/client/types.ts';
+import { LiveInfo } from '@/client/types.ts';
 
 export const selectCid = 'select';
 export const platformTypeCid = 'type';
-export const channelIdCid = 'channelId';
-export const channelNameCid = 'channelName';
 export const liveTitleCid = 'liveTitle';
 export const viewCntCid = 'viewCnt';
 export const assignedWebhookNameCid = 'assignedWebhookName';
 
+const channelColumn: ColumnDef<LiveInfo> = {
+  accessorKey: 'channel',
+  header: 'Channel',
+  cell: ({ row }) => {
+    const chan = row.original;
+    let url = '';
+    if (chan.type === 'chzzk') {
+      url = `https://chzzk.naver.com/${chan.channelId}`;
+    } else if (chan.type === 'soop') {
+      url = `https://ch.sooplive.co.kr/${chan.channelId}`;
+    } else {
+      throw new Error(`Not supported channel type: ${chan.type}`);
+    }
+    return (
+      <div className="font-medium my-1">
+        <a href={url}>{chan.channelName}</a>
+      </div>
+    );
+  },
+};
+
 export const liveColumns: ColumnDef<LiveInfo>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(platformTypeCid, 'Platform'),
-  baseColumnDef(channelIdCid, 'ID'),
-  baseColumnDef(channelNameCid, 'Channel'),
+  channelColumn,
   baseColumnDef(liveTitleCid, 'Title'),
   sortableColumnDef(viewCntCid, 'Viewers'),
   baseColumnDef(assignedWebhookNameCid, 'Webhook'),

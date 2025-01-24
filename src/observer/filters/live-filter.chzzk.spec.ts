@@ -15,8 +15,6 @@ it('test filtered', async () => {
 
   for (const info of filtered) {
     const url = `https://chzzk.naver.com/live/${info.channelId}`;
-    console.log(
-      `${url} - ${info.channelName} (${info.concurrentUserCount}): ${info.liveTitle}`,
-    );
+    console.log(`${url} - ${info.channelName} (${info.concurrentUserCount}): ${info.liveTitle}`);
   }
 });

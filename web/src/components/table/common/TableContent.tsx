@@ -24,10 +24,7 @@ export function TableContent<T>({ table, columnLength }: TableContentProps<T>) {
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               );
             })}
@@ -37,10 +34,7 @@ export function TableContent<T>({ table, columnLength }: TableContentProps<T>) {
       <TableBody>
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              data-state={row.getIsSelected() && 'selected'}
-            >
+            <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

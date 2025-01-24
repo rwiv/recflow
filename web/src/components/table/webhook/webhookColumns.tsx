@@ -1,9 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { WebhookState } from '@/client/types.ts';
-import {
-  baseColumnDef,
-  createSelectColumn,
-} from '@/components/table/common/column_utils.tsx';
+import { baseColumnDef, createSelectColumn } from '@/components/table/common/column_utils.tsx';
 
 export const selectCid = 'select';
 export const nameCid = 'name';

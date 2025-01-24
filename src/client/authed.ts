@@ -42,9 +42,7 @@ export class AuthedImpl implements Authed {
       return undefined;
     }
     const encRes = (await res.json()) as EncryptedResponse;
-    const cookies = JSON.parse(
-      decrypt(encRes.encrypted, this.enckey),
-    ) as Cookie[];
+    const cookies = JSON.parse(decrypt(encRes.encrypted, this.enckey)) as Cookie[];
     if (cookies.length === 0) {
       log.error('No chzzk cookies');
       return undefined;

@@ -44,19 +44,14 @@ export class CheckerSoop {
 
     const newLiveSubsChannels = (
       await Promise.all(
-        newSubsChannelIds.map((userId) =>
-          this.streamq.getSoopChannel(userId, false),
-        ),
+        newSubsChannelIds.map((userId) => this.streamq.getSoopChannel(userId, false)),
       )
     )
       .filter((info) => info !== null)
       .filter((info) => info.openLive);
 
     for (const newChannel of newLiveSubsChannels) {
-      const channel = await this.streamq.getSoopChannel(
-        newChannel.userId,
-        true,
-      );
+      const channel = await this.streamq.getSoopChannel(newChannel.userId, true);
       if (!channel) throw Error('Not found soop channel');
       const live = channel.liveInfo;
       if (!live) throw Error('Not found soopChannel.liveInfo');
@@ -79,9 +74,7 @@ export class CheckerSoop {
     // delete LiveInfos
     const toBeDeletedInfos = (
       await Promise.all(
-        (await this.targets.allSoop()).map(async (info) =>
-          this.isToBeDeleted(info),
-        ),
+        (await this.targets.allSoop()).map(async (info) => this.isToBeDeleted(info)),
       )
     ).filter((info) => info !== null);
 
@@ -103,10 +96,7 @@ export class CheckerSoop {
   }
 
   private async isToBeDeleted(existingInfo: LiveInfo) {
-    const channel = await this.streamq.getSoopChannel(
-      existingInfo.channelId,
-      false,
-    );
+    const channel = await this.streamq.getSoopChannel(existingInfo.channelId, false);
     if (channel?.openLive) return null;
     return existingInfo;
   }

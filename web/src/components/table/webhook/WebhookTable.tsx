@@ -5,10 +5,7 @@ import { SelectedRowCount } from '@/components/table/common/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/table/common/PageNavigation.tsx';
 import { useTable } from '@/components/table/common/useTable.ts';
 import { WebhookState } from '@/client/types.ts';
-import {
-  nameCid,
-  webhookColumns,
-} from '@/components/table/webhook/webhookColumns.tsx';
+import { nameCid, webhookColumns } from '@/components/table/webhook/webhookColumns.tsx';
 
 export function WebhookTable({ data }: { data: WebhookState[] }) {
   const table = useTable(data, webhookColumns);
@@ -16,11 +13,7 @@ export function WebhookTable({ data }: { data: WebhookState[] }) {
   return (
     <div className="w-full">
       <div className="flex items-center mb-4">
-        <FilterInput
-          table={table}
-          columnId={nameCid}
-          placeholder="Filter names..."
-        />
+        <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
         <ColumnSelector table={table} />
       </div>
       <div className="rounded-md border">

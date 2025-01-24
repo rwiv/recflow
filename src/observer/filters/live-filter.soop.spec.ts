@@ -15,8 +15,6 @@ it('test filtered', async () => {
 
   for (const info of filtered) {
     const url = `https://play.sooplive.co.kr/${info.userId}`;
-    console.log(
-      `${url} - ${info.userNick} (${info.totalViewCnt}): ${info.broadTitle}`,
-    );
+    console.log(`${url} - ${info.userNick} (${info.totalViewCnt}): ${info.broadTitle}`);
   }
 });

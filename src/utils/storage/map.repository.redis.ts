@@ -44,9 +44,7 @@ export class RedisRepository<T> {
   }
 
   async all() {
-    const promises = (await this.keys()).map((key) =>
-      this.get(key.replace(this.keyPrefix, '')),
-    );
+    const promises = (await this.keys()).map((key) => this.get(key.replace(this.keyPrefix, '')));
     return Promise.all(promises);
   }
 }

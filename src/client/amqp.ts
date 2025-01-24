@@ -26,9 +26,7 @@ export class AmqpImpl implements Amqp {
 
   async init() {
     const { host, port, username, password } = this.conf;
-    this.conn = await amqplib.connect(
-      `amqp://${username}:${password}@${host}:${port}`,
-    );
+    this.conn = await amqplib.connect(`amqp://${username}:${password}@${host}:${port}`);
     this.ch = await this.createChannel();
   }
 

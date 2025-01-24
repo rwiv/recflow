@@ -22,9 +22,6 @@ describe('AppController', () => {
   });
 
   it('health', () => {
-    return request(app.getHttpServer())
-      .get('/api/health')
-      .expect(200)
-      .expect('hello');
+    return request(app.getHttpServer()).get('/api/health').expect(200).expect('hello');
   });
 });

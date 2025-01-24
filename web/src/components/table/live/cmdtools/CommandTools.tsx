@@ -20,12 +20,8 @@ export function CommandTools({ table }: { table: Table<LiveInfo> }) {
   const queryClient = useQueryClient();
 
   const remove = async (cmd: ExitCmd) => {
-    const checked = table
-      .getFilteredSelectedRowModel()
-      .rows.map((it) => it.original);
-    await Promise.all(
-      checked.map((live) => deleteLive(live.channelId, live.type, cmd)),
-    );
+    const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
+    await Promise.all(checked.map((live) => deleteLive(live.channelId, live.type, cmd)));
     table.toggleAllPageRowsSelected(false);
     await queryClient.invalidateQueries({ queryKey: ['lives'] });
   };
@@ -60,19 +56,11 @@ export function CreateButton() {
   );
 }
 
-function ExitButton({
-  onClick,
-  children,
-}: {
-  onClick: () => void;
-  children: ReactNode;
-}) {
+function ExitButton({ onClick, children }: { onClick: () => void; children: ReactNode }) {
   return (
     <AlertDialog
       title="Are you absolutely sure?"
-      description={
-        'This action cannot be undone. This will permanently delete data.'
-      }
+      description={'This action cannot be undone. This will permanently delete data.'}
       onAction={onClick}
     >
       <Button variant="secondary">{children}</Button>

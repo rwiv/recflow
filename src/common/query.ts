@@ -57,9 +57,7 @@ function validate(query: QueryConfig) {
   }
   for (const wh of query.webhooks) {
     if (['main', 'sub', 'extra'].includes(wh.type) === false) {
-      throw new Error(
-        `webhook type must be one of "main", "sub", "extra": ${wh.type}`,
-      );
+      throw new Error(`webhook type must be one of "main", "sub", "extra": ${wh.type}`);
     }
   }
 }

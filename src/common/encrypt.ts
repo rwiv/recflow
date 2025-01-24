@@ -9,10 +9,7 @@ export function encrypt(plainText: string, key: string): string {
   const iv = crypto.randomBytes(16); // Generate a random IV
   const cipher = crypto.createCipheriv('aes-256-cfb', Buffer.from(key), iv);
 
-  const encrypted = Buffer.concat([
-    cipher.update(plainText, 'utf8'),
-    cipher.final(),
-  ]);
+  const encrypted = Buffer.concat([cipher.update(plainText, 'utf8'), cipher.final()]);
 
   // Combine IV and encrypted text and encode in base64
   return Buffer.concat([iv, encrypted]).toString('base64');
@@ -30,10 +27,7 @@ export function decrypt(encryptedText: string, key: string): string {
   const encrypted = inputBuffer.subarray(16);
 
   const decipher = crypto.createDecipheriv('aes-256-cfb', Buffer.from(key), iv);
-  const decrypted = Buffer.concat([
-    decipher.update(encrypted),
-    decipher.final(),
-  ]);
+  const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
 
   return decrypted.toString('utf8');
 }

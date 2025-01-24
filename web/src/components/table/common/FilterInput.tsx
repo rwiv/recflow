@@ -7,18 +7,12 @@ interface FilterInputProps<T> {
   placeholder: string;
 }
 
-export function FilterInput<T>({
-  table,
-  columnId,
-  placeholder,
-}: FilterInputProps<T>) {
+export function FilterInput<T>({ table, columnId, placeholder }: FilterInputProps<T>) {
   return (
     <Input
       placeholder={placeholder}
       value={(table.getColumn(columnId)?.getFilterValue() as string) ?? ''}
-      onChange={(event) =>
-        table.getColumn(columnId)?.setFilterValue(event.target.value)
-      }
+      onChange={(event) => table.getColumn(columnId)?.setFilterValue(event.target.value)}
       className="max-w-sm"
     />
   );

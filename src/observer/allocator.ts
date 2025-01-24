@@ -2,21 +2,14 @@ import { Stdl } from '../client/stdl.js';
 import { Authed, SoopCredential } from '../client/authed.js';
 import { Notifier } from '../client/notifier.js';
 import { TargetRepository } from '../storage/target/types.js';
-import {
-  ChzzkWebhookMatcher,
-  SoopWebhookMatcher,
-  WebhookMatcher,
-} from '../webhook/types.js';
+import { ChzzkWebhookMatcher, SoopWebhookMatcher, WebhookMatcher } from '../webhook/types.js';
 import { log } from 'jslog';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
 import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
-import {
-  WEBHOOK_MATCHER_CHZZK,
-  WEBHOOK_MATCHER_SOOP,
-} from '../webhook/webhook.module.js';
+import { WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.module.js';
 import { LiveInfo } from '../platform/live.js';
 import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';

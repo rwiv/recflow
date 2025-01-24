@@ -7,10 +7,7 @@ import { Injectable } from '@nestjs/common';
 export class LiveFilterSoop {
   constructor(private readonly streamq: Streamq) {}
 
-  async getFiltered(
-    infos: SoopLiveInfo[],
-    query: QueryConfig,
-  ): Promise<SoopLiveInfo[]> {
+  async getFiltered(infos: SoopLiveInfo[], query: QueryConfig): Promise<SoopLiveInfo[]> {
     return (
       await Promise.all(
         infos.map(async (info) => {

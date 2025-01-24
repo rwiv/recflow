@@ -1,9 +1,4 @@
-import {
-  ExitCmd,
-  LiveInfo,
-  PlatformType,
-  WebhookState,
-} from '@/client/types.ts';
+import { ExitCmd, LiveInfo, PlatformType, WebhookState } from '@/client/types.ts';
 import { configs } from '@/common/configs.ts';
 
 export async function fetchWebhooks() {
@@ -22,11 +17,7 @@ export async function createLive(uid: string, type: PlatformType) {
   return (await res.json()) as LiveInfo;
 }
 
-export async function deleteLive(
-  uid: string,
-  type: PlatformType,
-  cmd: ExitCmd,
-) {
+export async function deleteLive(uid: string, type: PlatformType, cmd: ExitCmd) {
   const url = `${configs.endpoint}/api/${type}/${uid}?cmd=${cmd}`;
   const res = await fetch(url, { method: 'DELETE' });
   return (await res.json()) as LiveInfo;

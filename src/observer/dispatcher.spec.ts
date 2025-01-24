@@ -11,9 +11,7 @@ interface TestConfig {
 const env = readEnv();
 const amqp = new AmqpImpl(env);
 const dispatcher = new Dispatcher(amqp);
-const conf = JSON.parse(
-  fs.readFileSync('dev/test_conf.json', 'utf-8'),
-) as TestConfig;
+const conf = JSON.parse(fs.readFileSync('dev/test_conf.json', 'utf-8')) as TestConfig;
 
 it('test cancel', async () => {
   await amqp.init();

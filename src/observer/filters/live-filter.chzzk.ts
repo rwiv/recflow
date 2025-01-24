@@ -7,10 +7,7 @@ import { Injectable } from '@nestjs/common';
 export class LiveFilterChzzk {
   constructor(private readonly streamq: Streamq) {}
 
-  async getFiltered(
-    infos: ChzzkLiveInfo[],
-    query: QueryConfig,
-  ): Promise<ChzzkLiveInfo[]> {
+  async getFiltered(infos: ChzzkLiveInfo[], query: QueryConfig): Promise<ChzzkLiveInfo[]> {
     return (
       await Promise.all(
         infos.map(async (info) => {
@@ -57,10 +54,7 @@ export class LiveFilterChzzk {
     info: ChzzkLiveInfo,
     minFollowerCnt: number,
   ): Promise<ChzzkLiveInfo | null> {
-    const { followerCount } = await this.streamq.getChzzkChannel(
-      info.channelId,
-      false,
-    );
+    const { followerCount } = await this.streamq.getChzzkChannel(info.channelId, false);
     if (followerCount >= minFollowerCnt) {
       return info;
     } else {

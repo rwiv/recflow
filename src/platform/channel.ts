@@ -24,13 +24,6 @@ export class ChannelInfo<T> {
   }
 
   static fromSoop(info: SoopChannelInfo): ChannelInfo<SoopChannelInfo> {
-    return new ChannelInfo(
-      'soop',
-      info.userId,
-      info.userNick,
-      info.fanCnt,
-      info.openLive,
-      info,
-    );
+    return new ChannelInfo('soop', info.userId, info.userNick, info.fanCnt, info.openLive, info);
   }
 }

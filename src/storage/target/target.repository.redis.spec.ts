@@ -10,10 +10,7 @@ const query = readQueryConfig(env.configPath);
 
 it('print', async () => {
   const redis = await createRedisClient(env.redis);
-  const repo = new TargetRepositoryRedis(
-    redis,
-    new WhcRepository(redis, query),
-  );
+  const repo = new TargetRepositoryRedis(redis, new WhcRepository(redis, query));
   console.log(await repo.keys());
   console.log(await repo.whcMap.getWhcMap());
   const chzzk = await repo.allChzzk();
@@ -24,9 +21,6 @@ it('print', async () => {
 
 it('clear', async () => {
   const redis = await createRedisClient(env.redis);
-  const repo = new TargetRepositoryRedis(
-    redis,
-    new WhcRepository(redis, query),
-  );
+  const repo = new TargetRepositoryRedis(redis, new WhcRepository(redis, query));
   await repo.clear();
 });

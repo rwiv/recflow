@@ -66,9 +66,7 @@ export class TargetRepositoryRedis implements TargetRepository {
   }
 
   async all() {
-    const promises = (await this.keys()).map((key) =>
-      this.get(key.replace(KEY_PREFIX, '')),
-    );
+    const promises = (await this.keys()).map((key) => this.get(key.replace(KEY_PREFIX, '')));
     return (await Promise.all(promises)).filter((info) => info !== undefined);
   }
 

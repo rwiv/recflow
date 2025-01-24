@@ -15,11 +15,7 @@ export function IndexPage() {
     queryFn: fetchWebhooks,
   });
 
-  return (
-    <div>
-      {lives && webhooks && <TableContent lives={lives} webhooks={webhooks} />}
-    </div>
-  );
+  return <div>{lives && webhooks && <TableContent lives={lives} webhooks={webhooks} />}</div>;
 }
 
 interface TestPageProps {

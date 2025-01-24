@@ -40,8 +40,7 @@ export function readEnv(): Env {
   // streamq
   const streamqUrl = process.env.STREAMQ_URL;
   const qsizeStr = process.env.STREAMQ_QSIZE;
-  if (streamqUrl === undefined || qsizeStr === undefined)
-    throw Error('streamq data is undefined');
+  if (streamqUrl === undefined || qsizeStr === undefined) throw Error('streamq data is undefined');
   const streamqQsize = parseInt(qsizeStr);
   if (isNaN(streamqQsize)) throw Error('streamqQsize is NaN');
 
@@ -55,18 +54,13 @@ export function readEnv(): Env {
   // ntfy
   const ntfyEndpoint = process.env.NTFY_ENDPOINT;
   const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
-  if (ntfyEndpoint === undefined || ntfyTopic === undefined)
-    throw Error('ntfy data is undefined');
+  if (ntfyEndpoint === undefined || ntfyTopic === undefined) throw Error('ntfy data is undefined');
 
   // redis
   const redisHost = process.env.REDIS_HOST;
   const redisPortStr = process.env.REDIS_PORT;
   const redisPassword = process.env.REDIS_PASSWORD;
-  if (
-    redisHost === undefined ||
-    redisPortStr === undefined ||
-    redisPassword === undefined
-  ) {
+  if (redisHost === undefined || redisPortStr === undefined || redisPassword === undefined) {
     throw Error('redis data is undefined');
   }
   const redisPort = parseInt(redisPortStr);

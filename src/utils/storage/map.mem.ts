@@ -1,0 +1,46 @@
+import { AsyncMap } from './interface.js';
+
+export class MemoryMap<K, V> implements AsyncMap<K, V> {
+  private map = new Map<K, V>();
+
+  get(key: K): Promise<V | undefined> {
+    return Promise.resolve(this.map.get(key));
+  }
+
+  async set(key: K, value: V): Promise<void> {
+    if (this.map.has(key)) {
+      throw Error('Already exists');
+    }
+    this.map.set(key, value);
+    return Promise.resolve();
+  }
+
+  async delete(key: K): Promise<void> {
+    if (!this.map.has(key)) {
+      throw Error('Not found');
+    }
+    this.map.delete(key);
+    return Promise.resolve();
+  }
+
+  clear(): Promise<void> {
+    this.map.clear();
+    return Promise.resolve();
+  }
+
+  size(): Promise<number> {
+    return Promise.resolve(this.map.size);
+  }
+
+  keys(): Promise<K[]> {
+    return Promise.resolve(Array.from(this.map.keys()));
+  }
+
+  values(): Promise<V[]> {
+    return Promise.resolve(Array.from(this.map.values()));
+  }
+
+  entries(): Promise<[K, V][]> {
+    return Promise.resolve(Array.from(this.map.entries()));
+  }
+}

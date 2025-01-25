@@ -1,18 +1,16 @@
-import { Controller, Delete, Get, Inject, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
-import { TargetRepository } from '../storage/target/types.js';
-import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { WebhookState } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
+import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
 
 @Controller('/api')
 export class AppController {
   constructor(
     private readonly streamq: Streamq,
-    @Inject(TARGET_REPOSITORY)
-    private readonly targets: TargetRepository,
+    private readonly targeted: TargetedLiveRepository,
     private readonly allocator: Allocator,
   ) {}
 
@@ -23,12 +21,12 @@ export class AppController {
 
   @Get('/webhooks')
   whStates(): Promise<WebhookState[]> {
-    return this.targets.whStates();
+    return this.targeted.webhooks();
   }
 
   @Get('/lives')
   all(): Promise<LiveInfo[]> {
-    return this.targets.all();
+    return this.targeted.all();
   }
 
   @Post('/chzzk/:channelId')

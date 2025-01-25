@@ -16,8 +16,6 @@ export class RedisMap<T> implements AsyncMap<string, T> {
 
   async set(id: string, value: T) {
     const key = this.keyPrefix + id;
-    if (await this.client.get(key)) throw Error(`${id} is already exists`);
-
     await this.client.set(key, JSON.stringify(value));
     await this.client.sAdd(this.keysKey, key);
   }

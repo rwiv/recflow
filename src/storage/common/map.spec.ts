@@ -1,8 +1,8 @@
 import { describe, it, afterEach, expect } from 'vitest';
-import { readEnv } from '../../common/env';
-import { createRedisClient } from './redis';
-import { AsyncMap } from './interface';
-import { RedisMap } from './map.redis';
+import { readEnv } from '../../common/env.js';
+import { createRedisClient } from './redis.js';
+import { AsyncMap } from './interface.js';
+import { RedisMap } from './map.redis.js';
 
 const env = readEnv();
 
@@ -25,15 +25,6 @@ describe('RedisMap (with real Redis client)', async () => {
 
     const result = await map.get(id);
     expect(result).toEqual(value);
-  });
-
-  it('should throw an error when setting a duplicate key', async () => {
-    const id = '123';
-    const value = { name: 'duplicate test' };
-
-    await map.set(id, value);
-
-    await expect(map.set(id, value)).rejects.toThrow();
   });
 
   it('should delete an item', async () => {

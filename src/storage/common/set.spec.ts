@@ -1,8 +1,8 @@
 import { describe, it, afterEach, expect } from 'vitest';
-import { readEnv } from '../../common/env';
-import { createRedisClient } from './redis';
-import { AsyncSet } from './interface';
-import { RedisSet } from './set.redis';
+import { readEnv } from '../../common/env.js';
+import { createRedisClient } from './redis.js';
+import { AsyncSet } from './interface.js';
+import { RedisSet } from './set.redis.js';
 
 const env = readEnv();
 

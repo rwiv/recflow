@@ -1,14 +1,13 @@
 import { log } from 'jslog';
 import { ChzzkLiveInfo } from '../platform/chzzk.js';
 import { Streamq } from '../client/streamq.js';
-import { TargetRepository } from '../storage/target/types.js';
 import { QueryConfig } from '../common/query.js';
 import { LiveFilterChzzk } from './filters/live-filter.chzzk.js';
 import { QUERY } from '../common/common.module.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from './allocator.js';
+import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
 
 @Injectable()
 export class CheckerChzzk {
@@ -17,8 +16,7 @@ export class CheckerChzzk {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly streamq: Streamq,
-    @Inject(TARGET_REPOSITORY)
-    private readonly targets: TargetRepository,
+    private readonly targeted: TargetedLiveRepository,
     private readonly allocator: Allocator,
     private readonly filter: LiveFilterChzzk,
   ) {}
@@ -35,7 +33,7 @@ export class CheckerChzzk {
       await Promise.all(
         this.query.subsChzzkChanIds.map(async (channelId) => ({
           channelId,
-          live: await this.targets.get(channelId),
+          live: await this.targeted.get(channelId),
         })),
       )
     )
@@ -70,7 +68,7 @@ export class CheckerChzzk {
     // delete LiveInfos
     const toBeDeletedInfos: LiveInfo[] = (
       await Promise.all(
-        (await this.targets.allChzzk()).map(async (info) => this.isToBeDeleted(info)),
+        (await this.targeted.allChzzk()).map(async (info) => this.isToBeDeleted(info)),
       )
     ).filter((info) => info !== null);
 
@@ -82,7 +80,7 @@ export class CheckerChzzk {
   }
 
   private async isToBeAdded(newInfo: ChzzkLiveInfo) {
-    if (await this.targets.get(newInfo.channelId)) return null;
+    if (await this.targeted.get(newInfo.channelId)) return null;
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음
     // 따라서 queried LiveInfo 뿐만 아니라 ChannelInfo를 같이 확인하여 방송중인지 확인한 뒤 리스트에 추가한다

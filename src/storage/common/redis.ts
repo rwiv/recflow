@@ -12,3 +12,7 @@ export async function createRedisClient(conf: RedisConfig, logging: boolean = fa
   }
   return client as RedisClientType;
 }
+
+export async function allKeys(client: RedisClientType, pattern: string) {
+  return client.keys(pattern);
+}

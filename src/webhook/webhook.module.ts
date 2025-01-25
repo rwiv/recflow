@@ -16,22 +16,13 @@ export const WEBHOOK_MATCHER_SOOP = 'WebhookMatcherSoop';
     },
     {
       provide: WEBHOOK_MATCHER_CHZZK,
-      useFactory: (factory: WebhookFactory) => {
-        return factory.createChzzkWebhookMatcher();
-      },
+      useFactory: (factory: WebhookFactory) => factory.createChzzkWebhookMatcher(),
       inject: [WebhookFactory],
     },
     {
       provide: WEBHOOK_MATCHER_SOOP,
       useClass: WebhookMatcherSoopMode1,
     },
-    // {
-    //   provide: WEBHOOK_MATCHER_SOOP,
-    //   useFactory: (factory: WebhookFactory) => {
-    //     return factory.createSoopWebhookMatcher();
-    //   },
-    //   inject: [WebhookFactory],
-    // },
   ],
   exports: [WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP],
 })

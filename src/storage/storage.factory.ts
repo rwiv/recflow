@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../common/common.module.js';
 import { QueryConfig } from '../common/query.js';
-import { TargetRepositoryRedis } from './target/target.repository.redis.js';
-import { TargetRepositoryMem } from './target/target.repository.mem.js';
 import { Env } from '../common/env.js';
-import { WhcRepository } from './webhook/whc.repository.js';
 import { createRedisClient } from './common/redis.js';
+import { RedisMap } from './common/map.redis.js';
+import { WebhookState } from '../webhook/types.js';
+import { WH_KEYS_KEY, WH_VALUE_PREFIX } from './webhook/consts.js';
+import { AsyncMap } from './common/interface.js';
+import { MemoryMap } from './common/map.mem.js';
+import { LiveInfo } from '../platform/live.js';
+import { TARGET_KEYS_KEY, TARGET_VALUE_PREFIX } from './targeted/consts.js';
 
 @Injectable()
 export class StorageFactory {
@@ -14,26 +18,25 @@ export class StorageFactory {
     @Inject(QUERY) private readonly query: QueryConfig,
   ) {}
 
-  createTargetRepository() {
-    switch (this.env.nodeEnv) {
-      case 'prod':
-        return this.createTargetRepositoryRedis();
-      case 'stage':
-        return this.createTargetRepositoryRedis();
-      case 'dev':
-        return this.createTargetRepositoryMem();
-      default:
-        throw Error('Unsupported env');
+  async targetMap() {
+    let result: AsyncMap<string, LiveInfo>;
+    if (['prod', 'stage'].includes(this.env.nodeEnv)) {
+      const redis = await createRedisClient(this.env.redis);
+      result = new RedisMap<LiveInfo>(redis, TARGET_KEYS_KEY, TARGET_VALUE_PREFIX);
+    } else {
+      result = new MemoryMap<string, LiveInfo>();
     }
+    return result;
   }
 
-  async createTargetRepositoryRedis() {
-    const client = await createRedisClient(this.env.redis);
-    const whcMap = new WhcRepository(client, this.query);
-    return new TargetRepositoryRedis(client, whcMap);
-  }
-
-  createTargetRepositoryMem() {
-    return new TargetRepositoryMem(this.query);
+  async webhookMap() {
+    let result: AsyncMap<string, WebhookState>;
+    if (['prod', 'stage'].includes(this.env.nodeEnv)) {
+      const redis = await createRedisClient(this.env.redis);
+      result = new RedisMap<WebhookState>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
+    } else {
+      result = new MemoryMap<string, WebhookState>();
+    }
+    return result;
   }
 }

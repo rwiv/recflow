@@ -1,18 +1,17 @@
 import { Stdl } from '../client/stdl.js';
 import { Authed, SoopCredential } from '../client/authed.js';
 import { Notifier } from '../client/notifier.js';
-import { TargetRepository } from '../storage/target/types.js';
 import { ChzzkWebhookMatcher, SoopWebhookMatcher, WebhookMatcher } from '../webhook/types.js';
 import { log } from 'jslog';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
 import { ENV } from '../common/common.module.js';
 import { Env } from '../common/env.js';
-import { TARGET_REPOSITORY } from '../storage/stroage.module.js';
 import { WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.module.js';
 import { LiveInfo } from '../platform/live.js';
 import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';
+import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
 
 @Injectable()
 export class Allocator {
@@ -23,12 +22,9 @@ export class Allocator {
     @Inject(AUTHED) private readonly authClient: Authed,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(ENV) private readonly env: Env,
-    @Inject(TARGET_REPOSITORY)
-    private readonly targets: TargetRepository,
-    @Inject(WEBHOOK_MATCHER_CHZZK)
-    private readonly chzzkMatcher: ChzzkWebhookMatcher,
-    @Inject(WEBHOOK_MATCHER_SOOP)
-    private readonly soopMatcher: SoopWebhookMatcher,
+    private readonly targeted: TargetedLiveRepository,
+    @Inject(WEBHOOK_MATCHER_CHZZK) private readonly chzzkMatcher: ChzzkWebhookMatcher,
+    @Inject(WEBHOOK_MATCHER_SOOP) private readonly soopMatcher: SoopWebhookMatcher,
     private readonly dispatcher: Dispatcher,
   ) {
     this.nftyTopic = this.env.ntfyTopic;
@@ -36,13 +32,13 @@ export class Allocator {
 
   async allocate(live: LiveInfo) {
     const matcher = this.getWebhookMatcher(live);
-    const wh = matcher.match(live, await this.targets.whStates());
+    const wh = matcher.match(live, await this.targeted.webhooks());
     if (!wh) {
       // TODO: use ntfy
       log.warn('No webhook');
       return;
     }
-    const created = await this.targets.set(live.channelId, live, wh);
+    const created = await this.targeted.set(live.channelId, live, wh);
 
     // stdl
     await this.requestStdl(wh.url, created);
@@ -58,7 +54,7 @@ export class Allocator {
   }
 
   async deallocate(live: LiveInfo, cmd: ExitCmd = 'delete') {
-    const deleted = await this.targets.delete(live.channelId);
+    const deleted = await this.targeted.delete(live.channelId);
     if (cmd !== 'delete') {
       await this.dispatcher.send(cmd, live.type, live.channelId);
     }

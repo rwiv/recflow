@@ -8,9 +8,6 @@ export class MemoryMap<K, V> implements AsyncMap<K, V> {
   }
 
   async set(key: K, value: V): Promise<void> {
-    if (this.map.has(key)) {
-      throw Error('Already exists');
-    }
     this.map.set(key, value);
     return Promise.resolve();
   }

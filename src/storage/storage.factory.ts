@@ -5,7 +5,7 @@ import { TargetRepositoryRedis } from './target/target.repository.redis.js';
 import { TargetRepositoryMem } from './target/target.repository.mem.js';
 import { Env } from '../common/env.js';
 import { WhcRepository } from './webhook/whc.repository.js';
-import { createRedisClient } from '../utils/storage/redis.js';
+import { createRedisClient } from './common/redis.js';
 
 @Injectable()
 export class StorageFactory {

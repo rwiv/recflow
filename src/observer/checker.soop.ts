@@ -28,10 +28,10 @@ export class CheckerSoop {
     }
     this.isChecking = true;
 
-    // --------------- check by subscriptions -------------------------------
-    const newSubsChannelIds = (
+    // --------------- check watched channels -------------------------------
+    const newWatchedChannelIds = (
       await Promise.all(
-        this.query.subsSoopUserIds.map(async (userId) => ({
+        this.query.watchedSoopUserIds.map(async (userId) => ({
           userId,
           live: await this.targeted.get(userId),
         })),
@@ -40,15 +40,15 @@ export class CheckerSoop {
       .filter(({ live }) => !live)
       .map(({ userId }) => userId);
 
-    const newLiveSubsChannels = (
+    const newLivedWatchedChannels = (
       await Promise.all(
-        newSubsChannelIds.map((userId) => this.streamq.getSoopChannel(userId, false)),
+        newWatchedChannelIds.map((userId) => this.streamq.getSoopChannel(userId, false)),
       )
     )
       .filter((info) => info !== null)
       .filter((info) => info.openLive);
 
-    for (const newChannel of newLiveSubsChannels) {
+    for (const newChannel of newLivedWatchedChannels) {
       const channel = await this.streamq.getSoopChannel(newChannel.userId, true);
       if (!channel) throw Error('Not found soop channel');
       const live = channel.liveInfo;
@@ -77,7 +77,7 @@ export class CheckerSoop {
     ).filter((info) => info !== null);
 
     for (const toBeDeleted of toBeDeletedInfos) {
-      await this.allocator.deallocate(toBeDeleted);
+      await this.allocator.deallocate(toBeDeleted, this.query.options.soop.defaultExitCommand);
     }
 
     this.isChecking = false;

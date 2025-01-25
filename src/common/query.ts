@@ -1,10 +1,13 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { WebhookInfo, WebhookMode } from '../webhook/types.js';
+import { WebhookInfo, WebhookMode, WebhookType } from '../webhook/types.js';
+import { ExitCmd } from '../observer/dispatcher.js';
 
 export interface QueryConfig {
-  subsChzzkChanIds: string[];
-  subsSoopUserIds: string[];
+  options: PlatformOptions;
+
+  watchedChzzkChanIds: string[];
+  watchedSoopUserIds: string[];
 
   chzzkMinUserCnt: number;
   chzzkMinFollowerCnt: number;
@@ -33,6 +36,17 @@ export interface QueryConfig {
   webhooks: WebhookInfo[];
 }
 
+export interface PlatformOptions {
+  chzzk: QueryOption;
+  soop: QueryOption;
+}
+
+export interface QueryOption {
+  forceCredentials: boolean;
+  forceWebhookType: WebhookType | undefined | null;
+  defaultExitCommand: ExitCmd;
+}
+
 export function readQueryConfig(filePath: string): QueryConfig {
   const text = fs.readFileSync(filePath, 'utf-8');
   const query = yaml.load(text) as QueryConfig;
@@ -41,6 +55,34 @@ export function readQueryConfig(filePath: string): QueryConfig {
 }
 
 function validate(query: QueryConfig) {
+  validateQueryOptions(query.options.chzzk);
+  validateQueryOptions(query.options.soop);
+  validateWebhookConfigs(query);
+}
+
+function validateQueryOptions(opts: QueryOption) {
+  // forceCredentials
+  if (opts.forceCredentials === undefined) {
+    throw new Error('forceCredentials is required');
+  }
+
+  // forceWebhookType
+  if (opts.forceWebhookType) {
+    checkWebhookType(opts.forceWebhookType);
+  }
+
+  // defaultExitCommand
+  if (!['delete', 'finish'].includes(opts.defaultExitCommand)) {
+    throw new Error(
+      `defaultExitCommand must be one of "delete", "finish": ${opts.defaultExitCommand}`,
+    );
+  }
+  if (opts.defaultExitCommand === 'cancel') {
+    throw new Error('defaultExitCommand cannot be "cancel"');
+  }
+}
+
+function validateWebhookConfigs(query: QueryConfig) {
   if (!query.webhookMode) {
     throw new Error('webhookMode is required');
   }
@@ -56,8 +98,12 @@ function validate(query: QueryConfig) {
     }
   }
   for (const wh of query.webhooks) {
-    if (['main', 'sub', 'extra'].includes(wh.type) === false) {
-      throw new Error(`webhook type must be one of "main", "sub", "extra": ${wh.type}`);
-    }
+    checkWebhookType(wh.type);
+  }
+}
+
+function checkWebhookType(type: string) {
+  if (!['main', 'sub', 'extra'].includes(type)) {
+    throw new Error(`webhook type must be one of "main", "sub", "extra": ${type}`);
   }
 }

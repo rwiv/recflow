@@ -28,10 +28,10 @@ export class CheckerChzzk {
     }
     this.isChecking = true;
 
-    // --------------- check by subscriptions -------------------------------
-    const newSubsChannelIds = (
+    // --------------- check watched channels -------------------------------
+    const newWatchedChannelIds = (
       await Promise.all(
-        this.query.subsChzzkChanIds.map(async (channelId) => ({
+        this.query.watchedChzzkChanIds.map(async (channelId) => ({
           channelId,
           live: await this.targeted.get(channelId),
         })),
@@ -40,13 +40,13 @@ export class CheckerChzzk {
       .filter(({ live }) => !live)
       .map(({ channelId }) => channelId);
 
-    const newLiveSubsChannels = (
+    const newLivedWatchedChannels = (
       await Promise.all(
-        newSubsChannelIds.map((channelId) => this.streamq.getChzzkChannel(channelId, false)),
+        newWatchedChannelIds.map((channelId) => this.streamq.getChzzkChannel(channelId, false)),
       )
     ).filter((info) => info.openLive);
 
-    for (const newChannel of newLiveSubsChannels) {
+    for (const newChannel of newLivedWatchedChannels) {
       const live = (await this.streamq.getChzzkChannel(newChannel.channelId, true)).liveInfo;
       if (!live) throw Error('Not found chzzkChannel.liveInfo');
       await this.allocator.allocate(liveFromChzzk(live));
@@ -73,7 +73,7 @@ export class CheckerChzzk {
     ).filter((info) => info !== null);
 
     for (const toBeDeleted of toBeDeletedInfos) {
-      await this.allocator.deallocate(toBeDeleted);
+      await this.allocator.deallocate(toBeDeleted, this.query.options.chzzk.defaultExitCommand);
     }
 
     this.isChecking = false;

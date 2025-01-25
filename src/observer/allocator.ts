@@ -5,19 +5,21 @@ import { ChzzkWebhookMatcher, SoopWebhookMatcher, WebhookMatcher } from '../webh
 import { log } from 'jslog';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
-import { ENV } from '../common/common.module.js';
+import { ENV, QUERY } from '../common/common.module.js';
 import { Env } from '../common/env.js';
 import { WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.module.js';
 import { LiveInfo } from '../platform/live.js';
 import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';
 import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
+import { QueryConfig } from '../common/query.js';
 
 @Injectable()
 export class Allocator {
   private readonly nftyTopic: string;
 
   constructor(
+    @Inject(QUERY) private readonly query: QueryConfig,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(AUTHED) private readonly authClient: Authed,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
@@ -76,14 +78,16 @@ export class Allocator {
 
   private async requestStdl(whUrl: string, live: LiveInfo) {
     if (live.type === 'chzzk') {
+      const force = this.query.options.chzzk.forceCredentials;
       let cookies: Cookie[] | undefined = undefined;
-      if (live.adult) {
+      if (force || live.adult) {
         cookies = await this.authClient.requestChzzkCookies();
       }
       await this.stdl.requestChzzkLive(whUrl, live.channelId, true, cookies);
     } else if (live.type === 'soop') {
+      const force = this.query.options.soop.forceCredentials;
       let cred: SoopCredential | undefined = undefined;
-      if (live.adult) {
+      if (force || live.adult) {
         cred = await this.authClient.requestSoopCred();
       }
       await this.stdl.requestSoopLive(whUrl, live.channelId, true, cred);

@@ -85,7 +85,7 @@ export class AmqpMock implements Amqp {
   }
 
   checkQueue(queue: string): Promise<boolean> {
-    return Promise.resolve(false);
+    return Promise.resolve(true);
   }
 
   async assertQueue(queue: string) {
@@ -94,8 +94,7 @@ export class AmqpMock implements Amqp {
   }
 
   publish(queue: string, content: object) {
-    log.info(`AmqpMock.publish(${queue})`);
-    log.info('AmqpMock.publish content:', content);
+    log.info('AmqpMock.publish(...)', { queue, content });
     return true;
   }
 

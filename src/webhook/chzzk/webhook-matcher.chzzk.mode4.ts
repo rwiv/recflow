@@ -7,8 +7,13 @@ export class WebhookMatcherChzzkMode4 implements ChzzkWebhookMatcher {
   constructor(private readonly query: QueryConfig) {}
 
   match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null {
+    const forceType = this.query.options.chzzk.forceWebhookType;
+    if (forceType) {
+      return findChzzkCandidate(whStates, forceType);
+    }
+
     let type: WebhookType = 'sub';
-    if (this.query.subsChzzkChanIds.includes(live.channelId)) {
+    if (this.query.watchedChzzkChanIds.includes(live.channelId)) {
       type = 'main';
     }
     if (this.query.allowedChzzkChanNames.includes(live.channelName)) {

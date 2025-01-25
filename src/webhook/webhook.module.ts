@@ -11,17 +11,14 @@ export const WEBHOOK_MATCHER_SOOP = 'WebhookMatcherSoop';
   providers: [
     WebhookFactory,
     {
-      provide: WEBHOOK_MATCHER_SOOP,
-      useValue: WebhookMatcherSoopMode1,
-    },
-    {
       provide: WEBHOOK_MATCHER_CHZZK,
       useFactory: (factory: WebhookFactory) => factory.createChzzkWebhookMatcher(),
       inject: [WebhookFactory],
     },
     {
       provide: WEBHOOK_MATCHER_SOOP,
-      useClass: WebhookMatcherSoopMode1,
+      useFactory: (factory: WebhookFactory) => factory.createSoopWebhookMatcher(),
+      inject: [WebhookFactory],
     },
   ],
   exports: [WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP],

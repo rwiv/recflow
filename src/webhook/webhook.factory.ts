@@ -14,7 +14,7 @@ export class WebhookFactory {
   createChzzkWebhookMatcher() {
     switch (this.query.webhookMode) {
       case 'mode1':
-        return new WebhookMatcherChzzkMode1();
+        return new WebhookMatcherChzzkMode1(this.query);
       case 'mode2':
         return new WebhookMatcherChzzkMode2(this.query);
       case 'mode3':
@@ -25,11 +25,12 @@ export class WebhookFactory {
   }
 
   createSoopWebhookMatcher() {
-    switch (this.query.webhookMode) {
-      case 'mode1':
-        return new WebhookMatcherSoopMode1();
-      default:
-        throw Error('Unsupported webhook mode');
-    }
+    return new WebhookMatcherSoopMode1(this.query);
+    // switch (this.query.webhookMode) {
+    //   case 'mode1':
+    //     return new WebhookMatcherSoopMode1(this.query);
+    //   default:
+    //     throw Error('Unsupported webhook mode');
+    // }
   }
 }

@@ -1,48 +1,49 @@
 import { QueryConfig } from '../../common/query.js';
-import { Streamq } from '../../client/streamq.js';
 import { SoopLiveInfo } from '../../platform/soop.js';
-import { Injectable } from '@nestjs/common';
+import { LiveFilter } from './interface.js';
+import { LiveInfo } from '../../platform/live.js';
+import { PlatformFetcher } from '../../platform/types.js';
 
-@Injectable()
-export class LiveFilterSoop {
-  constructor(private readonly streamq: Streamq) {}
+export class SoopLiveFilter implements LiveFilter {
+  constructor(
+    private readonly fetcher: PlatformFetcher,
+    private readonly query: QueryConfig,
+  ) {}
 
-  async getFiltered(infos: SoopLiveInfo[], query: QueryConfig): Promise<SoopLiveInfo[]> {
-    return (
-      await Promise.all(
-        infos.map(async (info) => {
-          // by userId
-          if (query.allowedSoopUserIds.includes(info.userId)) {
-            return info;
-          }
-          if (query.excludedSoopUserIds.includes(info.userId)) {
-            return null;
-          }
+  async getFiltered(infos: LiveInfo[]): Promise<LiveInfo[]> {
+    const promises = infos.map(async (liveInfo) => {
+      if (liveInfo.type !== 'soop') {
+        throw new Error('Invalid live type');
+      }
+      const info = liveInfo.content as SoopLiveInfo;
+      // by userId
+      if (this.query.allowedSoopUserIds.includes(info.userId)) {
+        return liveInfo;
+      }
+      if (this.query.excludedSoopUserIds.includes(info.userId)) {
+        return null;
+      }
 
-          // by user count
-          const userCnt = parseInt(info.totalViewCnt);
-          if (isNaN(userCnt)) {
-            throw new Error(`Invalid totalViewCnt: ${info.totalViewCnt}`);
-          }
-          if (userCnt >= query.soopMinUserCnt) {
-            return this.checkFollowerCnt(info, query.soopMinFollowerCnt);
-          }
+      // by user count
+      const userCnt = parseInt(info.totalViewCnt);
+      if (isNaN(userCnt)) {
+        throw new Error(`Invalid totalViewCnt: ${info.totalViewCnt}`);
+      }
+      if (userCnt >= this.query.soopMinUserCnt) {
+        return this.checkFollowerCnt(liveInfo, this.query.soopMinFollowerCnt);
+      }
 
-          return null;
-        }),
-      )
-    ).filter((info) => info !== null);
+      return null;
+    });
+    return (await Promise.all(promises)).filter((info) => info !== null);
   }
 
-  private async checkFollowerCnt(
-    info: SoopLiveInfo,
-    minFollowerCnt: number,
-  ): Promise<SoopLiveInfo | null> {
-    const channel = await this.streamq.getSoopChannel(info.userId, false);
+  private async checkFollowerCnt(info: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
+    const channel = await this.fetcher.fetchChannel(info.channelId, false);
     if (channel === null) {
       return null;
     }
-    if (channel.fanCnt >= minFollowerCnt) {
+    if (channel.followerCount >= minFollowerCnt) {
       return info;
     } else {
       return null;

@@ -1,35 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../common/common.module.js';
 import { WebhookModule } from '../webhook/webhook.module.js';
-import { CheckerChzzk } from './checker.chzzk.js';
 import { ClientModule } from '../client/client.module.js';
 import { RepositoryModule } from '../storage/repository.module.js';
-import { CheckerSoop } from './checker.soop.js';
-import { Observer } from './Observer.js';
-import { LiveFilterChzzk } from './filters/live-filter.chzzk.js';
-import { LiveFilterSoop } from './filters/live-filter.soop.js';
+import { Observer } from './observer.js';
+import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
+import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { Allocator } from './allocator.js';
 import { Dispatcher } from './dispatcher.js';
 
 @Module({
   imports: [ConfigModule, ClientModule, RepositoryModule, WebhookModule],
-  providers: [
-    Observer,
-    CheckerChzzk,
-    CheckerSoop,
-    Allocator,
-    LiveFilterChzzk,
-    LiveFilterSoop,
-    Dispatcher,
-  ],
-  exports: [
-    Observer,
-    CheckerChzzk,
-    CheckerSoop,
-    Allocator,
-    LiveFilterChzzk,
-    LiveFilterSoop,
-    Dispatcher,
-  ],
+  providers: [Observer, Allocator, ChzzkLiveFilter, SoopLiveFilter, Dispatcher],
+  exports: [Observer, Allocator, ChzzkLiveFilter, SoopLiveFilter, Dispatcher],
 })
 export class ObserverModule {}

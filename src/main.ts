@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { Observer } from './observer/Observer.js';
+import { Observer } from './observer/observer.js';
 import { ENV } from './common/common.module.js';
 import { Env } from './common/env.js';
 import { log } from 'jslog';

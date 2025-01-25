@@ -4,8 +4,7 @@ import { readEnv } from '../../common/env.js';
 
 const env = readEnv();
 // const pattern = '*';
-const pattern = 'stdl:*';
-// const pattern = 'stmgr:*';
+const pattern = 'stmgr:*';
 
 it('test allKeys', async () => {
   const redis = await createRedisClient(env.redis);

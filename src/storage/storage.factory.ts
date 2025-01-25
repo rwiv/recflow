@@ -5,11 +5,18 @@ import { Env } from '../common/env.js';
 import { createRedisClient } from './common/redis.js';
 import { RedisMap } from './common/map.redis.js';
 import { WebhookState } from '../webhook/types.js';
-import { WH_KEYS_KEY, WH_VALUE_PREFIX } from './webhook/consts.js';
-import { AsyncMap } from './common/interface.js';
+import {AsyncMap, AsyncSet} from './common/interface.js';
 import { MemoryMap } from './common/map.mem.js';
 import { LiveInfo } from '../platform/live.js';
-import { TARGET_KEYS_KEY, TARGET_VALUE_PREFIX } from './targeted/consts.js';
+import {RedisSet} from "./common/set.redis.js";
+import {MemorySet} from "./common/set.mem.js";
+import {
+  DELETED_LIVE_KEY,
+  TARGETED_LIVE_KEYS_KEY,
+  TARGETED_LIVE_VALUE_PREFIX,
+  WH_KEYS_KEY,
+  WH_VALUE_PREFIX
+} from "./redis_keys.js";
 
 @Injectable()
 export class StorageFactory {
@@ -18,11 +25,11 @@ export class StorageFactory {
     @Inject(QUERY) private readonly query: QueryConfig,
   ) {}
 
-  async targetMap() {
+  async targetedLiveMap() {
     let result: AsyncMap<string, LiveInfo>;
     if (['prod', 'stage'].includes(this.env.nodeEnv)) {
       const redis = await createRedisClient(this.env.redis);
-      result = new RedisMap<LiveInfo>(redis, TARGET_KEYS_KEY, TARGET_VALUE_PREFIX);
+      result = new RedisMap<LiveInfo>(redis, TARGETED_LIVE_KEYS_KEY, TARGETED_LIVE_VALUE_PREFIX);
     } else {
       result = new MemoryMap<string, LiveInfo>();
     }
@@ -36,6 +43,17 @@ export class StorageFactory {
       result = new RedisMap<WebhookState>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
     } else {
       result = new MemoryMap<string, WebhookState>();
+    }
+    return result;
+  }
+
+  async deletedLiveSet() {
+    let result: AsyncSet<string>;
+    if (['prod', 'stage'].includes(this.env.nodeEnv)) {
+      const redis = await createRedisClient(this.env.redis);
+      result = new RedisSet<string>(redis, DELETED_LIVE_KEY);
+    } else {
+      result = new MemorySet<string>();
     }
     return result;
   }

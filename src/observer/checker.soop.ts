@@ -7,7 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../common/common.module.js';
 import { Allocator } from './allocator.js';
 import { LiveInfo } from '../platform/live.js';
-import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
+import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
 
 @Injectable()
 export class CheckerSoop {

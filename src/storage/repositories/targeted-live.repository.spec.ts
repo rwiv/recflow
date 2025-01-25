@@ -1,15 +1,14 @@
 import { it } from 'vitest';
 import { readEnv } from '../../common/env.js';
 import { readQueryConfig } from '../../common/query.js';
-import { WebhookStateRepository } from '../webhook/webhook-state.repository.js';
+import { WebhookStateRepository } from './webhook-state.repository.js';
 import { createRedisClient } from '../common/redis.js';
 import { RedisMap } from '../common/map.redis.js';
-import { WH_KEYS_KEY, WH_VALUE_PREFIX } from '../webhook/consts.js';
 import { TargetedLiveRepository } from './targeted-live.repository.js';
 import { LiveInfo } from '../../platform/live.js';
-import { TARGET_KEYS_KEY, TARGET_VALUE_PREFIX } from './consts.js';
 import { MemoryMap } from '../common/map.mem.js';
 import { WebhookState } from '../../webhook/types.js';
+import {TARGETED_LIVE_KEYS_KEY, TARGETED_LIVE_VALUE_PREFIX, WH_KEYS_KEY, WH_VALUE_PREFIX} from "../redis_keys.js";
 
 const env = readEnv();
 const query = readQueryConfig(env.configPath);
@@ -35,7 +34,7 @@ async function createRedisRepo() {
   const redis = await createRedisClient(env.redis);
   const whMap = new RedisMap<WebhookState>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
   const whcRepo = new WebhookStateRepository(query, whMap);
-  const targetMap = new RedisMap<LiveInfo>(redis, TARGET_KEYS_KEY, TARGET_VALUE_PREFIX);
+  const targetMap = new RedisMap<LiveInfo>(redis, TARGETED_LIVE_KEYS_KEY, TARGETED_LIVE_VALUE_PREFIX);
   return new TargetedLiveRepository(targetMap, whcRepo);
 }
 

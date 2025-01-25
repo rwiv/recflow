@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { WebhookState } from '../../webhook/types.js';
 import { LiveInfo } from '../../platform/live.js';
-import { WebhookStateRepository } from '../webhook/webhook-state.repository.js';
+import { WebhookStateRepository } from './webhook-state.repository.js';
 import { AsyncMap } from '../common/interface.js';
-import { TARGET_MAP } from '../storage.module.js';
+import { TARGETED_LIVE_MAP } from '../storage.module.js';
 
 @Injectable()
 export class TargetedLiveRepository {
   constructor(
-    @Inject(TARGET_MAP) private readonly targetMap: AsyncMap<string, LiveInfo>,
+    @Inject(TARGETED_LIVE_MAP) private readonly targetMap: AsyncMap<string, LiveInfo>,
     public readonly whRepo: WebhookStateRepository,
   ) {}
 

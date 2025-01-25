@@ -4,7 +4,7 @@ import { WebhookState } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
-import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
+import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
 
 @Controller('/api')
 export class AppController {

@@ -11,7 +11,7 @@ import { WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.
 import { LiveInfo } from '../platform/live.js';
 import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';
-import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
+import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
 
 @Injectable()
 export class Allocator {

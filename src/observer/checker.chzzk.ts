@@ -7,7 +7,7 @@ import { QUERY } from '../common/common.module.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from './allocator.js';
-import { TargetedLiveRepository } from '../storage/targeted/targeted-live.repository.js';
+import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
 
 @Injectable()
 export class CheckerChzzk {

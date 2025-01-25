@@ -6,7 +6,7 @@ import { SoopLiveInfo } from '../platform/soop.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../common/common.module.js';
 import { Allocator } from './allocator.js';
-import { LiveInfo } from '../platform/live.js';
+import { LiveInfo, liveFromSoop } from '../platform/live.js';
 import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
 
 @Injectable()
@@ -53,7 +53,7 @@ export class CheckerSoop {
       if (!channel) throw Error('Not found soop channel');
       const live = channel.liveInfo;
       if (!live) throw Error('Not found soopChannel.liveInfo');
-      await this.allocator.allocate(LiveInfo.fromSoop(live));
+      await this.allocator.allocate(liveFromSoop(live));
     }
 
     // --------------- check by query --------------------------------------
@@ -66,7 +66,7 @@ export class CheckerSoop {
     ).filter((info) => info !== null);
 
     for (const newInfo of toBeAddedInfos) {
-      await this.allocator.allocate(LiveInfo.fromSoop(newInfo));
+      await this.allocator.allocate(liveFromSoop(newInfo));
     }
 
     // delete LiveInfos

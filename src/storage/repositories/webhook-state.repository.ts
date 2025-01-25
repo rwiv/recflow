@@ -3,14 +3,14 @@ import { WebhookState } from '../../webhook/types.js';
 import { QueryConfig } from '../../common/query.js';
 import { PlatformType } from '../../platform/types.js';
 import { AsyncMap } from '../common/interface.js';
-import { WEBHOOK_MAP } from '../storage.module.js';
+import { WEBHOOK_STATE_MAP } from '../storage.module.js';
 import { QUERY } from '../../common/common.module.js';
 
 @Injectable()
 export class WebhookStateRepository {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
-    @Inject(WEBHOOK_MAP) private readonly whMap: AsyncMap<string, WebhookState>,
+    @Inject(WEBHOOK_STATE_MAP) private readonly whMap: AsyncMap<string, WebhookState>,
   ) {}
 
   clear() {

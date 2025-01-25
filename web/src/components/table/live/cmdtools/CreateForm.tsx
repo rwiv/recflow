@@ -62,8 +62,8 @@ export function CreateForm({ cb }: CreateFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="chzzk">Chzzk</SelectItem>
-                  <SelectItem value="soop">Soop</SelectItem>
+                  <SelectItem value="chzzk">CHZZK</SelectItem>
+                  <SelectItem value="soop">SOOP</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

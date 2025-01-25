@@ -6,6 +6,7 @@ import { ArrowUpDown } from 'lucide-react';
 export function baseColumnDef<T>(
   cid: string,
   header: string | undefined = undefined,
+  className: string = '',
 ): ColumnDef<T> {
   if (!header) {
     header = firstLetterUppercase(cid);
@@ -13,7 +14,7 @@ export function baseColumnDef<T>(
   return {
     accessorKey: cid,
     header,
-    cell: ({ row }) => <div>{row.getValue(cid)}</div>,
+    cell: ({ row }) => <div className={className}>{row.getValue(cid)}</div>,
   };
 }
 

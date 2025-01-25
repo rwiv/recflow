@@ -5,7 +5,7 @@ import { QueryConfig } from '../common/query.js';
 import { LiveFilterChzzk } from './filters/live-filter.chzzk.js';
 import { QUERY } from '../common/common.module.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { LiveInfo } from '../platform/live.js';
+import { LiveInfo, liveFromChzzk } from '../platform/live.js';
 import { Allocator } from './allocator.js';
 import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
 
@@ -49,7 +49,7 @@ export class CheckerChzzk {
     for (const newChannel of newLiveSubsChannels) {
       const live = (await this.streamq.getChzzkChannel(newChannel.channelId, true)).liveInfo;
       if (!live) throw Error('Not found chzzkChannel.liveInfo');
-      await this.allocator.allocate(LiveInfo.fromChzzk(live));
+      await this.allocator.allocate(liveFromChzzk(live));
     }
 
     // --------------- check by query --------------------------------------
@@ -62,7 +62,7 @@ export class CheckerChzzk {
     ).filter((info) => info !== null);
 
     for (const newInfo of toBeAddedInfos) {
-      await this.allocator.allocate(LiveInfo.fromChzzk(newInfo));
+      await this.allocator.allocate(liveFromChzzk(newInfo));
     }
 
     // delete LiveInfos

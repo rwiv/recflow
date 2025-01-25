@@ -29,7 +29,7 @@ const soopColumn: ColumnDef<WebhookState> = {
 export const webhookColumns: ColumnDef<WebhookState>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
-  baseColumnDef(webhookTypeCid, 'Type'),
+  baseColumnDef(webhookTypeCid, 'Type', 'uppercase'),
   chzzkColumn,
   soopColumn,
 ];

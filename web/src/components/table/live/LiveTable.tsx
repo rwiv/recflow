@@ -9,7 +9,7 @@ import { assignedWebhookNameCid, liveColumns } from '@/components/table/live/liv
 import { CommandTools } from '@/components/table/live/cmdtools/CommandTools.tsx';
 
 export function LiveTable({ data }: { data: LiveInfo[] }) {
-  const table = useTable(data, liveColumns);
+  const table = useTable(data, liveColumns, 15);
 
   return (
     <div className="w-full">

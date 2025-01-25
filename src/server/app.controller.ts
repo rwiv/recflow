@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { Streamq } from '../client/streamq.js';
 import { WebhookState } from '../webhook/types.js';
-import { LiveInfo } from '../platform/live.js';
+import { LiveInfo, liveFromChzzk, liveFromSoop } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
@@ -59,12 +59,12 @@ export class AppController {
   private async getChzzkLive(channelId: string) {
     const live = (await this.streamq.getChzzkChannel(channelId, true))?.liveInfo;
     if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
-    return LiveInfo.fromChzzk(live);
+    return liveFromChzzk(live);
   }
 
   private async getSoopLive(userId: string) {
     const live = (await this.streamq.getSoopChannel(userId, true))?.liveInfo;
     if (!live) throw Error('Not found soopChannel.liveInfo');
-    return LiveInfo.fromSoop(live);
+    return liveFromSoop(live);
   }
 }

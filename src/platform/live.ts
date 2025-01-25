@@ -2,7 +2,7 @@ import { PlatformLiveInfo, PlatformType } from './types.js';
 import { ChzzkLiveInfo } from './chzzk.js';
 import { SoopLiveInfo } from './soop.js';
 
-export interface LiveInfoObj {
+export interface LiveInfo {
   type: PlatformType;
   channelId: string;
   channelName: string;
@@ -14,64 +14,36 @@ export interface LiveInfoObj {
   assignedWebhookName?: string;
 }
 
-export class LiveInfo {
-  public assignedWebhookName: string | undefined = undefined;
+export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
+  return {
+    type: 'chzzk',
+    channelId: info.channelId,
+    channelName: info.channelName,
+    liveId: info.liveId,
+    liveTitle: info.liveTitle,
+    viewCnt: info.concurrentUserCount,
+    adult: info.adult,
+    content: info,
+  };
+}
 
-  constructor(
-    public readonly type: PlatformType,
-    public readonly channelId: string,
-    public readonly channelName: string,
-    public readonly liveId: number,
-    public readonly liveTitle: string,
-    public readonly viewCnt: number,
-    public readonly adult: boolean,
-    public readonly content: PlatformLiveInfo,
-  ) {}
-
-  static fromObject(obj: LiveInfoObj): LiveInfo {
-    let liveInfo: LiveInfo | null = null;
-    if (obj.type === 'chzzk') {
-      liveInfo = LiveInfo.fromChzzk(obj.content as ChzzkLiveInfo);
-    } else if (obj.type === 'soop') {
-      liveInfo = LiveInfo.fromSoop(obj.content as SoopLiveInfo);
-    }
-    if (!liveInfo) throw Error('Unknown type');
-
-    liveInfo.assignedWebhookName = obj.assignedWebhookName;
-    return liveInfo;
+export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
+  const viewCnt = parseInt(info.totalViewCnt);
+  if (isNaN(viewCnt)) {
+    throw new Error('Invalid view count');
   }
-
-  static fromChzzk(info: ChzzkLiveInfo) {
-    return new LiveInfo(
-      'chzzk',
-      info.channelId,
-      info.channelName,
-      info.liveId,
-      info.liveTitle,
-      info.concurrentUserCount,
-      info.adult,
-      info,
-    );
+  const liveId = parseInt(info.broadNo);
+  if (isNaN(liveId)) {
+    throw new Error('Invalid live id');
   }
-
-  static fromSoop(info: SoopLiveInfo) {
-    const viewCnt = parseInt(info.totalViewCnt);
-    if (isNaN(viewCnt)) {
-      throw new Error('Invalid view count');
-    }
-    const liveId = parseInt(info.broadNo);
-    if (isNaN(liveId)) {
-      throw new Error('Invalid live id');
-    }
-    return new LiveInfo(
-      'soop',
-      info.userId,
-      info.userNick,
-      liveId,
-      info.broadTitle,
-      viewCnt,
-      info.adult,
-      info,
-    );
-  }
+  return {
+    type: 'soop',
+    channelId: info.userId,
+    channelName: info.userNick,
+    liveId: liveId,
+    liveTitle: info.broadTitle,
+    viewCnt: viewCnt,
+    adult: info.adult,
+    content: info,
+  };
 }

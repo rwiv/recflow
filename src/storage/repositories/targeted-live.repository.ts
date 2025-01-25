@@ -28,7 +28,7 @@ export class TargetedLiveRepository {
   async get(id: string) {
     const value = await this.targetMap.get(id);
     if (!value) return undefined;
-    return LiveInfo.fromObject(value);
+    return value;
   }
 
   async set(id: string, info: LiveInfo, wh: WebhookState) {

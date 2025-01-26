@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { WebhookState } from '../../webhook/types.js';
 import { LiveInfo } from '../../platform/live.js';
 import { WebhookStateRepository } from './webhook-state.repository.js';
-import { AsyncMap } from '../common/interface.js';
+import type { AsyncMap } from '../common/interface.js';
 import { TARGETED_LIVE_MAP } from '../storage.module.js';
 
 @Injectable()
@@ -54,13 +54,5 @@ export class TargetedLiveRepository {
   async all() {
     const promises = (await this.keys()).map((key) => this.get(key));
     return (await Promise.all(promises)).filter((info) => info !== undefined);
-  }
-
-  async allChzzk(): Promise<LiveInfo[]> {
-    return (await this.all()).filter((info) => info.type === 'chzzk');
-  }
-
-  async allSoop(): Promise<LiveInfo[]> {
-    return (await this.all()).filter((info) => info.type === 'soop');
   }
 }

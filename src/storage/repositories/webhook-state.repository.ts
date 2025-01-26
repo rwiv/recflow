@@ -2,9 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { WebhookState } from '../../webhook/types.js';
 import { QueryConfig } from '../../common/query.js';
 import { PlatformType } from '../../platform/types.js';
-import { AsyncMap } from '../common/interface.js';
+import type { AsyncMap } from '../common/interface.js';
 import { WEBHOOK_STATE_MAP } from '../storage.module.js';
 import { QUERY } from '../../common/common.module.js';
+import { LiveInfo } from '../../platform/live.js';
 
 @Injectable()
 export class WebhookStateRepository {
@@ -18,7 +19,7 @@ export class WebhookStateRepository {
   }
 
   async values(): Promise<WebhookState[]> {
-    await this.synchronize();
+    await this.syncWithQuery();
     return this.whMap.values();
   }
 
@@ -45,7 +46,12 @@ export class WebhookStateRepository {
     await this.whMap.set(whName, value);
   }
 
-  async synchronize() {
+  async synchronize(lives: LiveInfo[]) {
+    await this.syncWithQuery();
+    await this.syncWithLives(lives);
+  }
+
+  private async syncWithQuery() {
     const existedEntries = await this.whMap.entries();
 
     // Delete webhooks that are not assigned
@@ -72,6 +78,37 @@ export class WebhookStateRepository {
 
     // Update the map
     await Promise.all(toBeDeleted.map((name) => this.whMap.delete(name)));
-    await Promise.all(toBeCreated.map(([whName, whc]) => this.whMap.set(whName, whc)));
+    await Promise.all(toBeCreated.map(([whName, whs]) => this.whMap.set(whName, whs)));
+  }
+
+  private async syncWithLives(lives: LiveInfo[]) {
+    const whMap = new Map<string, WebhookState>();
+    for (const wh of await this.whMap.values()) {
+      whMap.set(wh.name, {
+        ...wh,
+        chzzkAssignedCnt: 0,
+        soopAssignedCnt: 0,
+      });
+    }
+
+    for (const live of lives) {
+      if (!live.assignedWebhookName) {
+        throw Error('Cannot found webhook');
+      }
+      const wh = whMap.get(live.assignedWebhookName);
+      if (!wh) {
+        throw Error('Cannot found webhook');
+      }
+
+      if (live.type === 'chzzk') {
+        wh.chzzkAssignedCnt += 1;
+      } else if (live.type === 'soop') {
+        wh.soopAssignedCnt += 1;
+      } else {
+        throw Error('Invalid platform');
+      }
+    }
+
+    return Promise.all(Array.from(whMap.values()).map((wh) => this.whMap.set(wh.name, wh)));
   }
 }

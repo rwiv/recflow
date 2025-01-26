@@ -46,9 +46,9 @@ export class PlatformChecker {
 
     for (const newChannel of newLivedWatchedChannels) {
       const channel = await this.fetcher.fetchChannel(newChannel.id, true);
-      if (!channel) throw Error('Not found soop channel');
+      if (!channel) throw Error('Not found channel');
       const live = channel.liveInfo;
-      if (!live) throw Error('Not found soopChannel.liveInfo');
+      if (!live) throw Error('Not found Channel.liveInfo');
       await this.allocator.allocate(live);
     }
 
@@ -67,13 +67,11 @@ export class PlatformChecker {
 
     // delete LiveInfos
     const toBeDeletedInfos = (
-      await Promise.all(
-        (await this.targeted.allSoop()).map(async (info) => this.isToBeDeleted(info)),
-      )
+      await Promise.all((await this.targeted.all()).map(async (info) => this.isToBeDeleted(info)))
     ).filter((info) => info !== null);
 
     for (const toBeDeleted of toBeDeletedInfos) {
-      await this.allocator.deallocate(toBeDeleted, this.query.options.soop.defaultExitCommand);
+      await this.allocator.deallocate(toBeDeleted);
     }
 
     this.isChecking = false;

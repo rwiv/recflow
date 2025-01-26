@@ -1,55 +1,20 @@
 import { it } from 'vitest';
+import { createRedisRepo } from './factory.js';
 import { readEnv } from '../../common/env.js';
 import { readQueryConfig } from '../../common/query.js';
-import { WebhookStateRepository } from './webhook-state.repository.js';
-import { createRedisClient } from '../common/redis.js';
-import { RedisMap } from '../common/map.redis.js';
-import { TargetedLiveRepository } from './targeted-live.repository.js';
-import { LiveInfo } from '../../platform/live.js';
-import { MemoryMap } from '../common/map.mem.js';
-import { WebhookState } from '../../webhook/types.js';
-import {
-  TARGETED_LIVE_KEYS_KEY,
-  TARGETED_LIVE_VALUE_PREFIX,
-  WH_KEYS_KEY,
-  WH_VALUE_PREFIX,
-} from '../redis_keys.js';
 
 const env = readEnv();
 const query = readQueryConfig(env.configPath);
 
 it('print', async () => {
-  // const targetRepo = createMemoryRepo();
-  const targetRepo = await createRedisRepo();
-  console.log(await targetRepo.keys());
-  console.log(await targetRepo.whRepo.values());
-  const chzzk = await targetRepo.allChzzk();
-  console.log(chzzk.map((info) => info.channelName));
-  const soop = await targetRepo.allSoop();
-  console.log(soop.map((info) => info.channelName));
+  // const targetRepo = createMemoryRepo(query);
+  const targeted = await createRedisRepo(env, query);
+  console.log(await targeted.keys());
+  console.log(await targeted.whRepo.values());
 });
 
 it('clear', async () => {
-  // const targetRepo = createMemoryRepo();
-  const targetRepo = await createRedisRepo();
-  await targetRepo.clear();
+  // const targetRepo = createMemoryRepo(query);
+  const targeted = await createRedisRepo(env, query);
+  await targeted.clear();
 });
-
-async function createRedisRepo() {
-  const redis = await createRedisClient(env.redis);
-  const whMap = new RedisMap<WebhookState>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
-  const whcRepo = new WebhookStateRepository(query, whMap);
-  const targetMap = new RedisMap<LiveInfo>(
-    redis,
-    TARGETED_LIVE_KEYS_KEY,
-    TARGETED_LIVE_VALUE_PREFIX,
-  );
-  return new TargetedLiveRepository(targetMap, whcRepo);
-}
-
-function createMemoryRepo() {
-  const whMap = new MemoryMap<string, WebhookState>();
-  const whcRepo = new WebhookStateRepository(query, whMap);
-  const targetMap = new MemoryMap<string, LiveInfo>();
-  return new TargetedLiveRepository(targetMap, whcRepo);
-}

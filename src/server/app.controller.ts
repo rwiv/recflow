@@ -31,8 +31,14 @@ export class AppController {
   }
 
   @Get('/webhooks')
-  whStates(): Promise<WebhookState[]> {
+  webhooks(): Promise<WebhookState[]> {
     return this.targeted.webhooks();
+  }
+
+  @Post('/webhooks/sync')
+  async webhookSync(): Promise<void> {
+    const lives = await this.targeted.all();
+    return this.targeted.whRepo.synchronize(lives);
   }
 
   @Get('/lives')

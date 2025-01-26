@@ -3,13 +3,22 @@ import { allKeys, createRedisClient } from './redis.js';
 import { readEnv } from '../../common/env.js';
 
 const env = readEnv();
-// const pattern = '*';
-const pattern = 'stmgr:*';
+const pattern = '*';
+// const pattern = 'stmgr:*';
+const targetKey = 'celery-task-meta-6c21eb7f-14e8-4234-95c0-09abc09c2160';
 
 it('test allKeys', async () => {
   const redis = await createRedisClient(env.redis);
   const res = await allKeys(redis, pattern);
   console.log(res);
+});
+
+it('test get', async () => {
+  const redis = await createRedisClient(env.redis);
+  const value = await redis.get(targetKey);
+  if (value) {
+    console.log(JSON.parse(value));
+  }
 });
 
 // it('clear keys', async () => {

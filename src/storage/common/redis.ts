@@ -13,6 +13,15 @@ export async function createRedisClient(conf: RedisConfig, logging: boolean = fa
   return client as RedisClientType;
 }
 
-export async function allKeys(client: RedisClientType, pattern: string) {
-  return client.keys(pattern);
+export async function allKeys(client: RedisClientType, pattern: string, cnt: number = 100) {
+  const keys: string[] = [];
+  let cursor = 0;
+
+  do {
+    const scanResult = await client.scan(cursor, { MATCH: pattern, COUNT: cnt });
+    cursor = scanResult.cursor;
+    keys.push(...scanResult.keys);
+  } while (cursor !== 0);
+
+  return keys;
 }

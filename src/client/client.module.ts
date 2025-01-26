@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { Streamq } from './streamq.js';
 import { ConfigModule } from '../common/common.module.js';
 import { MockNotifier, NtfyNotifier } from './notifier.js';
 import { StdlImpl, StdlMock } from './stdl.js';
@@ -15,7 +14,6 @@ export const AMQP = 'AMQP';
   imports: [ConfigModule],
   providers: [
     ClientFactory,
-    Streamq,
     {
       provide: STDL,
       useClass: process.env.NODE_ENV === 'prod' ? StdlImpl : StdlMock,
@@ -36,6 +34,6 @@ export const AMQP = 'AMQP';
       inject: [ClientFactory],
     },
   ],
-  exports: [Streamq, STDL, AUTHED, NOTIFIER, AMQP],
+  exports: [STDL, AUTHED, NOTIFIER, AMQP],
 })
 export class ClientModule {}

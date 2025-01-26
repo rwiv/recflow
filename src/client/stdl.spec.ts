@@ -4,15 +4,18 @@ import { AuthedImpl } from './authed.js';
 import { it } from 'vitest';
 import { readQueryConfig } from '../common/query.js';
 
+const uid = '';
+
 it('test', async () => {
   const env = readEnv();
   const query = readQueryConfig(env.configPath);
-  const stdlUrl = query.webhooks.find((wh) => (wh.type = 'main'))?.url;
   const stdl = new StdlImpl();
   const authClient = new AuthedImpl(env);
 
-  const uid = '';
+  const stdlUrl = query.webhooks.find((wh) => (wh.type = 'main'))?.url;
+  if (!stdlUrl) {
+    throw new Error('stdlUrl not found');
+  }
   const cookies = await authClient.requestChzzkCookies();
-  // const cookies = undefined;
-  await stdl.requestChzzkLive(stdlUrl, uid, true, cookies);
+  await stdl.requestChzzkLive(stdlUrl, uid, cookies);
 });

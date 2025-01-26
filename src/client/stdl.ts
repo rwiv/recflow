@@ -4,14 +4,11 @@ import { Injectable } from '@nestjs/common';
 
 interface ChzzkLiveRequest {
   uid: string;
-  once: boolean;
   cookies?: string;
 }
 
-// TODO: Rename to SoopLiveRequest
-interface AfreecaLiveRequest {
+interface SoopLiveRequest {
   userId: string;
-  once: boolean;
   cred?: SoopCred;
 }
 
@@ -21,18 +18,8 @@ export interface SoopCred {
 }
 
 export interface Stdl {
-  requestChzzkLive(
-    url: string,
-    uid: string,
-    once: boolean,
-    cookies: Cookie[] | undefined,
-  ): Promise<void>;
-  requestSoopLive(
-    url: string,
-    userId: string,
-    once: boolean,
-    cred: SoopCred | undefined,
-  ): Promise<void>;
+  requestChzzkLive(url: string, uid: string, cookies: Cookie[] | undefined): Promise<void>;
+  requestSoopLive(url: string, userId: string, cred: SoopCred | undefined): Promise<void>;
 }
 
 @Injectable()
@@ -40,10 +27,9 @@ export class StdlImpl implements Stdl {
   async requestChzzkLive(
     url: string,
     uid: string,
-    once: boolean = true,
     cookies: Cookie[] | undefined = undefined,
   ): Promise<void> {
-    let chzzkLive: ChzzkLiveRequest = { uid, once };
+    let chzzkLive: ChzzkLiveRequest = { uid };
     if (cookies) {
       chzzkLive = { ...chzzkLive, cookies: JSON.stringify(cookies) };
     }
@@ -59,17 +45,14 @@ export class StdlImpl implements Stdl {
   async requestSoopLive(
     url: string,
     userId: string,
-    once: boolean = true,
     cred: SoopCred | undefined = undefined,
   ): Promise<void> {
-    // TODO: Rename to soopLive, SoopLiveRequest
-    let afreecaLive: AfreecaLiveRequest = { userId, once };
+    let soopLive: SoopLiveRequest = { userId };
     if (cred) {
-      afreecaLive = { ...afreecaLive, cred };
+      soopLive = { ...soopLive, cred };
     }
 
-    // TODO: Rename to soop_live
-    const body = JSON.stringify({ reqType: 'afreeca_live', afreecaLive });
+    const body = JSON.stringify({ reqType: 'soop_live', soopLive });
     await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -83,18 +66,16 @@ export class StdlMock implements Stdl {
   async requestChzzkLive(
     url: string,
     uid: string,
-    once: boolean = true,
     cookies: Cookie[] | undefined = undefined,
   ): Promise<void> {
-    log.info(`MockStdlClient.requestChzzkLive(${uid}, ${once}, ${cookies})`);
+    log.info(`MockStdlClient.requestChzzkLive(...)`, { url, uid, cookies });
   }
 
   async requestSoopLive(
     url: string,
     uid: string,
-    once: boolean = true,
     cred: SoopCred | undefined = undefined,
   ): Promise<void> {
-    log.info(`MockStdlClient.requestSoopLive(${uid}, ${once}, ${cred})`);
+    log.info(`MockStdlClient.requestSoopLive(...)`, { url, uid, cred });
   }
 }

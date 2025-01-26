@@ -83,14 +83,14 @@ export class Allocator {
       if (force || live.adult) {
         cookies = await this.authClient.requestChzzkCookies();
       }
-      await this.stdl.requestChzzkLive(whUrl, live.channelId, true, cookies);
+      await this.stdl.requestChzzkLive(whUrl, live.channelId, cookies);
     } else if (live.type === 'soop') {
       const force = this.query.options.soop.forceCredentials;
       let cred: SoopCredential | undefined = undefined;
       if (force || live.adult) {
         cred = await this.authClient.requestSoopCred();
       }
-      await this.stdl.requestSoopLive(whUrl, live.channelId, true, cred);
+      await this.stdl.requestSoopLive(whUrl, live.channelId, cred);
     } else {
       throw new Error('Invalid live type');
     }

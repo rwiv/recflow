@@ -1,18 +1,29 @@
-import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { Streamq } from '../client/streamq.js';
+import { Controller, Delete, Get, Inject, Param, Post, Query } from '@nestjs/common';
 import { WebhookState } from '../webhook/types.js';
-import { LiveInfo, liveFromChzzk, liveFromSoop } from '../platform/live.js';
+import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
+import { ChzzkFetcher } from '../platform/chzzk.fetcher.js';
+import { ENV, QUERY } from '../common/common.module.js';
+import { Env } from '../common/env.js';
+import { QueryConfig } from '../common/query.js';
+import { SoopFetcher } from '../platform/soop.fetcher.js';
 
 @Controller('/api')
 export class AppController {
+  private readonly chzzkFetcher: ChzzkFetcher;
+  private readonly soopFetcher: SoopFetcher;
+
   constructor(
-    private readonly streamq: Streamq,
+    @Inject(ENV) private readonly env: Env,
+    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly targeted: TargetedLiveRepository,
     private readonly allocator: Allocator,
-  ) {}
+  ) {
+    this.chzzkFetcher = new ChzzkFetcher(this.env, this.query);
+    this.soopFetcher = new SoopFetcher(this.env, this.query);
+  }
 
   @Get('/health')
   health(): string {
@@ -57,14 +68,14 @@ export class AppController {
   }
 
   private async getChzzkLive(channelId: string) {
-    const live = (await this.streamq.getChzzkChannel(channelId, true))?.liveInfo;
+    const live = (await this.chzzkFetcher.fetchChannel(channelId, true))?.liveInfo;
     if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
-    return liveFromChzzk(live);
+    return live;
   }
 
   private async getSoopLive(userId: string) {
-    const live = (await this.streamq.getSoopChannel(userId, true))?.liveInfo;
+    const live = (await this.soopFetcher.fetchChannel(userId, true))?.liveInfo;
     if (!live) throw Error('Not found soopChannel.liveInfo');
-    return liveFromSoop(live);
+    return live;
   }
 }

@@ -3,7 +3,7 @@ import { WebhookState } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
-import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
+import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
 import { ChzzkFetcher } from '../platform/chzzk.fetcher.js';
 import { ENV, QUERY } from '../common/common.module.js';
 import { Env } from '../common/env.js';
@@ -18,7 +18,7 @@ export class AppController {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(QUERY) private readonly query: QueryConfig,
-    private readonly targeted: TargetedLiveRepository,
+    private readonly tracked: TrackedLiveRepository,
     private readonly allocator: Allocator,
   ) {
     this.chzzkFetcher = new ChzzkFetcher(this.env, this.query);
@@ -32,18 +32,18 @@ export class AppController {
 
   @Get('/webhooks')
   webhooks(): Promise<WebhookState[]> {
-    return this.targeted.webhooks();
+    return this.tracked.webhooks();
   }
 
   @Post('/webhooks/sync')
   async webhookSync(): Promise<void> {
-    const lives = await this.targeted.all();
-    return this.targeted.whRepo.synchronize(lives);
+    const lives = await this.tracked.all();
+    return this.tracked.whRepo.synchronize(lives);
   }
 
   @Get('/lives')
   all(): Promise<LiveInfo[]> {
-    return this.targeted.all();
+    return this.tracked.all();
   }
 
   @Post('/chzzk/:channelId')

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '../common/common.module.js';
 import { StorageFactory } from './storage.factory.js';
 
-export const TARGETED_LIVE_MAP = 'TargetLiveMap';
+export const TRACKED_LIVE_MAP = 'TrackedLiveMap';
 export const DELETED_LIVE_MAP = 'DeletedLiveMap';
 export const WEBHOOK_STATE_MAP = 'WebhookStateMap';
 
@@ -11,8 +11,8 @@ export const WEBHOOK_STATE_MAP = 'WebhookStateMap';
   providers: [
     StorageFactory,
     {
-      provide: TARGETED_LIVE_MAP,
-      useFactory: (factory: StorageFactory) => factory.targetedLiveMap(),
+      provide: TRACKED_LIVE_MAP,
+      useFactory: (factory: StorageFactory) => factory.trackedLiveMap(),
       inject: [StorageFactory],
     },
     {
@@ -26,6 +26,6 @@ export const WEBHOOK_STATE_MAP = 'WebhookStateMap';
       inject: [StorageFactory],
     },
   ],
-  exports: [TARGETED_LIVE_MAP, DELETED_LIVE_MAP, WEBHOOK_STATE_MAP],
+  exports: [TRACKED_LIVE_MAP, DELETED_LIVE_MAP, WEBHOOK_STATE_MAP],
 })
 export class StorageModule {}

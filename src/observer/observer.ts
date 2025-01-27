@@ -4,7 +4,7 @@ import { ENV, QUERY } from '../common/common.module.js';
 import { QueryConfig } from '../common/query.js';
 import { ChzzkFetcher } from '../platform/chzzk.fetcher.js';
 import { Env } from '../common/env.js';
-import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
+import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
 import { Allocator } from './allocator.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopFetcher } from '../platform/soop.fetcher.js';
@@ -22,8 +22,8 @@ export class Observer {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(QUERY) private readonly query: QueryConfig,
-    private readonly targeted: TargetedLiveRepository,
-    private readonly allocator: Allocator,
+    tracked: TrackedLiveRepository,
+    allocator: Allocator,
   ) {
     const chzzkFetcher = new ChzzkFetcher(this.env, this.query);
     const chzzkFilter = new ChzzkLiveFilter(chzzkFetcher, this.query);
@@ -31,7 +31,7 @@ export class Observer {
       'chzzk',
       this.query,
       chzzkFetcher,
-      targeted,
+      tracked,
       allocator,
       chzzkFilter,
     );
@@ -42,7 +42,7 @@ export class Observer {
       'soop',
       this.query,
       soopFetcher,
-      targeted,
+      tracked,
       allocator,
       soopFilter,
     );

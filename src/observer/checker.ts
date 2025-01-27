@@ -2,7 +2,7 @@ import { QueryConfig } from '../common/query.js';
 import { log } from 'jslog';
 import { Allocator } from './allocator.js';
 import { LiveInfo } from '../platform/live.js';
-import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
+import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
 import { PlatformFetcher, PlatformType } from '../platform/types.js';
 import { LiveFilter } from './filters/interface.js';
 
@@ -13,7 +13,7 @@ export class PlatformChecker {
     private readonly platformType: PlatformType,
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly targeted: TargetedLiveRepository,
+    private readonly tracked: TrackedLiveRepository,
     private readonly allocator: Allocator,
     private readonly filter: LiveFilter,
   ) {}
@@ -30,7 +30,7 @@ export class PlatformChecker {
       await Promise.all(
         this.query.watchedSoopUserIds.map(async (userId) => ({
           userId,
-          live: await this.targeted.get(userId),
+          live: await this.tracked.get(userId),
         })),
       )
     )
@@ -67,7 +67,7 @@ export class PlatformChecker {
     }
 
     // delete lives
-    const lives = (await this.targeted.all()).filter((info) => info.type === this.platformType);
+    const lives = (await this.tracked.all()).filter((info) => info.type === this.platformType);
     const toBeDeletedLives = (
       await Promise.all(lives.map(async (live) => this.isToBeDeleted(live)))
     ).filter((live) => live !== null);
@@ -80,7 +80,7 @@ export class PlatformChecker {
   }
 
   private async isToBeAdded(newInfo: LiveInfo) {
-    if (await this.targeted.get(newInfo.channelId)) return null;
+    if (await this.tracked.get(newInfo.channelId)) return null;
     // 스트리머가 방송을 종료해도 query 결과에는 나올 수 있음
     // 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있음
     // 따라서 queried LiveInfo 뿐만 아니라 ChannelInfo를 같이 확인하여 방송중인지 확인한 뒤 리스트에 추가한다

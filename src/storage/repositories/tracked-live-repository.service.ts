@@ -3,12 +3,12 @@ import { WebhookState } from '../../webhook/types.js';
 import { LiveInfo } from '../../platform/live.js';
 import { WebhookStateRepository } from './webhook-state.repository.js';
 import type { AsyncMap } from '../common/interface.js';
-import { TARGETED_LIVE_MAP } from '../storage.module.js';
+import { TRACKED_LIVE_MAP } from '../storage.module.js';
 
 @Injectable()
-export class TargetedLiveRepository {
+export class TrackedLiveRepository {
   constructor(
-    @Inject(TARGETED_LIVE_MAP) private readonly targetMap: AsyncMap<string, LiveInfo>,
+    @Inject(TRACKED_LIVE_MAP) private readonly targetMap: AsyncMap<string, LiveInfo>,
     public readonly whRepo: WebhookStateRepository,
   ) {}
 

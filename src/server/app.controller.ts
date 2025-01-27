@@ -3,13 +3,13 @@ import { WebhookRecord } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
 import { LiveAllocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
-import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
+import { TrackedLiveService } from '../service/tracked-live.service.js';
 import { PlatformFetcher } from '../platform/fetcher.js';
 
 @Controller('/api')
 export class AppController {
   constructor(
-    private readonly tracked: TrackedLiveRepository,
+    private readonly tracked: TrackedLiveService,
     private readonly allocator: LiveAllocator,
     private readonly fetcher: PlatformFetcher,
   ) {}
@@ -26,13 +26,13 @@ export class AppController {
 
   @Post('/webhooks/sync')
   async webhookSync(): Promise<void> {
-    const lives = await this.tracked.all();
+    const lives = await this.tracked.findAllActives();
     return this.tracked.whRepo.synchronize(lives);
   }
 
   @Get('/lives')
   all(): Promise<LiveInfo[]> {
-    return this.tracked.all();
+    return this.tracked.findAllActives();
   }
 
   @Post('/chzzk/:channelId')

@@ -11,7 +11,7 @@ import { WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.
 import { LiveInfo } from '../platform/live.js';
 import { Cookie } from '../client/types.js';
 import { Dispatcher, ExitCmd } from './dispatcher.js';
-import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
+import { TrackedLiveService } from '../service/tracked-live.service.js';
 import { QueryConfig } from '../common/query.js';
 
 @Injectable()
@@ -19,15 +19,15 @@ export class LiveAllocator {
   private readonly nftyTopic: string;
 
   constructor(
+    @Inject(ENV) private readonly env: Env,
     @Inject(QUERY) private readonly query: QueryConfig,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(AUTHED) private readonly authClient: Authed,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
-    @Inject(ENV) private readonly env: Env,
-    private readonly tracked: TrackedLiveRepository,
     @Inject(WEBHOOK_MATCHER_CHZZK) private readonly chzzkMatcher: WebhookMatcher,
     @Inject(WEBHOOK_MATCHER_SOOP) private readonly soopMatcher: WebhookMatcher,
     private readonly dispatcher: Dispatcher,
+    private readonly tracked: TrackedLiveService,
   ) {
     this.nftyTopic = this.env.ntfyTopic;
   }
@@ -40,7 +40,7 @@ export class LiveAllocator {
       log.warn('No webhook');
       return;
     }
-    const created = await this.tracked.set(live.channelId, live, wh.name);
+    const created = await this.tracked.add(live, wh.name);
 
     // stdl
     await this.requestStdl(wh.url, created);
@@ -58,9 +58,9 @@ export class LiveAllocator {
   async deallocate(live: LiveInfo, cmd: ExitCmd = 'delete') {
     const deleted = await this.tracked.delete(live.channelId);
     if (cmd !== 'delete') {
-      await this.dispatcher.exit(cmd, live.type, live.channelId);
+      await this.dispatcher.exit(cmd, deleted.type, deleted.channelId);
     }
-    log.info(`Delete: ${live.channelName}`);
+    log.info(`Delete: ${deleted.channelName}`);
     return deleted;
   }
 

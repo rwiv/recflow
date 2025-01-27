@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { TrackedChecker } from './tracked.checker.js';
 import { QUERY } from '../common/common.module.js';
 import { QueryConfig } from '../common/query.js';
-import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
+import { TrackedLiveService } from '../service/tracked-live.service.js';
 import { LiveAllocator } from './allocator.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
@@ -20,7 +20,7 @@ export class TrackedObserver {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     fetcher: PlatformFetcher,
-    tracked: TrackedLiveRepository,
+    tracked: TrackedLiveService,
     allocator: LiveAllocator,
     chzzkFilter: ChzzkLiveFilter,
     soopFilter: SoopLiveFilter,

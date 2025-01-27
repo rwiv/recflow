@@ -1,7 +1,6 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { WebhookDef, WebhookMode, WebhookType } from '../webhook/types.js';
-import { ExitCmd } from '../observer/dispatcher.js';
 
 export interface QueryConfig {
   options: PlatformOptions;
@@ -44,7 +43,6 @@ export interface PlatformOptions {
 export interface QueryOption {
   forceCredentials: boolean;
   forceWebhookType: WebhookType | undefined | null;
-  defaultExitCommand: ExitCmd;
 }
 
 export function readQueryConfig(filePath: string): QueryConfig {
@@ -69,14 +67,6 @@ function validateQueryOptions(opts: QueryOption) {
   // forceWebhookType
   if (opts.forceWebhookType) {
     checkWebhookType(opts.forceWebhookType);
-  }
-
-  // defaultExitCommand
-  if (!opts.defaultExitCommand) {
-    opts.defaultExitCommand = 'delete';
-  }
-  if (opts.defaultExitCommand === 'cancel') {
-    throw new Error('defaultExitCommand cannot be "cancel"');
   }
 }
 

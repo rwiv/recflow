@@ -2,7 +2,7 @@ import { QueryConfig } from '../common/query.js';
 import { log } from 'jslog';
 import { LiveAllocator } from './allocator.js';
 import { LiveInfo } from '../platform/live.js';
-import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
+import { TrackedLiveService } from '../service/tracked-live.service.js';
 import { PlatformType } from '../platform/types.js';
 import { LiveFilter } from './filters/interface.js';
 import { PlatformFetcher } from '../platform/fetcher.js';
@@ -14,7 +14,7 @@ export class TrackedChecker {
     private readonly ptype: PlatformType,
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly tracked: TrackedLiveRepository,
+    private readonly tracked: TrackedLiveService,
     private readonly allocator: LiveAllocator,
     private readonly filter: LiveFilter,
   ) {}
@@ -68,7 +68,7 @@ export class TrackedChecker {
     }
 
     // delete lives
-    const lives = (await this.tracked.all()).filter((info) => info.type === this.ptype);
+    const lives = (await this.tracked.findAllActives()).filter((info) => info.type === this.ptype);
     const toBeDeletedLives = (
       await Promise.all(lives.map(async (live) => this.isToBeDeleted(live)))
     ).filter((live) => live !== null);

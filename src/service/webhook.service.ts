@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WebhookRecord } from '../../webhook/types.js';
-import { QueryConfig } from '../../common/query.js';
-import { PlatformType } from '../../platform/types.js';
-import type { AsyncMap } from '../common/interface.js';
-import { WEBHOOK_MAP } from '../storage.module.js';
-import { QUERY } from '../../common/common.module.js';
-import { TrackedRecord } from '../types.js';
+import { WebhookRecord } from '../webhook/types.js';
+import { QueryConfig } from '../common/query.js';
+import { PlatformType } from '../platform/types.js';
+import type { AsyncMap } from '../storage/common/interface.js';
+import { WEBHOOK_MAP } from '../storage/storage.module.js';
+import { QUERY } from '../common/common.module.js';
+import { TrackedRecord } from '../storage/types.js';
 
 @Injectable()
-export class WebhookRepository {
+export class WebhookService {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     @Inject(WEBHOOK_MAP) private readonly whMap: AsyncMap<string, WebhookRecord>,

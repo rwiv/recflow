@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './server/app.controller.js';
 import { ConfigModule } from './common/common.module.js';
 import { ClientModule } from './client/client.module.js';
-import { RepositoryModule } from './storage/repository.module.js';
+import { ServiceModule } from './service/service.module.js';
 import { ObserverModule } from './observer/observer.module.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -15,7 +15,7 @@ import { PlatformModule } from './platform/platform.module.js';
     }),
     ConfigModule,
     ClientModule,
-    RepositoryModule,
+    ServiceModule,
     ObserverModule,
     PlatformModule,
   ],

@@ -11,6 +11,7 @@ export function mockLiveRecord(): LiveRecord {
     liveTitle: faker.lorem.sentence(),
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
     adult: randomElem([true, false]),
+    openDate: faker.date.anytime().toISOString(),
     savedAt: faker.date.anytime().toISOString(),
     updatedAt: faker.date.anytime().toISOString(),
     deletedAt: faker.date.anytime().toISOString(),

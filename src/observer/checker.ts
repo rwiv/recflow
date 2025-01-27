@@ -3,13 +3,14 @@ import { log } from 'jslog';
 import { Allocator } from './allocator.js';
 import { LiveInfo } from '../platform/live.js';
 import { TargetedLiveRepository } from '../storage/repositories/targeted-live.repository.js';
-import { PlatformFetcher } from '../platform/types.js';
+import { PlatformFetcher, PlatformType } from '../platform/types.js';
 import { LiveFilter } from './filters/interface.js';
 
 export class PlatformChecker {
   private isChecking: boolean = false;
 
   constructor(
+    private readonly platformType: PlatformType,
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
     private readonly targeted: TargetedLiveRepository,
@@ -56,22 +57,23 @@ export class PlatformChecker {
     const queriedInfos = await this.fetcher.fetchLives();
     const filtered = await this.filter.getFiltered(queriedInfos);
 
-    // add new LiveInfos
-    const toBeAddedInfos: LiveInfo[] = (
+    // add new lives
+    const toBeAddedLives: LiveInfo[] = (
       await Promise.all(filtered.map(async (info) => this.isToBeAdded(info)))
     ).filter((info) => info !== null);
 
-    for (const newInfo of toBeAddedInfos) {
-      await this.allocator.allocate(newInfo);
+    for (const live of toBeAddedLives) {
+      await this.allocator.allocate(live);
     }
 
-    // delete LiveInfos
-    const toBeDeletedInfos = (
-      await Promise.all((await this.targeted.all()).map(async (info) => this.isToBeDeleted(info)))
-    ).filter((info) => info !== null);
+    // delete lives
+    const lives = (await this.targeted.all()).filter((info) => info.type === this.platformType);
+    const toBeDeletedLives = (
+      await Promise.all(lives.map(async (live) => this.isToBeDeleted(live)))
+    ).filter((live) => live !== null);
 
-    for (const toBeDeleted of toBeDeletedInfos) {
-      await this.allocator.deallocate(toBeDeleted);
+    for (const live of toBeDeletedLives) {
+      await this.allocator.deallocate(live);
     }
 
     this.isChecking = false;

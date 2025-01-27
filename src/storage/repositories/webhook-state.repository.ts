@@ -19,8 +19,7 @@ export class WebhookStateRepository {
   }
 
   async values(): Promise<WebhookState[]> {
-    await this.syncWithQuery();
-    return this.whMap.values();
+    return this.syncWithConfig();
   }
 
   async updateWebhookCnt(whName: string, type: PlatformType, num: 1 | -1) {
@@ -47,18 +46,20 @@ export class WebhookStateRepository {
   }
 
   async synchronize(lives: LiveInfo[]) {
-    await this.syncWithQuery();
+    await this.syncWithConfig();
     await this.syncWithLives(lives);
   }
 
-  private async syncWithQuery() {
+  private async syncWithConfig() {
     const existedEntries = await this.whMap.entries();
 
     // Delete webhooks that are not assigned
     const toBeDeleted: string[] = [];
     for (const [key, value] of existedEntries) {
-      if (value.chzzkAssignedCnt === 0 && value.soopAssignedCnt === 0) {
-        toBeDeleted.push(key);
+      if (!this.query.webhooks.map((it) => it.name).includes(key)) {
+        if (value.chzzkAssignedCnt === 0 && value.soopAssignedCnt === 0) {
+          toBeDeleted.push(key);
+        }
       }
     }
 
@@ -79,6 +80,8 @@ export class WebhookStateRepository {
     // Update the map
     await Promise.all(toBeDeleted.map((name) => this.whMap.delete(name)));
     await Promise.all(toBeCreated.map(([whName, whs]) => this.whMap.set(whName, whs)));
+
+    return existedEntries.map(([_, value]) => value);
   }
 
   private async syncWithLives(lives: LiveInfo[]) {

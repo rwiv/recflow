@@ -72,10 +72,8 @@ function validateQueryOptions(opts: QueryOption) {
   }
 
   // defaultExitCommand
-  if (!['delete', 'finish'].includes(opts.defaultExitCommand)) {
-    throw new Error(
-      `defaultExitCommand must be one of "delete", "finish": ${opts.defaultExitCommand}`,
-    );
+  if (!opts.defaultExitCommand) {
+    opts.defaultExitCommand = 'delete';
   }
   if (opts.defaultExitCommand === 'cancel') {
     throw new Error('defaultExitCommand cannot be "cancel"');

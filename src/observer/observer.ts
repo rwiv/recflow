@@ -9,12 +9,13 @@ import { Allocator } from './allocator.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopFetcher } from '../platform/soop.fetcher.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
+import { DEFAULT_CHECK_CYCLE } from './consts.js';
 
 @Injectable()
 export class Observer {
   private curInterval: NodeJS.Timeout | undefined;
   private isObserving: boolean = false;
-  private readonly checkCycle: number = 5 * 1000;
+  private readonly checkCycle: number = DEFAULT_CHECK_CYCLE;
   private readonly chzzkChacker: PlatformChecker;
   private readonly soopChecker: PlatformChecker;
 
@@ -24,13 +25,27 @@ export class Observer {
     private readonly targeted: TargetedLiveRepository,
     private readonly allocator: Allocator,
   ) {
-    const cFetcher = new ChzzkFetcher(this.env, this.query);
-    const cFilter = new ChzzkLiveFilter(cFetcher, this.query);
-    this.chzzkChacker = new PlatformChecker(this.query, cFetcher, targeted, allocator, cFilter);
+    const chzzkFetcher = new ChzzkFetcher(this.env, this.query);
+    const chzzkFilter = new ChzzkLiveFilter(chzzkFetcher, this.query);
+    this.chzzkChacker = new PlatformChecker(
+      'chzzk',
+      this.query,
+      chzzkFetcher,
+      targeted,
+      allocator,
+      chzzkFilter,
+    );
 
-    const sFetcher = new SoopFetcher(this.env, this.query);
-    const sFilter = new SoopLiveFilter(cFetcher, this.query);
-    this.soopChecker = new PlatformChecker(this.query, sFetcher, targeted, allocator, sFilter);
+    const soopFetcher = new SoopFetcher(this.env, this.query);
+    const soopFilter = new SoopLiveFilter(chzzkFetcher, this.query);
+    this.soopChecker = new PlatformChecker(
+      'soop',
+      this.query,
+      soopFetcher,
+      targeted,
+      allocator,
+      soopFilter,
+    );
   }
 
   observe() {

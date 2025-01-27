@@ -5,7 +5,7 @@ import { readEnv } from '../../common/env.js';
 const env = readEnv();
 const pattern = '*';
 // const pattern = 'stmgr:*';
-const targetKey = 'celery-task-meta-6c21eb7f-14e8-4234-95c0-09abc09c2160';
+const targetKey = '';
 
 it('test allKeys', async () => {
   const redis = await createRedisClient(env.redis);

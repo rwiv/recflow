@@ -67,7 +67,7 @@ export class AppController {
   }
 
   private checkCmd(cmd: string) {
-    if (!['delete', 'cancel', 'finish'].includes(cmd)) {
+    if (!['delete', 'cancel'].includes(cmd)) {
       throw Error(`Invalid cmd: ${cmd}`);
     }
     return cmd as ExitCmd;

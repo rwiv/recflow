@@ -1,14 +1,15 @@
-import { PlatformFetcher } from './types.js';
 import { channelFromChzzk, ChannelInfo } from './channel.js';
 import { liveFromChzzk, LiveInfo } from './live.js';
 import { ChzzkChannelInfo, ChzzkLiveInfo } from './chzzk.js';
 import { QueryConfig } from '../common/query.js';
-import { Inject } from '@nestjs/common';
-import { ENV, QUERY } from '../common/common.module.js';
 import { Env } from '../common/env.js';
 import { checkResponse } from './utils.js';
+import { IFetcher } from './types.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV, QUERY } from '../common/common.module.js';
 
-export class ChzzkFetcher implements PlatformFetcher {
+@Injectable()
+export class ChzzkFetcher implements IFetcher {
   private readonly url: string;
   private readonly size: number;
 

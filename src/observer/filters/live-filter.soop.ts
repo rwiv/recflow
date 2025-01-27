@@ -2,12 +2,14 @@ import { QueryConfig } from '../../common/query.js';
 import { SoopLiveInfo } from '../../platform/soop.js';
 import { LiveFilter } from './interface.js';
 import { LiveInfo } from '../../platform/live.js';
-import { PlatformFetcher } from '../../platform/types.js';
+import { PlatformFetcher } from '../../platform/fetcher.js';
+import { Inject } from '@nestjs/common';
+import { QUERY } from '../../common/common.module.js';
 
 export class SoopLiveFilter implements LiveFilter {
   constructor(
+    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly query: QueryConfig,
   ) {}
 
   async getFiltered(infos: LiveInfo[]): Promise<LiveInfo[]> {
@@ -39,7 +41,7 @@ export class SoopLiveFilter implements LiveFilter {
   }
 
   private async checkFollowerCnt(info: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel(info.channelId, false);
+    const channel = await this.fetcher.fetchChannel('soop', info.channelId, false);
     if (channel === null) {
       return null;
     }

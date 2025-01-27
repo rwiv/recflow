@@ -1,13 +1,16 @@
 import { ChzzkLiveInfo } from '../../platform/chzzk.js';
 import { QueryConfig } from '../../common/query.js';
-import { PlatformFetcher } from '../../platform/types.js';
 import { LiveFilter } from './interface.js';
 import { LiveInfo } from '../../platform/live.js';
+import { PlatformFetcher } from '../../platform/fetcher.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { QUERY } from '../../common/common.module.js';
 
+@Injectable()
 export class ChzzkLiveFilter implements LiveFilter {
   constructor(
+    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly query: QueryConfig,
   ) {}
 
   async getFiltered(infos: LiveInfo[]): Promise<LiveInfo[]> {
@@ -55,7 +58,7 @@ export class ChzzkLiveFilter implements LiveFilter {
   }
 
   private async checkFollowerCnt(info: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel(info.channelId, false);
+    const channel = await this.fetcher.fetchChannel('chzzk', info.channelId, false);
     if (!channel) {
       return null;
     }

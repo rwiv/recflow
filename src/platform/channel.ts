@@ -4,7 +4,7 @@ import { SoopChannelInfo } from './soop.js';
 import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
 
 export interface ChannelInfo {
-  type: PlatformType;
+  ptype: PlatformType;
   id: string;
   name: string;
   followerCount: number;
@@ -19,7 +19,7 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
     liveInfo = liveFromChzzk(info.liveInfo);
   }
   return {
-    type: 'chzzk',
+    ptype: 'chzzk',
     id: info.channelId,
     name: info.channelName,
     followerCount: info.followerCount,
@@ -35,7 +35,7 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
     liveInfo = liveFromSoop(info.liveInfo);
   }
   return {
-    type: 'soop',
+    ptype: 'soop',
     id: info.userId,
     name: info.userNick,
     followerCount: info.fanCnt,

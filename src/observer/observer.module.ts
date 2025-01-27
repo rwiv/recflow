@@ -8,9 +8,10 @@ import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { Allocator } from './allocator.js';
 import { Dispatcher } from './dispatcher.js';
+import { PlatformModule } from '../platform/platform.module.js';
 
 @Module({
-  imports: [ConfigModule, ClientModule, RepositoryModule, WebhookModule],
+  imports: [ConfigModule, ClientModule, RepositoryModule, WebhookModule, PlatformModule],
   providers: [Observer, Allocator, ChzzkLiveFilter, SoopLiveFilter, Dispatcher],
   exports: [Observer, Allocator, ChzzkLiveFilter, SoopLiveFilter, Dispatcher],
 })

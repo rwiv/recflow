@@ -11,14 +11,14 @@ export async function fetchLives() {
   return (await res.json()) as LiveInfo[];
 }
 
-export async function createLive(uid: string, type: PlatformType) {
-  const url = `${configs.endpoint}/api/${type}/${uid}`;
+export async function createLive(uid: string, ptype: PlatformType) {
+  const url = `${configs.endpoint}/api/${ptype}/${uid}`;
   const res = await fetch(url, { method: 'POST' });
   return (await res.json()) as LiveInfo;
 }
 
-export async function deleteLive(uid: string, type: PlatformType, cmd: ExitCmd) {
-  const url = `${configs.endpoint}/api/${type}/${uid}?cmd=${cmd}`;
+export async function deleteLive(uid: string, ptype: PlatformType, cmd: ExitCmd) {
+  const url = `${configs.endpoint}/api/${ptype}/${uid}?cmd=${cmd}`;
   const res = await fetch(url, { method: 'DELETE' });
   return (await res.json()) as LiveInfo;
 }

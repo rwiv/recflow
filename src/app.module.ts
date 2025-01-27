@@ -6,6 +6,7 @@ import { RepositoryModule } from './storage/repository.module.js';
 import { ObserverModule } from './observer/observer.module.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { PlatformModule } from './platform/platform.module.js';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { join } from 'path';
     ClientModule,
     RepositoryModule,
     ObserverModule,
+    PlatformModule,
   ],
   controllers: [AppController],
   providers: [],

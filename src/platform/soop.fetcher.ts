@@ -1,14 +1,15 @@
-import { PlatformFetcher } from './types.js';
 import { channelFromSoop, ChannelInfo } from './channel.js';
 import { liveFromSoop, LiveInfo } from './live.js';
 import { QueryConfig } from '../common/query.js';
-import { Inject } from '@nestjs/common';
-import { ENV, QUERY } from '../common/common.module.js';
 import { Env } from '../common/env.js';
 import { SoopChannelInfo, SoopLiveInfo } from './soop.js';
 import { checkResponse } from './utils.js';
+import { IFetcher } from './types.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV, QUERY } from '../common/common.module.js';
 
-export class SoopFetcher implements PlatformFetcher {
+@Injectable()
+export class SoopFetcher implements IFetcher {
   private readonly url: string;
   private readonly size: number;
 

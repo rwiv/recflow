@@ -1,29 +1,18 @@
-import { Controller, Delete, Get, Inject, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { WebhookState } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
-import { ChzzkFetcher } from '../platform/chzzk.fetcher.js';
-import { ENV, QUERY } from '../common/common.module.js';
-import { Env } from '../common/env.js';
-import { QueryConfig } from '../common/query.js';
-import { SoopFetcher } from '../platform/soop.fetcher.js';
+import { PlatformFetcher } from '../platform/fetcher.js';
 
 @Controller('/api')
 export class AppController {
-  private readonly chzzkFetcher: ChzzkFetcher;
-  private readonly soopFetcher: SoopFetcher;
-
   constructor(
-    @Inject(ENV) private readonly env: Env,
-    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly tracked: TrackedLiveRepository,
     private readonly allocator: Allocator,
-  ) {
-    this.chzzkFetcher = new ChzzkFetcher(this.env, this.query);
-    this.soopFetcher = new SoopFetcher(this.env, this.query);
-  }
+    private readonly fetcher: PlatformFetcher,
+  ) {}
 
   @Get('/health')
   health(): string {
@@ -74,13 +63,13 @@ export class AppController {
   }
 
   private async getChzzkLive(channelId: string) {
-    const live = (await this.chzzkFetcher.fetchChannel(channelId, true))?.liveInfo;
+    const live = (await this.fetcher.fetchChannel('chzzk', channelId, true))?.liveInfo;
     if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
     return live;
   }
 
   private async getSoopLive(userId: string) {
-    const live = (await this.soopFetcher.fetchChannel(userId, true))?.liveInfo;
+    const live = (await this.fetcher.fetchChannel('soop', userId, true))?.liveInfo;
     if (!live) throw Error('Not found soopChannel.liveInfo');
     return live;
   }

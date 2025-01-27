@@ -5,7 +5,7 @@ import { PlatformType } from '../../platform/types.js';
 import type { AsyncMap } from '../common/interface.js';
 import { WEBHOOK_MAP } from '../storage.module.js';
 import { QUERY } from '../../common/common.module.js';
-import { LiveInfo } from '../../platform/live.js';
+import { TrackedRecord } from '../types.js';
 
 @Injectable()
 export class WebhookRepository {
@@ -45,7 +45,7 @@ export class WebhookRepository {
     await this.whMap.set(whName, value);
   }
 
-  async synchronize(lives: LiveInfo[]) {
+  async synchronize(lives: TrackedRecord[]) {
     await this.syncWithConfig();
     await this.syncWithLives(lives);
   }
@@ -84,7 +84,7 @@ export class WebhookRepository {
     return existedEntries.map(([_, value]) => value);
   }
 
-  private async syncWithLives(lives: LiveInfo[]) {
+  private async syncWithLives(lives: TrackedRecord[]) {
     const whMap = new Map<string, WebhookRecord>();
     for (const wh of await this.whMap.values()) {
       whMap.set(wh.name, {
@@ -95,9 +95,6 @@ export class WebhookRepository {
     }
 
     for (const live of lives) {
-      if (!live.assignedWebhookName) {
-        throw Error('Cannot found webhook');
-      }
       const wh = whMap.get(live.assignedWebhookName);
       if (!wh) {
         throw Error('Cannot found webhook');

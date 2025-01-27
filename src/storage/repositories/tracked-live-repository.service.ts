@@ -4,11 +4,12 @@ import { LiveInfo } from '../../platform/live.js';
 import { WebhookRepository } from './webhook.repository.js';
 import type { AsyncMap } from '../common/interface.js';
 import { TRACKED_LIVE_MAP } from '../storage.module.js';
+import { TrackedRecord } from '../types.js';
 
 @Injectable()
 export class TrackedLiveRepository {
   constructor(
-    @Inject(TRACKED_LIVE_MAP) private readonly trackedMap: AsyncMap<string, LiveInfo>,
+    @Inject(TRACKED_LIVE_MAP) private readonly trackedMap: AsyncMap<string, TrackedRecord>,
     public readonly whRepo: WebhookRepository,
   ) {}
 
@@ -32,19 +33,18 @@ export class TrackedLiveRepository {
   }
 
   async set(id: string, info: LiveInfo, wh: WebhookRecord) {
-    info.assignedWebhookName = wh.name;
-    await this.trackedMap.set(id, info);
+    const record = {
+      ...info,
+      assignedWebhookName: wh.name,
+    };
+    await this.trackedMap.set(id, record);
     await this.whRepo.updateWebhookCnt(wh.name, info.type, 1);
-    return info;
+    return record;
   }
 
   async delete(id: string) {
     const live = await this.get(id);
     if (!live) throw Error(`${id} is not found`);
-    if (!live.assignedWebhookName) {
-      throw Error('live.assignedWebhookName is undefined');
-    }
-
     await this.trackedMap.delete(id);
     await this.whRepo.updateWebhookCnt(live.assignedWebhookName, live.type, -1);
 

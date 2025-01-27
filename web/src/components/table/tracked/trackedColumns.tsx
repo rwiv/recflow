@@ -4,14 +4,14 @@ import {
   createSelectColumn,
   sortableColumnDef,
 } from '@/components/table/common/column_utils.tsx';
-import { LiveInfo } from '@/client/types.ts';
+import { TrackedRecord } from '@/client/types.ts';
 
 export const selectCid = 'select';
 export const platformTypeCid = 'type';
 export const viewCntCid = 'viewCnt';
 export const assignedWebhookNameCid = 'assignedWebhookName';
 
-const channelColumn: ColumnDef<LiveInfo> = {
+const channelColumn: ColumnDef<TrackedRecord> = {
   accessorKey: 'channel',
   header: 'Channel',
   cell: ({ row }) => {
@@ -32,7 +32,7 @@ const channelColumn: ColumnDef<LiveInfo> = {
   },
 };
 
-const titleColumn: ColumnDef<LiveInfo> = {
+const titleColumn: ColumnDef<TrackedRecord> = {
   accessorKey: 'title',
   header: 'Title',
   cell: ({ row }) => {
@@ -53,7 +53,7 @@ const titleColumn: ColumnDef<LiveInfo> = {
   },
 };
 
-export const liveColumns: ColumnDef<LiveInfo>[] = [
+export const trackedColumns: ColumnDef<TrackedRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(platformTypeCid, 'Platform', 'uppercase'),
   channelColumn,

@@ -11,7 +11,6 @@ export interface LiveInfo {
   viewCnt: number;
   adult: boolean;
   content: PlatformLiveInfo;
-  assignedWebhookName?: string;
 }
 
 export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {

@@ -6,9 +6,13 @@ export interface LiveInfo {
   type: PlatformType;
   channelId: string;
   channelName: string;
+  liveId: number;
   liveTitle: string;
   viewCnt: number;
   adult: boolean;
+}
+
+export interface TrackedRecord extends LiveInfo {
   assignedWebhookName: string;
 }
 

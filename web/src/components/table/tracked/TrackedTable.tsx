@@ -4,12 +4,15 @@ import { ColumnSelector } from '@/components/table/common/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/table/common/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/table/common/PageNavigation.tsx';
 import { useTable } from '@/components/table/common/useTable.ts';
-import { LiveInfo } from '@/client/types.ts';
-import { assignedWebhookNameCid, liveColumns } from '@/components/table/live/liveColumns.tsx';
-import { CommandTools } from '@/components/table/live/cmdtools/CommandTools.tsx';
+import { TrackedRecord } from '@/client/types.ts';
+import {
+  assignedWebhookNameCid,
+  trackedColumns,
+} from '@/components/table/tracked/trackedColumns.tsx';
+import { CommandTools } from '@/components/table/tracked/cmdtools/CommandTools.tsx';
 
-export function LiveTable({ data }: { data: LiveInfo[] }) {
-  const table = useTable(data, liveColumns, 15);
+export function TrackedTable({ data }: { data: TrackedRecord[] }) {
+  const table = useTable(data, trackedColumns, 15);
 
   return (
     <div className="w-full">
@@ -23,7 +26,7 @@ export function LiveTable({ data }: { data: LiveInfo[] }) {
         <ColumnSelector table={table} />
       </div>
       <div className="rounded-md border">
-        <TableContent table={table} columnLength={liveColumns.length} />
+        <TableContent table={table} columnLength={trackedColumns.length} />
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <SelectedRowCount table={table} />

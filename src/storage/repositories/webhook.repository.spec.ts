@@ -8,6 +8,6 @@ const query = readQueryConfig(env.configPath);
 
 it('test synchronize', async () => {
   const tracked = await createRedisRepo(env, query);
-  const lives = await tracked.all();
-  await tracked.whRepo.synchronize(lives);
+  const records = await tracked.all();
+  await tracked.whRepo.synchronize(records);
 });

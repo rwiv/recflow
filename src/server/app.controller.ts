@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { WebhookState } from '../webhook/types.js';
+import { WebhookRecord } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
 import { Allocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
@@ -20,7 +20,7 @@ export class AppController {
   }
 
   @Get('/webhooks')
-  webhooks(): Promise<WebhookState[]> {
+  webhooks(): Promise<WebhookRecord[]> {
     return this.tracked.webhooks();
   }
 

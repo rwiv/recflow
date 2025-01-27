@@ -12,7 +12,7 @@ export interface LiveInfo {
   assignedWebhookName: string;
 }
 
-export interface WebhookState {
+export interface WebhookRecord {
   name: string;
   type: WebhookType;
   url: string;

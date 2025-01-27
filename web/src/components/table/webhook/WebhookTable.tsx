@@ -4,10 +4,10 @@ import { ColumnSelector } from '@/components/table/common/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/table/common/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/table/common/PageNavigation.tsx';
 import { useTable } from '@/components/table/common/useTable.ts';
-import { WebhookState } from '@/client/types.ts';
+import { WebhookRecord } from '@/client/types.ts';
 import { nameCid, webhookColumns } from '@/components/table/webhook/webhookColumns.tsx';
 
-export function WebhookTable({ data }: { data: WebhookState[] }) {
+export function WebhookTable({ data }: { data: WebhookRecord[] }) {
   const table = useTable(data, webhookColumns);
 
   return (

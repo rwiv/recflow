@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { LiveInfo, WebhookState } from '@/client/types.ts';
+import { LiveInfo, WebhookRecord } from '@/client/types.ts';
 import { randomElem } from '@/lib/list.ts';
 
-export function mockLiveInfo(): LiveInfo {
+export function mockLive(): LiveInfo {
   return {
     type: randomElem(['chzzk', 'soop', 'twitch']),
     channelId: faker.string.uuid().replace(/-/g, ''),
@@ -14,7 +14,7 @@ export function mockLiveInfo(): LiveInfo {
   };
 }
 
-export function mockWebhookState(): WebhookState {
+export function mockWebhook(): WebhookRecord {
   return {
     name: faker.lorem.word(),
     type: randomElem(['main', 'sub', 'extra']),

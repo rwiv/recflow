@@ -1,43 +1,43 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WebhookState } from '../../webhook/types.js';
+import { WebhookRecord } from '../../webhook/types.js';
 import { QueryConfig } from '../../common/query.js';
 import { PlatformType } from '../../platform/types.js';
 import type { AsyncMap } from '../common/interface.js';
-import { WEBHOOK_STATE_MAP } from '../storage.module.js';
+import { WEBHOOK_MAP } from '../storage.module.js';
 import { QUERY } from '../../common/common.module.js';
 import { LiveInfo } from '../../platform/live.js';
 
 @Injectable()
-export class WebhookStateRepository {
+export class WebhookRepository {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
-    @Inject(WEBHOOK_STATE_MAP) private readonly whMap: AsyncMap<string, WebhookState>,
+    @Inject(WEBHOOK_MAP) private readonly whMap: AsyncMap<string, WebhookRecord>,
   ) {}
 
   clear() {
     return this.whMap.clear();
   }
 
-  async values(): Promise<WebhookState[]> {
+  async values(): Promise<WebhookRecord[]> {
     return this.syncWithConfig();
   }
 
   async updateWebhookCnt(whName: string, type: PlatformType, num: 1 | -1) {
-    const whState = await this.whMap.get(whName);
-    if (whState === undefined) throw Error('Cannot found whState');
+    const webhook = await this.whMap.get(whName);
+    if (webhook === undefined) throw Error('Cannot found webhook');
 
-    let value: WebhookState;
+    let value: WebhookRecord;
     if (type === 'chzzk') {
       value = {
-        ...whState,
-        chzzkAssignedCnt: whState.chzzkAssignedCnt + num,
-        soopAssignedCnt: whState.soopAssignedCnt,
+        ...webhook,
+        chzzkAssignedCnt: webhook.chzzkAssignedCnt + num,
+        soopAssignedCnt: webhook.soopAssignedCnt,
       };
     } else if (type === 'soop') {
       value = {
-        ...whState,
-        chzzkAssignedCnt: whState.chzzkAssignedCnt,
-        soopAssignedCnt: whState.soopAssignedCnt + num,
+        ...webhook,
+        chzzkAssignedCnt: webhook.chzzkAssignedCnt,
+        soopAssignedCnt: webhook.soopAssignedCnt + num,
       };
     } else {
       throw Error('Invalid type');
@@ -64,16 +64,16 @@ export class WebhookStateRepository {
     }
 
     // Create webhooks for newly added
-    const toBeCreated: [string, WebhookState][] = [];
+    const toBeCreated: [string, WebhookRecord][] = [];
     const keys = existedEntries.map(([key, _]) => key);
     for (const whInfo of this.query.webhooks) {
       if (!keys.includes(whInfo.name)) {
-        const whState: WebhookState = {
+        const webhook: WebhookRecord = {
           ...whInfo,
           chzzkAssignedCnt: 0,
           soopAssignedCnt: 0,
         };
-        toBeCreated.push([whInfo.name, whState]);
+        toBeCreated.push([whInfo.name, webhook]);
       }
     }
 
@@ -85,7 +85,7 @@ export class WebhookStateRepository {
   }
 
   private async syncWithLives(lives: LiveInfo[]) {
-    const whMap = new Map<string, WebhookState>();
+    const whMap = new Map<string, WebhookRecord>();
     for (const wh of await this.whMap.values()) {
       whMap.set(wh.name, {
         ...wh,

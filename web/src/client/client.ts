@@ -1,9 +1,9 @@
-import { ExitCmd, LiveInfo, PlatformType, WebhookState } from '@/client/types.ts';
+import { ExitCmd, LiveInfo, PlatformType, WebhookRecord } from '@/client/types.ts';
 import { configs } from '@/common/configs.ts';
 
 export async function fetchWebhooks() {
   const res = await fetch(`${configs.endpoint}/api/webhooks`);
-  return (await res.json()) as WebhookState[];
+  return (await res.json()) as WebhookRecord[];
 }
 
 export async function fetchLives() {

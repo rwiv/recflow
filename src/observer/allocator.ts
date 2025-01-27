@@ -1,7 +1,7 @@
 import { Stdl } from '../client/stdl.js';
 import { Authed, SoopCredential } from '../client/authed.js';
 import { Notifier } from '../client/notifier.js';
-import { ChzzkWebhookMatcher, SoopWebhookMatcher, WebhookMatcher } from '../webhook/types.js';
+import { WebhookMatcher } from '../webhook/types.js';
 import { log } from 'jslog';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, NOTIFIER, STDL } from '../client/client.module.js';
@@ -25,8 +25,8 @@ export class Allocator {
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(ENV) private readonly env: Env,
     private readonly tracked: TrackedLiveRepository,
-    @Inject(WEBHOOK_MATCHER_CHZZK) private readonly chzzkMatcher: ChzzkWebhookMatcher,
-    @Inject(WEBHOOK_MATCHER_SOOP) private readonly soopMatcher: SoopWebhookMatcher,
+    @Inject(WEBHOOK_MATCHER_CHZZK) private readonly chzzkMatcher: WebhookMatcher,
+    @Inject(WEBHOOK_MATCHER_SOOP) private readonly soopMatcher: WebhookMatcher,
     private readonly dispatcher: Dispatcher,
   ) {
     this.nftyTopic = this.env.ntfyTopic;

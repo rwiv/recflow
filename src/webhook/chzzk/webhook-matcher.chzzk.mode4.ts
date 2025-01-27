@@ -1,15 +1,15 @@
-import { ChzzkWebhookMatcher, WebhookState, WebhookType } from '../types.js';
+import { WebhookMatcher, WebhookRecord, WebhookType } from '../types.js';
 import { QueryConfig } from '../../common/query.js';
 import { findChzzkCandidate } from '../webhook.utils.js';
 import { LiveInfo } from '../../platform/live.js';
 
-export class WebhookMatcherChzzkMode4 implements ChzzkWebhookMatcher {
+export class WebhookMatcherChzzkMode4 implements WebhookMatcher {
   constructor(private readonly query: QueryConfig) {}
 
-  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null {
+  match(live: LiveInfo, webhooks: WebhookRecord[]): WebhookRecord | null {
     const forceType = this.query.options.chzzk.forceWebhookType;
     if (forceType) {
-      return findChzzkCandidate(whStates, forceType);
+      return findChzzkCandidate(webhooks, forceType);
     }
 
     let type: WebhookType = 'sub';
@@ -24,7 +24,7 @@ export class WebhookMatcherChzzkMode4 implements ChzzkWebhookMatcher {
     }
 
     if (type === 'main') {
-      const candidate = findChzzkCandidate(whStates, 'main');
+      const candidate = findChzzkCandidate(webhooks, 'main');
       if (!candidate) {
         type = 'sub';
       } else {
@@ -33,13 +33,13 @@ export class WebhookMatcherChzzkMode4 implements ChzzkWebhookMatcher {
     }
 
     if (type === 'sub') {
-      const candidate = findChzzkCandidate(whStates, 'sub');
+      const candidate = findChzzkCandidate(webhooks, 'sub');
       if (candidate) {
         return candidate;
       }
     }
 
     // type === "extra"
-    return findChzzkCandidate(whStates, 'extra');
+    return findChzzkCandidate(webhooks, 'extra');
   }
 }

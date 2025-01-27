@@ -1,5 +1,5 @@
 import { LiveTable } from '@/components/table/live/LiveTable.tsx';
-import { LiveInfo, WebhookState } from '@/client/types.ts';
+import { LiveInfo, WebhookRecord } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WebhookTable } from '@/components/table/webhook/WebhookTable.tsx';
 import { fetchLives, fetchWebhooks } from '@/client/client.ts';
@@ -10,7 +10,7 @@ export function IndexPage() {
     queryKey: ['lives'],
     queryFn: fetchLives,
   });
-  const { data: webhooks } = useQuery<WebhookState[]>({
+  const { data: webhooks } = useQuery<WebhookRecord[]>({
     queryKey: ['webhooks'],
     queryFn: fetchWebhooks,
   });
@@ -20,7 +20,7 @@ export function IndexPage() {
 
 interface TestPageProps {
   lives: LiveInfo[];
-  webhooks: WebhookState[];
+  webhooks: WebhookRecord[];
 }
 
 function TableContent({ lives, webhooks }: TestPageProps) {

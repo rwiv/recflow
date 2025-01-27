@@ -3,7 +3,7 @@ import { LiveInfo } from '../platform/live.js';
 export type WebhookType = 'main' | 'sub' | 'extra';
 export type WebhookMode = 'mode1' | 'mode2' | 'mode3' | 'mode4';
 
-export interface WebhookInfo {
+export interface WebhookDef {
   name: string;
   type: WebhookType;
   url: string;
@@ -11,19 +11,11 @@ export interface WebhookInfo {
   soopCapacity: number;
 }
 
-export interface WebhookState extends WebhookInfo {
+export interface WebhookRecord extends WebhookDef {
   chzzkAssignedCnt: number;
   soopAssignedCnt: number;
 }
 
 export interface WebhookMatcher {
-  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null;
-}
-
-export interface ChzzkWebhookMatcher extends WebhookMatcher {
-  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null;
-}
-
-export interface SoopWebhookMatcher extends WebhookMatcher {
-  match(live: LiveInfo, whStates: WebhookState[]): WebhookState | null;
+  match(live: LiveInfo, webhooks: WebhookRecord[]): WebhookRecord | null;
 }

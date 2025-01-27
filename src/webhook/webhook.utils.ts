@@ -1,10 +1,10 @@
-import { WebhookState, WebhookType } from './types.js';
+import { WebhookRecord, WebhookType } from './types.js';
 
 export function findChzzkCandidate(
-  whStates: WebhookState[],
+  webhooks: WebhookRecord[],
   type: WebhookType,
-): WebhookState | null {
-  const candidates = whStates
+): WebhookRecord | null {
+  const candidates = webhooks
     .filter((wh) => wh.type === type)
     .filter((wh) => wh.chzzkCapacity > wh.chzzkAssignedCnt);
 
@@ -16,10 +16,10 @@ export function findChzzkCandidate(
 }
 
 export function findSoopCandidate(
-  whStates: WebhookState[],
+  webhooks: WebhookRecord[],
   type: WebhookType,
-): WebhookState | null {
-  const candidates = whStates
+): WebhookRecord | null {
+  const candidates = webhooks
     .filter((wh) => wh.type === type)
     .filter((wh) => wh.soopCapacity > wh.soopAssignedCnt);
 
@@ -30,7 +30,7 @@ export function findSoopCandidate(
   }
 }
 
-function findMinCandidate(candidates: WebhookState[]): WebhookState {
+function findMinCandidate(candidates: WebhookRecord[]): WebhookRecord {
   if (candidates.length === 0) {
     throw new Error('No candidate');
   }

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { WebhookInfo, WebhookMode, WebhookType } from '../webhook/types.js';
+import { WebhookDef, WebhookMode, WebhookType } from '../webhook/types.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 
 export interface QueryConfig {
@@ -33,7 +33,7 @@ export interface QueryConfig {
   excludedChzzkChanIds: string[];
 
   webhookMode: WebhookMode;
-  webhooks: WebhookInfo[];
+  webhooks: WebhookDef[];
 }
 
 export interface PlatformOptions {

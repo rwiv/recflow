@@ -4,7 +4,7 @@ import { QueryConfig } from '../common/query.js';
 import { Env } from '../common/env.js';
 import { createRedisClient } from './common/redis.js';
 import { RedisMap } from './common/map.redis.js';
-import { WebhookState } from '../webhook/types.js';
+import { WebhookRecord } from '../webhook/types.js';
 import { AsyncMap } from './common/interface.js';
 import { MemoryMap } from './common/map.mem.js';
 import { LiveInfo } from '../platform/live.js';
@@ -36,12 +36,12 @@ export class StorageFactory {
   }
 
   async webhookMap() {
-    let result: AsyncMap<string, WebhookState>;
+    let result: AsyncMap<string, WebhookRecord>;
     if (['prod', 'stage'].includes(this.env.nodeEnv)) {
       const redis = await createRedisClient(this.env.redis);
-      result = new RedisMap<WebhookState>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
+      result = new RedisMap<WebhookRecord>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
     } else {
-      result = new MemoryMap<string, WebhookState>();
+      result = new MemoryMap<string, WebhookRecord>();
     }
     return result;
   }

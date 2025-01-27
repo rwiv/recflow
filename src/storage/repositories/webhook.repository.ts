@@ -22,6 +22,10 @@ export class WebhookRepository {
     return this.syncWithConfig();
   }
 
+  /**
+   * 이 메서드는 병렬적으로 호출되면 동시성 이슈를 발생시킨다.
+   * TODO: distributed lock을 사용하여 동시성 이슈 해결
+   */
   async updateWebhookCnt(whName: string, type: PlatformType, num: 1 | -1) {
     const webhook = await this.whMap.get(whName);
     if (webhook === undefined) throw Error('Cannot found webhook');

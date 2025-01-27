@@ -5,12 +5,14 @@ import { WebhookRepository } from './webhook.repository.js';
 import type { AsyncMap } from '../common/interface.js';
 import { TRACKED_LIVE_MAP } from '../storage.module.js';
 import { TrackedRecord } from '../types.js';
+import { PlatformFetcher } from '../../platform/fetcher.js';
 
 @Injectable()
 export class TrackedLiveRepository {
   constructor(
     @Inject(TRACKED_LIVE_MAP) private readonly trackedMap: AsyncMap<string, TrackedRecord>,
     public readonly whRepo: WebhookRepository,
+    private readonly fetcher: PlatformFetcher,
   ) {}
 
   async clear() {
@@ -26,19 +28,41 @@ export class TrackedLiveRepository {
     return this.whRepo.values();
   }
 
+  async synchronize() {
+    const records = await this.all();
+    const entries = records.map((it) => [it.channelId, it] as const);
+    const recordMap = new Map<string, TrackedRecord>(entries);
+
+    const fetchPromises = records.map(async (live) => {
+      return this.fetcher.fetchChannel(live.type, live.channelId, true);
+    });
+    const newLives = (await Promise.all(fetchPromises)).filter((it) => it !== null);
+
+    for (const live of newLives) {
+      const record = recordMap.get(live.id);
+      if (!record) throw Error(`Record not found for ${live.id}`);
+      if (!live.liveInfo) throw Error(`Live info not found for ${live.id}`);
+      await this.set(live.id, live.liveInfo, record.assignedWebhookName);
+    }
+  }
+
   async get(id: string) {
     const value = await this.trackedMap.get(id);
     if (!value) return undefined;
     return value;
   }
 
-  async set(id: string, info: LiveInfo, wh: WebhookRecord) {
+  /**
+   * 이 메서드 내부에서 호출되는 `this.whRepo.updateWebhookCnt`가 직렬적으로 동작하기에
+   * `this.set`을 병렬호출해도 성능상 병목이 발생할 수 있다.
+   */
+  async set(id: string, info: LiveInfo, webhookName: string): Promise<TrackedRecord> {
     const record = {
       ...info,
-      assignedWebhookName: wh.name,
+      assignedWebhookName: webhookName,
     };
     await this.trackedMap.set(id, record);
-    await this.whRepo.updateWebhookCnt(wh.name, info.type, 1);
+    await this.whRepo.updateWebhookCnt(webhookName, info.type, 1);
     return record;
   }
 

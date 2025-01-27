@@ -40,7 +40,7 @@ export class Allocator {
       log.warn('No webhook');
       return;
     }
-    const created = await this.tracked.set(live.channelId, live, wh);
+    const created = await this.tracked.set(live.channelId, live, wh.name);
 
     // stdl
     await this.requestStdl(wh.url, created);

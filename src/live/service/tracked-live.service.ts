@@ -42,6 +42,10 @@ export class TrackedLiveService {
   }
 
   async add(info: LiveInfo): Promise<LiveRecord> {
+    const exists = await this.get(info.channelId);
+    if (exists && !exists.isDeleted) {
+      throw Error(`Already exists: ${info.channelId}`);
+    }
     const webhook = this.webhookMatcher.matchWebhook(info, await this.webhooks());
     if (webhook === null) {
       // TODO: use ntfy

@@ -13,7 +13,7 @@ export class LiveSynchronizer {
     private readonly ptype: PlatformType,
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly tracked: TrackedLiveService,
+    private readonly liveService: TrackedLiveService,
     private readonly filter: LiveFilter,
   ) {}
 
@@ -29,7 +29,7 @@ export class LiveSynchronizer {
       await Promise.all(
         this.query.watchedSoopUserIds.map(async (userId) => ({
           userId,
-          live: await this.tracked.get(userId),
+          live: await this.liveService.get(userId),
         })),
       )
     )
@@ -49,7 +49,7 @@ export class LiveSynchronizer {
       if (!channel) throw Error('Not found channel');
       const live = channel.liveInfo;
       if (!live) throw Error('Not found Channel.liveInfo');
-      await this.tracked.add(live);
+      await this.liveService.add(live);
     }
 
     // --------------- check by query --------------------------------------
@@ -62,17 +62,19 @@ export class LiveSynchronizer {
     ).filter((info) => info !== null);
 
     for (const live of toBeAddedLives) {
-      await this.tracked.add(live);
+      await this.liveService.add(live);
     }
 
     // delete lives
-    const lives = (await this.tracked.findAllActives()).filter((info) => info.type === this.ptype);
+    const lives = (await this.liveService.findAllActives()).filter(
+      (info) => info.type === this.ptype,
+    );
     const toBeDeletedLives = (
       await Promise.all(lives.map(async (live) => this.isToBeDeleted(live)))
     ).filter((live) => live !== null);
 
     for (const live of toBeDeletedLives) {
-      await this.tracked.delete(live.channelId);
+      await this.liveService.delete(live.channelId);
     }
 
     this.isChecking = false;
@@ -81,10 +83,10 @@ export class LiveSynchronizer {
   /**
    * 스트리머가 방송을 종료해도 query 결과에는 노출될 수 있다.
    * 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있다.
-   * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 tracked 목록에 추가한다.
+   * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
    */
   private async isToBeAdded(newInfo: LiveInfo) {
-    if (await this.tracked.get(newInfo.channelId)) return null;
+    if (await this.liveService.get(newInfo.channelId)) return null;
     const channel = await this.fetcher.fetchChannel(this.ptype, newInfo.channelId, false);
     if (!channel?.openLive) return null;
     return newInfo;

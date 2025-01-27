@@ -19,13 +19,13 @@ export class LiveScheduler {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     fetcher: PlatformFetcher,
-    tracked: TrackedLiveService,
+    liveService: TrackedLiveService,
     chzzkFilter: ChzzkLiveFilter,
     soopFilter: SoopLiveFilter,
   ) {
-    this.chzzkSync = new LiveSynchronizer('chzzk', this.query, fetcher, tracked, chzzkFilter);
+    this.chzzkSync = new LiveSynchronizer('chzzk', this.query, fetcher, liveService, chzzkFilter);
 
-    this.soopSync = new LiveSynchronizer('soop', this.query, fetcher, tracked, soopFilter);
+    this.soopSync = new LiveSynchronizer('soop', this.query, fetcher, liveService, soopFilter);
   }
 
   run() {

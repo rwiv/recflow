@@ -11,16 +11,16 @@ import { LiveRecord } from './types.js';
 export class WebhookService {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
-    @Inject(WEBHOOK_MAP) private readonly whMap: AsyncMap<string, WebhookRecord>,
+    @Inject(WEBHOOK_MAP) private readonly webhookMap: AsyncMap<string, WebhookRecord>,
   ) {}
 
   clear() {
-    return this.whMap.clear();
+    return this.webhookMap.clear();
   }
 
   async values(): Promise<WebhookRecord[]> {
     await this.syncWithConfig();
-    return this.whMap.values();
+    return this.webhookMap.values();
   }
 
   /**
@@ -28,7 +28,7 @@ export class WebhookService {
    * TODO: distributed lock을 사용하여 동시성 이슈 해결
    */
   async updateWebhookCnt(whName: string, type: PlatformType, num: 1 | -1) {
-    const webhook = await this.whMap.get(whName);
+    const webhook = await this.webhookMap.get(whName);
     if (webhook === undefined) throw Error('Cannot found webhook');
 
     let value: WebhookRecord;
@@ -47,7 +47,7 @@ export class WebhookService {
     } else {
       throw Error('Invalid type');
     }
-    await this.whMap.set(whName, value);
+    await this.webhookMap.set(whName, value);
   }
 
   async synchronize(lives: LiveRecord[]) {
@@ -56,7 +56,7 @@ export class WebhookService {
   }
 
   private async syncWithConfig() {
-    const existedEntries = await this.whMap.entries();
+    const existedEntries = await this.webhookMap.entries();
 
     // Delete webhooks that are not assigned
     const toBeDeleted: string[] = [];
@@ -83,13 +83,13 @@ export class WebhookService {
     }
 
     // Update the map
-    await Promise.all(toBeDeleted.map((name) => this.whMap.delete(name)));
-    await Promise.all(toBeCreated.map(([whName, whs]) => this.whMap.set(whName, whs)));
+    await Promise.all(toBeDeleted.map((name) => this.webhookMap.delete(name)));
+    await Promise.all(toBeCreated.map(([whName, whs]) => this.webhookMap.set(whName, whs)));
   }
 
   private async syncWithLives(lives: LiveRecord[]) {
     const whMap = new Map<string, WebhookRecord>();
-    for (const wh of await this.whMap.values()) {
+    for (const wh of await this.webhookMap.values()) {
       whMap.set(wh.name, {
         ...wh,
         chzzkAssignedCnt: 0,
@@ -112,6 +112,6 @@ export class WebhookService {
       }
     }
 
-    return Promise.all(Array.from(whMap.values()).map((wh) => this.whMap.set(wh.name, wh)));
+    return Promise.all(Array.from(whMap.values()).map((wh) => this.webhookMap.set(wh.name, wh)));
   }
 }

@@ -3,7 +3,7 @@ import { WebhookRecord } from '../webhook/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { WebhookService } from './webhook.service.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
-import { TRACKED_LIVE_MAP } from '../persistence/persistence.module.js';
+import { LIVE_MAP } from '../persistence/persistence.module.js';
 import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
@@ -13,15 +13,15 @@ import { ExitCmd } from '../event/types.js';
 @Injectable()
 export class TrackedLiveService {
   constructor(
-    @Inject(TRACKED_LIVE_MAP) private readonly trackedMap: AsyncMap<string, LiveRecord>,
+    @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
-    public readonly whService: WebhookService,
-    private readonly whMatcher: PlatformWebhookMatcher,
+    public readonly webhookService: WebhookService,
+    private readonly webhookMatcher: PlatformWebhookMatcher,
   ) {}
 
   async get(id: string) {
-    const value = await this.trackedMap.get(id);
+    const value = await this.liveMap.get(id);
     if (!value) return undefined;
     return value;
   }
@@ -31,7 +31,7 @@ export class TrackedLiveService {
    * 병렬호출해도 성능상 병목이 발생할 수 있다.
    */
   async add(info: LiveInfo): Promise<LiveRecord> {
-    const webhook = this.whMatcher.matchWebhook(info, await this.webhooks());
+    const webhook = this.webhookMatcher.matchWebhook(info, await this.webhooks());
     if (webhook === null) {
       // TODO: use ntfy
       throw Error(`No webhook matched for ${info.channelId}`);
@@ -44,8 +44,8 @@ export class TrackedLiveService {
       isDeleted: false,
       assignedWebhookName: webhook.name,
     };
-    await this.trackedMap.set(info.channelId, record);
-    await this.whService.updateWebhookCnt(webhook.name, info.type, 1);
+    await this.liveMap.set(info.channelId, record);
+    await this.webhookService.updateWebhookCnt(webhook.name, info.type, 1);
     await this.listener.onCreate(record, webhook.url);
     return record;
   }
@@ -56,24 +56,24 @@ export class TrackedLiveService {
    */
   async update(newRecord: LiveRecord) {
     const exists = await this.get(newRecord.channelId);
-    if (!exists) throw Error(`Not found trackedRecord: ${newRecord.channelId}`);
+    if (!exists) throw Error(`Not found liveRecord: ${newRecord.channelId}`);
     if (exists.assignedWebhookName !== newRecord.assignedWebhookName) {
-      await this.whService.updateWebhookCnt(exists.assignedWebhookName, exists.type, -1);
-      await this.whService.updateWebhookCnt(newRecord.assignedWebhookName, newRecord.type, 1);
+      await this.webhookService.updateWebhookCnt(exists.assignedWebhookName, exists.type, -1);
+      await this.webhookService.updateWebhookCnt(newRecord.assignedWebhookName, newRecord.type, 1);
     }
-    await this.trackedMap.set(newRecord.channelId, newRecord);
+    await this.liveMap.set(newRecord.channelId, newRecord);
     return exists;
   }
 
   async delete(id: string, cmd: ExitCmd = 'delete') {
     const record = await this.get(id);
-    if (!record) throw Error(`Not found trackedRecord: ${id}`);
+    if (!record) throw Error(`Not found liveRecord: ${id}`);
     if (record.isDeleted) throw Error(`Already deleted: ${id}`);
 
     record.isDeleted = true;
     record.deletedAt = new Date().toISOString();
-    await this.trackedMap.set(id, record);
-    await this.whService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
+    await this.liveMap.set(id, record);
+    await this.webhookService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
 
     await this.listener.onDelete(record, cmd);
 
@@ -86,10 +86,10 @@ export class TrackedLiveService {
    */
   async purge(id: string) {
     const live = await this.get(id);
-    if (!live) throw Error(`Not found trackedRecord: ${id}`);
+    if (!live) throw Error(`Not found liveRecord: ${id}`);
     if (!live.isDeleted) throw Error(`Not deleted: ${id}`);
 
-    await this.trackedMap.delete(id);
+    await this.liveMap.delete(id);
 
     return live;
   }
@@ -103,15 +103,15 @@ export class TrackedLiveService {
   }
 
   private async findAll() {
-    return this.trackedMap.values();
+    return this.liveMap.values();
   }
 
   async keys() {
-    return this.trackedMap.keys();
+    return this.liveMap.keys();
   }
 
   async webhooks(): Promise<WebhookRecord[]> {
-    return this.whService.values();
+    return this.webhookService.values();
   }
 
   async synchronize() {
@@ -140,7 +140,7 @@ export class TrackedLiveService {
   }
 
   async clear() {
-    await this.trackedMap.clear();
-    await this.whService.clear();
+    await this.liveMap.clear();
+    await this.webhookService.clear();
   }
 }

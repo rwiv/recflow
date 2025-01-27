@@ -6,20 +6,15 @@ import { RedisMap } from '../../infra/storage/map.redis.js';
 import { WebhookRecord } from '../webhook/types.js';
 import { AsyncMap } from '../../infra/storage/interface.js';
 import { MemoryMap } from '../../infra/storage/map.mem.js';
-import {
-  TRACKED_LIVE_KEYS_KEY,
-  TRACKED_LIVE_VALUE_PREFIX,
-  WH_KEYS_KEY,
-  WH_VALUE_PREFIX,
-} from './redis_keys.js';
+import { LIVE_KEYS_KEY, LIVE_VALUE_PREFIX, WH_KEYS_KEY, WH_VALUE_PREFIX } from './redis_keys.js';
 import { LiveRecord } from '../service/types.js';
 
 @Injectable()
 export class PersistenceFactory {
   constructor(@Inject(ENV) private readonly env: Env) {}
 
-  async trackedLiveMap() {
-    return createMap<LiveRecord>(this.env, TRACKED_LIVE_KEYS_KEY, TRACKED_LIVE_VALUE_PREFIX);
+  async liveMap() {
+    return createMap<LiveRecord>(this.env, LIVE_KEYS_KEY, LIVE_VALUE_PREFIX);
   }
 
   async webhookMap() {

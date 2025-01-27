@@ -1,13 +1,13 @@
 import { readEnv } from '../../common/env.js';
 import { readQueryConfig } from '../../common/query.js';
 import { it } from 'vitest';
-import { createRedisTrackedService } from './test_utils.spec.js';
+import { createRedisLiveService } from './test_utils.spec.js';
 
 const env = readEnv();
 const query = readQueryConfig(env.configPath);
 
 it('test synchronize', async () => {
-  const tracked = await createRedisTrackedService(env, query);
-  const records = await tracked.findAllActives();
-  await tracked.whService.synchronize(records);
+  const liveService = await createRedisLiveService(env, query);
+  const lives = await liveService.findAllActives();
+  await liveService.webhookService.synchronize(lives);
 });

@@ -25,7 +25,7 @@ export class LiveController {
   @Post('/webhooks/sync')
   async webhookSync(): Promise<void> {
     const lives = await this.liveService.findAllActives();
-    return this.liveService.whService.synchronize(lives);
+    return this.liveService.webhookService.synchronize(lives);
   }
 
   @Get('/lives')

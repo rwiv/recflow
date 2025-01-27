@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '../../common/config.module.js';
 import { PersistenceFactory } from './persistence.factory.js';
 
-export const TRACKED_LIVE_MAP = 'TrackedLiveMap';
+export const LIVE_MAP = 'LiveMap';
 export const WEBHOOK_MAP = 'WebhookMap';
 
 @Module({
@@ -10,8 +10,8 @@ export const WEBHOOK_MAP = 'WebhookMap';
   providers: [
     PersistenceFactory,
     {
-      provide: TRACKED_LIVE_MAP,
-      useFactory: (factory: PersistenceFactory) => factory.trackedLiveMap(),
+      provide: LIVE_MAP,
+      useFactory: (factory: PersistenceFactory) => factory.liveMap(),
       inject: [PersistenceFactory],
     },
     {
@@ -20,6 +20,6 @@ export const WEBHOOK_MAP = 'WebhookMap';
       inject: [PersistenceFactory],
     },
   ],
-  exports: [TRACKED_LIVE_MAP, WEBHOOK_MAP],
+  exports: [LIVE_MAP, WEBHOOK_MAP],
 })
 export class LivePersistenceModule {}

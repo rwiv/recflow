@@ -10,6 +10,7 @@ export interface LiveInfo {
   liveTitle: string;
   viewCnt: number;
   adult: boolean;
+  openDate: string;
   content: PlatformLiveInfo;
 }
 
@@ -22,6 +23,7 @@ export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
     liveTitle: info.liveTitle,
     viewCnt: info.concurrentUserCount,
     adult: info.adult,
+    openDate: new Date(info.openDate).toISOString(),
     content: info,
   };
 }
@@ -43,6 +45,7 @@ export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
     liveTitle: info.broadTitle,
     viewCnt: viewCnt,
     adult: info.adult,
+    openDate: new Date(info.broadStart).toISOString(),
     content: info,
   };
 }

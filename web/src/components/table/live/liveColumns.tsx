@@ -2,18 +2,17 @@ import { ColumnDef } from '@tanstack/react-table';
 import {
   baseColumnDef,
   createSelectColumn,
+  dateColumnDef,
   sortableColumnDef,
 } from '@/components/table/common/column_utils.tsx';
 import { LiveRecord } from '@/client/types.ts';
-import { dateToTimestamp } from '@/lib/date.ts';
-import { Button } from '@/components/ui/button.tsx';
-import { ArrowUpDown } from 'lucide-react';
 
 export const selectCid = 'select';
 export const platformTypeCid = 'type';
 export const viewCntCid = 'viewCnt';
 export const assignedWebhookNameCid = 'assignedWebhookName';
 export const savedAtCit = 'savedAt';
+export const openDateCit = 'openDate';
 
 const channelColumn: ColumnDef<LiveRecord> = {
   accessorKey: 'channel',
@@ -57,34 +56,13 @@ const titleColumn: ColumnDef<LiveRecord> = {
   },
 };
 
-const savedAtColumn: ColumnDef<LiveRecord> = {
-  accessorKey: savedAtCit,
-  header: ({ column }) => {
-    return (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Saved At
-        <ArrowUpDown />
-      </Button>
-    );
-  },
-  cell: ({ row }) => {
-    const live = row.original;
-    const date = new Date(live.savedAt);
-    return <div>{dateToTimestamp(date)}</div>;
-  },
-  sortingFn: (rowA, rowB, _) => {
-    const dateA = new Date(rowA.original.savedAt);
-    const dateB = new Date(rowB.original.savedAt);
-    return dateA.getTime() - dateB.getTime(); // Ascending
-  },
-};
-
 export const liveColumns: ColumnDef<LiveRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(platformTypeCid, 'Platform', 'uppercase'),
   channelColumn,
   titleColumn,
   sortableColumnDef(viewCntCid, 'Viewers'),
+  dateColumnDef<LiveRecord>(savedAtCit, 'Saved Time', (elem) => new Date(elem.savedAt)),
+  dateColumnDef<LiveRecord>(openDateCit, 'Open Time', (elem) => new Date(elem.openDate)),
   baseColumnDef(assignedWebhookNameCid, 'Webhook'),
-  savedAtColumn,
 ];

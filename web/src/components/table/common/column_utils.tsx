@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
+import { formatTimeAgo } from '@/lib/date.ts';
 
 export function baseColumnDef<T>(
   cid: string,
@@ -67,5 +68,34 @@ export function createSelectColumn<T>(cid: string): ColumnDef<T> {
     ),
     enableSorting: false,
     enableHiding: false,
+  };
+}
+
+export function dateColumnDef<T>(
+  cid: string,
+  header: string,
+  getDate: (elem: T) => Date,
+): ColumnDef<T> {
+  return {
+    accessorKey: cid,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          {header}
+          <ArrowUpDown />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return <div>{formatTimeAgo(getDate(row.original))}</div>;
+    },
+    sortingFn: (rowA, rowB, _) => {
+      const dateA = getDate(rowA.original);
+      const dateB = getDate(rowB.original);
+      return dateA.getTime() - dateB.getTime(); // Ascending
+    },
   };
 }

@@ -29,8 +29,18 @@ export class LiveController {
   }
 
   @Get('/lives')
-  all(): Promise<LiveInfo[]> {
+  allActives(): Promise<LiveInfo[]> {
     return this.liveService.findAllActives();
+  }
+
+  @Get('/lives/all')
+  all(): Promise<LiveInfo[]> {
+    return this.liveService.findAll();
+  }
+
+  @Delete('/lives/purge')
+  async purge(): Promise<LiveInfo[]> {
+    return this.liveService.purgeAll();
   }
 
   @Post('/chzzk/:channelId')
@@ -45,12 +55,12 @@ export class LiveController {
 
   @Delete('/chzzk/:channelId')
   async deleteChzzk(@Param('channelId') channelId: string, @Query('cmd') cmd: string = 'delete') {
-    return this.liveService.delete(channelId, this.checkCmd(cmd));
+    return this.liveService.delete(channelId, { exitCmd: this.checkCmd(cmd) });
   }
 
   @Delete('/soop/:userId')
   async deleteSoop(@Param('userId') userId: string, @Query('cmd') cmd: string = 'delete') {
-    return this.liveService.delete(userId, this.checkCmd(cmd));
+    return this.liveService.delete(userId, { exitCmd: this.checkCmd(cmd) });
   }
 
   private checkCmd(cmd: string) {

@@ -1,35 +1,29 @@
-import { QueryConfig } from '../../common/query.js';
-import { log } from 'jslog';
-import { LiveInfo } from '../../platform/wapper/live.js';
-import { TrackedLiveService } from '../service/tracked-live.service.js';
-import { PlatformType } from '../../platform/types.js';
-import { LiveFilter } from './filters/interface.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
+import { Synchronizer } from './synchronizer.js';
+import { LiveInfo } from '../../../platform/wapper/live.js';
+import { PlatformType } from '../../../platform/types.js';
+import { QueryConfig } from '../../../common/query.js';
+import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
+import { TrackedLiveService } from '../../service/tracked-live.service.js';
+import { LiveFilter } from '../filters/interface.js';
 
-export class LiveSynchronizer {
-  private isChecking: boolean = false;
-
+export class LiveInjector extends Synchronizer {
   constructor(
     private readonly ptype: PlatformType,
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
     private readonly liveService: TrackedLiveService,
     private readonly filter: LiveFilter,
-  ) {}
+  ) {
+    super();
+  }
 
-  async check() {
-    if (this.isChecking) {
-      log.info('Already checking');
-      return;
-    }
-    this.isChecking = true;
-
+  protected async check() {
     // --------------- check watched channels -------------------------------
     const newWatchedChannelIds = (
       await Promise.all(
         this.query.watchedSoopUserIds.map(async (userId) => ({
           userId,
-          live: await this.liveService.get(userId),
+          live: await this.liveService.get(userId, { includeDeleted: true }),
         })),
       )
     )
@@ -53,8 +47,8 @@ export class LiveSynchronizer {
     }
 
     // --------------- check by query --------------------------------------
-    const queriedInfos = await this.fetcher.fetchLives(this.ptype);
-    const filtered = await this.filter.getFiltered(queriedInfos);
+    const queriedLives = await this.fetcher.fetchLives(this.ptype);
+    const filtered = await this.filter.getFiltered(queriedLives);
 
     // add new lives
     const toBeAddedLives: LiveInfo[] = (
@@ -64,20 +58,6 @@ export class LiveSynchronizer {
     for (const live of toBeAddedLives) {
       await this.liveService.add(live);
     }
-
-    // delete lives
-    const lives = (await this.liveService.findAllActives()).filter(
-      (info) => info.type === this.ptype,
-    );
-    const toBeDeletedLives = (
-      await Promise.all(lives.map(async (live) => this.isToBeDeleted(live)))
-    ).filter((live) => live !== null);
-
-    for (const live of toBeDeletedLives) {
-      await this.liveService.delete(live.channelId);
-    }
-
-    this.isChecking = false;
   }
 
   /**
@@ -86,15 +66,9 @@ export class LiveSynchronizer {
    * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
    */
   private async isToBeAdded(newInfo: LiveInfo) {
-    if (await this.liveService.get(newInfo.channelId)) return null;
+    if (await this.liveService.get(newInfo.channelId, { includeDeleted: true })) return null;
     const channel = await this.fetcher.fetchChannel(this.ptype, newInfo.channelId, false);
     if (!channel?.openLive) return null;
     return newInfo;
-  }
-
-  private async isToBeDeleted(existingInfo: LiveInfo) {
-    const channel = await this.fetcher.fetchChannel(this.ptype, existingInfo.channelId, false);
-    if (channel?.openLive) return null;
-    return existingInfo;
   }
 }

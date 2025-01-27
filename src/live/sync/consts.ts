@@ -1,1 +1,3 @@
-export const DEFAULT_CHECK_CYCLE = 5 * 1000;
+export const DEFAULT_INJECT_CYCLE = 5 * 1000;
+export const DEFAULT_CLEAN_CYCLE = 60 * 1000;
+export const DEFAULT_REFRESH_CYCLE = 60 * 1000;

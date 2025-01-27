@@ -3,8 +3,8 @@ import { allKeys, createRedisClient } from './redis.js';
 import { readEnv } from '../../common/env.js';
 
 const env = readEnv();
-const pattern = '*';
-// const pattern = 'stmgr:*';
+// const pattern = '*';
+const pattern = 'stmgr:*';
 const targetKey = '';
 
 it('test allKeys', async () => {

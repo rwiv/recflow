@@ -10,6 +10,7 @@ export interface LiveInfo {
   liveTitle: string;
   viewCnt: number;
   adult: boolean;
+  openDate: string;
 }
 
 export interface LiveRecord extends LiveInfo {

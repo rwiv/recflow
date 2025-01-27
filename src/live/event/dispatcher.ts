@@ -1,0 +1,20 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { AMQP } from '../../infra/infra.module.js';
+import { PlatformType } from '../../platform/types.js';
+import { AMQP_QUEUE_PREFIX } from './consts.js';
+import { Amqp } from '../../infra/amqp/interface.js';
+import { ExitCmd, ExitMessage } from './types.js';
+
+@Injectable()
+export class Dispatcher {
+  constructor(@Inject(AMQP) private readonly amqp: Amqp) {}
+
+  async exit(cmd: ExitCmd, platform: PlatformType, uid: string) {
+    const queue = `${AMQP_QUEUE_PREFIX}:${platform}:${uid}`;
+    if (!(await this.amqp.checkQueue(queue))) {
+      throw new Error(`Not found queue: ${queue}`);
+    }
+    const message: ExitMessage = { cmd, platform, uid };
+    this.amqp.publish(queue, message);
+  }
+}

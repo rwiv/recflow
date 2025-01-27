@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { TrackedObserver } from './observer/tracked.observer.js';
-import { ENV } from './common/common.module.js';
+import { LiveScheduler } from './live/sync/scheduler.js';
+import { ENV } from './common/config.module.js';
 import { Env } from './common/env.js';
 import { log } from 'jslog';
 
@@ -14,8 +14,8 @@ async function bootstrap() {
     app.enableCors();
   }
 
-  const observer = app.get(TrackedObserver);
-  observer.observe();
+  const scheduler = app.get(LiveScheduler);
+  scheduler.run();
 
   await app.listen(env.appPort);
 }

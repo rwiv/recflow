@@ -1,7 +1,7 @@
-import { ChzzkChannelInfo, ChzzkLiveInfo } from './chzzk.js';
-import { SoopChannelInfo, SoopLiveInfo } from './soop.js';
-import { LiveInfo } from './live.js';
-import { ChannelInfo } from './channel.js';
+import { ChzzkChannelInfo, ChzzkLiveInfo } from './raw/chzzk.js';
+import { SoopChannelInfo, SoopLiveInfo } from './raw/soop.js';
+import { LiveInfo } from './wapper/live.js';
+import { ChannelInfo } from './wapper/channel.js';
 
 export type PlatformType = 'chzzk' | 'soop';
 export type PlatformLiveInfo = ChzzkLiveInfo | SoopLiveInfo;

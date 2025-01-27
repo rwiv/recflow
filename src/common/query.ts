@@ -1,6 +1,6 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { WebhookDef, WebhookMode, WebhookType } from '../webhook/types.js';
+import { WebhookDef, WebhookMode, WebhookType } from '../live/webhook/types.js';
 
 export interface QueryConfig {
   options: PlatformOptions;

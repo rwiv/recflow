@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../common/common.module.js';
-import { PlatformFetcher } from './fetcher.js';
-import { ChzzkFetcher } from './chzzk.fetcher.js';
-import { SoopFetcher } from './soop.fetcher.js';
+import { ConfigModule } from '../common/config.module.js';
+import { PlatformFetcher } from './fetcher/fetcher.js';
+import { ChzzkFetcher } from './fetcher/chzzk.fetcher.js';
+import { SoopFetcher } from './fetcher/soop.fetcher.js';
 
 @Module({
   imports: [ConfigModule],

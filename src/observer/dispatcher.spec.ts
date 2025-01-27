@@ -15,5 +15,5 @@ const conf = JSON.parse(fs.readFileSync('dev/test_conf.json', 'utf-8')) as TestC
 
 it('test cancel', async () => {
   await amqp.init();
-  await dispatcher.send('cancel', 'chzzk', conf.channelId);
+  await dispatcher.exit('cancel', 'chzzk', conf.channelId);
 });

@@ -1,31 +1,31 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PlatformChecker } from './checker.js';
+import { TrackedChecker } from './tracked.checker.js';
 import { QUERY } from '../common/common.module.js';
 import { QueryConfig } from '../common/query.js';
 import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
-import { Allocator } from './allocator.js';
+import { LiveAllocator } from './allocator.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { DEFAULT_CHECK_CYCLE } from './consts.js';
 import { PlatformFetcher } from '../platform/fetcher.js';
 
 @Injectable()
-export class Observer {
+export class TrackedObserver {
   private curInterval: NodeJS.Timeout | undefined;
   private isObserving: boolean = false;
   private readonly checkCycle: number = DEFAULT_CHECK_CYCLE;
-  private readonly chzzkChacker: PlatformChecker;
-  private readonly soopChecker: PlatformChecker;
+  private readonly chzzkChacker: TrackedChecker;
+  private readonly soopChecker: TrackedChecker;
 
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     fetcher: PlatformFetcher,
     tracked: TrackedLiveRepository,
-    allocator: Allocator,
+    allocator: LiveAllocator,
     chzzkFilter: ChzzkLiveFilter,
     soopFilter: SoopLiveFilter,
   ) {
-    this.chzzkChacker = new PlatformChecker(
+    this.chzzkChacker = new TrackedChecker(
       'chzzk',
       this.query,
       fetcher,
@@ -34,7 +34,7 @@ export class Observer {
       chzzkFilter,
     );
 
-    this.soopChecker = new PlatformChecker(
+    this.soopChecker = new TrackedChecker(
       'soop',
       this.query,
       fetcher,

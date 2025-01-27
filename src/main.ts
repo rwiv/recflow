@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { Observer } from './observer/observer.js';
+import { TrackedObserver } from './observer/tracked.observer.js';
 import { ENV } from './common/common.module.js';
 import { Env } from './common/env.js';
 import { log } from 'jslog';
@@ -14,7 +14,7 @@ async function bootstrap() {
     app.enableCors();
   }
 
-  const observer = app.get(Observer);
+  const observer = app.get(TrackedObserver);
   observer.observe();
 
   await app.listen(env.appPort);

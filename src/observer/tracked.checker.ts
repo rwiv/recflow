@@ -1,13 +1,13 @@
 import { QueryConfig } from '../common/query.js';
 import { log } from 'jslog';
-import { Allocator } from './allocator.js';
+import { LiveAllocator } from './allocator.js';
 import { LiveInfo } from '../platform/live.js';
 import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
 import { PlatformType } from '../platform/types.js';
 import { LiveFilter } from './filters/interface.js';
 import { PlatformFetcher } from '../platform/fetcher.js';
 
-export class PlatformChecker {
+export class TrackedChecker {
   private isChecking: boolean = false;
 
   constructor(
@@ -15,7 +15,7 @@ export class PlatformChecker {
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
     private readonly tracked: TrackedLiveRepository,
-    private readonly allocator: Allocator,
+    private readonly allocator: LiveAllocator,
     private readonly filter: LiveFilter,
   ) {}
 

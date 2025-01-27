@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { WebhookRecord } from '../webhook/types.js';
 import { LiveInfo } from '../platform/live.js';
-import { Allocator } from '../observer/allocator.js';
+import { LiveAllocator } from '../observer/allocator.js';
 import { ExitCmd } from '../observer/dispatcher.js';
 import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repository.service.js';
 import { PlatformFetcher } from '../platform/fetcher.js';
@@ -10,7 +10,7 @@ import { PlatformFetcher } from '../platform/fetcher.js';
 export class AppController {
   constructor(
     private readonly tracked: TrackedLiveRepository,
-    private readonly allocator: Allocator,
+    private readonly allocator: LiveAllocator,
     private readonly fetcher: PlatformFetcher,
   ) {}
 

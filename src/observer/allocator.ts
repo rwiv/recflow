@@ -15,7 +15,7 @@ import { TrackedLiveRepository } from '../storage/repositories/tracked-live-repo
 import { QueryConfig } from '../common/query.js';
 
 @Injectable()
-export class Allocator {
+export class LiveAllocator {
   private readonly nftyTopic: string;
 
   constructor(
@@ -58,7 +58,7 @@ export class Allocator {
   async deallocate(live: LiveInfo, cmd: ExitCmd = 'delete') {
     const deleted = await this.tracked.delete(live.channelId);
     if (cmd !== 'delete') {
-      await this.dispatcher.send(cmd, live.type, live.channelId);
+      await this.dispatcher.exit(cmd, live.type, live.channelId);
     }
     log.info(`Delete: ${live.channelName}`);
     return deleted;

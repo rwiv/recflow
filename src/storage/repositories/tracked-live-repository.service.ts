@@ -59,6 +59,7 @@ export class TrackedLiveRepository {
   async set(id: string, info: LiveInfo, webhookName: string): Promise<TrackedRecord> {
     const record = {
       ...info,
+      savedAt: new Date().toISOString(),
       assignedWebhookName: webhookName,
     };
     await this.trackedMap.set(id, record);

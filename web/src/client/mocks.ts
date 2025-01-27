@@ -4,13 +4,14 @@ import { randomElem } from '@/lib/list.ts';
 
 export function mockTrackedRecord(): TrackedRecord {
   return {
-    type: randomElem(['chzzk', 'soop', 'twitch']),
+    type: randomElem(['chzzk', 'soop']),
     channelId: faker.string.uuid().replace(/-/g, ''),
     channelName: faker.internet.username(),
     liveId: faker.number.int({ min: 100000, max: 999999 }),
     liveTitle: faker.lorem.sentence(),
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
     adult: randomElem([true, false]),
+    savedAt: faker.date.anytime().toISOString(),
     assignedWebhookName: faker.lorem.word(),
   };
 }

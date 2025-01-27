@@ -13,6 +13,7 @@ export interface LiveInfo {
 }
 
 export interface TrackedRecord extends LiveInfo {
+  savedAt: string;
   assignedWebhookName: string;
 }
 

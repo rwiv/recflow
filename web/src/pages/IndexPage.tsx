@@ -18,12 +18,12 @@ export function IndexPage() {
   return <div>{lives && webhooks && <TableContent lives={lives} webhooks={webhooks} />}</div>;
 }
 
-interface TestPageProps {
+interface TableContentProps {
   lives: TrackedRecord[];
   webhooks: WebhookRecord[];
 }
 
-function TableContent({ lives, webhooks }: TestPageProps) {
+function TableContent({ lives, webhooks }: TableContentProps) {
   return (
     <Tabs defaultValue="lives" className="mx-10 my-3">
       <TabsList className="my-3">

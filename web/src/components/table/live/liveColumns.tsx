@@ -4,7 +4,7 @@ import {
   createSelectColumn,
   sortableColumnDef,
 } from '@/components/table/common/column_utils.tsx';
-import { TrackedRecord } from '@/client/types.ts';
+import { LiveRecord } from '@/client/types.ts';
 import { dateToTimestamp } from '@/lib/date.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
@@ -15,7 +15,7 @@ export const viewCntCid = 'viewCnt';
 export const assignedWebhookNameCid = 'assignedWebhookName';
 export const savedAtCit = 'savedAt';
 
-const channelColumn: ColumnDef<TrackedRecord> = {
+const channelColumn: ColumnDef<LiveRecord> = {
   accessorKey: 'channel',
   header: 'Channel',
   cell: ({ row }) => {
@@ -36,7 +36,7 @@ const channelColumn: ColumnDef<TrackedRecord> = {
   },
 };
 
-const titleColumn: ColumnDef<TrackedRecord> = {
+const titleColumn: ColumnDef<LiveRecord> = {
   accessorKey: 'title',
   header: 'Title',
   cell: ({ row }) => {
@@ -57,7 +57,7 @@ const titleColumn: ColumnDef<TrackedRecord> = {
   },
 };
 
-const savedAtColumn: ColumnDef<TrackedRecord> = {
+const savedAtColumn: ColumnDef<LiveRecord> = {
   accessorKey: savedAtCit,
   header: ({ column }) => {
     return (
@@ -79,7 +79,7 @@ const savedAtColumn: ColumnDef<TrackedRecord> = {
   },
 };
 
-export const trackedColumns: ColumnDef<TrackedRecord>[] = [
+export const liveColumns: ColumnDef<LiveRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(platformTypeCid, 'Platform', 'uppercase'),
   channelColumn,

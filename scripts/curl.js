@@ -2,6 +2,7 @@ const commands = {
   create: "create",
   delete: "delete",
   cancel: "cancel",
+  finish: "finish",
 };
 
 const types = {
@@ -10,7 +11,7 @@ const types = {
 }
 
 function isExitCommand(cmd) {
-    return cmd === commands.delete || cmd === commands.cancel;
+    return cmd === commands.delete || cmd === commands.cancel || cmd === commands.finish;
 }
 
 async function main() {

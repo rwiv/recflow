@@ -1,12 +1,12 @@
-import { TrackedTable } from '@/components/table/tracked/TrackedTable.tsx';
-import { TrackedRecord, WebhookRecord } from '@/client/types.ts';
+import { LiveTable } from '@/components/table/live/LiveTable.tsx';
+import { LiveRecord, WebhookRecord } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WebhookTable } from '@/components/table/webhook/WebhookTable.tsx';
 import { fetchLives, fetchWebhooks } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 
 export function IndexPage() {
-  const { data: lives } = useQuery<TrackedRecord[]>({
+  const { data: lives } = useQuery<LiveRecord[]>({
     queryKey: ['lives'],
     queryFn: fetchLives,
   });
@@ -19,7 +19,7 @@ export function IndexPage() {
 }
 
 interface TableContentProps {
-  lives: TrackedRecord[];
+  lives: LiveRecord[];
   webhooks: WebhookRecord[];
 }
 
@@ -32,7 +32,7 @@ function TableContent({ lives, webhooks }: TableContentProps) {
       </TabsList>
       <TabsContent value="lives">
         <div>
-          <TrackedTable data={lives} />
+          <LiveTable data={lives} />
         </div>
       </TabsContent>
       <TabsContent value="webhooks">

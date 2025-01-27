@@ -8,7 +8,7 @@ import { ExitCmd } from '../event/types.js';
 @Controller('/api')
 export class LiveController {
   constructor(
-    private readonly tracked: TrackedLiveService,
+    private readonly liveService: TrackedLiveService,
     private readonly fetcher: PlatformFetcher,
   ) {}
 
@@ -19,42 +19,42 @@ export class LiveController {
 
   @Get('/webhooks')
   webhooks(): Promise<WebhookRecord[]> {
-    return this.tracked.webhooks();
+    return this.liveService.webhooks();
   }
 
   @Post('/webhooks/sync')
   async webhookSync(): Promise<void> {
-    const lives = await this.tracked.findAllActives();
-    return this.tracked.whService.synchronize(lives);
+    const lives = await this.liveService.findAllActives();
+    return this.liveService.whService.synchronize(lives);
   }
 
   @Get('/lives')
   all(): Promise<LiveInfo[]> {
-    return this.tracked.findAllActives();
+    return this.liveService.findAllActives();
   }
 
   @Post('/chzzk/:channelId')
   async addChzzk(@Param('channelId') channelId: string) {
-    return this.tracked.add(await this.getChzzkLive(channelId));
+    return this.liveService.add(await this.getChzzkLive(channelId));
   }
 
   @Post('/soop/:userId')
   async addSoop(@Param('userId') userId: string) {
-    return this.tracked.add(await this.getSoopLive(userId));
+    return this.liveService.add(await this.getSoopLive(userId));
   }
 
   @Delete('/chzzk/:channelId')
   async deleteChzzk(@Param('channelId') channelId: string, @Query('cmd') cmd: string = 'delete') {
-    return this.tracked.delete(channelId, this.checkCmd(cmd));
+    return this.liveService.delete(channelId, this.checkCmd(cmd));
   }
 
   @Delete('/soop/:userId')
   async deleteSoop(@Param('userId') userId: string, @Query('cmd') cmd: string = 'delete') {
-    return this.tracked.delete(userId, this.checkCmd(cmd));
+    return this.liveService.delete(userId, this.checkCmd(cmd));
   }
 
   private checkCmd(cmd: string) {
-    if (!['delete', 'cancel'].includes(cmd)) {
+    if (!['delete', 'cancel', 'finish'].includes(cmd)) {
       throw Error(`Invalid cmd: ${cmd}`);
     }
     return cmd as ExitCmd;

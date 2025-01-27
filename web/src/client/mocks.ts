@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { TrackedRecord, WebhookRecord } from '@/client/types.ts';
+import { LiveRecord, WebhookRecord } from '@/client/types.ts';
 import { randomElem } from '@/lib/list.ts';
 
-export function mockTrackedRecord(): TrackedRecord {
+export function mockLiveRecord(): LiveRecord {
   return {
     type: randomElem(['chzzk', 'soop']),
     channelId: faker.string.uuid().replace(/-/g, ''),
@@ -12,6 +12,9 @@ export function mockTrackedRecord(): TrackedRecord {
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
     adult: randomElem([true, false]),
     savedAt: faker.date.anytime().toISOString(),
+    updatedAt: faker.date.anytime().toISOString(),
+    deletedAt: faker.date.anytime().toISOString(),
+    isDeleted: randomElem([true, false]),
     assignedWebhookName: faker.lorem.word(),
   };
 }

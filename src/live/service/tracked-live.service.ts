@@ -4,7 +4,7 @@ import { LiveInfo } from '../../platform/wapper/live.js';
 import { WebhookService } from './webhook.service.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
 import { TRACKED_LIVE_MAP } from '../persistence/persistence.module.js';
-import { TrackedRecord } from './types.js';
+import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { PlatformWebhookMatcher } from './webhook.matcher.js';
@@ -13,7 +13,7 @@ import { ExitCmd } from '../event/types.js';
 @Injectable()
 export class TrackedLiveService {
   constructor(
-    @Inject(TRACKED_LIVE_MAP) private readonly trackedMap: AsyncMap<string, TrackedRecord>,
+    @Inject(TRACKED_LIVE_MAP) private readonly trackedMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
     public readonly whService: WebhookService,
@@ -30,7 +30,7 @@ export class TrackedLiveService {
    * 이 메서드 내부에서 호출되는 `this.whRepo.updateWebhookCnt`가 직렬적으로 동작하기에
    * 병렬호출해도 성능상 병목이 발생할 수 있다.
    */
-  async add(info: LiveInfo): Promise<TrackedRecord> {
+  async add(info: LiveInfo): Promise<LiveRecord> {
     const webhook = this.whMatcher.matchWebhook(info, await this.webhooks());
     if (webhook === null) {
       // TODO: use ntfy
@@ -54,7 +54,7 @@ export class TrackedLiveService {
    * 이 메서드 내부에서 호출되는 `this.whRepo.updateWebhookCnt`가 직렬적으로 동작하기에
    * 병렬호출해도 성능상 병목이 발생할 수 있다.
    */
-  async update(newRecord: TrackedRecord) {
+  async update(newRecord: LiveRecord) {
     const exists = await this.get(newRecord.channelId);
     if (!exists) throw Error(`Not found trackedRecord: ${newRecord.channelId}`);
     if (exists.assignedWebhookName !== newRecord.assignedWebhookName) {
@@ -117,7 +117,7 @@ export class TrackedLiveService {
   async synchronize() {
     const records = await this.findAllActives();
     const entries = records.map((it) => [it.channelId, it] as const);
-    const recordMap = new Map<string, TrackedRecord>(entries);
+    const recordMap = new Map<string, LiveRecord>(entries);
 
     const fetchPromises = records.map(async (live) => {
       return this.fetcher.fetchChannel(live.type, live.channelId, true);

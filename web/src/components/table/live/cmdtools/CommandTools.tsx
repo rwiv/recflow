@@ -1,8 +1,8 @@
 import { Table } from '@tanstack/react-table';
-import { ExitCmd, TrackedRecord } from '@/client/types.ts';
+import { ExitCmd, LiveRecord } from '@/client/types.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/client.ts';
-import { CreateForm } from '@/components/table/tracked/cmdtools/CreateForm.tsx';
+import { CreateForm } from '@/components/table/live/cmdtools/CreateForm.tsx';
 import { ReactNode, useRef } from 'react';
 import { AlertDialog } from '@/components/common/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog.tsx';
 import { DialogClose } from '@radix-ui/react-dialog';
 
-export function CommandTools({ table }: { table: Table<TrackedRecord> }) {
+export function CommandTools({ table }: { table: Table<LiveRecord> }) {
   const queryClient = useQueryClient();
 
   const remove = async (cmd: ExitCmd) => {
@@ -31,6 +31,7 @@ export function CommandTools({ table }: { table: Table<TrackedRecord> }) {
       <CreateButton />
       <ExitButton onClick={() => remove('delete')}>Delete</ExitButton>
       <ExitButton onClick={() => remove('cancel')}>Cancel</ExitButton>
+      <ExitButton onClick={() => remove('finish')}>Cancel</ExitButton>
     </div>
   );
 }

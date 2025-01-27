@@ -12,14 +12,14 @@ import {
   WH_KEYS_KEY,
   WH_VALUE_PREFIX,
 } from './redis_keys.js';
-import { TrackedRecord } from '../service/types.js';
+import { LiveRecord } from '../service/types.js';
 
 @Injectable()
 export class PersistenceFactory {
   constructor(@Inject(ENV) private readonly env: Env) {}
 
   async trackedLiveMap() {
-    return createMap<TrackedRecord>(this.env, TRACKED_LIVE_KEYS_KEY, TRACKED_LIVE_VALUE_PREFIX);
+    return createMap<LiveRecord>(this.env, TRACKED_LIVE_KEYS_KEY, TRACKED_LIVE_VALUE_PREFIX);
   }
 
   async webhookMap() {

@@ -10,7 +10,7 @@ import { LiveInfo } from '../../platform/wapper/live.js';
 import { Cookie } from '../../infra/authed/types.js';
 import { Dispatcher } from './dispatcher.js';
 import { QueryConfig } from '../../common/query.js';
-import { TrackedRecord } from '../service/types.js';
+import { LiveRecord } from '../service/types.js';
 import { ExitCmd } from './types.js';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class LiveEventListener {
     private readonly dispatcher: Dispatcher,
   ) {}
 
-  async onCreate(created: TrackedRecord, webhookUrl: string) {
+  async onCreate(created: LiveRecord, webhookUrl: string) {
     // stdl
     await this.requestStdl(webhookUrl, created);
 

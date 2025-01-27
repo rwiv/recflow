@@ -1,10 +1,10 @@
-import { TrackedTable } from '@/components/table/tracked/TrackedTable.tsx';
-import { TrackedRecord, WebhookRecord } from '@/client/types.ts';
+import { LiveTable } from '@/components/table/live/LiveTable.tsx';
+import { LiveRecord, WebhookRecord } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WebhookTable } from '@/components/table/webhook/WebhookTable.tsx';
-import { mockTrackedRecord, mockWebhook } from '@/client/mocks.ts';
+import { mockLiveRecord, mockWebhook } from '@/client/mocks.ts';
 
-const lives = Array.from({ length: 10 }).map(mockTrackedRecord);
+const lives = Array.from({ length: 10 }).map(mockLiveRecord);
 const webhooks = Array.from({ length: 10 }).map(mockWebhook);
 
 export function TestPage() {
@@ -12,7 +12,7 @@ export function TestPage() {
 }
 
 interface TableContentProps {
-  lives: TrackedRecord[];
+  lives: LiveRecord[];
   webhooks: WebhookRecord[];
 }
 
@@ -25,7 +25,7 @@ function TableContent({ lives, webhooks }: TableContentProps) {
       </TabsList>
       <TabsContent value="lives">
         <div>
-          <TrackedTable data={lives} />
+          <LiveTable data={lives} />
         </div>
       </TabsContent>
       <TabsContent value="webhooks">

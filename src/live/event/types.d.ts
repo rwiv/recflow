@@ -1,6 +1,6 @@
 import { PlatformType } from '../../platform/types.js';
 
-export type ExitCmd = 'delete' | 'cancel';
+export type ExitCmd = 'delete' | 'cancel' | 'finish';
 
 export interface ExitMessage {
   cmd: ExitCmd;

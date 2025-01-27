@@ -4,10 +4,11 @@ const commands = {
     create: "create",
     delete: "delete",
     cancel: "cancel",
+    finish: "finish",
 };
 
 function isExitCommand(cmd) {
-    return cmd === commands.delete || cmd === commands.cancel;
+    return cmd === commands.delete || cmd === commands.cancel || cmd === commands.finish;
 }
 
 async function main() {

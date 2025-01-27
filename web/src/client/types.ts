@@ -1,6 +1,6 @@
 export type PlatformType = 'chzzk' | 'soop' | 'twitch';
 export type WebhookType = 'main' | 'sub' | 'extra';
-export type ExitCmd = 'delete' | 'cancel';
+export type ExitCmd = 'delete' | 'cancel' | 'finish';
 
 export interface LiveInfo {
   type: PlatformType;
@@ -12,7 +12,7 @@ export interface LiveInfo {
   adult: boolean;
 }
 
-export interface TrackedRecord extends LiveInfo {
+export interface LiveRecord extends LiveInfo {
   savedAt: string;
   updatedAt: string | undefined;
   deletedAt: string | undefined;

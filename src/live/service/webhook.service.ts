@@ -5,7 +5,7 @@ import { PlatformType } from '../../platform/types.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
 import { WEBHOOK_MAP } from '../persistence/persistence.module.js';
 import { QUERY } from '../../common/config.module.js';
-import { TrackedRecord } from './types.js';
+import { LiveRecord } from './types.js';
 
 @Injectable()
 export class WebhookService {
@@ -50,7 +50,7 @@ export class WebhookService {
     await this.whMap.set(whName, value);
   }
 
-  async synchronize(lives: TrackedRecord[]) {
+  async synchronize(lives: LiveRecord[]) {
     await this.syncWithConfig();
     await this.syncWithLives(lives);
   }
@@ -87,7 +87,7 @@ export class WebhookService {
     await Promise.all(toBeCreated.map(([whName, whs]) => this.whMap.set(whName, whs)));
   }
 
-  private async syncWithLives(lives: TrackedRecord[]) {
+  private async syncWithLives(lives: LiveRecord[]) {
     const whMap = new Map<string, WebhookRecord>();
     for (const wh of await this.whMap.values()) {
       whMap.set(wh.name, {

@@ -17,3 +17,8 @@ it('test cancel', async () => {
   await amqp.init();
   await dispatcher.exit('cancel', 'chzzk', conf.channelId);
 });
+
+it('test finish', async () => {
+  await amqp.init();
+  await dispatcher.exit('finish', 'chzzk', conf.channelId);
+});

@@ -1,4 +1,4 @@
-import { Stdl } from '../../infra/stdl/types.js';
+import type { Stdl } from '../../infra/stdl/types.js';
 import { Authed, SoopCredential } from '../../infra/authed/authed.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { log } from 'jslog';

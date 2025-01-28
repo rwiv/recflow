@@ -68,22 +68,40 @@ export class WebhookService {
       }
     }
 
+    // Update webhooks that are assigned
+    const toBeUpdated: [string, WebhookRecord][] = [];
+    for (const [key, value] of existedEntries) {
+      if (this.query.webhooks.map((it) => it.name).includes(key)) {
+        const whDef = this.query.webhooks.find((it) => it.name === key);
+        if (!whDef) throw Error('Cannot found webhook');
+        if (
+          value.type !== whDef.type ||
+          value.url !== whDef.url ||
+          value.chzzkCapacity !== whDef.chzzkCapacity ||
+          value.soopCapacity !== whDef.soopCapacity
+        ) {
+          toBeUpdated.push([key, { ...value, ...whDef }]);
+        }
+      }
+    }
+
     // Create webhooks for newly added
     const toBeCreated: [string, WebhookRecord][] = [];
     const keys = existedEntries.map(([key, _]) => key);
-    for (const whInfo of this.query.webhooks) {
-      if (!keys.includes(whInfo.name)) {
+    for (const whDef of this.query.webhooks) {
+      if (!keys.includes(whDef.name)) {
         const webhook: WebhookRecord = {
-          ...whInfo,
+          ...whDef,
           chzzkAssignedCnt: 0,
           soopAssignedCnt: 0,
         };
-        toBeCreated.push([whInfo.name, webhook]);
+        toBeCreated.push([whDef.name, webhook]);
       }
     }
 
     // Update the map
     await Promise.all(toBeDeleted.map((name) => this.webhookMap.delete(name)));
+    await Promise.all(toBeUpdated.map(([whName, wh]) => this.webhookMap.set(whName, wh)));
     await Promise.all(toBeCreated.map(([whName, whs]) => this.webhookMap.set(whName, whs)));
   }
 

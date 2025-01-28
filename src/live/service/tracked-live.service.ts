@@ -25,7 +25,7 @@ export class TrackedLiveService {
     @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
-    public readonly webhookService: WebhookService,
+    private readonly webhookService: WebhookService,
     private readonly webhookMatcher: PlatformWebhookMatcher,
   ) {}
 
@@ -158,6 +158,11 @@ export class TrackedLiveService {
       });
     });
     return Promise.all(promises);
+  }
+
+  async syncWebhooks() {
+    const lives = await this.findAllActives();
+    await this.webhookService.synchronize(lives);
   }
 
   async clear() {

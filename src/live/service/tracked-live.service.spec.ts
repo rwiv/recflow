@@ -9,10 +9,15 @@ const query = readQueryConfig(env.configPath);
 it('print', async () => {
   const liveService = await createRedisLiveService(env, query);
   console.log(await liveService.keys());
-  console.log(await liveService.webhookService.values());
+  console.log(await liveService.webhooks());
 });
 
-it('clear', async () => {
+it('sync webhooks', async () => {
   const liveService = await createRedisLiveService(env, query);
-  await liveService.clear();
+  await liveService.syncWebhooks();
 });
+
+// it('clear', async () => {
+//   const liveService = await createRedisLiveService(env, query);
+//   await liveService.clear();
+// });

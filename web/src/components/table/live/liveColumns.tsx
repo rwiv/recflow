@@ -12,7 +12,6 @@ export const platformTypeCid = 'type';
 export const viewCntCid = 'viewCnt';
 export const assignedWebhookNameCid = 'assignedWebhookName';
 export const savedAtCit = 'savedAt';
-export const openDateCit = 'openDate';
 
 const channelColumn: ColumnDef<LiveRecord> = {
   accessorKey: 'channel',
@@ -62,7 +61,6 @@ export const liveColumns: ColumnDef<LiveRecord>[] = [
   channelColumn,
   titleColumn,
   sortableColumnDef(viewCntCid, 'Viewers'),
-  dateColumnDef<LiveRecord>(savedAtCit, 'Saved Time', (elem) => new Date(elem.savedAt)),
-  dateColumnDef<LiveRecord>(openDateCit, 'Open Time', (elem) => new Date(elem.openDate)),
+  dateColumnDef<LiveRecord>(savedAtCit, 'Save Time', (elem) => new Date(elem.savedAt)),
   baseColumnDef(assignedWebhookNameCid, 'Webhook'),
 ];

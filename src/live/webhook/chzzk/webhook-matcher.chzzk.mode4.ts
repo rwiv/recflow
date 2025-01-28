@@ -13,7 +13,7 @@ export class WebhookMatcherChzzkMode4 implements WebhookMatcher {
     }
 
     let type: WebhookType = 'sub';
-    if (this.query.watchedChzzkChanIds.includes(live.channelId)) {
+    if (this.query.followChzzkChanIds.includes(live.channelId)) {
       type = 'main';
     }
     if (this.query.allowedChzzkChanNames.includes(live.channelName)) {

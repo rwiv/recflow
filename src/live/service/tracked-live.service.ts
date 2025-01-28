@@ -94,10 +94,13 @@ export class TrackedLiveService {
       record.isDeleted = true;
       record.deletedAt = new Date().toISOString();
       await this.liveMap.set(id, record);
+      await this.webhookService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
     } else {
+      if (!record.isDeleted) {
+        await this.webhookService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
+      }
       await this.liveMap.delete(id);
     }
-    await this.webhookService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
 
     await this.listener.onDelete(record, exitCmd);
 

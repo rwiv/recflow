@@ -5,8 +5,8 @@ import { WebhookDef, WebhookMode, WebhookType } from '../live/webhook/types.js';
 export interface QueryConfig {
   options: PlatformOptions;
 
-  watchedChzzkChanIds: string[];
-  watchedSoopUserIds: string[];
+  followChzzkChanIds: string[];
+  followSoopUserIds: string[];
 
   chzzkMinUserCnt: number;
   chzzkMinFollowerCnt: number;

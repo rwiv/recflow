@@ -18,10 +18,10 @@ export class LiveInjector extends Synchronizer {
   }
 
   protected async check() {
-    // --------------- check watched channels -------------------------------
-    const newWatchedChannelIds = (
+    // --------------- check follow channels -------------------------------
+    const untrackedFollowChannelIds = (
       await Promise.all(
-        this.query.watchedSoopUserIds.map(async (userId) => ({
+        this.query.followSoopUserIds.map(async (userId) => ({
           userId,
           live: await this.liveService.get(userId, { includeDeleted: true }),
         })),
@@ -30,18 +30,20 @@ export class LiveInjector extends Synchronizer {
       .filter(({ live }) => !live)
       .map(({ userId }) => userId);
 
-    const newLivedWatchedChannels = (
+    const untrackedLivedFollowChannels = (
       await Promise.all(
-        newWatchedChannelIds.map((userId) => this.fetcher.fetchChannel(this.ptype, userId, false)),
+        untrackedFollowChannelIds.map((userId) =>
+          this.fetcher.fetchChannel(this.ptype, userId, false),
+        ),
       )
     )
       .filter((info) => info !== null)
       .filter((info) => info.openLive);
 
-    for (const newChannel of newLivedWatchedChannels) {
-      const channel = await this.fetcher.fetchChannel(this.ptype, newChannel.id, true);
-      if (!channel) throw Error('Not found channel');
-      const live = channel.liveInfo;
+    for (const channel of untrackedLivedFollowChannels) {
+      const chanWithLiveInfo = await this.fetcher.fetchChannel(this.ptype, channel.id, true);
+      if (!chanWithLiveInfo) throw Error('Not found channel');
+      const live = chanWithLiveInfo.liveInfo;
       if (!live) throw Error('Not found Channel.liveInfo');
       await this.liveService.add(live);
     }

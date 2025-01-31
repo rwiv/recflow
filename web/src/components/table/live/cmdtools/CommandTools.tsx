@@ -31,7 +31,7 @@ export function CommandTools({ table }: { table: Table<LiveRecord> }) {
       <CreateButton />
       <ExitButton onClick={() => remove('delete')}>Delete</ExitButton>
       <ExitButton onClick={() => remove('cancel')}>Cancel</ExitButton>
-      <ExitButton onClick={() => remove('finish')}>Cancel</ExitButton>
+      <ExitButton onClick={() => remove('finish')}>Finish</ExitButton>
     </div>
   );
 }

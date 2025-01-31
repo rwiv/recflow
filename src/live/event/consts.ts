@@ -1,1 +1,1 @@
-export const AMQP_QUEUE_PREFIX = 'stdl:exit';
+export const AMQP_EXIT_QUEUE_PREFIX = 'stdl.exit';

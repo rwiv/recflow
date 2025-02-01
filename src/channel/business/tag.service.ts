@@ -25,6 +25,6 @@ export class TagService {
   }
 
   async findByChannelId(channelId: string): Promise<TagRecord[]> {
-    return this.tagRepo.findByChannelId(channelId);
+    return this.tagRepo.findTagsByChannelId(channelId);
   }
 }

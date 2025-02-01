@@ -7,6 +7,10 @@ export interface ChannelCreation extends ChannelDef {
   priority: ChannelPriority;
 }
 
+export interface ChannelUpdate extends ChannelCreation {
+  id: string;
+}
+
 export interface ChannelRecord extends ChannelCreation {
   id: string;
   createdAt: Date;

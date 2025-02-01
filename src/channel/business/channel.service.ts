@@ -17,7 +17,7 @@ export class ChannelService {
     if (!withTags) return channels as ChannelRecord[];
     const promises = channels.map(async (channel) => ({
       ...channel,
-      tags: await this.tagRepo.findByChannelId(channel.id),
+      tags: await this.tagRepo.findTagsByChannelId(channel.id),
     }));
     return (await Promise.all(promises)) as ChannelRecord[];
   }
@@ -28,7 +28,7 @@ export class ChannelService {
     if (!withTags) return channel as ChannelRecord;
     return {
       ...channel,
-      tags: await this.tagRepo.findByChannelId(channelId),
+      tags: await this.tagRepo.findTagsByChannelId(channelId),
     } as ChannelRecord;
   }
 }

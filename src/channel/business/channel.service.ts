@@ -1,31 +1,21 @@
-import { db } from '../../infra/db/db.js';
-import { channels } from '../persistence/schema.js';
 import { ChannelCreation, ChannelRecord } from './types.js';
-import { eq } from 'drizzle-orm';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { TagService } from './tag.service.js';
-import { uuid } from '../../utils/uuid.js';
+import { ChannelRepository } from '../persistence/channel.repository.js';
+import { TagRepository } from '../persistence/tag.repository.js';
 
 export class ChannelService {
-  constructor(private readonly tagRepo: TagService) {}
+  constructor(
+    private readonly chanRepo: ChannelRepository,
+    private readonly tagRepo: TagRepository,
+  ) {}
 
-  async createChannel(req: ChannelCreation) {
-    const toBeAdded = {
-      ...req,
-      id: uuid(),
-      createdAt: new Date(),
-      updatedAt: null,
-    };
-    const query = db.insert(channels).values(toBeAdded).returning();
-    return oneNotNull(await query) as ChannelRecord;
+  async create(req: ChannelCreation) {
+    return (await this.chanRepo.create(req)) as ChannelRecord;
   }
 
   async findAll(withTags: boolean = false): Promise<ChannelRecord[]> {
-    const channelList = await db.select().from(channels);
-    if (!withTags) {
-      return channelList as ChannelRecord[];
-    }
-    const promises = channelList.map(async (channel) => ({
+    const channels = await this.chanRepo.findAll();
+    if (!withTags) return channels as ChannelRecord[];
+    const promises = channels.map(async (channel) => ({
       ...channel,
       tags: await this.tagRepo.findByChannelId(channel.id),
     }));
@@ -33,13 +23,9 @@ export class ChannelService {
   }
 
   async findById(channelId: string, withTags: boolean = false): Promise<ChannelRecord | undefined> {
-    const channel = oneNullable(await db.select().from(channels).where(eq(channels.id, channelId)));
-    if (!channel) {
-      return undefined;
-    }
-    if (!withTags) {
-      return channel as ChannelRecord;
-    }
+    const channel = await this.chanRepo.findById(channelId);
+    if (!channel) return undefined;
+    if (!withTags) return channel as ChannelRecord;
     return {
       ...channel,
       tags: await this.tagRepo.findByChannelId(channelId),

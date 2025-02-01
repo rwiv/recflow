@@ -4,16 +4,20 @@ import { channels, channelsToTags, tags } from '../persistence/schema.js';
 import { db } from '../../infra/db/db.js';
 import { ChannelService } from './channel.service.js';
 import { TagService } from './tag.service.js';
+import { TagRepository } from '../persistence/tag.repository.js';
+import { ChannelRepository } from '../persistence/channel.repository.js';
 
-const tagService = new TagService();
-const chanService = new ChannelService(tagService);
+const tagRepo = new TagRepository();
+const chanRepo = new ChannelRepository();
+const tagService = new TagService(tagRepo, chanRepo);
+const chanService = new ChannelService(chanRepo, tagRepo);
 
 it('test', async () => {
-  const channel1 = await chanService.createChannel(mockChannel(1));
+  const channel1 = await chanService.create(mockChannel(1));
   await tagService.attach(channel1.id, 'tag1');
   await tagService.attach(channel1.id, 'tag2');
 
-  const channel2 = await chanService.createChannel(mockChannel(2));
+  const channel2 = await chanService.create(mockChannel(2));
   await tagService.attach(channel2.id, 'tag2');
   await tagService.attach(channel2.id, 'tag3');
 

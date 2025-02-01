@@ -14,7 +14,7 @@ export const channels = pgTable('channels', {
 
 export const tags = pgTable('tags', {
   id: char({ length: 32 }).primaryKey(),
-  name: varchar({ length: 255 }).notNull(),
+  name: varchar({ length: 255 }).notNull().unique(),
   description: text(),
   createdAt: timestamp().notNull(),
   updatedAt: timestamp(),
@@ -29,6 +29,7 @@ export const channelsToTags = pgTable(
     tagId: char('tag_id', { length: 32 })
       .notNull()
       .references(() => tags.id),
+    createdAt: timestamp().notNull(),
   },
   (t) => ({
     pk: primaryKey({

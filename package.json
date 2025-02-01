@@ -10,7 +10,10 @@
     "dev": "nest start --watch",
     "prod": "node dist/main",
     "format": "prettier --write \"{src,test}/**/*.ts\"",
-    "lint": "eslint \"{src,test}/**/*.ts\" --fix"
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "gen": "drizzle-kit generate",
+    "mig": "drizzle-kit migrate",
+    "push": "drizzle-kit push"
   },
   "engines": {
     "npm": ">=10.0.0",
@@ -26,14 +29,15 @@
     "drizzle-orm": "^0.39.0",
     "js-yaml": "^4.1.0",
     "jslog": "git+https://github.com/rwiv/jslog.git#v1.0.0",
+    "pg": "^8.13.1",
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
-    "@libsql/client": "^0.14.0",
     "@nestjs/cli": "^10.4.9",
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^11.0.1",
@@ -43,6 +47,7 @@
     "@types/express": "^5.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.10.7",
+    "@types/pg": "^8.11.11",
     "@types/supertest": "^6.0.2",
     "drizzle-kit": "^0.30.3",
     "eslint": "^9.18.0",

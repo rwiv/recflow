@@ -10,3 +10,12 @@ export interface AmqpConfig {
   username: string;
   password: string;
 }
+
+export interface PostgresConfig {
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+  url: string;
+}

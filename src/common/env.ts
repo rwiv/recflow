@@ -1,5 +1,5 @@
 import { DEFAULT_NTFY_TOPIC } from './consts.js';
-import { AmqpConfig, RedisConfig } from './types.js';
+import { AmqpConfig, PostgresConfig, RedisConfig } from './types.js';
 import dotenv from 'dotenv';
 
 export interface Env {
@@ -14,6 +14,7 @@ export interface Env {
   ntfyTopic: string;
   redis: RedisConfig;
   amqp: AmqpConfig;
+  pg: PostgresConfig;
 }
 
 export function readEnv(): Env {
@@ -93,6 +94,33 @@ export function readEnv(): Env {
     password: amqpPassword,
   };
 
+  // postgres
+  const pgHost = process.env.PG_HOST;
+  const pgPortStr = process.env.PG_PORT;
+  const pgDatabase = process.env.PG_DATABASE;
+  const pgUsername = process.env.PG_USERNAME;
+  const pgPassword = process.env.PG_PASSWORD;
+  if (
+    pgHost === undefined ||
+    pgPortStr === undefined ||
+    pgDatabase === undefined ||
+    pgUsername === undefined ||
+    pgPassword === undefined
+  ) {
+    throw Error('pg data is undefined');
+  }
+  const pgPort = parseInt(pgPortStr);
+  if (isNaN(pgPort)) throw Error('pgPort is NaN');
+  const url = `postgres://${pgUsername}:${pgPassword}@${pgHost}:${pgPort}/${pgDatabase}`;
+  const pg: PostgresConfig = {
+    host: pgHost,
+    port: pgPort,
+    database: pgDatabase,
+    username: pgUsername,
+    password: pgPassword,
+    url,
+  };
+
   return {
     nodeEnv,
     appPort,
@@ -105,5 +133,6 @@ export function readEnv(): Env {
     ntfyTopic,
     redis,
     amqp,
+    pg,
   };
 }

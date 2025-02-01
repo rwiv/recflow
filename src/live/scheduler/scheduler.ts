@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../common/config.module.js';
 import { QueryConfig } from '../../common/query.js';
-import { TrackedLiveService } from '../service/tracked-live.service.js';
+import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { DEFAULT_INJECT_CYCLE, DEFAULT_CLEAN_CYCLE, DEFAULT_REFRESH_CYCLE } from './consts.js';

@@ -10,7 +10,7 @@ import { LiveInfo } from '../../platform/wapper/live.js';
 import { Cookie } from '../../infra/authed/types.js';
 import { Dispatcher } from './dispatcher.js';
 import { QueryConfig } from '../../common/query.js';
-import { LiveRecord } from '../service/types.js';
+import { LiveRecord } from '../business/types.js';
 import { ExitCmd } from './types.js';
 
 @Injectable()

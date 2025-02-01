@@ -3,7 +3,7 @@ import { LiveInfo } from '../../../platform/wapper/live.js';
 import { PlatformType } from '../../../platform/types.js';
 import { QueryConfig } from '../../../common/query.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { TrackedLiveService } from '../../service/tracked-live.service.js';
+import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { LiveFilter } from '../filters/interface.js';
 
 export class LiveInjector extends Synchronizer {
@@ -41,7 +41,7 @@ export class LiveInjector extends Synchronizer {
       .filter((info) => info.openLive);
 
     for (const channel of untrackedLivedFollowChannels) {
-      const chanWithLiveInfo = await this.fetcher.fetchChannel(this.ptype, channel.id, true);
+      const chanWithLiveInfo = await this.fetcher.fetchChannel(this.ptype, channel.pid, true);
       if (!chanWithLiveInfo) throw Error('Not found channel');
       const live = chanWithLiveInfo.liveInfo;
       if (!live) throw Error('Not found Channel.liveInfo');

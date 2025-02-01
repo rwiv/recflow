@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { LiveScheduler } from './live/sync/scheduler.js';
+import { LiveScheduler } from './live/scheduler/scheduler.js';
 import { ENV } from './common/config.module.js';
 import { Env } from './common/env.js';
 import { log } from 'jslog';

@@ -144,8 +144,8 @@ export class TrackedLiveService {
     const newChannels = (await Promise.all(fetchPromises)).filter((it) => it !== null);
 
     const promises = newChannels.map(async (channel) => {
-      const record = recordMap.get(channel.id);
-      if (!record) throw Error(`Record not found for ${channel.id}`);
+      const record = recordMap.get(channel.pid);
+      if (!record) throw Error(`Record not found for ${channel.pid}`);
       // 방송이 종료되었으나 cleanup cycle 이전에 refresh가 진행되면
       // record는 active이나 fetchedChannel.liveInfo는 null이 될 수 있다.
       if (!channel.liveInfo) {

@@ -1,7 +1,7 @@
 import { Synchronizer } from './synchronizer.js';
 import { PlatformType } from '../../../platform/types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { TrackedLiveService } from '../../service/tracked-live.service.js';
+import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { LiveInfo } from '../../../platform/wapper/live.js';
 
 export class LiveCleaner extends Synchronizer {

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { LiveSyncModule } from './sync/sync.module.js';
-import { LiveControllerModule } from './controller/contoller.module.js';
+import { LiveSchedulerModule } from './scheduler/scheduler.module.js';
+import { LiveWebModule } from './web/web.module.js';
 
 @Module({
-  imports: [LiveSyncModule, LiveControllerModule],
+  imports: [LiveSchedulerModule, LiveWebModule],
   controllers: [],
   providers: [],
 })

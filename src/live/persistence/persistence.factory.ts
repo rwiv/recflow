@@ -7,7 +7,7 @@ import { WebhookRecord } from '../webhook/types.js';
 import { AsyncMap } from '../../infra/storage/interface.js';
 import { MemoryMap } from '../../infra/storage/map.mem.js';
 import { LIVE_KEYS_KEY, LIVE_VALUE_PREFIX, WH_KEYS_KEY, WH_VALUE_PREFIX } from './redis_keys.js';
-import { LiveRecord } from '../service/types.js';
+import { LiveRecord } from '../business/types.js';
 
 @Injectable()
 export class PersistenceFactory {

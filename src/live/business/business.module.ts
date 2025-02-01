@@ -13,4 +13,4 @@ import { WebhookModule } from '../webhook/webhook.module.js';
   providers: [WebhookService, TrackedLiveService, PlatformWebhookMatcher],
   exports: [WebhookService, TrackedLiveService],
 })
-export class LiveServiceModule {}
+export class LiveBusinessModule {}

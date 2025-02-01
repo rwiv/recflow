@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '../../common/config.module.js';
 import { WebhookMatcherSoopMode1 } from './soop/webhook-matcher.soop.mode1.js';
 import { WebhookFactory } from './webhook.factory.js';
-import { PlatformWebhookMatcher } from '../service/webhook.matcher.js';
+import { PlatformWebhookMatcher } from '../business/webhook.matcher.js';
 
 export const WEBHOOK_MATCHER_CHZZK = 'WebhookMatcherChzzk';
 export const WEBHOOK_MATCHER_SOOP = 'WebhookMatcherSoop';

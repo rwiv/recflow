@@ -13,7 +13,8 @@
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "gen": "drizzle-kit generate",
     "mig": "drizzle-kit migrate",
-    "push": "drizzle-kit push"
+    "push": "drizzle-kit push",
+    "export": "drizzle-kit export"
   },
   "engines": {
     "npm": ">=10.0.0",

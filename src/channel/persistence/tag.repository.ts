@@ -1,13 +1,18 @@
-import { TagRecord } from '../business/types.js';
+import { ChannelRecord, TagRecord } from './types.js';
 import { db } from '../../infra/db/db.js';
 import { channels, channelsToTags, tags } from './schema.js';
 import { and, eq } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
+import { processSets } from '../../utils/set.js';
 
 export class TagRepository {
-  async create(name: string, description: string | null = null, tx: Tx = db): Promise<TagRecord> {
+  private async create(
+    name: string,
+    description: string | null = null,
+    tx: Tx = db,
+  ): Promise<TagRecord> {
     const tag = await this.findByName(name, tx);
     if (tag) throw new Error('Tag already exists');
     const req = {
@@ -20,7 +25,12 @@ export class TagRepository {
     return oneNotNull(await tx.insert(tags).values(req).returning());
   }
 
-  async update(tagId: string, name: string, description: string | null = null, tx: Tx = db) {
+  async update(
+    tagId: string,
+    name: string,
+    description: string | null = null,
+    tx: Tx = db,
+  ): Promise<TagRecord> {
     const tag = await this.findById(tagId, tx);
     if (!tag) throw new Error('Tag not found');
     const req = {
@@ -32,7 +42,7 @@ export class TagRepository {
     return oneNotNull(await tx.update(tags).set(req).where(eq(tags.name, name)).returning());
   }
 
-  async attach(channelId: string, tagName: string, tx: Tx = db) {
+  async attach(channelId: string, tagName: string, tx: Tx = db): Promise<TagRecord> {
     return tx.transaction(async (txx) => {
       let tag = await this.findByName(tagName, txx);
       if (!tag) {
@@ -53,11 +63,32 @@ export class TagRepository {
     });
   }
 
-  async findById(tagId: string, tx: Tx = db) {
+  async applyTags(channelId: string, tagNames: string[], tx: Tx = db): Promise<TagRecord[]> {
+    const tags = await this.findTagsByChannelId(channelId, tx);
+    const setA = new Set(tagNames); // expected tags
+    const setB = new Set(tags.map((tag) => tag.name)); // existing tags
+    const mapB = new Map(tags.map((tag) => [tag.name, tag]));
+    const { newSetA, newSetB } = processSets(setA, setB);
+    return tx.transaction(async (txx) => {
+      const result: TagRecord[] = [];
+      for (const tagName of newSetA) {
+        const newTag = await this.attach(channelId, tagName, txx);
+        result.push(newTag);
+      }
+      for (const tagName of newSetB) {
+        const tag = mapB.get(tagName);
+        if (!tag) throw new Error('Tag not found');
+        await this.detach(channelId, tag.id, txx);
+      }
+      return result;
+    });
+  }
+
+  private async findById(tagId: string, tx: Tx = db): Promise<TagRecord | undefined> {
     return oneNullable(await tx.select().from(tags).where(eq(tags.id, tagId)));
   }
 
-  async findByName(tagName: string, tx: Tx = db): Promise<TagRecord | undefined> {
+  private async findByName(tagName: string, tx: Tx = db): Promise<TagRecord | undefined> {
     return oneNullable(await tx.select().from(tags).where(eq(tags.name, tagName)));
   }
 
@@ -70,7 +101,11 @@ export class TagRepository {
     return rows.map((row) => row.tags).filter((tag) => tag !== null);
   }
 
-  private async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db) {
+  private async findChannelsByTagId(
+    tagId: string,
+    limit: number,
+    tx: Tx = db,
+  ): Promise<ChannelRecord[]> {
     const rows = await tx
       .select()
       .from(channelsToTags)

@@ -1,24 +1,18 @@
 import { it } from 'vitest';
-import { ChannelCreation } from './types.js';
+import { ChannelCreation } from '../persistence/types.js';
 import { ChannelService } from './channel.service.js';
-import { TagService } from './tag.service.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 
 const tagRepo = new TagRepository();
-const chanRepo = new ChannelRepository();
-const tagService = new TagService(tagRepo, chanRepo);
+const chanRepo = new ChannelRepository(tagRepo);
 const chanService = new ChannelService(chanRepo, tagRepo);
 
 it('test', async () => {
-  const channel1 = await chanService.create(mockChannel(1));
-  await tagService.attach(channel1.id, 'tag1');
-  await tagService.attach(channel1.id, 'tag2');
+  const channel1 = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
 
-  const channel2 = await chanService.create(mockChannel(2));
-  await tagService.attach(channel2.id, 'tag2');
-  await tagService.attach(channel2.id, 'tag3');
+  const channel2 = await chanService.create(mockChannel(2), ['tag2', 'tag3']);
 
   // console.log(await chRepo.findById(channel1.id, true));
   for (const channel of await chanService.findAll(true)) {

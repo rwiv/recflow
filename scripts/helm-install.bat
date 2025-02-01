@@ -1,3 +1,3 @@
 cd ..
-helm install stmgr ./helm -n media
+helm install stmgr ./kube/app -n media
 pause

@@ -3,11 +3,14 @@ import { ChzzkChannelInfo } from '../raw/chzzk.js';
 import { SoopChannelInfo } from '../raw/soop.js';
 import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
 
-export interface ChannelInfo {
+export interface ChannelMeta {
   ptype: PlatformType;
-  id: string;
+  pid: string;
   name: string;
   followerCount: number;
+}
+
+export interface ChannelInfo extends ChannelMeta {
   openLive: boolean;
   content: PlatformChannelInfo;
   liveInfo: LiveInfo | null;
@@ -20,7 +23,7 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
   }
   return {
     ptype: 'chzzk',
-    id: info.channelId,
+    pid: info.channelId,
     name: info.channelName,
     followerCount: info.followerCount,
     openLive: info.openLive,
@@ -36,7 +39,7 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
   }
   return {
     ptype: 'soop',
-    id: info.userId,
+    pid: info.userId,
     name: info.userNick,
     followerCount: info.fanCnt,
     openLive: info.openLive,

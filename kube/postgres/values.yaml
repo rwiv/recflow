@@ -1,0 +1,15 @@
+globalName: stmgr-postgres
+vault:
+  mount: kube
+  path: db/cnpg/media/stmgr
+  version: 1
+  secretName: stmgr-postgres
+  refreshAfter: 30s
+database:
+  name: stmgr
+  owner: admin
+  instance: 1
+  nodePort: 30221
+storage:
+  storageClass: rook-ceph-block
+  size: 3Gi

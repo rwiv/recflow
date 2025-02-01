@@ -1,11 +1,10 @@
 import { it } from 'vitest';
 import { ChannelCreation } from './types.js';
-import { channels, channelsToTags, tags } from '../persistence/schema.js';
-import { db } from '../../infra/db/db.js';
 import { ChannelService } from './channel.service.js';
 import { TagService } from './tag.service.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
+import { dropAll } from '../../infra/db/utils.js';
 
 const tagRepo = new TagRepository();
 const chanRepo = new ChannelRepository();
@@ -26,15 +25,11 @@ it('test', async () => {
     console.log(channel);
   }
 
-  await db.delete(channelsToTags);
-  await db.delete(tags);
-  await db.delete(channels);
+  await dropAll();
 });
 
-it('clear', async () => {
-  await db.delete(channelsToTags);
-  await db.delete(tags);
-  await db.delete(channels);
+it('drop all tables', async () => {
+  await dropAll();
 });
 
 function mockChannel(n: number): ChannelCreation {

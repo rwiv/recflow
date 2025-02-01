@@ -4,29 +4,33 @@ import { channelsToTags, tags } from './schema.js';
 import { and, eq } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
+import { Tx } from '../../infra/db/types.js';
 
 export class TagRepository {
-  async create(name: string, description: string | null = null): Promise<TagRecord> {
-    const tagReq = {
+  async create(name: string, description: string | null = null, tx: Tx = db): Promise<TagRecord> {
+    const toBeCreated = {
       id: uuid(),
       name,
       description,
       createdAt: new Date(),
       updatedAt: null,
     };
-    return oneNotNull(await db.insert(tags).values(tagReq).returning());
+    return oneNotNull(await tx.insert(tags).values(toBeCreated).returning());
   }
 
-  async attach(channelId: string, tagId: string) {
-    await db.insert(channelsToTags).values({ channelId, tagId, createdAt: new Date() });
+  async attach(channelId: string, tagName: string) {
+    return db.transaction(async (tx) => {
+      let tag = await this.findByName(tagName);
+      if (!tag) {
+        tag = await this.create(tagName, null, tx);
+      }
+      await tx.insert(channelsToTags).values({ channelId, tagId: tag.id, createdAt: new Date() });
+      return tag;
+    });
   }
 
   async detach(channelId: string, tagId: string) {
     const cond = and(eq(channelsToTags.channelId, channelId), eq(channelsToTags.tagId, tagId));
-    const ct = oneNullable(await db.select().from(channelsToTags).where(cond));
-    if (!ct) {
-      throw new Error('Channel to tag not found');
-    }
     await db.delete(channelsToTags).where(cond);
   }
 

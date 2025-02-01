@@ -17,12 +17,7 @@ export class TagService {
     if (!channel) {
       throw new Error('Channel not found');
     }
-    let tag = await this.tagRepo.findByName(tagName);
-    if (!tag) {
-      tag = await this.create(tagName);
-    }
-    await this.tagRepo.attach(channel.id, tag.id);
-    return tag;
+    return this.tagRepo.attach(channel.id, tagName);
   }
 
   async detach(channelId: string, tagId: string) {

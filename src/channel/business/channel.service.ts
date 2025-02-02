@@ -1,7 +1,8 @@
-import { ChannelCreation, ChannelRecord, ChannelUpdate, TagRecord } from '../persistence/types.js';
+import { ChannelCreation, ChannelRecord, ChannelUpdate } from '../persistence/channel.types.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { db } from '../../infra/db/db.js';
+import { TagRecord } from '../persistence/tag.types.js';
 
 export class ChannelService {
   constructor(
@@ -14,7 +15,7 @@ export class ChannelService {
       const channel = await this.chanRepo.create(req, txx);
       const tags: TagRecord[] = [];
       for (const tagName of reqTagNames) {
-        tags.push(await this.tagRepo.attach(channel.id, tagName, txx));
+        tags.push(await this.tagRepo.attach({ channelId: channel.id, tagName }, txx));
       }
       return {
         ...channel,

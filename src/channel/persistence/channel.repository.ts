@@ -2,11 +2,13 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { db } from '../../infra/db/db.js';
 import { channels } from './schema.js';
 import { eq } from 'drizzle-orm';
-import { ChannelCreation, ChannelRecord, ChannelUpdate } from './types.js';
+import { ChannelCreation, ChannelRecord, ChannelUpdate } from './channel.types.js';
 import { uuid } from '../../utils/uuid.js';
 import { TagRepository } from './tag.repository.js';
 import { Tx } from '../../infra/db/types.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ChannelRepository {
   constructor(private readonly tagRepo: TagRepository) {}
 
@@ -39,7 +41,7 @@ export class ChannelRepository {
     const tags = await this.tagRepo.findTagsByChannelId(channel.id, tx);
     return tx.transaction(async (txx) => {
       for (const tag of tags) {
-        await this.tagRepo.detach(channel.id, tag.id, txx);
+        await this.tagRepo.detach({ channelId: channel.id, tagId: tag.id }, txx);
       }
       await txx.delete(channels).where(eq(channels.id, channel.id));
       return channel;

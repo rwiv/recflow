@@ -3,14 +3,14 @@ import { ChzzkChannelInfo } from '../raw/chzzk.js';
 import { SoopChannelInfo } from '../raw/soop.js';
 import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
 
-export interface ChannelDef {
+export interface ChannelBase {
   ptype: PlatformType;
   pid: string;
   username: string;
   followerCount: number;
 }
 
-export interface ChannelInfo extends ChannelDef {
+export interface ChannelInfo extends ChannelBase {
   openLive: boolean;
   content: PlatformChannelInfo;
   liveInfo: LiveInfo | null;

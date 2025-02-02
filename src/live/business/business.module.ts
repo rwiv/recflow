@@ -7,9 +7,17 @@ import { PlatformModule } from '../../platform/platform.module.js';
 import { LiveEventModule } from '../event/event.module.js';
 import { PlatformNodeSelector } from './node.selector.js';
 import { NodeModule } from '../node/node.module.js';
+import { ChannelBusinessModule } from '../../channel/business/business.module.js';
 
 @Module({
-  imports: [ConfigModule, LivePersistenceModule, PlatformModule, NodeModule, LiveEventModule],
+  imports: [
+    ConfigModule,
+    LivePersistenceModule,
+    PlatformModule,
+    NodeModule,
+    LiveEventModule,
+    ChannelBusinessModule,
+  ],
   providers: [NodeService, TrackedLiveService, PlatformNodeSelector],
   exports: [NodeService, TrackedLiveService],
 })

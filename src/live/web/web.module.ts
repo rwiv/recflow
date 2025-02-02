@@ -6,6 +6,5 @@ import { LiveController } from './live.controller.js';
 @Module({
   imports: [LiveBusinessModule, PlatformModule],
   controllers: [LiveController],
-  providers: [],
 })
 export class LiveWebModule {}

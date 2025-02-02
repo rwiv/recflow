@@ -1,9 +1,22 @@
 import { TagRepository } from '../persistence/tag.repository.js';
+import { TagAttachment, TagDetachment, TagRecord, TagUpdate } from '../persistence/tag.types.js';
 
 export class TagService {
   constructor(private readonly tagRepo: TagRepository) {}
 
-  update(tagId: string, name: string, description: string | null = null) {
-    return this.tagRepo.update(tagId, name, description);
+  update(req: TagUpdate): Promise<TagRecord> {
+    return this.tagRepo.update(req);
+  }
+
+  attach(req: TagAttachment): Promise<TagRecord> {
+    return this.tagRepo.attach(req);
+  }
+
+  detach(req: TagDetachment) {
+    return this.tagRepo.detach(req);
+  }
+
+  findAll() {
+    return this.tagRepo.findAll();
   }
 }

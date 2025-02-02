@@ -5,39 +5,34 @@ import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ExitCmd } from '../event/types.js';
 
-@Controller('/api')
+@Controller('/api/lives')
 export class LiveController {
   constructor(
     private readonly liveService: TrackedLiveService,
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  @Get('/health')
-  health(): string {
-    return 'hello';
-  }
-
-  @Get('/webhooks')
-  nodes(): Promise<NodeRecord[]> {
-    return this.liveService.nodes();
-  }
-
-  @Post('/webhooks/sync')
-  async nodesSync(): Promise<void> {
-    return this.liveService.syncNodes();
-  }
-
-  @Get('/lives')
+  @Get('/')
   allActives(): Promise<LiveInfo[]> {
     return this.liveService.findAllActives();
   }
 
-  @Get('/lives/all')
+  @Get('/nodes')
+  nodes(): Promise<NodeRecord[]> {
+    return this.liveService.nodes();
+  }
+
+  @Post('/nodes/sync')
+  async nodesSync(): Promise<void> {
+    return this.liveService.syncNodes();
+  }
+
+  @Get('/all')
   all(): Promise<LiveInfo[]> {
     return this.liveService.findAll();
   }
 
-  @Delete('/lives/purge')
+  @Delete('/purge')
   async purge(): Promise<LiveInfo[]> {
     return this.liveService.purgeAll();
   }

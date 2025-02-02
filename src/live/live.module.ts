@@ -4,7 +4,5 @@ import { LiveWebModule } from './web/web.module.js';
 
 @Module({
   imports: [LiveSchedulerModule, LiveWebModule],
-  controllers: [],
-  providers: [],
 })
 export class LiveModule {}

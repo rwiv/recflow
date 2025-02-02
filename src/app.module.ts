@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { LiveModule } from './live/live.module.js';
+import { ChannelModule } from './channel/channel.module.js';
 
 @Module({
   imports: [
@@ -9,8 +10,7 @@ import { LiveModule } from './live/live.module.js';
       rootPath: join(import.meta.dirname, '..', 'public'),
     }),
     LiveModule,
+    ChannelModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

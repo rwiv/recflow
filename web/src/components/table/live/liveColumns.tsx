@@ -62,5 +62,5 @@ export const liveColumns: ColumnDef<LiveRecord>[] = [
   titleColumn,
   sortableColumnDef(viewCntCid, 'Viewers'),
   dateColumnDef<LiveRecord>(savedAtCit, 'Save Time', (elem) => new Date(elem.savedAt)),
-  baseColumnDef(assignedWebhookNameCid, 'Webhook'),
+  baseColumnDef(assignedWebhookNameCid, 'Node'),
 ];

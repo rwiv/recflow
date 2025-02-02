@@ -12,7 +12,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const platformEnum = pgEnum('platform', ['chzzk', 'soop', 'twitch']);
-export const priorityEnum = pgEnum('priority', ['main', 'sub', 'extra']);
+export const channelPriorityEnum = pgEnum('channel_priority', ['main', 'sub', 'extra']);
 
 export const channels = pgTable(
   'channels',
@@ -23,7 +23,7 @@ export const channels = pgTable(
     username: varchar({ length: 255 }).notNull(),
     followerCount: integer().notNull(),
     description: text(),
-    priority: priorityEnum().notNull(),
+    priority: channelPriorityEnum().notNull(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp(),
   },

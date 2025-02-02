@@ -1,7 +1,7 @@
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { db } from '../../infra/db/db.js';
 import { channels } from './schema.js';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { ChannelCreation, ChannelRecord, ChannelUpdate } from './channel.types.js';
 import { uuid } from '../../utils/uuid.js';
 import { TagRepository } from './tag.repository.js';
@@ -17,7 +17,7 @@ export class ChannelRepository {
       ...req,
       id: uuid(),
       createdAt: new Date(),
-      updatedAt: null,
+      updatedAt: new Date(),
     };
     return oneNotNull(await tx.insert(channels).values(toBeAdded).returning());
   }
@@ -55,7 +55,7 @@ export class ChannelRepository {
   async findPage(page: number, size: number, tx: Tx = db): Promise<ChannelRecord[]> {
     if (page < 1) throw new Error('Page must be greater than 0');
     const offset = (page - 1) * size;
-    return tx.select().from(channels).offset(offset).limit(size);
+    return tx.select().from(channels).orderBy(desc(channels.updatedAt)).offset(offset).limit(size);
   }
 
   async findById(channelId: string, tx: Tx = db): Promise<ChannelRecord | undefined> {

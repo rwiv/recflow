@@ -12,7 +12,8 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const platformEnum = pgEnum('platform', ['chzzk', 'soop', 'twitch']);
-export const channelPriorityEnum = pgEnum('channel_priority', ['main', 'sub', 'extra']);
+const channelPriorities = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
+export const channelPriorityEnum = pgEnum('channel_priority', channelPriorities);
 
 export const channels = pgTable(
   'channels',
@@ -26,13 +27,15 @@ export const channels = pgTable(
     description: text(),
     priority: channelPriorityEnum().notNull(),
     createdAt: timestamp().notNull(),
-    updatedAt: timestamp(),
+    updatedAt: timestamp().notNull(),
   },
   (t) => ({
     pidIndex: index('channels_pid_idx').on(t.pid),
     usernameIndex: index('channels_username_idx').on(t.username),
     followCntIndex: index('channels_followCnt_idx').on(t.followerCount),
     priorityIndex: index('channels_priority_idx').on(t.priority),
+    createdAtIndex: index('channels_createdAt_idx').on(t.createdAt),
+    updatedAtIndex: index('channels_updatedAt_idx').on(t.updatedAt),
   }),
 );
 
@@ -47,6 +50,7 @@ export const tags = pgTable(
   },
   (t) => ({
     nameIndex: uniqueIndex('tags_name_idx').on(t.name),
+    createdAtIndex: index('tags_createdAt_idx').on(t.createdAt),
   }),
 );
 

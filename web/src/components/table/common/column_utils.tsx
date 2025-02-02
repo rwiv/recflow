@@ -47,11 +47,12 @@ function firstLetterUppercase(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function createSelectColumn<T>(cid: string): ColumnDef<T> {
+export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): ColumnDef<T> {
   return {
     id: cid,
     header: ({ table }) => (
       <Checkbox
+        className={className}
         checked={
           table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
@@ -61,6 +62,7 @@ export function createSelectColumn<T>(cid: string): ColumnDef<T> {
     ),
     cell: ({ row }) => (
       <Checkbox
+        className={className}
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"

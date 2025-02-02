@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { LiveRecord, NodeRecord } from '@/client/types.ts';
+import { ChannelRecord, LiveRecord, NodeRecord, TagRecord } from '@/client/types.ts';
 import { randomElem } from '@/lib/list.ts';
 
 export function mockLiveRecord(): LiveRecord {
   return {
-    type: randomElem(['chzzk', 'soop']),
+    type: randomElem(['chzzk', 'soop', 'twitch']),
     channelId: faker.string.uuid().replace(/-/g, ''),
     channelName: faker.internet.username(),
     liveId: faker.number.int({ min: 100000, max: 999999 }),
@@ -30,4 +30,34 @@ export function mockNode(): NodeRecord {
     chzzkAssignedCnt: faker.number.int({ min: 0, max: 100 }),
     soopAssignedCnt: faker.number.int({ min: 0, max: 100 }),
   };
+}
+
+export function mockChannel(): ChannelRecord {
+  return {
+    id: faker.string.uuid().replace(/-/g, ''),
+    ptype: randomElem(['chzzk', 'soop', 'twitch']),
+    pid: faker.string.uuid().replace(/-/g, ''),
+    username: faker.internet.username(),
+    profileImgUrl: faker.image.avatar(),
+    followerCount: faker.number.int({ min: 10, max: 10000 }),
+    description: faker.lorem.sentence(),
+    priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
+    createdAt: faker.date.anytime(),
+    updatedAt: faker.date.anytime(),
+    tags: mockTags(faker.number.int({ min: 0, max: 5 })),
+  };
+}
+
+export function mockTag(): TagRecord {
+  return {
+    id: faker.string.uuid().replace(/-/g, ''),
+    name: faker.lorem.word(),
+    description: faker.lorem.sentence(),
+    createdAt: faker.date.anytime(),
+    updatedAt: faker.date.anytime(),
+  };
+}
+
+export function mockTags(n: number): TagRecord[] {
+  return Array.from({ length: n }, () => mockTag());
 }

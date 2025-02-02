@@ -2,7 +2,7 @@ import { ChannelBase } from '../../platform/wapper/channel.js';
 import { TagRecord } from './tag.types.js';
 import { PlatformType } from '../../platform/types.js';
 
-export type ChannelPriority = 'main' | 'sub' | 'extra';
+export type ChannelPriority = 'must' | 'should' | 'may' | 'review' | 'skip' | 'none';
 
 export interface ChannelDef extends ChannelBase {
   description: string | null;
@@ -12,7 +12,7 @@ export interface ChannelDef extends ChannelBase {
 export interface ChannelRecord extends ChannelDef {
   id: string;
   createdAt: Date;
-  updatedAt: Date | null;
+  updatedAt: Date;
   tags?: TagRecord[];
 }
 

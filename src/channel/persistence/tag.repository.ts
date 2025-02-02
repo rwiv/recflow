@@ -1,4 +1,4 @@
-import { ChannelRecord, ChannelUpdate } from './channel.types.js';
+import { ChannelRecord } from './channel.types.js';
 import { db } from '../../infra/db/db.js';
 import { channels, channelsToTags, tags } from './schema.js';
 import { and, eq } from 'drizzle-orm';

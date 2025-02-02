@@ -6,6 +6,7 @@ import {
   sortableColumnDef,
 } from '@/components/table/common/column_utils.tsx';
 import { LiveRecord } from '@/client/types.ts';
+import { getChannelUrl, getLiveUrl } from '@/lib/platform.ts';
 
 export const selectCid = 'select';
 export const platformTypeCid = 'type';
@@ -18,17 +19,9 @@ const channelColumn: ColumnDef<LiveRecord> = {
   header: 'Channel',
   cell: ({ row }) => {
     const live = row.original;
-    let url = '';
-    if (live.type === 'chzzk') {
-      url = `https://chzzk.naver.com/${live.channelId}`;
-    } else if (live.type === 'soop') {
-      url = `https://ch.sooplive.co.kr/${live.channelId}`;
-    } else {
-      throw new Error(`Not supported channel type: ${live.type}`);
-    }
     return (
       <div className="font-medium my-1">
-        <a href={url}>{live.channelName}</a>
+        <a href={getChannelUrl(live.type, live.channelId)}>{live.channelName}</a>
       </div>
     );
   },
@@ -39,17 +32,9 @@ const titleColumn: ColumnDef<LiveRecord> = {
   header: 'Title',
   cell: ({ row }) => {
     const live = row.original;
-    let url = '';
-    if (live.type === 'chzzk') {
-      url = `https://chzzk.naver.com/live/${live.channelId}`;
-    } else if (live.type === 'soop') {
-      url = `https://play.sooplive.co.kr/${live.channelId}`;
-    } else {
-      throw new Error(`Not supported channel type: ${live.type}`);
-    }
     return (
       <div className="my-1">
-        <a href={url}>{live.liveTitle}</a>
+        <a href={getLiveUrl(live.type, live.channelId)}>{live.liveTitle}</a>
       </div>
     );
   },

@@ -1,4 +1,25 @@
-export function dateToTimestamp(date: Date) {
+export function prettyDate(date: Date) {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(Math.abs(diffMs) / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours < 24) {
+    return formatTimeAgo(date);
+  } else {
+    return toDateString(date);
+  }
+}
+
+export function toDateString(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}.${month}.${day}`;
+}
+
+export function toTimestamp(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -25,7 +46,34 @@ export function formatTimeAgo(date: Date) {
   }
 }
 
-// export function formatTimeAgo(date: Date): string {
+export function formatTimeAgoWithDate(date: Date) {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(Math.abs(diffMs) / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHours = Math.floor(diffMin / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffMonths / 12);
+
+  if (diffMin < 1) {
+    return `${diffSec}초 전`;
+  } else if (diffMin < 60) {
+    return `${diffMin}분 전`;
+  } else if (diffHours < 24) {
+    return `${diffHours}시간 전`;
+  } else if (diffDays < 30) {
+    return `${diffDays}일 전`;
+  } else if (diffMonths < 12) {
+    const remainingDays = diffDays % 30;
+    return remainingDays === 0 ? `${diffMonths}달 전` : `${diffMonths}달 ${remainingDays}일 전`;
+  } else {
+    const remainingMonths = diffMonths % 12;
+    return remainingMonths === 0 ? `${diffYears}년 전` : `${diffYears}년 ${remainingMonths}달 전`;
+  }
+}
+
+// export function formatTimeAgoEng(date: Date): string {
 //   const now = new Date();
 //   const diffMs = now.getTime() - date.getTime();
 //   const diffSec = Math.floor(Math.abs(diffMs) / 1000);

@@ -54,6 +54,6 @@ function mockChannel(n: number): ChannelCreation {
     profileImgUrl: 'http://example.com',
     description: 'desc',
     followerCount: 10,
-    priority: 'main',
+    priority: 'must',
   };
 }

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ChannelService } from '../business/channel.service.js';
 import { TagService } from '../business/tag.service.js';
 import { ChannelRecord } from '../persistence/channel.types.js';
@@ -14,6 +14,11 @@ export class ChannelController {
   @Get('/all')
   all(): Promise<ChannelRecord[]> {
     return this.channelService.findAll();
+  }
+
+  @Get('/')
+  channels(@Query('page') page: number, @Query('size') size: number): Promise<ChannelRecord[]> {
+    return this.channelService.findPage(page, size);
   }
 
   @Get('/tags')

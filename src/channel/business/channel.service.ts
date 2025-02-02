@@ -40,7 +40,14 @@ export class ChannelService {
   }
 
   async findAll(withTags: boolean = false): Promise<ChannelRecord[]> {
-    const channels = await this.chanRepo.findAll();
+    return this.findList(await this.chanRepo.findAll(), withTags);
+  }
+
+  async findPage(page: number, size: number, withTags: boolean = false): Promise<ChannelRecord[]> {
+    return this.findList(await this.chanRepo.findPage(page, size), withTags);
+  }
+
+  private async findList(channels: ChannelRecord[], withTags: boolean = false) {
     if (!withTags) return channels;
     const promises = channels.map(async (channel) => ({
       ...channel,

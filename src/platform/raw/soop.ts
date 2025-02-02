@@ -20,10 +20,16 @@ export interface SoopLiveInfo {
 export interface SoopChannelInfo {
   userId: string;
   userNick: string;
+  profileImageUrl: string;
+  profileText: string;
   stationName: string;
-  broadStart: string;
 
   fanCnt: number;
+  subscriptionCnt: number;
+  isBestBj: boolean;
+  isPartnerBj: boolean;
+
+  broadStart: string;
   openLive: boolean;
 
   liveInfo: SoopLiveInfo | null;

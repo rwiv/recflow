@@ -21,6 +21,7 @@ export const channels = pgTable(
     ptype: platformEnum().notNull(),
     pid: varchar({ length: 255 }).notNull(),
     username: varchar({ length: 255 }).notNull(),
+    profileImgUrl: text(),
     followerCount: integer().notNull(),
     description: text(),
     priority: channelPriorityEnum().notNull(),

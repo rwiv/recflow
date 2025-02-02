@@ -1,7 +1,7 @@
 import { ChannelBase } from '../../platform/wapper/channel.js';
 import { TagRecord } from './tag.types.js';
 
-type ChannelPriority = 'main' | 'sub' | 'extra';
+export type ChannelPriority = 'main' | 'sub' | 'extra';
 
 export interface ChannelDef extends ChannelBase {
   description: string | null;

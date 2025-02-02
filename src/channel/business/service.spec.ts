@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { ChannelCreation } from '../persistence/channel.types.js';
+import { ChannelCreation, ChannelUpdate } from '../persistence/channel.types.js';
 import { ChannelService } from './channel.service.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
@@ -27,14 +27,15 @@ describe('ChannelService', () => {
 
   it('update', async () => {
     const channel = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
-    const req = {
+    const req: ChannelUpdate = {
       id: channel.id,
-      description: 'new desc',
+      profileImgUrl: channel.profileImgUrl,
       followerCount: channel.followerCount,
       priority: channel.priority,
       ptype: channel.ptype,
       pid: channel.pid,
       username: channel.username,
+      description: 'new desc',
     };
     await chanService.update(req, ['tag2', 'tag3', 'tag4']);
     const updated = assertNotNull(await chanService.findById(channel.id, true));
@@ -54,6 +55,7 @@ function mockChannel(n: number): ChannelCreation {
     ptype: 'chzzk',
     pid: `chzzk${n}`,
     username: `user${n}`,
+    profileImgUrl: 'http://example.com',
     description: 'desc',
     followerCount: 10,
     priority: 'main',

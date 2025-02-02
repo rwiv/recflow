@@ -48,8 +48,14 @@ export class ChannelRepository {
     });
   }
 
-  async findAll(tx: Tx = db): Promise<ChannelRecord[]> {
+  findAll(tx: Tx = db): Promise<ChannelRecord[]> {
     return tx.select().from(channels);
+  }
+
+  async findPage(page: number, size: number, tx: Tx = db): Promise<ChannelRecord[]> {
+    if (page < 1) throw new Error('Page must be greater than 0');
+    const offset = (page - 1) * size;
+    return tx.select().from(channels).offset(offset).limit(size);
   }
 
   async findById(channelId: string, tx: Tx = db): Promise<ChannelRecord | undefined> {

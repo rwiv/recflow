@@ -7,6 +7,7 @@ export interface ChannelBase {
   ptype: PlatformType;
   pid: string;
   username: string;
+  profileImgUrl: string | null;
   followerCount: number;
 }
 
@@ -21,10 +22,15 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
   if (info.liveInfo) {
     liveInfo = liveFromChzzk(info.liveInfo);
   }
+  let profileImgUrl: string | null = info.channelImageUrl;
+  if (profileImgUrl === '') {
+    profileImgUrl = null;
+  }
   return {
     ptype: 'chzzk',
     pid: info.channelId,
     username: info.channelName,
+    profileImgUrl,
     followerCount: info.followerCount,
     openLive: info.openLive,
     content: info,
@@ -37,10 +43,15 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
   if (info.liveInfo) {
     liveInfo = liveFromSoop(info.liveInfo);
   }
+  let profileImgUrl: string | null = info.profileImageUrl;
+  if (profileImgUrl === '') {
+    profileImgUrl = null;
+  }
   return {
     ptype: 'soop',
     pid: info.userId,
     username: info.userNick,
+    profileImgUrl,
     followerCount: info.fanCnt,
     openLive: info.openLive,
     content: info,

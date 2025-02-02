@@ -6,10 +6,10 @@ import { LiveInfo } from '../../../../platform/wapper/live.js';
 export class ChzzkNodeSelectorMode2 implements NodeSelector {
   constructor(private readonly query: QueryConfig) {}
 
-  match(live: LiveInfo, webhooks: NodeRecord[]): NodeRecord | null {
+  match(live: LiveInfo, nodes: NodeRecord[]): NodeRecord | null {
     const forceType = this.query.options.chzzk.forceWebhookType;
     if (forceType) {
-      return findChzzkCandidate(webhooks, forceType);
+      return findChzzkCandidate(nodes, forceType);
     }
 
     let type: NodePriority = 'main';
@@ -18,13 +18,13 @@ export class ChzzkNodeSelectorMode2 implements NodeSelector {
     }
 
     if (type === 'main') {
-      const candidate = findChzzkCandidate(webhooks, 'main');
+      const candidate = findChzzkCandidate(nodes, 'main');
       if (candidate) {
         return candidate;
       }
     }
 
     // type === "extra"
-    return findChzzkCandidate(webhooks, 'extra');
+    return findChzzkCandidate(nodes, 'extra');
   }
 }

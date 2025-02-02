@@ -25,8 +25,8 @@ export class TrackedLiveService {
     @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
-    private readonly webhookService: NodeService,
-    private readonly webhookMatcher: PlatformNodeSelector,
+    private readonly nodeService: NodeService,
+    private readonly nodeSelector: PlatformNodeSelector,
   ) {}
 
   async get(id: string, opts: FindOptions = {}) {
@@ -46,10 +46,10 @@ export class TrackedLiveService {
     if (exists && !exists.isDeleted) {
       throw Error(`Already exists: ${info.channelId}`);
     }
-    const webhook = this.webhookMatcher.matchWebhook(info, await this.webhooks());
-    if (webhook === null) {
+    const node = this.nodeSelector.matchNode(info, await this.nodes());
+    if (node === null) {
       // TODO: use ntfy
-      throw Error(`No webhook matched for ${info.channelId}`);
+      throw Error(`No node matched for ${info.channelId}`);
     }
     const record = {
       ...info,
@@ -57,11 +57,11 @@ export class TrackedLiveService {
       updatedAt: undefined,
       deletedAt: undefined,
       isDeleted: false,
-      assignedWebhookName: webhook.name,
+      assignedWebhookName: node.name,
     };
     await this.liveMap.set(info.channelId, record);
-    await this.webhookService.updateWebhookCnt(webhook.name, info.type, 1);
-    await this.listener.onCreate(record, webhook.url);
+    await this.nodeService.updateCnt(node.name, info.type, 1);
+    await this.listener.onCreate(record, node.url);
     return record;
   }
 
@@ -69,8 +69,8 @@ export class TrackedLiveService {
     const exists = await this.get(newRecord.channelId, { includeDeleted: true });
     if (!exists) throw Error(`Not found liveRecord: ${newRecord.channelId}`);
     if (exists.assignedWebhookName !== newRecord.assignedWebhookName) {
-      await this.webhookService.updateWebhookCnt(exists.assignedWebhookName, exists.type, -1);
-      await this.webhookService.updateWebhookCnt(newRecord.assignedWebhookName, newRecord.type, 1);
+      await this.nodeService.updateCnt(exists.assignedWebhookName, exists.type, -1);
+      await this.nodeService.updateCnt(newRecord.assignedWebhookName, newRecord.type, 1);
     }
     await this.liveMap.set(newRecord.channelId, newRecord);
     return exists;
@@ -94,10 +94,10 @@ export class TrackedLiveService {
       record.isDeleted = true;
       record.deletedAt = new Date().toISOString();
       await this.liveMap.set(id, record);
-      await this.webhookService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
+      await this.nodeService.updateCnt(record.assignedWebhookName, record.type, -1);
     } else {
       if (!record.isDeleted) {
-        await this.webhookService.updateWebhookCnt(record.assignedWebhookName, record.type, -1);
+        await this.nodeService.updateCnt(record.assignedWebhookName, record.type, -1);
       }
       await this.liveMap.delete(id);
     }
@@ -129,8 +129,8 @@ export class TrackedLiveService {
     return this.liveMap.keys();
   }
 
-  async webhooks(): Promise<NodeRecord[]> {
-    return this.webhookService.values();
+  async nodes(): Promise<NodeRecord[]> {
+    return this.nodeService.values();
   }
 
   async refreshAllLives() {
@@ -163,13 +163,13 @@ export class TrackedLiveService {
     return Promise.all(promises);
   }
 
-  async syncWebhooks() {
+  async syncNodes() {
     const lives = await this.findAllActives();
-    await this.webhookService.synchronize(lives);
+    await this.nodeService.synchronize(lives);
   }
 
   async clear() {
     await this.liveMap.clear();
-    await this.webhookService.clear();
+    await this.nodeService.clear();
   }
 }

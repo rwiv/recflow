@@ -1,12 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { WebhookRecord } from '@/client/types.ts';
+import { NodeRecord } from '@/client/types.ts';
 import { baseColumnDef, createSelectColumn } from '@/components/table/common/column_utils.tsx';
 
 export const selectCid = 'select';
 export const nameCid = 'name';
 export const webhookTypeCid = 'type';
 
-const chzzkColumn: ColumnDef<WebhookRecord> = {
+const chzzkColumn: ColumnDef<NodeRecord> = {
   accessorKey: 'chzzk',
   header: 'Chzzk',
   cell: ({ row }) => {
@@ -16,7 +16,7 @@ const chzzkColumn: ColumnDef<WebhookRecord> = {
   },
 };
 
-const soopColumn: ColumnDef<WebhookRecord> = {
+const soopColumn: ColumnDef<NodeRecord> = {
   accessorKey: 'soop',
   header: 'Soop',
   cell: ({ row }) => {
@@ -26,7 +26,7 @@ const soopColumn: ColumnDef<WebhookRecord> = {
   },
 };
 
-export const webhookColumns: ColumnDef<WebhookRecord>[] = [
+export const webhookColumns: ColumnDef<NodeRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
   baseColumnDef(webhookTypeCid, 'Type', 'uppercase'),

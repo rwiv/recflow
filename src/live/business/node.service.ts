@@ -27,22 +27,22 @@ export class NodeService {
    * 이 메서드는 병렬적으로 호출되면 동시성 이슈를 발생시킨다.
    * TODO: distributed lock을 사용하여 동시성 이슈 해결
    */
-  async updateWebhookCnt(whName: string, type: PlatformType, num: 1 | -1) {
-    const webhook = await this.map.get(whName);
-    if (webhook === undefined) throw Error('Cannot found webhook');
+  async updateCnt(whName: string, type: PlatformType, num: 1 | -1) {
+    const node = await this.map.get(whName);
+    if (node === undefined) throw Error('Cannot found node');
 
     let value: NodeRecord;
     if (type === 'chzzk') {
       value = {
-        ...webhook,
-        chzzkAssignedCnt: webhook.chzzkAssignedCnt + num,
-        soopAssignedCnt: webhook.soopAssignedCnt,
+        ...node,
+        chzzkAssignedCnt: node.chzzkAssignedCnt + num,
+        soopAssignedCnt: node.soopAssignedCnt,
       };
     } else if (type === 'soop') {
       value = {
-        ...webhook,
-        chzzkAssignedCnt: webhook.chzzkAssignedCnt,
-        soopAssignedCnt: webhook.soopAssignedCnt + num,
+        ...node,
+        chzzkAssignedCnt: node.chzzkAssignedCnt,
+        soopAssignedCnt: node.soopAssignedCnt + num,
       };
     } else {
       throw Error('Invalid type');
@@ -58,7 +58,7 @@ export class NodeService {
   private async syncWithConfig() {
     const existedEntries = await this.map.entries();
 
-    // Delete webhooks that are not assigned
+    // Delete nodes that are not assigned
     const toBeDeleted: string[] = [];
     for (const [key, value] of existedEntries) {
       if (!this.query.webhooks.map((it) => it.name).includes(key)) {
@@ -68,12 +68,12 @@ export class NodeService {
       }
     }
 
-    // Update webhooks that are assigned
+    // Update nodes that are assigned
     const toBeUpdated: [string, NodeRecord][] = [];
     for (const [key, value] of existedEntries) {
       if (this.query.webhooks.map((it: NodeDef) => it.name).includes(key)) {
         const whDef = this.query.webhooks.find((it) => it.name === key);
-        if (!whDef) throw Error('Cannot found webhook');
+        if (!whDef) throw Error('Cannot found node');
         if (
           value.type !== whDef.type ||
           value.url !== whDef.url ||
@@ -85,17 +85,17 @@ export class NodeService {
       }
     }
 
-    // Create webhooks for newly added
+    // Create nodes for newly added
     const toBeCreated: [string, NodeRecord][] = [];
     const keys = existedEntries.map(([key, _]) => key);
     for (const whDef of this.query.webhooks) {
       if (!keys.includes(whDef.name)) {
-        const webhook: NodeRecord = {
+        const nodes: NodeRecord = {
           ...whDef,
           chzzkAssignedCnt: 0,
           soopAssignedCnt: 0,
         };
-        toBeCreated.push([whDef.name, webhook]);
+        toBeCreated.push([whDef.name, nodes]);
       }
     }
 
@@ -118,7 +118,7 @@ export class NodeService {
     for (const live of lives) {
       const wh = whMap.get(live.assignedWebhookName);
       if (!wh) {
-        throw Error('Cannot found webhook');
+        throw Error('Cannot found node');
       }
 
       if (live.type === 'chzzk') {

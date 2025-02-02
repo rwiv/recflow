@@ -10,9 +10,9 @@ export class PlatformNodeSelector {
     @Inject(NODE_SELECTOR_SOOP) private readonly soopMatcher: NodeSelector,
   ) {}
 
-  matchWebhook(live: LiveInfo, webhooks: NodeRecord[]): NodeRecord | null {
+  matchNode(live: LiveInfo, nodes: NodeRecord[]): NodeRecord | null {
     const matcher = this.selectMatcher(live);
-    return matcher.match(live, webhooks);
+    return matcher.match(live, nodes);
   }
 
   private selectMatcher(live: LiveInfo) {

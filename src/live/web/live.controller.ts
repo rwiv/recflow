@@ -18,13 +18,13 @@ export class LiveController {
   }
 
   @Get('/webhooks')
-  webhooks(): Promise<NodeRecord[]> {
-    return this.liveService.webhooks();
+  nodes(): Promise<NodeRecord[]> {
+    return this.liveService.nodes();
   }
 
   @Post('/webhooks/sync')
-  async webhookSync(): Promise<void> {
-    return this.liveService.syncWebhooks();
+  async nodesSync(): Promise<void> {
+    return this.liveService.syncNodes();
   }
 
   @Get('/lives')

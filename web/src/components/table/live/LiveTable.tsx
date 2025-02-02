@@ -17,7 +17,7 @@ export function LiveTable({ data }: { data: LiveRecord[] }) {
         <FilterInput
           table={table}
           columnId={assignedWebhookNameCid}
-          placeholder="Filter webhooks..."
+          placeholder="Filter nodes..."
         />
         <CommandTools table={table} />
         <ColumnSelector table={table} />

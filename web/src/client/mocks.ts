@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { LiveRecord, WebhookRecord } from '@/client/types.ts';
+import { LiveRecord, NodeRecord } from '@/client/types.ts';
 import { randomElem } from '@/lib/list.ts';
 
 export function mockLiveRecord(): LiveRecord {
@@ -20,7 +20,7 @@ export function mockLiveRecord(): LiveRecord {
   };
 }
 
-export function mockWebhook(): WebhookRecord {
+export function mockNode(): NodeRecord {
   return {
     name: faker.lorem.word(),
     type: randomElem(['main', 'sub', 'extra']),

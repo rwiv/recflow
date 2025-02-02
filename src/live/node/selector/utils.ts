@@ -12,11 +12,8 @@ export function findChzzkCandidate(nodes: NodeRecord[], type: NodePriority): Nod
   }
 }
 
-export function findSoopCandidate(
-  webhooks: NodeRecord[],
-  type: NodePriority,
-): NodeRecord | null {
-  const candidates = webhooks
+export function findSoopCandidate(nodes: NodeRecord[], type: NodePriority): NodeRecord | null {
+  const candidates = nodes
     .filter((wh) => wh.type === type)
     .filter((wh) => wh.soopCapacity > wh.soopAssignedCnt);
 

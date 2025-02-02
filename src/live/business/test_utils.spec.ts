@@ -21,27 +21,27 @@ import { SoopNodeSelectorMode1 } from '../node/selector/soop/selector.soop.mode1
 
 export async function createRedisLiveService(env: Env, query: QueryConfig) {
   const redis = await createRedisClient(env.redis);
-  const webhookMap = new RedisMap<NodeRecord>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
-  const webhookService = new NodeService(query, webhookMap);
+  const nodeMap = new RedisMap<NodeRecord>(redis, WH_KEYS_KEY, WH_VALUE_PREFIX);
+  const nodeService = new NodeService(query, nodeMap);
   const liveMap = new RedisMap<LiveRecord>(redis, LIVE_KEYS_KEY, LIVE_VALUE_PREFIX);
   const fetcher = createFetcher(env, query);
   const listener = createLiveEventListener(env, query);
-  const webhookMatcher = new PlatformNodeSelector(
+  const nodeSelector = new PlatformNodeSelector(
     new ChzzkNodeSelectorMode1(query),
     new SoopNodeSelectorMode1(query),
   );
-  return new TrackedLiveService(liveMap, fetcher, listener, webhookService, webhookMatcher);
+  return new TrackedLiveService(liveMap, fetcher, listener, nodeService, nodeSelector);
 }
 
 export function createMemoryLiveService(env: Env, query: QueryConfig) {
-  const webhookMap = new MemoryMap<string, NodeRecord>();
-  const webhookService = new NodeService(query, webhookMap);
+  const nodeMap = new MemoryMap<string, NodeRecord>();
+  const nodeService = new NodeService(query, nodeMap);
   const liveMap = new MemoryMap<string, LiveRecord>();
   const fetcher = createFetcher(env, query);
   const listener = createLiveEventListener(env, query);
-  const webhookMatcher = new PlatformNodeSelector(
+  const nodeSelector = new PlatformNodeSelector(
     new ChzzkNodeSelectorMode1(query),
     new SoopNodeSelectorMode1(query),
   );
-  return new TrackedLiveService(liveMap, fetcher, listener, webhookService, webhookMatcher);
+  return new TrackedLiveService(liveMap, fetcher, listener, nodeService, nodeSelector);
 }

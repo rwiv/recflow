@@ -21,7 +21,7 @@ export interface LiveRecord extends LiveInfo {
   assignedWebhookName: string;
 }
 
-export interface WebhookRecord {
+export interface NodeRecord {
   name: string;
   type: WebhookType;
   url: string;

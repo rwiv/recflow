@@ -1,8 +1,8 @@
 import { LiveTable } from '@/components/table/live/LiveTable.tsx';
-import { LiveRecord, WebhookRecord } from '@/client/types.ts';
+import { LiveRecord, NodeRecord } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WebhookTable } from '@/components/table/webhook/WebhookTable.tsx';
-import { fetchLives, fetchWebhooks } from '@/client/client.ts';
+import { fetchLives, fetchNodes } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 
 export function IndexPage() {
@@ -10,34 +10,34 @@ export function IndexPage() {
     queryKey: ['lives'],
     queryFn: fetchLives,
   });
-  const { data: webhooks } = useQuery<WebhookRecord[]>({
-    queryKey: ['webhooks'],
-    queryFn: fetchWebhooks,
+  const { data: nodes } = useQuery<NodeRecord[]>({
+    queryKey: ['nodes'],
+    queryFn: fetchNodes,
   });
 
-  return <div>{lives && webhooks && <TableContent lives={lives} webhooks={webhooks} />}</div>;
+  return <div>{lives && nodes && <TableContent lives={lives} nodes={nodes} />}</div>;
 }
 
 interface TableContentProps {
   lives: LiveRecord[];
-  webhooks: WebhookRecord[];
+  nodes: NodeRecord[];
 }
 
-function TableContent({ lives, webhooks }: TableContentProps) {
+function TableContent({ lives, nodes }: TableContentProps) {
   return (
     <Tabs defaultValue="lives" className="mx-10 my-3">
       <TabsList className="my-3">
         <TabsTrigger value="lives">Lives</TabsTrigger>
-        <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+        <TabsTrigger value="nodes">Nodes</TabsTrigger>
       </TabsList>
       <TabsContent value="lives">
         <div>
           <LiveTable data={lives} />
         </div>
       </TabsContent>
-      <TabsContent value="webhooks">
+      <TabsContent value="nodes">
         <div>
-          <WebhookTable data={webhooks} />
+          <WebhookTable data={nodes} />
         </div>
       </TabsContent>
     </Tabs>

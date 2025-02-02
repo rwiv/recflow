@@ -1,26 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WebhookRecord } from '../webhook/types.js';
+import { NodeDef, NodeRecord } from '../node/types.js';
 import { QueryConfig } from '../../common/query.js';
 import { PlatformType } from '../../platform/types.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
-import { WEBHOOK_MAP } from '../persistence/persistence.module.js';
+import { NODE_MAP } from '../persistence/persistence.module.js';
 import { QUERY } from '../../common/config.module.js';
 import { LiveRecord } from './types.js';
 
 @Injectable()
-export class WebhookService {
+export class NodeService {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
-    @Inject(WEBHOOK_MAP) private readonly webhookMap: AsyncMap<string, WebhookRecord>,
+    @Inject(NODE_MAP) private readonly map: AsyncMap<string, NodeRecord>,
   ) {}
 
   clear() {
-    return this.webhookMap.clear();
+    return this.map.clear();
   }
 
-  async values(): Promise<WebhookRecord[]> {
+  async values(): Promise<NodeRecord[]> {
     await this.syncWithConfig();
-    return this.webhookMap.values();
+    return this.map.values();
   }
 
   /**
@@ -28,10 +28,10 @@ export class WebhookService {
    * TODO: distributed lock을 사용하여 동시성 이슈 해결
    */
   async updateWebhookCnt(whName: string, type: PlatformType, num: 1 | -1) {
-    const webhook = await this.webhookMap.get(whName);
+    const webhook = await this.map.get(whName);
     if (webhook === undefined) throw Error('Cannot found webhook');
 
-    let value: WebhookRecord;
+    let value: NodeRecord;
     if (type === 'chzzk') {
       value = {
         ...webhook,
@@ -47,7 +47,7 @@ export class WebhookService {
     } else {
       throw Error('Invalid type');
     }
-    await this.webhookMap.set(whName, value);
+    await this.map.set(whName, value);
   }
 
   async synchronize(lives: LiveRecord[]) {
@@ -56,7 +56,7 @@ export class WebhookService {
   }
 
   private async syncWithConfig() {
-    const existedEntries = await this.webhookMap.entries();
+    const existedEntries = await this.map.entries();
 
     // Delete webhooks that are not assigned
     const toBeDeleted: string[] = [];
@@ -69,9 +69,9 @@ export class WebhookService {
     }
 
     // Update webhooks that are assigned
-    const toBeUpdated: [string, WebhookRecord][] = [];
+    const toBeUpdated: [string, NodeRecord][] = [];
     for (const [key, value] of existedEntries) {
-      if (this.query.webhooks.map((it) => it.name).includes(key)) {
+      if (this.query.webhooks.map((it: NodeDef) => it.name).includes(key)) {
         const whDef = this.query.webhooks.find((it) => it.name === key);
         if (!whDef) throw Error('Cannot found webhook');
         if (
@@ -86,11 +86,11 @@ export class WebhookService {
     }
 
     // Create webhooks for newly added
-    const toBeCreated: [string, WebhookRecord][] = [];
+    const toBeCreated: [string, NodeRecord][] = [];
     const keys = existedEntries.map(([key, _]) => key);
     for (const whDef of this.query.webhooks) {
       if (!keys.includes(whDef.name)) {
-        const webhook: WebhookRecord = {
+        const webhook: NodeRecord = {
           ...whDef,
           chzzkAssignedCnt: 0,
           soopAssignedCnt: 0,
@@ -100,14 +100,14 @@ export class WebhookService {
     }
 
     // Update the map
-    await Promise.all(toBeDeleted.map((name) => this.webhookMap.delete(name)));
-    await Promise.all(toBeUpdated.map(([whName, wh]) => this.webhookMap.set(whName, wh)));
-    await Promise.all(toBeCreated.map(([whName, whs]) => this.webhookMap.set(whName, whs)));
+    await Promise.all(toBeDeleted.map((name) => this.map.delete(name)));
+    await Promise.all(toBeUpdated.map(([whName, wh]) => this.map.set(whName, wh)));
+    await Promise.all(toBeCreated.map(([whName, whs]) => this.map.set(whName, whs)));
   }
 
   private async syncWithLives(lives: LiveRecord[]) {
-    const whMap = new Map<string, WebhookRecord>();
-    for (const wh of await this.webhookMap.values()) {
+    const whMap = new Map<string, NodeRecord>();
+    for (const wh of await this.map.values()) {
       whMap.set(wh.name, {
         ...wh,
         chzzkAssignedCnt: 0,
@@ -130,6 +130,6 @@ export class WebhookService {
       }
     }
 
-    return Promise.all(Array.from(whMap.values()).map((wh) => this.webhookMap.set(wh.name, wh)));
+    return Promise.all(Array.from(whMap.values()).map((wh) => this.map.set(wh.name, wh)));
   }
 }

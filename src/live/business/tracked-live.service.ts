@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WebhookRecord } from '../webhook/types.js';
+import { NodeRecord } from '../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import { WebhookService } from './webhook.service.js';
+import { NodeService } from './node.service.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
 import { LIVE_MAP } from '../persistence/persistence.module.js';
 import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
-import { PlatformWebhookMatcher } from './webhook.matcher.js';
+import { PlatformNodeSelector } from './node.selector.js';
 import { ExitCmd } from '../event/types.js';
 
 export interface DeleteOptions {
@@ -25,8 +25,8 @@ export class TrackedLiveService {
     @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
-    private readonly webhookService: WebhookService,
-    private readonly webhookMatcher: PlatformWebhookMatcher,
+    private readonly webhookService: NodeService,
+    private readonly webhookMatcher: PlatformNodeSelector,
   ) {}
 
   async get(id: string, opts: FindOptions = {}) {
@@ -129,7 +129,7 @@ export class TrackedLiveService {
     return this.liveMap.keys();
   }
 
-  async webhooks(): Promise<WebhookRecord[]> {
+  async webhooks(): Promise<NodeRecord[]> {
     return this.webhookService.values();
   }
 

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { WebhookDef, WebhookMode, WebhookType } from '../live/webhook/types.js';
+import { NodeDef, NodeSelectMode, NodePriority } from '../live/node/types.js';
 
 export interface QueryConfig {
   options: PlatformOptions;
@@ -31,8 +31,8 @@ export interface QueryConfig {
   excludedChzzkChanNames: string[];
   excludedChzzkChanIds: string[];
 
-  webhookMode: WebhookMode;
-  webhooks: WebhookDef[];
+  webhookMode: NodeSelectMode;
+  webhooks: NodeDef[];
 }
 
 export interface PlatformOptions {
@@ -42,7 +42,7 @@ export interface PlatformOptions {
 
 export interface QueryOption {
   forceCredentials: boolean;
-  forceWebhookType: WebhookType | undefined | null;
+  forceWebhookType: NodePriority | undefined | null;
 }
 
 export function readQueryConfig(filePath: string): QueryConfig {

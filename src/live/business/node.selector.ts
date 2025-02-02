@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WEBHOOK_MATCHER_CHZZK, WEBHOOK_MATCHER_SOOP } from '../webhook/webhook.module.js';
+import { NODE_SELECTOR_CHZZK, NODE_SELECTOR_SOOP } from '../node/node.module.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import { WebhookMatcher, WebhookRecord } from '../webhook/types.js';
+import { NodeSelector, NodeRecord } from '../node/types.js';
 
 @Injectable()
-export class PlatformWebhookMatcher {
+export class PlatformNodeSelector {
   constructor(
-    @Inject(WEBHOOK_MATCHER_CHZZK) private readonly chzzkMatcher: WebhookMatcher,
-    @Inject(WEBHOOK_MATCHER_SOOP) private readonly soopMatcher: WebhookMatcher,
+    @Inject(NODE_SELECTOR_CHZZK) private readonly chzzkMatcher: NodeSelector,
+    @Inject(NODE_SELECTOR_SOOP) private readonly soopMatcher: NodeSelector,
   ) {}
 
-  matchWebhook(live: LiveInfo, webhooks: WebhookRecord[]): WebhookRecord | null {
+  matchWebhook(live: LiveInfo, webhooks: NodeRecord[]): NodeRecord | null {
     const matcher = this.selectMatcher(live);
     return matcher.match(live, webhooks);
   }

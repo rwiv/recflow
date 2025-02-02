@@ -1,24 +1,18 @@
-import { WebhookMatcher, WebhookRecord, WebhookType } from '../types.js';
-import { QueryConfig } from '../../../common/query.js';
-import { findChzzkCandidate } from '../webhook.utils.js';
-import { LiveInfo } from '../../../platform/wapper/live.js';
+import { NodeSelector, NodeRecord, NodePriority } from '../../types.js';
+import { QueryConfig } from '../../../../common/query.js';
+import { findChzzkCandidate } from '../utils.js';
+import { LiveInfo } from '../../../../platform/wapper/live.js';
 
-export class WebhookMatcherChzzkMode4 implements WebhookMatcher {
+export class ChzzkNodeSelectorMode3 implements NodeSelector {
   constructor(private readonly query: QueryConfig) {}
 
-  match(live: LiveInfo, webhooks: WebhookRecord[]): WebhookRecord | null {
+  match(live: LiveInfo, webhooks: NodeRecord[]): NodeRecord | null {
     const forceType = this.query.options.chzzk.forceWebhookType;
     if (forceType) {
       return findChzzkCandidate(webhooks, forceType);
     }
 
-    let type: WebhookType = 'sub';
-    if (this.query.followChzzkChanIds.includes(live.channelId)) {
-      type = 'main';
-    }
-    if (this.query.allowedChzzkChanNames.includes(live.channelName)) {
-      type = 'main';
-    }
+    let type: NodePriority = 'main';
     if (this.query.extraChzzkChanNames.includes(live.channelName)) {
       type = 'extra';
     }

@@ -1,12 +1,12 @@
-import { WebhookMatcher, WebhookRecord } from '../types.js';
-import { findChzzkCandidate, findSoopCandidate } from '../webhook.utils.js';
-import { LiveInfo } from '../../../platform/wapper/live.js';
-import { QueryConfig } from '../../../common/query.js';
+import { NodeSelector, NodeRecord } from '../../types.js';
+import { findChzzkCandidate, findSoopCandidate } from '../utils.js';
+import { LiveInfo } from '../../../../platform/wapper/live.js';
+import { QueryConfig } from '../../../../common/query.js';
 
-export class WebhookMatcherSoopMode1 implements WebhookMatcher {
+export class SoopNodeSelectorMode1 implements NodeSelector {
   constructor(private readonly query: QueryConfig) {}
 
-  match(live: LiveInfo, webhooks: WebhookRecord[]): WebhookRecord | null {
+  match(live: LiveInfo, webhooks: NodeRecord[]): NodeRecord | null {
     const forceType = this.query.options.soop.forceWebhookType;
     if (forceType) {
       return findChzzkCandidate(webhooks, forceType);

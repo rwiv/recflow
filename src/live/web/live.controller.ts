@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { WebhookRecord } from '../webhook/types.js';
+import { NodeRecord } from '../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -18,7 +18,7 @@ export class LiveController {
   }
 
   @Get('/webhooks')
-  webhooks(): Promise<WebhookRecord[]> {
+  webhooks(): Promise<NodeRecord[]> {
     return this.liveService.webhooks();
   }
 

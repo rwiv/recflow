@@ -29,13 +29,9 @@ describe('ChannelService', () => {
     const channel = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
     const req: ChannelUpdate = {
       id: channel.id,
-      profileImgUrl: channel.profileImgUrl,
-      followerCount: channel.followerCount,
-      priority: channel.priority,
-      ptype: channel.ptype,
-      pid: channel.pid,
-      username: channel.username,
-      description: 'new desc',
+      form: {
+        description: 'new desc',
+      },
     };
     await chanService.update(req, ['tag2', 'tag3', 'tag4']);
     const updated = assertNotNull(await chanService.findById(channel.id, true));

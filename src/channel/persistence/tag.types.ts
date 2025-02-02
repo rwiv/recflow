@@ -8,13 +8,15 @@ export interface TagRecord {
 
 export interface TagCreation {
   name: string;
-  description: string | null;
+  description?: string;
 }
 
 export interface TagUpdate {
-  id: string;
-  name: string;
-  description: string | null;
+  tagId: string;
+  form: {
+    name: string;
+    description?: string | null;
+  };
 }
 
 export interface TagAttachment {

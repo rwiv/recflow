@@ -27,7 +27,7 @@ export class ChannelRepository {
     if (!channel) throw new Error('Channel not found');
     const toBeUpdated = {
       ...channel,
-      ...req,
+      ...req.form,
       updatedAt: new Date(),
     };
     return oneNotNull(

@@ -1,5 +1,6 @@
 import { ChannelBase } from '../../platform/wapper/channel.js';
 import { TagRecord } from './tag.types.js';
+import { PlatformType } from '../../platform/types.js';
 
 export type ChannelPriority = 'main' | 'sub' | 'extra';
 
@@ -17,6 +18,15 @@ export interface ChannelRecord extends ChannelDef {
 
 export type ChannelCreation = ChannelDef;
 
-export interface ChannelUpdate extends ChannelCreation {
+export interface ChannelUpdate {
   id: string;
+  form: {
+    ptype?: PlatformType;
+    pid?: string;
+    username?: string;
+    profileImgUrl?: string | null;
+    followerCount?: number;
+    description?: string | null;
+    priority?: ChannelPriority;
+  };
 }

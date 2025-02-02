@@ -16,9 +16,8 @@ export class TagRepository {
     const tag = await this.findByName(req.name, tx);
     if (tag) throw new Error('Tag already exists');
     const tbc = {
+      ...req,
       id: uuid(),
-      name: req.name,
-      description: req.description,
       createdAt: new Date(),
       updatedAt: null,
     };
@@ -26,22 +25,21 @@ export class TagRepository {
   }
 
   async update(req: TagUpdate, tx: Tx = db): Promise<TagRecord> {
-    const tag = await this.findById(req.id, tx);
+    const tag = await this.findById(req.tagId, tx);
     if (!tag) throw new Error('Tag not found');
     const tbu = {
       ...tag,
-      name: req.name,
-      description: req.description,
+      ...req.form,
       updatedAt: new Date(),
     };
-    return oneNotNull(await tx.update(tags).set(tbu).where(eq(tags.name, req.name)).returning());
+    return oneNotNull(await tx.update(tags).set(tbu).where(eq(tags.id, req.tagId)).returning());
   }
 
   async attach(req: TagAttachment, tx: Tx = db): Promise<TagRecord> {
     return tx.transaction(async (txx) => {
       let tag = await this.findByName(req.tagName, txx);
       if (!tag) {
-        tag = await this.create({ name: req.tagName, description: null }, txx);
+        tag = await this.create({ name: req.tagName }, txx);
       }
       const tbc = { channelId: req.channelId, tagId: tag.id, createdAt: new Date() };
       await txx.insert(channelsToTags).values(tbc);

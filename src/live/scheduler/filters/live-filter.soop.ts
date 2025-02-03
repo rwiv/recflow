@@ -45,7 +45,7 @@ export class SoopLiveFilter implements LiveFilter {
     if (channel === null) {
       return null;
     }
-    if (channel.followerCount >= minFollowerCnt) {
+    if (channel.followerCnt >= minFollowerCnt) {
       return info;
     } else {
       return null;

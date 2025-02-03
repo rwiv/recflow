@@ -1,12 +1,13 @@
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { db } from '../../infra/db/db.js';
-import { channels } from './schema.js';
-import { desc, eq } from 'drizzle-orm';
-import { ChannelCreation, ChannelRecord, ChannelUpdate } from './channel.types.js';
+import { channels, channelsToTags, tags } from './schema.js';
+import { and, desc, eq } from 'drizzle-orm';
+import { ChannelCreation, ChannelPriority, ChannelRecord, ChannelUpdate } from './channel.types.js';
 import { uuid } from '../../utils/uuid.js';
 import { TagRepository } from './tag.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
+import { ChannelSortType } from './tag.types.js';
 
 @Injectable()
 export class ChannelRepository {
@@ -52,10 +53,33 @@ export class ChannelRepository {
     return tx.select().from(channels);
   }
 
-  async findPage(page: number, size: number, tx: Tx = db): Promise<ChannelRecord[]> {
+  async findByQuery(
+    page: number,
+    size: number,
+    sorted: ChannelSortType = undefined,
+    priority: ChannelPriority | undefined = undefined,
+    tagName: string | undefined = undefined,
+    tx: Tx = db,
+  ): Promise<ChannelRecord[]> {
     if (page < 1) throw new Error('Page must be greater than 0');
     const offset = (page - 1) * size;
-    return tx.select().from(channels).orderBy(desc(channels.updatedAt)).offset(offset).limit(size);
+    let query = tx.select().from(channels).offset(offset).limit(size).$dynamic();
+    if (sorted === 'latest') {
+      query = query.orderBy(desc(channels.updatedAt));
+    } else if (sorted === 'followerCnt') {
+      query = query.orderBy(desc(channels.followerCnt));
+    }
+    if (tagName) {
+      const withTags = await query
+        .leftJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
+        .leftJoin(tags, eq(tags.id, channelsToTags.tagId))
+        .where(and(eq(tags.name, tagName), priority ? eq(channels.priority, priority) : undefined));
+      return withTags.map((r) => r.channels);
+    }
+    if (priority) {
+      query = query.where(eq(channels.priority, priority));
+    }
+    return query;
   }
 
   async findById(channelId: string, tx: Tx = db): Promise<ChannelRecord | undefined> {

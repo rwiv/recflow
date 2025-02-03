@@ -105,11 +105,7 @@ export class TagRepository {
     return rows.map((row) => row.tags).filter((tag) => tag !== null);
   }
 
-  private async findChannelsByTagId(
-    tagId: string,
-    limit: number,
-    tx: Tx = db,
-  ): Promise<ChannelRecord[]> {
+  async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelRecord[]> {
     const rows = await tx
       .select()
       .from(channelsToTags)

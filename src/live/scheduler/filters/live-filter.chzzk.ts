@@ -62,7 +62,7 @@ export class ChzzkLiveFilter implements LiveFilter {
     if (!channel) {
       return null;
     }
-    if (channel.followerCount >= minFollowerCnt) {
+    if (channel.followerCnt >= minFollowerCnt) {
       return info;
     } else {
       return null;

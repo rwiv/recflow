@@ -1,8 +1,13 @@
-import { ChannelCreation, ChannelRecord, ChannelUpdate } from '../persistence/channel.types.js';
+import {
+  ChannelCreation,
+  ChannelPriority,
+  ChannelRecord,
+  ChannelUpdate,
+} from '../persistence/channel.types.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { db } from '../../infra/db/db.js';
-import { TagRecord } from '../persistence/tag.types.js';
+import { ChannelSortType, TagRecord } from '../persistence/tag.types.js';
 
 export class ChannelService {
   constructor(
@@ -40,14 +45,22 @@ export class ChannelService {
   }
 
   async findAll(withTags: boolean = false): Promise<ChannelRecord[]> {
-    return this.findList(await this.chanRepo.findAll(), withTags);
+    return this.solve(await this.chanRepo.findAll(), withTags);
   }
 
-  async findPage(page: number, size: number, withTags: boolean = false): Promise<ChannelRecord[]> {
-    return this.findList(await this.chanRepo.findPage(page, size), withTags);
+  async findByQuery(
+    page: number,
+    size: number,
+    sorted: ChannelSortType = undefined,
+    priority: ChannelPriority | undefined = undefined,
+    tagName: string | undefined = undefined,
+    withTags: boolean = false,
+  ): Promise<ChannelRecord[]> {
+    const channels = await this.chanRepo.findByQuery(page, size, sorted, priority, tagName);
+    return this.solve(channels, withTags);
   }
 
-  private async findList(channels: ChannelRecord[], withTags: boolean = false) {
+  private async solve(channels: ChannelRecord[], withTags: boolean = false) {
     if (!withTags) return channels;
     const promises = channels.map(async (channel) => ({
       ...channel,

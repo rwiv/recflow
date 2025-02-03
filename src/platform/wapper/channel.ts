@@ -8,7 +8,7 @@ export interface ChannelBase {
   pid: string;
   username: string;
   profileImgUrl: string | null;
-  followerCount: number;
+  followerCnt: number;
 }
 
 export interface ChannelInfo extends ChannelBase {
@@ -31,7 +31,7 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
     pid: info.channelId,
     username: info.channelName,
     profileImgUrl,
-    followerCount: info.followerCount,
+    followerCnt: info.followerCount,
     openLive: info.openLive,
     content: info,
     liveInfo,
@@ -52,7 +52,7 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
     pid: info.userId,
     username: info.userNick,
     profileImgUrl,
-    followerCount: info.fanCnt,
+    followerCnt: info.fanCnt,
     openLive: info.openLive,
     content: info,
     liveInfo,

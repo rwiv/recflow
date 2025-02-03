@@ -1,3 +1,4 @@
+export type ChannelSortType = 'latest' | 'followerCnt' | undefined;
 export interface TagRecord {
   id: string;
   name: string;

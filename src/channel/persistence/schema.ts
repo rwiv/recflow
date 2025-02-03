@@ -23,7 +23,7 @@ export const channels = pgTable(
     pid: varchar({ length: 255 }).notNull(),
     username: varchar({ length: 255 }).notNull(),
     profileImgUrl: text(),
-    followerCount: integer().notNull(),
+    followerCnt: integer().notNull(),
     description: text(),
     priority: channelPriorityEnum().notNull(),
     createdAt: timestamp().notNull(),
@@ -32,7 +32,7 @@ export const channels = pgTable(
   (t) => ({
     pidIndex: index('channels_pid_idx').on(t.pid),
     usernameIndex: index('channels_username_idx').on(t.username),
-    followCntIndex: index('channels_followCnt_idx').on(t.followerCount),
+    followCntIndex: index('channels_followCnt_idx').on(t.followerCnt),
     priorityIndex: index('channels_priority_idx').on(t.priority),
     createdAtIndex: index('channels_createdAt_idx').on(t.createdAt),
     updatedAtIndex: index('channels_updatedAt_idx').on(t.updatedAt),

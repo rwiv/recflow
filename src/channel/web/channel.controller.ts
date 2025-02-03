@@ -1,8 +1,14 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ChannelService } from '../business/channel.service.js';
 import { TagService } from '../business/tag.service.js';
-import { ChannelRecord } from '../persistence/channel.types.js';
-import { TagAttachment, TagDetachment, TagRecord, TagUpdate } from '../persistence/tag.types.js';
+import { ChannelPriority, ChannelRecord } from '../persistence/channel.types.js';
+import {
+  ChannelSortType,
+  TagAttachment,
+  TagDetachment,
+  TagRecord,
+  TagUpdate,
+} from '../persistence/tag.types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ChannelCreationReq, ChannelUpdateReq } from './channel.controller.types.js';
 
@@ -15,8 +21,29 @@ export class ChannelController {
   ) {}
 
   @Get('/')
-  channels(@Query('page') page: number, @Query('size') size: number): Promise<ChannelRecord[]> {
-    return this.channelService.findPage(page, size);
+  channels(
+    @Query('page') page: number | undefined,
+    @Query('size') size: number | undefined,
+    @Query('sorted') sorted: string | undefined,
+    @Query('priority') priority: string | undefined,
+    @Query('tagName') tagName: string | undefined,
+  ): Promise<ChannelRecord[]> {
+    if (!page || !size) {
+      throw new Error('page and size must be provided');
+    }
+    if (sorted && !['latest', 'followerCnt'].includes(sorted)) {
+      throw new Error('Invalid sorted value');
+    }
+    if (priority && !['must', 'should', 'may', 'review', 'skip', 'none'].includes(priority)) {
+      throw new Error('Invalid priority value');
+    }
+    return this.channelService.findByQuery(
+      page,
+      size,
+      sorted as ChannelSortType,
+      priority as ChannelPriority,
+      tagName,
+    );
   }
 
   @Post('/')

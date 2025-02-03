@@ -1,10 +1,12 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { ChannelCreation, ChannelUpdate } from '../persistence/channel.types.js';
+import { ChannelPriority, ChannelUpdate } from '../persistence/channel.types.js';
 import { ChannelService } from './channel.service.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { assertNotNull } from '../../utils/null.js';
+import { mockChannel } from '../persistence/helpers.spec.js';
+import { ChannelSortType } from '../persistence/tag.types.js';
 
 const tagRepo = new TagRepository();
 const chanRepo = new ChannelRepository(tagRepo);
@@ -44,16 +46,33 @@ describe('ChannelService', () => {
     await chanService.delete(channel.id);
     expect(await chanService.findById(channel.id)).toBeUndefined();
   });
+
+  it('findPage', async () => {
+    for (let i = 1; i <= 10; i++) {
+      if (i <= 5) {
+        await add(i, 'must', 100 - i, ['tag1', 'tag2']);
+      } else {
+        await add(i, 'must', 100 - i, ['tag2', 'tag3']);
+      }
+    }
+    for (let i = 11; i <= 20; i++) {
+      if (i <= 15) {
+        await add(i, 'should', 100 - i, ['tag3', 'tag4']);
+      } else {
+        await add(i, 'should', 100 - i, ['tag4', 'tag5']);
+      }
+    }
+    const sorted: ChannelSortType = 'latest';
+    // const sorted: ChannelSortType = 'followerCnt';
+    // const sorted: ChannelSortType = undefined;
+    const prioirty = 'should';
+    // const prioirty = undefined;
+    const tagName = 'tag3';
+    const result = await chanRepo.findByQuery(1, 10, sorted, prioirty, tagName);
+    console.log(result.map((r) => r.username));
+  });
 });
 
-function mockChannel(n: number): ChannelCreation {
-  return {
-    ptype: 'chzzk',
-    pid: `chzzk${n}`,
-    username: `user${n}`,
-    profileImgUrl: 'http://example.com',
-    description: 'desc',
-    followerCount: 10,
-    priority: 'must',
-  };
+function add(n: number, priority: ChannelPriority, followerCnt: number, tagNames: string[]) {
+  return chanService.create(mockChannel(n, priority, followerCnt), tagNames);
 }

@@ -1,5 +1,6 @@
 import { TagRepository } from '../persistence/tag.repository.js';
-import { TagAttachment, TagDetachment, TagRecord, TagUpdate } from '../persistence/tag.types.js';
+import { TagAttachment, TagDetachment, TagUpdate } from '../persistence/tag.types.js';
+import { TagRecord } from './tag.types.js';
 
 export class TagService {
   constructor(private readonly tagRepo: TagRepository) {}

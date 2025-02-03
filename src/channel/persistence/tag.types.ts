@@ -1,11 +1,9 @@
+import { channelsToTags, tags } from './schema.js';
+
+export type TagEnt = typeof tags.$inferSelect;
+export type ChannelToTagEnt = typeof channelsToTags.$inferSelect;
+
 export type ChannelSortType = 'latest' | 'followerCnt' | undefined;
-export interface TagRecord {
-  id: string;
-  name: string;
-  description: string | null;
-  createdAt: Date;
-  updatedAt: Date | null;
-}
 
 export interface TagCreation {
   name: string;

@@ -1,13 +1,10 @@
-import {
-  ChannelCreation,
-  ChannelPriority,
-  ChannelRecord,
-  ChannelUpdate,
-} from '../persistence/channel.types.js';
+import { ChannelCreation, ChannelPriority, ChannelUpdate } from '../persistence/channel.types.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
 import { TagRepository } from '../persistence/tag.repository.js';
 import { db } from '../../infra/db/db.js';
-import { ChannelSortType, TagRecord } from '../persistence/tag.types.js';
+import { ChannelSortType } from '../persistence/tag.types.js';
+import { ChannelRecord } from './channel.types.js';
+import { TagRecord } from './tag.types.js';
 
 export class ChannelService {
   constructor(
@@ -54,9 +51,16 @@ export class ChannelService {
     sorted: ChannelSortType = undefined,
     priority: ChannelPriority | undefined = undefined,
     tagName: string | undefined = undefined,
+    tagNamesOr: string[] | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanRepo.findByQuery(page, size, sorted, priority, tagName);
+    const channels = await this.chanRepo.findByQuery(
+      { page, size },
+      sorted,
+      priority,
+      tagName,
+      tagNamesOr,
+    );
     return this.solve(channels, withTags);
   }
 

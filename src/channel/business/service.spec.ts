@@ -48,28 +48,41 @@ describe('ChannelService', () => {
   });
 
   it('findPage', async () => {
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 15; i++) {
       if (i <= 5) {
         await add(i, 'must', 100 - i, ['tag1', 'tag2']);
-      } else {
+      } else if (i <= 10) {
         await add(i, 'must', 100 - i, ['tag2', 'tag3']);
-      }
-    }
-    for (let i = 11; i <= 20; i++) {
-      if (i <= 15) {
-        await add(i, 'should', 100 - i, ['tag3', 'tag4']);
       } else {
-        await add(i, 'should', 100 - i, ['tag4', 'tag5']);
+        await add(i, 'must', 100 - i, ['tag3', 'tag4']);
       }
     }
-    const sorted: ChannelSortType = 'latest';
-    // const sorted: ChannelSortType = 'followerCnt';
+    for (let i = 16; i <= 30; i++) {
+      if (i <= 20) {
+        await add(i, 'should', 100 - i, ['tag4', 'tag5']);
+      } else if (i <= 25) {
+        await add(i, 'should', 100 - i, ['tag5', 'tag6']);
+      } else {
+        await add(i, 'should', 100 - i, ['tag6', 'tag7']);
+      }
+    }
+
+    // const sorted: ChannelSortType = 'latest';
+    const sorted: ChannelSortType = 'followerCnt';
     // const sorted: ChannelSortType = undefined;
     const prioirty = 'should';
     // const prioirty = undefined;
-    const tagName = 'tag3';
-    const result = await chanRepo.findByQuery(1, 10, sorted, prioirty, tagName);
+    const tagName = 'tag5';
+    // const tagName = undefined;
+    // const tagNames = ['tag4', 'tag5'];
+    const tagNames = undefined;
+    const result = await chanService.findByQuery(1, 10, sorted, prioirty, tagName, tagNames, true);
     console.log(result.map((r) => r.username));
+
+    const all = await chanService.findAll(true);
+    for (const r of all) {
+      console.log(`${r.username}: [${r.tags?.map((t) => t.name).join(',')}]`);
+    }
   });
 });
 

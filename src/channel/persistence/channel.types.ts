@@ -1,19 +1,14 @@
 import { ChannelBase } from '../../platform/wapper/channel.js';
-import { TagRecord } from './tag.types.js';
 import { PlatformType } from '../../platform/types.js';
+import { channels } from './schema.js';
+
+export type ChannelEnt = typeof channels.$inferSelect;
 
 export type ChannelPriority = 'must' | 'should' | 'may' | 'review' | 'skip' | 'none';
 
 export interface ChannelDef extends ChannelBase {
   description: string | null;
   priority: ChannelPriority;
-}
-
-export interface ChannelRecord extends ChannelDef {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tags?: TagRecord[];
 }
 
 export type ChannelCreation = ChannelDef;

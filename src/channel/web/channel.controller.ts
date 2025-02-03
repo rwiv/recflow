@@ -1,12 +1,23 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ChannelService } from '../business/channel.service.js';
 import { TagService } from '../business/tag.service.js';
-import { ChannelPriority, ChannelRecord } from '../persistence/channel.types.js';
+import { ChannelPriority } from '../persistence/channel.types.js';
 import {
   ChannelSortType,
   TagAttachment,
   TagDetachment,
-  TagRecord,
   TagUpdate,
 } from '../persistence/tag.types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -22,12 +33,13 @@ export class ChannelController {
 
   @Get('/')
   channels(
-    @Query('page') page: number | undefined,
-    @Query('size') size: number | undefined,
-    @Query('sorted') sorted: string | undefined,
-    @Query('priority') priority: string | undefined,
-    @Query('tagName') tagName: string | undefined,
-  ): Promise<ChannelRecord[]> {
+    @Query('p', ParseIntPipe) page: number,
+    @Query('s', ParseIntPipe) size: number,
+    @Query('st') sorted?: string,
+    @Query('pri') priority?: string,
+    @Query('tn') tagName?: string,
+    @Query('wt', new ParseBoolPipe({ optional: true })) withTags?: boolean,
+  ) {
     if (!page || !size) {
       throw new Error('page and size must be provided');
     }
@@ -43,41 +55,43 @@ export class ChannelController {
       sorted as ChannelSortType,
       priority as ChannelPriority,
       tagName,
+      undefined,
+      withTags,
     );
   }
 
   @Post('/')
-  createChannel(@Body() req: ChannelCreationReq): Promise<ChannelRecord> {
+  createChannel(@Body() req: ChannelCreationReq) {
     return this.channelService.create(req.creation, req.tagNames);
   }
 
   @Put('/')
-  updateChannel(@Body() req: ChannelUpdateReq): Promise<ChannelRecord> {
+  updateChannel(@Body() req: ChannelUpdateReq) {
     return this.channelService.update(req.update, req.tagNames);
   }
 
   @Delete('/{channelId}')
-  deleteChannel(@Param('channelId') channelId: string): Promise<ChannelRecord> {
+  deleteChannel(@Param('channelId') channelId: string) {
     return this.channelService.delete(channelId);
   }
 
   @Put('/tags')
-  updateTag(@Body() req: TagUpdate): Promise<TagRecord> {
+  updateTag(@Body() req: TagUpdate) {
     return this.tagService.update(req);
   }
 
   @Patch('/tags/attach')
-  attachTag(@Body() req: TagAttachment): Promise<TagRecord> {
+  attachTag(@Body() req: TagAttachment) {
     return this.tagService.attach(req);
   }
 
   @Patch('/tags/detach')
-  detachTag(@Body() req: TagDetachment): Promise<void> {
+  detachTag(@Body() req: TagDetachment) {
     return this.tagService.detach(req);
   }
 
   @Get('/tags')
-  tags(): Promise<TagRecord[]> {
+  tags() {
     return this.tagService.findAll();
   }
 

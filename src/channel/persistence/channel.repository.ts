@@ -1,8 +1,8 @@
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { db } from '../../infra/db/db.js';
 import { channels, channelsToTags, tags } from './schema.js';
-import { and, desc, eq } from 'drizzle-orm';
-import { ChannelCreation, ChannelPriority, ChannelRecord, ChannelUpdate } from './channel.types.js';
+import { and, desc, eq, inArray } from 'drizzle-orm';
+import { ChannelCreation, ChannelEnt, ChannelPriority, ChannelUpdate } from './channel.types.js';
 import { uuid } from '../../utils/uuid.js';
 import { TagRepository } from './tag.repository.js';
 import { Tx } from '../../infra/db/types.js';
@@ -13,7 +13,7 @@ import { ChannelSortType } from './tag.types.js';
 export class ChannelRepository {
   constructor(private readonly tagRepo: TagRepository) {}
 
-  async create(req: ChannelCreation, tx: Tx = db): Promise<ChannelRecord> {
+  async create(req: ChannelCreation, tx: Tx = db): Promise<ChannelEnt> {
     const toBeAdded = {
       ...req,
       id: uuid(),
@@ -23,7 +23,7 @@ export class ChannelRepository {
     return oneNotNull(await tx.insert(channels).values(toBeAdded).returning());
   }
 
-  async update(req: ChannelUpdate, tx: Tx = db): Promise<ChannelRecord> {
+  async update(req: ChannelUpdate, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.findById(req.id, tx);
     if (!channel) throw new Error('Channel not found');
     const toBeUpdated = {
@@ -36,7 +36,7 @@ export class ChannelRepository {
     );
   }
 
-  async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {
+  async delete(channelId: string, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.findById(channelId, tx);
     if (!channel) throw new Error('Channel not found');
     const tags = await this.tagRepo.findTagsByChannelId(channel.id, tx);
@@ -49,44 +49,62 @@ export class ChannelRepository {
     });
   }
 
-  findAll(tx: Tx = db): Promise<ChannelRecord[]> {
+  findAll(tx: Tx = db): Promise<ChannelEnt[]> {
     return tx.select().from(channels);
   }
 
   async findByQuery(
-    page: number,
-    size: number,
+    page: { page: number; size: number } | undefined = undefined,
     sorted: ChannelSortType = undefined,
     priority: ChannelPriority | undefined = undefined,
     tagName: string | undefined = undefined,
+    tagNamesOr: string[] | undefined = undefined,
     tx: Tx = db,
-  ): Promise<ChannelRecord[]> {
-    if (page < 1) throw new Error('Page must be greater than 0');
-    const offset = (page - 1) * size;
-    let query = tx.select().from(channels).offset(offset).limit(size).$dynamic();
+  ): Promise<ChannelEnt[]> {
+    let query = tx.selectDistinct({ channels }).from(channels).$dynamic();
+    const conds = [];
+
+    if (page) {
+      if (page.page < 1) throw new Error('Page must be greater than 0');
+      const offset = (page.page - 1) * page.size;
+      query = query.offset(offset).limit(page.size);
+    }
+
     if (sorted === 'latest') {
       query = query.orderBy(desc(channels.updatedAt));
     } else if (sorted === 'followerCnt') {
       query = query.orderBy(desc(channels.followerCnt));
     }
-    if (tagName) {
+
+    if (priority) {
+      conds.push(eq(channels.priority, priority));
+    }
+
+    query = query.where(and(...conds));
+
+    if (tagName || tagNamesOr) {
+      if (tagName && tagNamesOr) {
+        throw new Error('Cannot specify both tagName and tagNames');
+      }
+      if (tagName) {
+        conds.push(eq(tags.name, tagName));
+      } else if (tagNamesOr) {
+        conds.push(inArray(tags.name, tagNamesOr));
+      }
       const withTags = await query
-        .leftJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
-        .leftJoin(tags, eq(tags.id, channelsToTags.tagId))
-        .where(and(eq(tags.name, tagName), priority ? eq(channels.priority, priority) : undefined));
+        .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
+        .innerJoin(tags, eq(channelsToTags.tagId, tags.id))
+        .where(and(...conds));
       return withTags.map((r) => r.channels);
     }
-    if (priority) {
-      query = query.where(eq(channels.priority, priority));
-    }
-    return query;
+    return (await query).map((r) => r.channels);
   }
 
-  async findById(channelId: string, tx: Tx = db): Promise<ChannelRecord | undefined> {
+  async findById(channelId: string, tx: Tx = db): Promise<ChannelEnt | undefined> {
     return oneNullable(await tx.select().from(channels).where(eq(channels.id, channelId)));
   }
 
-  async findByUsername(username: string, tx: Tx = db): Promise<ChannelRecord[]> {
+  async findByUsername(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
     return tx.select().from(channels).where(eq(channels.username, username));
   }
 }

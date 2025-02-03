@@ -18,7 +18,7 @@ export function ChannelTableContent({ channels }: { channels: ChannelRecord[] })
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead css={css({ width: '20rem' })}>
+          <TableHead css={css({ width: '15rem' })}>
             <div className="ml-2">Channel</div>
           </TableHead>
           <TableHead css={css({ width: '7rem' })}>Priority</TableHead>
@@ -74,10 +74,10 @@ function ChannelRow({ channel }: { channel: ChannelRecord }) {
         </div>
       </TableCell>
       <TableCell>
-        <div className="justify-self-end mr-4">{channel.followerCount}</div>
+        <div className="justify-self-end mr-4">{channel.followerCnt}</div>
       </TableCell>
       <TableCell>
-        <div className="justify-self-end mr-5">{prettyDate(channel.updatedAt)}</div>
+        <div className="justify-self-end mr-5">{prettyDate(new Date(channel.updatedAt))}</div>
       </TableCell>
     </TableRow>
   );

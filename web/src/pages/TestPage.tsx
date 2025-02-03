@@ -1,13 +1,11 @@
 import { LiveTable } from '@/components/table/live/LiveTable.tsx';
 import { LiveRecord, NodeRecord } from '@/client/types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { WebhookTable } from '@/components/table/webhook/WebhookTable.tsx';
-import { mockChannel, mockLiveRecord, mockNode } from '@/client/mocks.ts';
-import { ChannelTable } from '@/components/table/channel/ChannelTable.tsx';
+import { NodeTable } from '@/components/table/webhook/NodeTable.tsx';
+import { mockLiveRecord, mockNode } from '@/client/mocks.ts';
 
 const lives = Array.from({ length: 10 }).map(mockLiveRecord);
 const nodes = Array.from({ length: 10 }).map(mockNode);
-const channels = Array.from({ length: 10 }).map(mockChannel);
 
 export function TestPage() {
   return <div>{lives && nodes && <TableContent lives={lives} nodes={nodes} />}</div>;
@@ -20,7 +18,7 @@ interface TableContentProps {
 
 function TableContent({ lives, nodes }: TableContentProps) {
   return (
-    <Tabs defaultValue="channels" className="mx-10 my-3">
+    <Tabs defaultValue="lives" className="mx-10 my-3">
       <TabsList className="my-3">
         <TabsTrigger value="lives">Lives</TabsTrigger>
         <TabsTrigger value="channels">Channels</TabsTrigger>
@@ -31,12 +29,9 @@ function TableContent({ lives, nodes }: TableContentProps) {
           <LiveTable data={lives} />
         </div>
       </TabsContent>
-      <TabsContent value="channels">
-        <ChannelTable channels={channels} />
-      </TabsContent>
       <TabsContent value="nodes">
         <div>
-          <WebhookTable data={nodes} />
+          <NodeTable data={nodes} />
         </div>
       </TabsContent>
     </Tabs>

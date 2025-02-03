@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { cn } from '@/lib/utils.ts';
 
 interface IconButtonProps {
   children: ReactNode;
@@ -9,7 +10,10 @@ interface IconButtonProps {
 export function IconButton({ children, className, onClick }: IconButtonProps) {
   return (
     <button
-      className={`${className} flex items-center justify-center hover:bg-accent hover:text-accent-foreground rounded-md cursor-pointer`}
+      className={cn(
+        'flex items-center justify-center hover:bg-accent hover:text-accent-foreground rounded-md cursor-pointer',
+        className,
+      )}
       onClick={onClick}
     >
       {children}

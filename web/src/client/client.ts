@@ -1,4 +1,4 @@
-import { ExitCmd, PlatformType, LiveRecord, NodeRecord } from '@/client/types.ts';
+import { ExitCmd, PlatformType, LiveRecord, NodeRecord, ChannelRecord } from '@/client/types.ts';
 import { configs } from '@/common/configs.ts';
 
 export async function fetchNodes() {
@@ -21,4 +21,10 @@ export async function deleteLive(uid: string, ptype: PlatformType, cmd: ExitCmd)
   const url = `${configs.endpoint}/api/lives/${ptype}/${uid}?cmd=${cmd}`;
   const res = await fetch(url, { method: 'DELETE' });
   return (await res.json()) as LiveRecord;
+}
+
+export async function fetchChannels(page: number, size: number = 10) {
+  const qs = `?p=${page}&s=${size}`;
+  const res = await fetch(`${configs.endpoint}/api/channels${qs}`);
+  return (await res.json()) as ChannelRecord[];
 }

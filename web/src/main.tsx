@@ -6,8 +6,14 @@ import { configs } from '@/common/configs.ts';
 import { IndexPage } from '@/pages/IndexPage.tsx';
 import { TestPage } from '@/pages/TestPage.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ChannelsPage } from '@/pages/ChanenelsPage.tsx';
+import { NodesPage } from '@/pages/NodesPage.tsx';
 
-const routes: RouteObject[] = [{ path: '/', element: <IndexPage /> }];
+const routes: RouteObject[] = [
+  { path: '/', element: <IndexPage /> },
+  { path: '/channels', element: <ChannelsPage /> },
+  { path: '/nodes', element: <NodesPage /> },
+];
 
 if (configs.isDev) {
   routes.push({ path: '/test', element: <TestPage /> });

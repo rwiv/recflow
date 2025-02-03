@@ -7,7 +7,7 @@ import { useTable } from '@/components/table/common/useTable.ts';
 import { NodeRecord } from '@/client/types.ts';
 import { nameCid, webhookColumns } from '@/components/table/webhook/webhookColumns.tsx';
 
-export function WebhookTable({ data }: { data: NodeRecord[] }) {
+export function NodeTable({ data }: { data: NodeRecord[] }) {
   const table = useTable(data, webhookColumns);
 
   return (

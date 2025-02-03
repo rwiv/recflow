@@ -38,7 +38,7 @@ export interface ChannelRecord {
   pid: string;
   username: string;
   profileImgUrl: string | null;
-  followerCount: number;
+  followerCnt: number;
   description: string | null;
   priority: ChannelPriority;
   createdAt: Date;

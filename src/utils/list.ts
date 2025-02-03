@@ -17,3 +17,7 @@ export function oneNullable<T>(list: T[]): T | undefined {
   }
   return list[0];
 }
+
+export function hasDuplicates(arr: string[]): boolean {
+  return new Set(arr).size !== arr.length;
+}

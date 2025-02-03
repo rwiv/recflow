@@ -7,6 +7,7 @@ import { ChannelRecord } from './channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
 import { Injectable } from '@nestjs/common';
+import { hasDuplicates } from '../../utils/list.js';
 
 @Injectable()
 export class ChannelService {
@@ -18,6 +19,9 @@ export class ChannelService {
 
   async create(req: ChannelCreation, reqTagNames: string[]): Promise<ChannelRecord> {
     return db.transaction(async (txx) => {
+      if (hasDuplicates(reqTagNames)) {
+        throw new Error('Duplicate tag names');
+      }
       const channel = await this.chanRepo.create(req, txx);
       const tags: TagRecord[] = [];
       for (const tagName of reqTagNames) {
@@ -32,6 +36,9 @@ export class ChannelService {
 
   async update(req: ChannelUpdate, reqTagNames: string[]): Promise<ChannelRecord> {
     return db.transaction(async (txx) => {
+      if (hasDuplicates(reqTagNames)) {
+        throw new Error('Duplicate tag names');
+      }
       const channel = await this.chanRepo.update(req, txx);
       const tags = await this.tagRepo.applyTags(channel.id, reqTagNames, txx);
       return {

@@ -5,6 +5,8 @@ import { getFetcher } from '../../live/helpers/utils.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelService } from '../business/channel.service.js';
 import { ChannelCreation } from '../persistence/channel.types.js';
+import { faker } from '@faker-js/faker';
+import { randomElem } from '../../../web/src/lib/list.js';
 
 export class TestChannelInjector {
   constructor(private readonly channelService: ChannelService) {}
@@ -36,10 +38,17 @@ export class TestChannelInjector {
         ptype: info.ptype,
         pid: info.pid,
         followerCnt: info.followerCnt,
-        priority: 'must',
-        description: null,
+        priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
+        description: faker.lorem.sentence(),
       };
-      await this.channelService.create(req, ['tag1', 'tag2']);
+
+      const tags: string[] = [];
+      for (let i = 1; i < 10; i++) {
+        tags.push(`tag${i}`);
+      }
+      const n = faker.number.int({ min: 0, max: 8 });
+      const tagNames = Array.from({ length: n }, () => randomElem(tags));
+      await this.channelService.create(req, Array.from(new Set(tagNames)).sort());
     }
   }
 }

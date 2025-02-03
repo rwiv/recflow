@@ -30,8 +30,8 @@ export async function deleteLive(uid: string, ptype: PlatformType, cmd: ExitCmd)
   return (await res.json()) as LiveRecord;
 }
 
-export async function fetchChannels(page: number, size: number = 10) {
-  const qs = `?p=${page}&s=${size}`;
+export async function fetchChannels(page: number, size: number = 10, withTags = true) {
+  const qs = `?p=${page}&s=${size}&wt=${withTags}`;
   const res = await fetch(`${configs.endpoint}/api/channels${qs}`);
   return (await res.json()) as ChannelRecord[];
 }

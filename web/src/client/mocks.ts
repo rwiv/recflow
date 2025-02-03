@@ -39,7 +39,7 @@ export function mockChannel(): ChannelRecord {
     pid: faker.string.uuid().replace(/-/g, ''),
     username: faker.internet.username(),
     profileImgUrl: faker.image.avatar(),
-    followerCount: faker.number.int({ min: 10, max: 10000 }),
+    followerCnt: faker.number.int({ min: 10, max: 10000 }),
     description: faker.lorem.sentence(),
     priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
     createdAt: faker.date.anytime(),

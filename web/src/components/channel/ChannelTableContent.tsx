@@ -60,8 +60,8 @@ function ChannelRow({ channel }: { channel: ChannelRecord }) {
         </div>
       </TableCell>
       <TableCell>
-        <Badge className="uppercase cursor-default" variant="default">
-          {channel.priority}
+        <Badge variant="default">
+          <button className="uppercase">{channel.priority}</button>
         </Badge>
       </TableCell>
       <TableCell>

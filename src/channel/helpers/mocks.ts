@@ -3,15 +3,15 @@ import { ChannelCreation, ChannelPriority } from '../persistence/channel.types.j
 export function mockChannel(
   n: number,
   priority: ChannelPriority = 'must',
-  followerCount: number = 10,
+  followerCnt: number = 10,
 ): ChannelCreation {
   return {
     ptype: 'chzzk',
     pid: `chzzk${n}`,
     username: `user${n}`,
     profileImgUrl: 'http://example.com',
-    description: 'desc',
-    followerCnt: followerCount,
+    followerCnt,
+    description: '',
     priority,
   };
 }

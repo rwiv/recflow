@@ -8,11 +8,13 @@ import { assertNotNull } from '../../utils/null.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
 import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
+import { ChannelValidator } from './channel.validator.js';
 
 const tagRepo = new TagRepository();
 const chanRepo = new ChannelRepository(tagRepo);
 const chanQueryRepo = new ChannelQueryRepository(tagRepo);
-const chanService = new ChannelService(chanRepo, chanQueryRepo, tagRepo);
+const chanValidator = new ChannelValidator();
+const chanService = new ChannelService(chanRepo, chanQueryRepo, tagRepo, chanValidator);
 
 describe('ChannelService', () => {
   beforeEach(async () => {
@@ -25,6 +27,7 @@ describe('ChannelService', () => {
 
   it('create', async () => {
     const channel = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
+    console.log(channel);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });

@@ -1,5 +1,5 @@
-import { ChannelTable } from '@/components/table/channel/ChannelTable.tsx';
-import { TabButton, TabList } from '@/components/common/Tab.tsx';
+import { ChannelTable } from '@/components/channel/ChannelTable.tsx';
+import { TabButton, TabList } from '@/components/common/ui/Tab.tsx';
 import { Link, useSearchParams } from 'react-router';
 
 const DEFAULT_PAGE_SIZE = 10;

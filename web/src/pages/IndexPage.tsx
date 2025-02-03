@@ -1,9 +1,9 @@
-import { LiveTable } from '@/components/table/live/LiveTable.tsx';
+import { LiveTable } from '@/components/live/LiveTable.tsx';
 import { LiveRecord } from '@/client/types.ts';
 import { fetchLives } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
-import { TabButton, TabList } from '@/components/common/Tab.tsx';
+import { TabButton, TabList } from '@/components/common/ui/Tab.tsx';
 
 export function IndexPage() {
   const { data: lives } = useQuery<LiveRecord[]>({

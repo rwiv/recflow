@@ -1,7 +1,7 @@
 import { Check, ChevronsUpDown } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils.ts';
+import { Button } from '@/components/ui/button.tsx';
 import {
   Command,
   CommandEmpty,
@@ -9,8 +9,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@/components/ui/command.tsx';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { useState } from 'react';
 import { fetchTags } from '@/client/client.ts';
 import { TagRecord } from '@/client/types.ts';

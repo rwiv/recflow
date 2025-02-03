@@ -4,7 +4,7 @@ import {
   createSelectColumn,
   dateColumnDef,
   sortableColumnDef,
-} from '@/components/table/common/column_utils.tsx';
+} from '@/components/common/table/column_utils.tsx';
 import { LiveRecord } from '@/client/types.ts';
 import { getChannelUrl, getLiveUrl } from '@/lib/platform.ts';
 

@@ -1,14 +1,14 @@
 import { ChannelRecord } from '@/client/types.ts';
-import { ChannelTableContent } from '@/components/table/channel/ChannelTableContent.tsx';
+import { ChannelTableContent } from '@/components/channel/ChannelTableContent.tsx';
 import { useEffect, useState } from 'react';
 import { fetchChannels } from '@/client/client.ts';
-import { PageNavigation } from '@/components/common/ChannelNavigation.tsx';
-import { ChannelPrioritySelect } from '@/components/table/channel/search/ChannelPrioritySelect.tsx';
-import { ChannelTagSelect } from '@/components/table/channel/search/ChannelTagSelect.tsx';
+import { PageNavigation } from '@/components/common/ui/ChannelNavigation.tsx';
+import { ChannelPrioritySelect } from '@/components/channel/search/ChannelPrioritySelect.tsx';
+import { ChannelTagSelect } from '@/components/channel/search/ChannelTagSelect.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { css } from '@emotion/react';
-import { ChannelKeywordSearchBar } from '@/components/table/channel/search/ChannelKeywordSearchBar.tsx';
-import { ChannelSortSelect } from '@/components/table/channel/search/ChannelSortSelect.tsx';
+import { ChannelKeywordSearchBar } from '@/components/channel/search/ChannelKeywordSearchBar.tsx';
+import { ChannelSortSelect } from '@/components/channel/search/ChannelSortSelect.tsx';
 
 export interface ChannelTableProps {
   page: number;

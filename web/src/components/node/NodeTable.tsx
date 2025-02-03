@@ -1,11 +1,11 @@
-import { TableContent } from '@/components/table/common/TableContent.tsx';
-import { FilterInput } from '@/components/table/common/FilterInput.tsx';
-import { ColumnSelector } from '@/components/table/common/ColumnSelector.tsx';
-import { SelectedRowCount } from '@/components/table/common/SelectedRowCount.tsx';
-import { PageNavigation } from '@/components/table/common/PageNavigation.tsx';
-import { useTable } from '@/components/table/common/useTable.ts';
+import { TableContent } from '@/components/common/table/TableContent.tsx';
+import { FilterInput } from '@/components/common/table/FilterInput.tsx';
+import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
+import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
+import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
+import { useTable } from '@/components/common/table/useTable.ts';
 import { NodeRecord } from '@/client/types.ts';
-import { nameCid, webhookColumns } from '@/components/table/webhook/webhookColumns.tsx';
+import { nameCid, webhookColumns } from '@/components/node/webhookColumns.tsx';
 
 export function NodeTable({ data }: { data: NodeRecord[] }) {
   const table = useTable(data, webhookColumns);

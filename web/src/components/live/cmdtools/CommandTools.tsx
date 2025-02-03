@@ -2,9 +2,9 @@ import { Table } from '@tanstack/react-table';
 import { ExitCmd, LiveRecord } from '@/client/types.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/client.ts';
-import { CreateForm } from '@/components/table/live/cmdtools/CreateForm.tsx';
+import { CreateForm } from '@/components/live/cmdtools/CreateForm.tsx';
 import { ReactNode, useRef } from 'react';
-import { AlertDialog } from '@/components/common/AlertDialog.tsx';
+import { AlertDialog } from '@/components/common/ui/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import {
   Dialog,

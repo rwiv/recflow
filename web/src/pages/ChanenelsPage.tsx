@@ -2,6 +2,8 @@ import { ChannelTable } from '@/components/table/channel/ChannelTable.tsx';
 import { TabButton, TabList } from '@/components/common/Tab.tsx';
 import { Link, useSearchParams } from 'react-router';
 
+const DEFAULT_PAGE_SIZE = 10;
+
 export function ChannelsPage() {
   const [searchParams] = useSearchParams();
 
@@ -21,7 +23,7 @@ export function ChannelsPage() {
         </TabList>
       </div>
       <div className="mx-10 my-3">
-        <ChannelTable page={page} size={3} />
+        <ChannelTable page={page} size={DEFAULT_PAGE_SIZE} />
       </div>
     </div>
   );

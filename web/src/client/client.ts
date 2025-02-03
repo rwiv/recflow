@@ -1,4 +1,11 @@
-import { ExitCmd, PlatformType, LiveRecord, NodeRecord, ChannelRecord } from '@/client/types.ts';
+import {
+  ExitCmd,
+  PlatformType,
+  LiveRecord,
+  NodeRecord,
+  ChannelRecord,
+  TagRecord,
+} from '@/client/types.ts';
 import { configs } from '@/common/configs.ts';
 
 export async function fetchNodes() {
@@ -27,4 +34,9 @@ export async function fetchChannels(page: number, size: number = 10) {
   const qs = `?p=${page}&s=${size}`;
   const res = await fetch(`${configs.endpoint}/api/channels${qs}`);
   return (await res.json()) as ChannelRecord[];
+}
+
+export async function fetchTags() {
+  const res = await fetch(`${configs.endpoint}/api/channels/tags`);
+  return (await res.json()) as TagRecord[];
 }

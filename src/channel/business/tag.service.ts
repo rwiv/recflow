@@ -1,7 +1,9 @@
 import { TagRepository } from '../persistence/tag.repository.js';
 import { TagAttachment, TagDetachment, TagUpdate } from '../persistence/tag.types.js';
 import { TagRecord } from './tag.types.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class TagService {
   constructor(private readonly tagRepo: TagRepository) {}
 
@@ -17,7 +19,7 @@ export class TagService {
     return this.tagRepo.detach(req);
   }
 
-  findAll() {
+  findAll(): Promise<TagRecord[]> {
     return this.tagRepo.findAll();
   }
 }

@@ -2,9 +2,9 @@ import { ChannelRecord } from '@/client/types.ts';
 import { ChannelTableContent } from '@/components/channel/ChannelTableContent.tsx';
 import { useEffect } from 'react';
 import { fetchChannels } from '@/client/client.ts';
-import { PageNavigation } from '@/components/common/ui/ChannelNavigation.tsx';
+import { PageNavigation } from '@/components/common/layout/ChannelNavigation.tsx';
 import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
-import { TagSelect } from '@/components/channel/search/TagSelect.tsx';
+import { QueryTagSelect } from '@/components/channel/search/QueryTagSelect.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { css } from '@emotion/react';
 import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.tsx';
@@ -67,7 +67,7 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
         </div>
         <div className="flex gap-2">
           <PrioritySelect />
-          <TagSelect />
+          <QueryTagSelect />
           <SortSelect />
           <Button variant="outline" css={css({ width: '5.5rem' })}>
             Refresh

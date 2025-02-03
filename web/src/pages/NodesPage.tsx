@@ -2,7 +2,7 @@ import { NodeRecord } from '@/client/types.ts';
 import { fetchNodes } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
-import { TabButton, TabList } from '@/components/common/ui/Tab.tsx';
+import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
 
 export function NodesPage() {

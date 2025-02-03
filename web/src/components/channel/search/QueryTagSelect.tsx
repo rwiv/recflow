@@ -15,18 +15,23 @@ import { useState } from 'react';
 import { fetchTags } from '@/client/client.ts';
 import { TagRecord } from '@/client/types.ts';
 
-export function TagSelect() {
+export function QueryTagSelect() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [tags, setTags] = useState<TagRecord[]>([]);
 
-  const onClick = async () => {
+  const onTrigger = async () => {
     if (!open) {
       setTags(await fetchTags());
       setOpen((prev) => !prev);
     } else {
       setOpen((prev) => !prev);
     }
+  };
+
+  const onSelect = (currentValue: string) => {
+    setValue(currentValue === value ? '' : currentValue);
+    setOpen(false);
   };
 
   return (
@@ -36,10 +41,10 @@ export function TagSelect() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          onClick={onClick}
+          onClick={onTrigger}
           className="w-[200px] justify-between"
         >
-          {value ? tags.find((tag) => tag.id === value)?.name : 'Select Tag'}
+          {value ? tags.find((tag) => tag.name === value)?.name : 'Select Tag'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -50,14 +55,7 @@ export function TagSelect() {
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags.map((tag) => (
-                <CommandItem
-                  key={tag.id}
-                  value={tag.id}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? '' : currentValue);
-                    setOpen(false);
-                  }}
-                >
+                <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                   {tag.name}
                   <Check
                     className={cn('ml-auto', value === tag.name ? 'opacity-100' : 'opacity-0')}

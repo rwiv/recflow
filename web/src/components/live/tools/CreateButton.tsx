@@ -2,11 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button.tsx';
-import { Form } from '@/components/ui/form.tsx';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { createLive } from '@/client/client.ts';
-import { PlatformSelectField } from '@/components/common/form/PlatformSelectField.tsx';
-import { ChannelIdField } from '@/components/common/form/ChannelIdField.tsx';
 import { useRef } from 'react';
 import {
   Dialog,
@@ -17,6 +22,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog.tsx';
 import { DialogClose } from '@radix-ui/react-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select.tsx';
+import { Input } from '@/components/ui/input.tsx';
 
 export function CreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -61,8 +74,40 @@ export function CreateForm({ cb }: { cb: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <PlatformSelectField form={form} />
-        <ChannelIdField form={form} />
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Type</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="chzzk">CHZZK</SelectItem>
+                  <SelectItem value="soop">SOOP</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="uid"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>UID</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter UID" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className="flex flex-row justify-end mt-5">
           <Button type="submit" className="px-7">
             Save

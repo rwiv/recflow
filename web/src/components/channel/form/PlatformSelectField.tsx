@@ -1,4 +1,4 @@
-import { EditForm } from '@/components/common/form/types.ts';
+import { EditFormProps } from '@/components/channel/form/types.ts';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import {
   Select,
@@ -7,8 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select.tsx';
+import { UseFormReturn } from 'react-hook-form';
 
-export function PlatformSelectField({ form }: { form: EditForm }) {
+export function PlatformSelectField({ form }: { form: UseFormReturn<EditFormProps> }) {
   return (
     <FormField
       control={form.control}

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/client.ts';
 import { CreateButton } from '@/components/live/tools/CreateButton.tsx';
 import { ReactNode } from 'react';
-import { AlertDialog } from '@/components/common/ui/AlertDialog.tsx';
+import { AlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 
 export function CommandTools({ table }: { table: Table<LiveRecord> }) {

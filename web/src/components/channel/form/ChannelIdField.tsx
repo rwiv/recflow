@@ -1,4 +1,4 @@
-import { EditForm } from '@/components/common/form/types.ts';
+import { EditForm } from '@/components/channel/form/types.ts';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
 

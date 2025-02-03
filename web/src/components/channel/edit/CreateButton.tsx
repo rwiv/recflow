@@ -15,8 +15,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form.tsx';
-import { PlatformSelectField } from '@/components/common/form/PlatformSelectField.tsx';
-import { ChannelIdField } from '@/components/common/form/ChannelIdField.tsx';
+import { PlatformSelectField } from '@/components/channel/form/PlatformSelectField.tsx';
+import { ChannelIdField } from '@/components/channel/form/ChannelIdField.tsx';
+import { TagSelectField } from '@/components/channel/edit/EditTagSelect.tsx';
 
 export function CreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -43,6 +44,7 @@ export function CreateButton() {
 const FormSchema = z.object({
   type: z.enum(['chzzk', 'soop']),
   uid: z.string().min(1),
+  tagNames: z.array(z.string()),
 });
 
 export function CreateForm({ cb }: { cb: () => void }) {
@@ -52,10 +54,12 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       type: 'chzzk',
       uid: '',
+      tagNames: [],
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log(data);
     // await createLive(data.uid, data.type);
     // await queryClient.invalidateQueries({ queryKey: ['lives'] });
     // cb();
@@ -66,6 +70,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <PlatformSelectField form={form} />
         <ChannelIdField form={form} />
+        <TagSelectField form={form} />
         <div className="flex flex-row justify-end mt-5">
           <Button type="submit" className="px-7">
             Save

@@ -5,10 +5,12 @@ import { db } from '../../infra/db/db.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
 import { ChannelRecord } from './channel.types.js';
 import { TagRecord } from './tag.types.js';
+import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
 
 export class ChannelService {
   constructor(
     private readonly chanRepo: ChannelRepository,
+    private readonly chanQueryRepo: ChannelQueryRepository,
     private readonly tagRepo: TagRepository,
   ) {}
 
@@ -51,16 +53,41 @@ export class ChannelService {
     sorted: ChannelSortType = undefined,
     priority: ChannelPriority | undefined = undefined,
     tagName: string | undefined = undefined,
-    tagNamesOr: string[] | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanRepo.findByQuery(
+    const channels = await this.chanQueryRepo.findByQuery(
       { page, size },
       sorted,
       priority,
       tagName,
-      tagNamesOr,
     );
+    return this.solve(channels, withTags);
+  }
+
+  async findByAnyTag(
+    tagNames: string[],
+    page: number,
+    size: number,
+    sorted: ChannelSortType = undefined,
+    priority: ChannelPriority | undefined = undefined,
+    withTags: boolean = false,
+  ): Promise<ChannelRecord[]> {
+    const channels = await this.chanQueryRepo.findByAnyTag(
+      tagNames,
+      { page, size },
+      sorted,
+      priority,
+    );
+    return this.solve(channels, withTags);
+  }
+
+  async findByAllTags(
+    tagNames: string[],
+    sorted: ChannelSortType = undefined,
+    priority: ChannelPriority | undefined = undefined,
+    withTags: boolean = false,
+  ): Promise<ChannelRecord[]> {
+    const channels = await this.chanQueryRepo.findByAllTags(tagNames, sorted, priority);
     return this.solve(channels, withTags);
   }
 

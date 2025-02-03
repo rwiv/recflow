@@ -7,10 +7,12 @@ import { dropAll } from '../../infra/db/utils.js';
 import { assertNotNull } from '../../utils/null.js';
 import { mockChannel } from '../persistence/helpers.spec.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
+import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
 
 const tagRepo = new TagRepository();
 const chanRepo = new ChannelRepository(tagRepo);
-const chanService = new ChannelService(chanRepo, tagRepo);
+const chanQueryRepo = new ChannelQueryRepository(tagRepo);
+const chanService = new ChannelService(chanRepo, chanQueryRepo, tagRepo);
 
 describe('ChannelService', () => {
   beforeEach(async () => {
@@ -63,20 +65,25 @@ describe('ChannelService', () => {
       } else if (i <= 25) {
         await add(i, 'should', 100 - i, ['tag5', 'tag6']);
       } else {
-        await add(i, 'should', 100 - i, ['tag6', 'tag7']);
+        await add(i, 'may', 100 - i, ['tag4', 'tag5']);
       }
     }
 
     // const sorted: ChannelSortType = 'latest';
     const sorted: ChannelSortType = 'followerCnt';
     // const sorted: ChannelSortType = undefined;
+
     const prioirty = 'should';
     // const prioirty = undefined;
+
     const tagName = 'tag5';
     // const tagName = undefined;
-    // const tagNames = ['tag4', 'tag5'];
-    const tagNames = undefined;
-    const result = await chanService.findByQuery(1, 10, sorted, prioirty, tagName, tagNames, true);
+    const tagNames = ['tag4', 'tag5'];
+    // const tagNames = undefined;
+
+    const result = await chanService.findByQuery(1, 20, sorted, prioirty, tagName, true);
+    // const result = await chanService.findByAnyTag(tagNames, 1, 20, sorted, prioirty, true);
+    // const result = await chanService.findByAllTags(tagNames, sorted, prioirty, true);
     console.log(result.map((r) => r.username));
 
     const all = await chanService.findAll(true);

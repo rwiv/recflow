@@ -1,7 +1,7 @@
 import { ChannelEnt } from './channel.types.js';
 import { db } from '../../infra/db/db.js';
 import { channels, channelsToTags, tags } from './schema.js';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
@@ -88,11 +88,11 @@ export class TagRepository {
     return tx.select().from(tags);
   }
 
-  private async findById(tagId: string, tx: Tx = db): Promise<TagEnt | undefined> {
+  async findById(tagId: string, tx: Tx = db): Promise<TagEnt | undefined> {
     return oneNullable(await tx.select().from(tags).where(eq(tags.id, tagId)));
   }
 
-  private async findByName(tagName: string, tx: Tx = db): Promise<TagEnt | undefined> {
+  async findByName(tagName: string, tx: Tx = db): Promise<TagEnt | undefined> {
     return oneNullable(await tx.select().from(tags).where(eq(tags.name, tagName)));
   }
 
@@ -113,5 +113,10 @@ export class TagRepository {
       .where(eq(channelsToTags.tagId, tagId))
       .limit(limit);
     return rows.map((row) => row.channels).filter((tag) => tag !== null);
+  }
+
+  async findIdsByNames(tagNames: string[], tx: Tx = db) {
+    const records = await tx.select({ id: tags.id }).from(tags).where(inArray(tags.name, tagNames));
+    return records.map((tag) => tag.id);
   }
 }

@@ -55,7 +55,6 @@ export class ChannelController {
       sorted as ChannelSortType,
       priority as ChannelPriority,
       tagName,
-      undefined,
       withTags,
     );
   }

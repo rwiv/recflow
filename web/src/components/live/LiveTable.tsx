@@ -6,7 +6,7 @@ import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { LiveRecord } from '@/client/types.ts';
 import { assignedWebhookNameCid, liveColumns } from '@/components/live/liveColumns.tsx';
-import { CommandTools } from '@/components/live/cmdtools/CommandTools.tsx';
+import { CommandTools } from '@/components/live/tools/CommandTools.tsx';
 
 export function LiveTable({ data }: { data: LiveRecord[] }) {
   const table = useTable(data, liveColumns, 15);

@@ -2,19 +2,10 @@ import { Table } from '@tanstack/react-table';
 import { ExitCmd, LiveRecord } from '@/client/types.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/client.ts';
-import { CreateForm } from '@/components/live/cmdtools/CreateForm.tsx';
-import { ReactNode, useRef } from 'react';
+import { CreateButton } from '@/components/live/tools/CreateButton.tsx';
+import { ReactNode } from 'react';
 import { AlertDialog } from '@/components/common/ui/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog.tsx';
-import { DialogClose } from '@radix-ui/react-dialog';
 
 export function CommandTools({ table }: { table: Table<LiveRecord> }) {
   const queryClient = useQueryClient();
@@ -33,26 +24,6 @@ export function CommandTools({ table }: { table: Table<LiveRecord> }) {
       <ExitButton onClick={() => remove('cancel')}>Cancel</ExitButton>
       <ExitButton onClick={() => remove('finish')}>Finish</ExitButton>
     </div>
-  );
-}
-
-export function CreateButton() {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="secondary">Add</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Add New Live</DialogTitle>
-          <DialogDescription>Click save when you're done.</DialogDescription>
-        </DialogHeader>
-        <CreateForm cb={() => closeBtnRef?.current?.click()} />
-        <DialogClose ref={closeBtnRef} />
-      </DialogContent>
-    </Dialog>
   );
 }
 

@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { fetchTags } from '@/client/client.ts';
 import { TagRecord } from '@/client/types.ts';
 
-export function ChannelTagSelect() {
+export function TagSelect() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [tags, setTags] = useState<TagRecord[]>([]);

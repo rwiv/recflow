@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
 
-export function ChannelSortSelect() {
+export function SortSelect() {
   return (
     <Select defaultValue="updatedAy">
       <SelectTrigger css={css({ width: '10rem' })}>

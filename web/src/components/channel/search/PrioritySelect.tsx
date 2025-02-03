@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
 
-export function ChannelPrioritySelect() {
+export function PrioritySelect() {
   return (
     <Select defaultValue="all">
       <SelectTrigger css={css({ width: '9rem' })}>

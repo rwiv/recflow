@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 
-export function ChannelKeywordSearchBar() {
+export function KeywordSearchBar() {
   return (
     <div className="flex gap-2">
       <SearchCriteriaSelect />

@@ -1,15 +1,11 @@
 import { it } from 'vitest';
 import { SoopFetcher } from './soop.fetcher.js';
-import { readEnv } from '../../common/env.js';
-import { readQueryConfig } from '../../common/query.js';
-
-const env = readEnv();
-const query = readQueryConfig(env.configPath);
+import { getConf } from '../../common/helpers.js';
 
 const channelId = '123';
 
 it('test', async () => {
-  const fetcher = new SoopFetcher(env, query);
+  const fetcher = new SoopFetcher(...getConf());
   const res = await fetcher.fetchChannel(channelId, true);
   console.log(res);
 });

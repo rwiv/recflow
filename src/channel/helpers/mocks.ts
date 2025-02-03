@@ -1,4 +1,4 @@
-import { ChannelCreation, ChannelPriority } from './channel.types.js';
+import { ChannelCreation, ChannelPriority } from '../persistence/channel.types.js';
 
 export function mockChannel(
   n: number,

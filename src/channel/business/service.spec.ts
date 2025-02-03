@@ -5,7 +5,7 @@ import { TagRepository } from '../persistence/tag.repository.js';
 import { ChannelRepository } from '../persistence/channel.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { assertNotNull } from '../../utils/null.js';
-import { mockChannel } from '../persistence/helpers.spec.js';
+import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
 import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
 

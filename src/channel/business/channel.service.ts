@@ -6,7 +6,9 @@ import { ChannelSortType } from '../persistence/tag.types.js';
 import { ChannelRecord } from './channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class ChannelService {
   constructor(
     private readonly chanRepo: ChannelRepository,

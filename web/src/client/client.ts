@@ -5,6 +5,7 @@ import {
   NodeRecord,
   ChannelRecord,
   TagRecord,
+  ChannelCreation,
 } from '@/client/types.ts';
 import { configs } from '@/common/configs.ts';
 
@@ -39,4 +40,14 @@ export async function fetchChannels(page: number, size: number = 10, withTags = 
 export async function fetchTags() {
   const res = await fetch(`${configs.endpoint}/api/channels/tags`);
   return (await res.json()) as TagRecord[];
+}
+
+export async function createChannel(req: ChannelCreation) {
+  const url = `${configs.endpoint}/api/channels`;
+  const res = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(req),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return (await res.json()) as LiveRecord;
 }

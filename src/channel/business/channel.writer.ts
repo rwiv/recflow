@@ -38,7 +38,7 @@ export class ChannelWriter {
   }
 
   async createWithFetch(req: ChannelCreation): Promise<ChannelRecord> {
-    req = this.validator.validateCreate(req, req.tagNames);
+    req = this.validator.validateCreate(req);
     const info = assertNotNull(await this.fetcher.fetchChannel(req.ptype, req.pid, false));
     const reqEnt: ChannelEntCreation = {
       ptype: info.ptype,
@@ -51,19 +51,20 @@ export class ChannelWriter {
     };
     return db.transaction(async (txx) => {
       const channel = await this.chanCmd.create(reqEnt, txx);
+      let result: ChannelRecord = { ...channel };
       const tags: TagRecord[] = [];
-      for (const tagName of req.tagNames) {
-        tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
+      if (req.tagNames && req.tagNames.length > 0) {
+        for (const tagName of req.tagNames) {
+          tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
+        }
+        result = { ...channel, tags };
       }
-      return {
-        ...channel,
-        tags,
-      };
+      return result;
     });
   }
 
   async update(req: ChannelUpdate): Promise<ChannelRecord> {
-    req = this.validator.validateUpdate(req, req.tagNames);
+    req = this.validator.validateUpdate(req);
     return db.transaction(async (txx) => {
       const channel = await this.chanCmd.update(req, txx);
       let result: ChannelRecord = { ...channel };

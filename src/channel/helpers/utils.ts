@@ -22,5 +22,5 @@ export function getChannelServies() {
   const tagFinder = new TagFinder(tagQuery);
   const chanWriter = new ChannelWriter(chanCmd, chanQuery, tagWriter, tagQuery, validator, fetcher);
   const chanFinder = new ChannelFinder(chanQuery, chanSearch, tagQuery);
-  return { chanFinder, chanWriter, tagWriter, tagFinder };
+  return { chanWriter, chanFinder, tagWriter, tagFinder };
 }

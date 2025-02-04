@@ -10,49 +10,12 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { Dispatch, KeyboardEventHandler, SetStateAction, useEffect, useState } from 'react';
+import { KeyboardEventHandler, useEffect, useState } from 'react';
 import { fetchTags } from '@/client/client.ts';
 import { TagRecord } from '@/client/types.ts';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
-import { ControllerRenderProps } from 'react-hook-form';
-import { EditFormProps, EditForm } from '@/components/channel/form/types.ts';
-import { Badge } from '@/components/ui/badge.tsx';
 import { css } from '@emotion/react';
 
-export function TagSelectField({ form }: { form: EditForm }) {
-  const [tagNames, setTagNames] = useState<string[]>([]);
-  return (
-    <div>
-      <FormField
-        control={form.control}
-        name="tagNames"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Tags</FormLabel>
-            <FormControl>
-              <div>
-                <EditTagSelect field={field} setTagNames={setTagNames} />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <div className="flex gap-1 my-3">
-        {tagNames.map((tagName, i) => (
-          <Badge key={i}>{tagName}</Badge>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-interface SelectProps {
-  field: ControllerRenderProps<EditFormProps, 'tagNames'>;
-  setTagNames: Dispatch<SetStateAction<string[]>>;
-}
-
-export function EditTagSelect({ field, setTagNames }: SelectProps) {
+export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) => void }) {
   const [open, setOpen] = useState(false);
   const [tags, setTags] = useState<TagRecord[]>([]);
   const [input, setInput] = useState('');
@@ -61,19 +24,18 @@ export function EditTagSelect({ field, setTagNames }: SelectProps) {
     fetchTags().then(setTags);
   }, []);
 
-  const addTagName = (tagName: string) => {
-    field.onChange([...field.value, tagName]);
-    setTagNames([...field.value, tagName]);
+  const onAddTagName = (tagName: string) => {
+    addTagName(tagName);
     setOpen(false);
   };
 
   const onSelect = (currentValue: string) => {
-    addTagName(currentValue);
+    onAddTagName(currentValue);
   };
 
   const onKeydown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
     if (ev.key === 'Enter') {
-      addTagName(input);
+      onAddTagName(input);
       setInput('');
     }
   };

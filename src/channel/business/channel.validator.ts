@@ -4,17 +4,17 @@ import { hasDuplicates } from '../../utils/list.js';
 
 @Injectable()
 export class ChannelValidator {
-  validateCreate(req: ChannelCreation, reqTagNames: string[]): ChannelCreation {
-    this.assertTagNames(reqTagNames);
+  validateCreate(req: ChannelCreation): ChannelCreation {
+    this.assertTagNames(req.tagNames);
     if (req.description === '') {
       req.description = null;
     }
     return req;
   }
 
-  validateUpdate(req: ChannelUpdate, reqTagNames: string[] | undefined): ChannelUpdate {
-    if (reqTagNames) {
-      this.assertTagNames(reqTagNames);
+  validateUpdate(req: ChannelUpdate): ChannelUpdate {
+    if (req.tagNames) {
+      this.assertTagNames(req.tagNames);
     }
     if (req.form.description === '') {
       req.form.description = null;

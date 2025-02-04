@@ -53,3 +53,22 @@ export interface TagRecord {
   createdAt: Date;
   updatedAt: Date | null;
 }
+
+export interface ChannelCreation {
+  ptype: PlatformType;
+  pid: string;
+  description: string | null;
+  priority: ChannelPriority;
+  tagNames: string[];
+}
+
+export interface ChannelUpdate {
+  id: string;
+  form: {
+    ptype?: PlatformType;
+    pid?: string;
+    description?: string | null;
+    priority?: ChannelPriority;
+  };
+  tagNames?: string[];
+}

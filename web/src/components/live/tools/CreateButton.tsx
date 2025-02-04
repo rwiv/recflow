@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
+import { PLATFORM_TYPES } from '@/components/common/consts.ts';
 
 export function CreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -51,8 +52,8 @@ export function CreateButton() {
 }
 
 const FormSchema = z.object({
-  type: z.enum(['chzzk', 'soop']),
-  uid: z.string().min(1),
+  type: z.enum(PLATFORM_TYPES),
+  uid: z.string().nonempty(),
 });
 
 export function CreateForm({ cb }: { cb: () => void }) {

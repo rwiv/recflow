@@ -5,9 +5,9 @@ import { assertNotNull } from '../../utils/null.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
 import { ChannelUpdate } from './channel.types.js';
-import { getServies } from '../helpers/utils.js';
+import { getChannelServies } from '../helpers/utils.js';
 
-const { chanFinder, chanCommander } = getServies();
+const { chanFinder, chanWriter } = getChannelServies();
 
 describe('ChannelService', () => {
   beforeEach(async () => {
@@ -19,14 +19,14 @@ describe('ChannelService', () => {
   });
 
   it('create', async () => {
-    const channel = await chanCommander.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chanWriter.create(mockChannel(1), ['tag1', 'tag2']);
     console.log(channel);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });
 
   it('update', async () => {
-    const channel = await chanCommander.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chanWriter.create(mockChannel(1), ['tag1', 'tag2']);
     const req: ChannelUpdate = {
       id: channel.id,
       form: {
@@ -34,15 +34,15 @@ describe('ChannelService', () => {
       },
       tagNames: ['tag2', 'tag3', 'tag4'],
     };
-    await chanCommander.update(req);
+    await chanWriter.update(req);
     const updated = assertNotNull(await chanFinder.findById(channel.id, true));
     expect(updated.description).toBe('new desc');
     expect(updated.tags).toHaveLength(3);
   });
 
   it('delete', async () => {
-    const channel = await chanCommander.create(mockChannel(1), ['tag1', 'tag2']);
-    await chanCommander.delete(channel.id);
+    const channel = await chanWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    await chanWriter.delete(channel.id);
     expect(await chanFinder.findById(channel.id)).toBeUndefined();
   });
 
@@ -91,5 +91,5 @@ describe('ChannelService', () => {
 });
 
 function add(n: number, priority: ChannelPriority, followerCnt: number, tagNames: string[]) {
-  return chanCommander.create(mockChannel(n, priority, followerCnt), tagNames);
+  return chanWriter.create(mockChannel(n, priority, followerCnt), tagNames);
 }

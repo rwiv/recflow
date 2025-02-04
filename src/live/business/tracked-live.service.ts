@@ -9,7 +9,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { PlatformNodeSelector } from './node.selector.js';
 import { ExitCmd } from '../event/types.js';
-import { ChannelCommander } from '../../channel/business/channel.commander.js';
+import { ChannelWriter } from '../../channel/business/channel.writer.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -28,7 +28,7 @@ export class TrackedLiveService {
     private readonly listener: LiveEventListener,
     private readonly nodeService: NodeService,
     private readonly nodeSelector: PlatformNodeSelector,
-    private readonly channelService: ChannelCommander,
+    private readonly channelService: ChannelWriter,
   ) {}
 
   async get(id: string, opts: FindOptions = {}) {

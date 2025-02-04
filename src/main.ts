@@ -6,7 +6,7 @@ import { Env } from './common/env.js';
 import { log } from 'jslog';
 import { TestChannelInjector } from './channel/helpers/injector.js';
 import { dropAll } from './infra/db/utils.js';
-import { ChannelCommander } from './channel/business/channel.commander.js';
+import { ChannelWriter } from './channel/business/channel.writer.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,7 +17,7 @@ async function bootstrap() {
     app.enableCors();
 
     await dropAll();
-    const injector = new TestChannelInjector(app.get(ChannelCommander));
+    const injector = new TestChannelInjector(app.get(ChannelWriter));
     await injector.insertTestChannels();
   }
 

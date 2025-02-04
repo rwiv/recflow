@@ -8,12 +8,12 @@ import { TagQueryRepository } from '../persistence/tag.query.repository.js';
 @Injectable()
 export class ChannelFinder {
   constructor(
-    private readonly chanQueryRepo: ChannelQueryRepository,
-    private readonly tagQueryRepo: TagQueryRepository,
+    private readonly chanQuery: ChannelQueryRepository,
+    private readonly tagQuery: TagQueryRepository,
   ) {}
 
   async findAll(withTags: boolean = false): Promise<ChannelRecord[]> {
-    return this.solveTags(await this.chanQueryRepo.findAll(), withTags);
+    return this.solveTags(await this.chanQuery.findAll(), withTags);
   }
 
   async findByQuery(
@@ -24,12 +24,7 @@ export class ChannelFinder {
     tagName: string | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanQueryRepo.findByQuery(
-      { page, size },
-      sorted,
-      priority,
-      tagName,
-    );
+    const channels = await this.chanQuery.findByQuery({ page, size }, sorted, priority, tagName);
     return this.solveTags(channels, withTags);
   }
 
@@ -41,12 +36,7 @@ export class ChannelFinder {
     priority: ChannelPriority | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanQueryRepo.findByAnyTag(
-      tagNames,
-      { page, size },
-      sorted,
-      priority,
-    );
+    const channels = await this.chanQuery.findByAnyTag(tagNames, { page, size }, sorted, priority);
     return this.solveTags(channels, withTags);
   }
 
@@ -56,7 +46,7 @@ export class ChannelFinder {
     priority: ChannelPriority | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanQueryRepo.findByAllTags(tagNames, sorted, priority);
+    const channels = await this.chanQuery.findByAllTags(tagNames, sorted, priority);
     return this.solveTags(channels, withTags);
   }
 
@@ -64,18 +54,18 @@ export class ChannelFinder {
     if (!withTags) return channels;
     const promises = channels.map(async (channel) => ({
       ...channel,
-      tags: await this.tagQueryRepo.findTagsByChannelId(channel.id),
+      tags: await this.tagQuery.findTagsByChannelId(channel.id),
     }));
     return Promise.all(promises);
   }
 
   async findById(channelId: string, withTags: boolean = false): Promise<ChannelRecord | undefined> {
-    const channel = await this.chanQueryRepo.findById(channelId);
+    const channel = await this.chanQuery.findById(channelId);
     if (!channel) return undefined;
     if (!withTags) return channel;
     return {
       ...channel,
-      tags: await this.tagQueryRepo.findTagsByChannelId(channelId),
+      tags: await this.tagQuery.findTagsByChannelId(channelId),
     };
   }
 }

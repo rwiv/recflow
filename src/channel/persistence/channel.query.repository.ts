@@ -12,7 +12,7 @@ import { TagQueryRepository } from './tag.query.repository.js';
 
 @Injectable()
 export class ChannelQueryRepository {
-  constructor(private readonly tagQueryRepo: TagQueryRepository) {}
+  constructor(private readonly tagQuery: TagQueryRepository) {}
 
   findAll(tx: Tx = db): Promise<ChannelEnt[]> {
     return tx.select().from(channels);
@@ -37,7 +37,7 @@ export class ChannelQueryRepository {
     const basis = this.withBasis(bqb, page, sorted, priority);
 
     if (tagName) {
-      const tag = await this.tagQueryRepo.findByName(tagName, tx);
+      const tag = await this.tagQuery.findByName(tagName, tx);
       if (!tag) return [];
       const withTags = await basis.qb
         .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
@@ -56,7 +56,7 @@ export class ChannelQueryRepository {
     priority: ChannelPriority | undefined = undefined,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
-    const tagIds = await this.tagQueryRepo.findIdsByNames(tagNames, tx);
+    const tagIds = await this.tagQuery.findIdsByNames(tagNames, tx);
     if (tagIds.length === 0) return [];
 
     const bqb = tx.selectDistinct({ channels }).from(channels).$dynamic();
@@ -76,7 +76,7 @@ export class ChannelQueryRepository {
     priority: ChannelPriority | undefined = undefined,
     tx: Tx = db,
   ) {
-    const tagIds = await this.tagQueryRepo.findIdsByNames(tagNames, tx);
+    const tagIds = await this.tagQuery.findIdsByNames(tagNames, tx);
     if (tagIds.length === 0) return [];
     const requiredTagCnt = tagIds.length;
 

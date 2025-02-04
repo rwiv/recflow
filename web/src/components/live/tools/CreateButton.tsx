@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { PLATFORM_TYPES } from '@/components/common/consts.ts';
+import { LIVES_QUERY_KEY } from '@/common/consts.ts';
 
 export function CreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -68,7 +69,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await createLive(data.uid, data.type);
-    await queryClient.invalidateQueries({ queryKey: ['lives'] });
+    await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
     cb();
   }
 

@@ -1,11 +1,13 @@
 import { Table } from '@tanstack/react-table';
-import { ExitCmd, LiveRecord } from '@/client/types.ts';
+import { LiveRecord } from '@/client/types.live.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/client.ts';
 import { CreateButton } from '@/components/live/tools/CreateButton.tsx';
 import { ReactNode } from 'react';
 import { AlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import { LIVES_QUERY_KEY } from '@/common/consts.ts';
+import { ExitCmd } from '@/client/types.common.ts';
 
 export function CommandTools({ table }: { table: Table<LiveRecord> }) {
   const queryClient = useQueryClient();
@@ -14,7 +16,7 @@ export function CommandTools({ table }: { table: Table<LiveRecord> }) {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
     await Promise.all(checked.map((live) => deleteLive(live.channelId, live.type, cmd)));
     table.toggleAllPageRowsSelected(false);
-    await queryClient.invalidateQueries({ queryKey: ['lives'] });
+    await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
   };
 
   return (

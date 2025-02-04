@@ -1,4 +1,3 @@
-import { ChannelRecord } from '@/client/types.ts';
 import { TableCell, TableRow } from '@/components/ui/table.tsx';
 import { getChannelUrl } from '@/lib/platform.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
@@ -6,6 +5,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { prettyDate } from '@/lib/date.ts';
 import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
+import { ChannelRecord } from '@/client/types.channel.ts';
 
 export function ChannelRow({ channel }: { channel: ChannelRecord }) {
   return (

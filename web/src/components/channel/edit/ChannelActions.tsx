@@ -21,6 +21,7 @@ export function ChannelActions() {
       <DropdownMenuContent>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem>Attach</DropdownMenuItem>
         <DropdownMenuItem>Follow</DropdownMenuItem>
         <DropdownMenuItem>Update</DropdownMenuItem>
         <DropdownMenuItem>Delete</DropdownMenuItem>

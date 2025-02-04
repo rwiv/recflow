@@ -12,8 +12,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { KeyboardEventHandler, useEffect, useState } from 'react';
 import { fetchTags } from '@/client/client.ts';
-import { TagRecord } from '@/client/types.ts';
 import { css } from '@emotion/react';
+import { TagRecord } from '@/client/types.tag.ts';
 
 export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) => void }) {
   const [open, setOpen] = useState(false);

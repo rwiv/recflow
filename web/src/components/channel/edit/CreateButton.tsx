@@ -35,6 +35,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { CHANNEL_PRIORITIES, PLATFORM_TYPES } from '@/components/common/consts.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { createChannel } from '@/client/client.ts';
+import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 
 const FormSchema = z.object({
   ptype: z.enum(PLATFORM_TYPES),
@@ -83,7 +84,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
     await createChannel(data);
-    await queryClient.invalidateQueries({ queryKey: ['channels'] });
+    await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY] });
     cb();
   }
 

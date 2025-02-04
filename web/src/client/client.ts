@@ -1,15 +1,9 @@
-import {
-  ExitCmd,
-  PlatformType,
-  LiveRecord,
-  NodeRecord,
-  ChannelRecord,
-  TagRecord,
-  ChannelCreation,
-  ChannelUpdate,
-  TagEntUpdate,
-} from '@/client/types.ts';
+import { LiveRecord } from '@/client/types.live.ts';
 import { configs } from '@/common/configs.ts';
+import { TagEntUpdate, TagRecord } from '@/client/types.tag.ts';
+import { ChannelCreation, ChannelRecord, ChannelUpdate } from '@/client/types.channel.ts';
+import { ExitCmd, PlatformType } from '@/client/types.common.ts';
+import { NodeRecord } from '@/client/types.node.ts';
 
 export async function fetchNodes() {
   const res = await fetch(`${configs.endpoint}/api/lives/nodes`);

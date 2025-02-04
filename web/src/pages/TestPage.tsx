@@ -1,8 +1,9 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
-import { LiveRecord, NodeRecord } from '@/client/types.ts';
+import { LiveRecord } from '@/client/types.live.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
 import { mockLiveRecord, mockNode } from '@/client/mocks.ts';
+import { NodeRecord } from '@/client/types.node.ts';
 
 const lives = Array.from({ length: 10 }).map(mockLiveRecord);
 const nodes = Array.from({ length: 10 }).map(mockNode);

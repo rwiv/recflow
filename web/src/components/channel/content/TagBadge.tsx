@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { TagRecord } from '@/client/types.ts';
+import { TagRecord } from '@/client/types.tag.ts';
 
 export function TagBadge({ tag }: { tag: TagRecord }) {
   return (

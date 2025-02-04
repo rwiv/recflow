@@ -1,7 +1,10 @@
 import { faker } from '@faker-js/faker';
-import { ChannelRecord, LiveRecord, NodeRecord, TagRecord } from '@/client/types.ts';
+import { LiveRecord } from '@/client/types.live.ts';
 import { randomElem } from '@/lib/list.ts';
 import { CHANNEL_PRIORITIES, NODE_PRIORITIES, PLATFORM_TYPES } from '@/components/common/consts.ts';
+import { ChannelRecord } from '@/client/types.channel.ts';
+import { TagRecord } from '@/client/types.tag.ts';
+import { NodeRecord } from '@/client/types.node.ts';
 
 export function mockLiveRecord(): LiveRecord {
   return {

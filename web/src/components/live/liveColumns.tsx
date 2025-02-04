@@ -5,7 +5,7 @@ import {
   dateColumnDef,
   sortableColumnDef,
 } from '@/components/common/table/column_utils.tsx';
-import { LiveRecord } from '@/client/types.ts';
+import { LiveRecord } from '@/client/types.live.ts';
 import { getChannelUrl, getLiveUrl } from '@/lib/platform.ts';
 
 export const selectCid = 'select';

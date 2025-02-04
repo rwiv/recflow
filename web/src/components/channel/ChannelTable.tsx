@@ -1,44 +1,45 @@
-import { ChannelRecord } from '@/client/types.ts';
 import { TableContent } from '@/components/channel/content/TableContent.tsx';
 import { useEffect } from 'react';
 import { fetchChannels } from '@/client/client.ts';
 import { PageNavigation } from '@/components/common/layout/ChannelNavigation.tsx';
 import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
-import { QueryTagSelect } from '@/components/channel/search/QueryTagSelect.tsx';
+import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { css } from '@emotion/react';
 import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.tsx';
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CreateButton } from '@/components/channel/edit/CreateButton.tsx';
+import {
+  CHANNELS_QUERY_KEY,
+  DEFAULT_END_PAGE,
+  DEFAULT_PAGINATION_SIZE,
+  PREFETCH_SIZE,
+} from '@/common/consts.ts';
+import { ChannelRecord } from '@/client/types.channel.ts';
 
 export interface ChannelTableProps {
   page: number;
   size: number;
 }
 
-const DEFAULT_PAGINATION_SIZE = 7;
-const DEFAULT_END_PAGE = 1000000000;
-const QUERY_KEY = 'channels';
-const PREFETCH_SIZE = 2;
-
 export function ChannelTable({ page, size }: ChannelTableProps) {
   const queryClient = useQueryClient();
-  const prefetched1 = queryClient.getQueryData([QUERY_KEY, page + 1]) as ChannelRecord[];
+  const prefetched1 = queryClient.getQueryData([CHANNELS_QUERY_KEY, page + 1]) as ChannelRecord[];
 
   const {
     data: channels,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: [QUERY_KEY, page],
+    queryKey: [CHANNELS_QUERY_KEY, page],
     queryFn: () => fetchChannels(page, size),
   });
 
   useEffect(() => {
     for (let i = 1; i <= PREFETCH_SIZE; i++) {
       queryClient.prefetchQuery({
-        queryKey: [QUERY_KEY, page + i],
+        queryKey: [CHANNELS_QUERY_KEY, page + i],
         queryFn: () => fetchChannels(page + i, size),
       });
     }
@@ -67,7 +68,7 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
         </div>
         <div className="flex gap-2">
           <PrioritySelect />
-          <QueryTagSelect />
+          <TagSelect onSelectCallback={() => {}} />
           <SortSelect />
           <Button variant="outline" css={css({ width: '5.5rem' })}>
             Refresh

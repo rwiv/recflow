@@ -1,10 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { NodeRecord } from '@/client/types.ts';
 import { baseColumnDef, createSelectColumn } from '@/components/common/table/column_utils.tsx';
+import { NodeRecord } from '@/client/types.node.ts';
 
 export const selectCid = 'select';
 export const nameCid = 'name';
-export const webhookTypeCid = 'type';
+export const nodeTypeCid = 'type';
 
 const chzzkColumn: ColumnDef<NodeRecord> = {
   accessorKey: 'chzzk',
@@ -26,10 +26,10 @@ const soopColumn: ColumnDef<NodeRecord> = {
   },
 };
 
-export const webhookColumns: ColumnDef<NodeRecord>[] = [
+export const nodeColumns: ColumnDef<NodeRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
-  baseColumnDef(webhookTypeCid, 'Type', 'uppercase'),
+  baseColumnDef(nodeTypeCid, 'Type', 'uppercase'),
   chzzkColumn,
   soopColumn,
 ];

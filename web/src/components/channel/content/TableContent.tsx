@@ -1,7 +1,7 @@
-import { ChannelRecord } from '@/client/types.ts';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table.tsx';
 import { css } from '@emotion/react';
 import { ChannelRow } from '@/components/channel/content/ChannelRow.tsx';
+import { ChannelRecord } from '@/client/types.channel.ts';
 
 export function TableContent({ channels }: { channels: ChannelRecord[] }) {
   return (

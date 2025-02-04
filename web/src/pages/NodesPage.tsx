@@ -1,13 +1,14 @@
-import { NodeRecord } from '@/client/types.ts';
 import { fetchNodes } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
+import { NODES_QUERY_KEY } from '@/common/consts.ts';
+import { NodeRecord } from '@/client/types.node.ts';
 
 export function NodesPage() {
   const { data: nodes } = useQuery<NodeRecord[]>({
-    queryKey: ['nodes'],
+    queryKey: [NODES_QUERY_KEY],
     queryFn: fetchNodes,
   });
   return (

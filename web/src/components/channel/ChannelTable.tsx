@@ -9,7 +9,7 @@ import { css } from '@emotion/react';
 import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.tsx';
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { CreateButton } from '@/components/channel/edit/CreateButton.tsx';
+import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
 import {
   CHANNELS_QUERY_KEY,
   DEFAULT_END_PAGE,
@@ -63,7 +63,7 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
         <div className="flex">
           <KeywordSearchBar />
           <div className="flex ml-2 gap-1">
-            <CreateButton />
+            <ChannelCreateButton />
           </div>
         </div>
         <div className="flex gap-2">

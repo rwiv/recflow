@@ -2,7 +2,7 @@ import { Table } from '@tanstack/react-table';
 import { LiveRecord } from '@/client/types.live.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/client.ts';
-import { CreateButton } from '@/components/live/tools/CreateButton.tsx';
+import { LiveCreateButton } from '@/components/live/tools/LiveCreateButton.tsx';
 import { ReactNode } from 'react';
 import { AlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -21,7 +21,7 @@ export function CommandTools({ table }: { table: Table<LiveRecord> }) {
 
   return (
     <div className="flex gap-1.5 mx-5">
-      <CreateButton />
+      <LiveCreateButton />
       <ExitButton onClick={() => remove('delete')}>Delete</ExitButton>
       <ExitButton onClick={() => remove('cancel')}>Cancel</ExitButton>
       <ExitButton onClick={() => remove('finish')}>Finish</ExitButton>

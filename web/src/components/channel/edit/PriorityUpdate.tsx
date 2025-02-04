@@ -11,8 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { createLive } from '@/client/client.ts';
-import { useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -29,20 +28,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select.tsx';
-import { Input } from '@/components/ui/input.tsx';
-import { PLATFORM_TYPES } from '@/components/common/consts.ts';
-import { LIVES_QUERY_KEY } from '@/common/consts.ts';
+import { CHANNEL_PRIORITIES } from '@/components/common/consts.ts';
+import { css } from '@emotion/react';
+import {CHANNELS_QUERY_KEY} from "@/common/consts.ts";
 
-export function CreateButton() {
+const FormSchema = z.object({
+  priority: z.enum(CHANNEL_PRIORITIES),
+});
+
+export function PriorityUpdate({ children }: { children: ReactNode }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="secondary">Add</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Live</DialogTitle>
+          <DialogTitle>Update Channel Priority</DialogTitle>
           <DialogDescription>Click save when you're done.</DialogDescription>
         </DialogHeader>
         <CreateForm cb={() => closeBtnRef?.current?.click()} />
@@ -52,24 +53,18 @@ export function CreateButton() {
   );
 }
 
-const FormSchema = z.object({
-  type: z.enum(PLATFORM_TYPES),
-  uid: z.string().nonempty(),
-});
-
-export function CreateForm({ cb }: { cb: () => void }) {
+function CreateForm({ cb }: { cb: () => void }) {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      type: 'chzzk',
-      uid: '',
+      priority: 'none',
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await createLive(data.uid, data.type);
-    await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
+    // await createLive(data.uid, data.type);
+    await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY] });
     cb();
   }
 
@@ -78,34 +73,25 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
-          name="type"
+          name="priority"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type</FormLabel>
+            <FormItem css={css({ marginTop: '0.4rem', marginBottom: '2rem' })}>
+              <FormLabel>Priority</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Type" />
+                    <SelectValue placeholder="Select Priority" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="chzzk">CHZZK</SelectItem>
-                  <SelectItem value="soop">SOOP</SelectItem>
+                  <SelectItem value="must">MUST</SelectItem>
+                  <SelectItem value="should">SHOULD</SelectItem>
+                  <SelectItem value="may">MAY</SelectItem>
+                  <SelectItem value="review">REVIEW</SelectItem>
+                  <SelectItem value="skip">SKIP</SelectItem>
+                  <SelectItem value="none">NONE</SelectItem>
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="uid"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>UID</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter UID" {...field} />
-              </FormControl>
               <FormMessage />
             </FormItem>
           )}

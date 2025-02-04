@@ -53,7 +53,7 @@ export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) =>
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0" css={css({ width: '25rem' })}>
+      <PopoverContent side="top" className="p-0" css={css({ width: '25rem' })}>
         <Command>
           <CommandInput
             placeholder="Search Tag..."

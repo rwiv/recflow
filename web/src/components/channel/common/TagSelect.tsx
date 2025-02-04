@@ -16,12 +16,15 @@ import { fetchTags } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { TagRecord } from '@/client/types.tag.ts';
+import { SerializedStyles } from '@emotion/react';
 
 interface TagSelectProps {
   onSelectCallback: (tag: TagRecord) => void;
+  triggerClassName?: string;
+  contentStyle?: SerializedStyles;
 }
 
-export function TagSelect({ onSelectCallback }: TagSelectProps) {
+export function TagSelect({ onSelectCallback, triggerClassName, contentStyle }: TagSelectProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [isTriggered, setIsTriggered] = useState(false);
@@ -59,13 +62,13 @@ export function TagSelect({ onSelectCallback }: TagSelectProps) {
           role="combobox"
           aria-expanded={open}
           onClick={onTrigger}
-          className="w-[200px] justify-between"
+          className={cn('w-[200px] justify-between', triggerClassName)}
         >
           {tags && value ? tagMap.get(value)?.name : 'Select Tag'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0" css={contentStyle}>
         <Command>
           <CommandInput placeholder="Search Tag..." className="h-9" />
           <CommandList>

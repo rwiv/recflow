@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -36,6 +36,7 @@ import { CHANNEL_PRIORITIES, PLATFORM_TYPES } from '@/components/common/consts.t
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { createChannel } from '@/client/client.ts';
 import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
+import { formItemStyle } from '@/components/common/styles/form.ts';
 
 const FormSchema = z.object({
   ptype: z.enum(PLATFORM_TYPES),
@@ -45,9 +46,7 @@ const FormSchema = z.object({
   tagNames: z.array(z.string()),
 });
 
-export type CreationForm = UseFormReturn<z.infer<typeof FormSchema>>;
-
-export function CreateButton() {
+export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
     <Dialog>
@@ -95,7 +94,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
           control={form.control}
           name="priority"
           render={({ field }) => (
-            <FormItem>
+            <FormItem css={formItemStyle}>
               <FormLabel>Priority</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -120,7 +119,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
           control={form.control}
           name="ptype"
           render={({ field }) => (
-            <FormItem>
+            <FormItem css={formItemStyle}>
               <FormLabel>Type</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
@@ -141,7 +140,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
           control={form.control}
           name="pid"
           render={({ field }) => (
-            <FormItem>
+            <FormItem css={formItemStyle}>
               <FormLabel>UID</FormLabel>
               <FormControl>
                 <Input placeholder="Enter Channel ID..." {...field} />
@@ -154,8 +153,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>UID</FormLabel>
+            <FormItem css={formItemStyle}>
+              <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Write a description about channel..."
@@ -167,7 +166,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
             </FormItem>
           )}
         />
-        <TagSelectField form={form} />
+        <TagSelectField form={form} style={formItemStyle} />
         <div className="flex flex-row justify-end mt-5">
           <Button type="submit" className="px-7">
             Save
@@ -178,34 +177,42 @@ export function CreateForm({ cb }: { cb: () => void }) {
   );
 }
 
-function TagSelectField({ form }: { form: CreationForm }) {
+interface TagSelectFieldProps {
+  form: UseFormReturn<z.infer<typeof FormSchema>>;
+  style: SerializedStyles;
+}
+
+function TagSelectField({ form, style }: TagSelectFieldProps) {
   const [tagNames, setTagNames] = useState<string[]>([]);
+
+  const addTagName = (tagName: string) => {
+    const prev = form.getValues('tagNames');
+    form.setValue('tagNames', [...prev, tagName]);
+    setTagNames([...prev, tagName]);
+  };
+
   return (
     <div>
       <FormField
         control={form.control}
         name="tagNames"
-        render={({ field }) => {
-          const addTagName = (tagName: string) => {
-            field.onChange([...field.value, tagName]);
-            setTagNames([...field.value, tagName]);
-          };
-          return (
-            <FormItem>
-              <FormLabel>Tags</FormLabel>
-              <FormControl>
-                <div>
-                  <EditTagSelect addTagName={addTagName} />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          );
-        }}
+        render={() => (
+          <FormItem css={style}>
+            <FormLabel>Tags</FormLabel>
+            <FormControl>
+              <div>
+                <EditTagSelect addTagName={addTagName} />
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
-      <div className="flex gap-1 my-3">
+      <div className="flex gap-1 flex-wrap" css={css({ height: '2rem' })}>
         {tagNames.map((tagName, i) => (
-          <Badge key={i}>{tagName}</Badge>
+          <div key={i}>
+            <Badge variant="secondary">{tagName}</Badge>
+          </div>
         ))}
       </div>
     </div>

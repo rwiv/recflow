@@ -1,19 +1,27 @@
-import { ChannelEnt } from './channel.types.js';
 import { db } from '../../infra/db/db.js';
-import { channels, channelsToTags, tags } from './schema.js';
-import { and, eq, inArray } from 'drizzle-orm';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
+import { channelsToTags, tags } from './schema.js';
+import { and, eq } from 'drizzle-orm';
+import { oneNotNull } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { processSets } from '../../utils/set.js';
 import { assertNotNull } from '../../utils/null.js';
 import { Injectable } from '@nestjs/common';
-import { TagAttachment, TagCreation, TagDetachment, TagEnt, TagUpdate } from './tag.types.js';
+import {
+  TagEntAttachment,
+  TagEntCreation,
+  TagEntDetachment,
+  TagEnt,
+  TagEntUpdate,
+} from './tag.types.js';
+import { TagQueryRepository } from './tag.query.repository.js';
 
 @Injectable()
-export class TagRepository {
-  private async create(req: TagCreation, tx: Tx = db): Promise<TagEnt> {
-    const tag = await this.findByName(req.name, tx);
+export class TagCommandRepository {
+  constructor(private readonly tagQueryRepo: TagQueryRepository) {}
+
+  private async create(req: TagEntCreation, tx: Tx = db): Promise<TagEnt> {
+    const tag = await this.tagQueryRepo.findByName(req.name, tx);
     if (tag) throw new Error('Tag already exists');
     const tbc = {
       ...req,
@@ -24,8 +32,8 @@ export class TagRepository {
     return oneNotNull(await tx.insert(tags).values(tbc).returning());
   }
 
-  async update(req: TagUpdate, tx: Tx = db): Promise<TagEnt> {
-    const tag = await this.findById(req.tagId, tx);
+  async update(req: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
+    const tag = await this.tagQueryRepo.findById(req.tagId, tx);
     if (!tag) throw new Error('Tag not found');
     const tbu = {
       ...tag,
@@ -35,9 +43,9 @@ export class TagRepository {
     return oneNotNull(await tx.update(tags).set(tbu).where(eq(tags.id, req.tagId)).returning());
   }
 
-  async attach(req: TagAttachment, tx: Tx = db): Promise<TagEnt> {
+  async attach(req: TagEntAttachment, tx: Tx = db): Promise<TagEnt> {
     return tx.transaction(async (txx) => {
-      let tag = await this.findByName(req.tagName, txx);
+      let tag = await this.tagQueryRepo.findByName(req.tagName, txx);
       if (!tag) {
         tag = await this.create({ name: req.tagName }, txx);
       }
@@ -47,21 +55,21 @@ export class TagRepository {
     });
   }
 
-  async detach(req: TagDetachment, tx: Tx = db) {
+  async detach(req: TagEntDetachment, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       const cond = and(
         eq(channelsToTags.channelId, req.channelId),
         eq(channelsToTags.tagId, req.tagId),
       );
       await txx.delete(channelsToTags).where(cond);
-      if ((await this.findChannelsByTagId(req.tagId, 1, txx)).length === 0) {
+      if ((await this.tagQueryRepo.findChannelsByTagId(req.tagId, 1, txx)).length === 0) {
         await txx.delete(tags).where(eq(tags.id, req.tagId));
       }
     });
   }
 
   async applyTags(channelId: string, tagNames: string[], tx: Tx = db): Promise<TagEnt[]> {
-    const tags = await this.findTagsByChannelId(channelId, tx);
+    const tags = await this.tagQueryRepo.findTagsByChannelId(channelId, tx);
     const setA = new Set(tags.map((tag) => tag.name)); // existing tags
     const mapA = new Map(tags.map((tag) => [tag.name, tag]));
     const setB = new Set(tagNames); // expected tags
@@ -82,41 +90,5 @@ export class TagRepository {
       }
       return result;
     });
-  }
-
-  async findAll(tx: Tx = db): Promise<TagEnt[]> {
-    return tx.select().from(tags);
-  }
-
-  async findById(tagId: string, tx: Tx = db): Promise<TagEnt | undefined> {
-    return oneNullable(await tx.select().from(tags).where(eq(tags.id, tagId)));
-  }
-
-  async findByName(tagName: string, tx: Tx = db): Promise<TagEnt | undefined> {
-    return oneNullable(await tx.select().from(tags).where(eq(tags.name, tagName)));
-  }
-
-  async findTagsByChannelId(channelId: string, tx: Tx = db): Promise<TagEnt[]> {
-    const rows = await tx
-      .select()
-      .from(channelsToTags)
-      .innerJoin(tags, eq(channelsToTags.tagId, tags.id))
-      .where(eq(channelsToTags.channelId, channelId));
-    return rows.map((row) => row.tags).filter((tag) => tag !== null);
-  }
-
-  async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
-    const rows = await tx
-      .select()
-      .from(channelsToTags)
-      .innerJoin(channels, eq(channelsToTags.channelId, channels.id))
-      .where(eq(channelsToTags.tagId, tagId))
-      .limit(limit);
-    return rows.map((row) => row.channels).filter((tag) => tag !== null);
-  }
-
-  async findIdsByNames(tagNames: string[], tx: Tx = db) {
-    const records = await tx.select({ id: tags.id }).from(tags).where(inArray(tags.name, tagNames));
-    return records.map((tag) => tag.id);
   }
 }

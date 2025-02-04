@@ -1,7 +1,6 @@
 #!/bin/sh
 
-cd ..
-ENV_FILE=./dev/.env
+ENV_FILE=../dev/.env
 if [ ! -f $ENV_FILE ]; then
   echo "not found .env file"
   exit 1

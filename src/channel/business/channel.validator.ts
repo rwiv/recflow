@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelCreation, ChannelUpdate } from '../persistence/channel.types.js';
+import { ChannelCreation, ChannelUpdate } from './channel.types.js';
 import { hasDuplicates } from '../../utils/list.js';
 
 @Injectable()
@@ -12,8 +12,10 @@ export class ChannelValidator {
     return req;
   }
 
-  validateUpdate(req: ChannelUpdate, reqTagNames: string[]): ChannelUpdate {
-    this.assertTagNames(reqTagNames);
+  validateUpdate(req: ChannelUpdate, reqTagNames: string[] | undefined): ChannelUpdate {
+    if (reqTagNames) {
+      this.assertTagNames(reqTagNames);
+    }
     if (req.form.description === '') {
       req.form.description = null;
     }
@@ -21,6 +23,9 @@ export class ChannelValidator {
   }
 
   private assertTagNames(tagNames: string[]) {
+    if (tagNames.length === 0) {
+      return;
+    }
     if (hasDuplicates(tagNames)) {
       throw new Error('Duplicate tag names');
     }

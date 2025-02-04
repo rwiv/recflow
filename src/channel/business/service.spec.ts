@@ -1,20 +1,13 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { ChannelPriority, ChannelUpdate } from '../persistence/channel.types.js';
-import { ChannelService } from './channel.service.js';
-import { TagRepository } from '../persistence/tag.repository.js';
-import { ChannelRepository } from '../persistence/channel.repository.js';
+import { ChannelPriority } from '../persistence/channel.types.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { assertNotNull } from '../../utils/null.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
-import { ChannelQueryRepository } from '../persistence/channel.repository.query.js';
-import { ChannelValidator } from './channel.validator.js';
+import { ChannelUpdate } from './channel.types.js';
+import { getServies } from '../helpers/utils.js';
 
-const tagRepo = new TagRepository();
-const chanRepo = new ChannelRepository(tagRepo);
-const chanQueryRepo = new ChannelQueryRepository(tagRepo);
-const chanValidator = new ChannelValidator();
-const chanService = new ChannelService(chanRepo, chanQueryRepo, tagRepo, chanValidator);
+const { chanFinder, chanCommander } = getServies();
 
 describe('ChannelService', () => {
   beforeEach(async () => {
@@ -26,30 +19,31 @@ describe('ChannelService', () => {
   });
 
   it('create', async () => {
-    const channel = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chanCommander.create(mockChannel(1), ['tag1', 'tag2']);
     console.log(channel);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });
 
   it('update', async () => {
-    const channel = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chanCommander.create(mockChannel(1), ['tag1', 'tag2']);
     const req: ChannelUpdate = {
       id: channel.id,
       form: {
         description: 'new desc',
       },
+      tagNames: ['tag2', 'tag3', 'tag4'],
     };
-    await chanService.update(req, ['tag2', 'tag3', 'tag4']);
-    const updated = assertNotNull(await chanService.findById(channel.id, true));
+    await chanCommander.update(req);
+    const updated = assertNotNull(await chanFinder.findById(channel.id, true));
     expect(updated.description).toBe('new desc');
     expect(updated.tags).toHaveLength(3);
   });
 
   it('delete', async () => {
-    const channel = await chanService.create(mockChannel(1), ['tag1', 'tag2']);
-    await chanService.delete(channel.id);
-    expect(await chanService.findById(channel.id)).toBeUndefined();
+    const channel = await chanCommander.create(mockChannel(1), ['tag1', 'tag2']);
+    await chanCommander.delete(channel.id);
+    expect(await chanFinder.findById(channel.id)).toBeUndefined();
   });
 
   it('findPage', async () => {
@@ -84,12 +78,12 @@ describe('ChannelService', () => {
     const tagNames = ['tag4', 'tag5'];
     // const tagNames = undefined;
 
-    const result = await chanService.findByQuery(1, 20, sorted, prioirty, tagName, true);
+    const result = await chanFinder.findByQuery(1, 20, sorted, prioirty, tagName, true);
     // const result = await chanService.findByAnyTag(tagNames, 1, 20, sorted, prioirty, true);
     // const result = await chanService.findByAllTags(tagNames, sorted, prioirty, true);
     console.log(result.map((r) => r.username));
 
-    const all = await chanService.findAll(true);
+    const all = await chanFinder.findAll(true);
     for (const r of all) {
       console.log(`${r.username}: [${r.tags?.map((t) => t.name).join(',')}]`);
     }
@@ -97,5 +91,5 @@ describe('ChannelService', () => {
 });
 
 function add(n: number, priority: ChannelPriority, followerCnt: number, tagNames: string[]) {
-  return chanService.create(mockChannel(n, priority, followerCnt), tagNames);
+  return chanCommander.create(mockChannel(n, priority, followerCnt), tagNames);
 }

@@ -5,12 +5,12 @@ export type ChannelToTagEnt = typeof channelsToTags.$inferSelect;
 
 export type ChannelSortType = 'latest' | 'followerCnt' | undefined;
 
-export interface TagCreation {
+export interface TagEntCreation {
   name: string;
   description?: string;
 }
 
-export interface TagUpdate {
+export interface TagEntUpdate {
   tagId: string;
   form: {
     name: string;
@@ -18,12 +18,12 @@ export interface TagUpdate {
   };
 }
 
-export interface TagAttachment {
+export interface TagEntAttachment {
   channelId: string;
   tagName: string;
 }
 
-export interface TagDetachment {
+export interface TagEntDetachment {
   channelId: string;
   tagId: string;
 }

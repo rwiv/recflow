@@ -7,13 +7,13 @@ export type ChannelEnt = typeof channels.$inferSelect;
 export type ChannelPriority = 'must' | 'should' | 'may' | 'review' | 'skip' | 'none';
 
 export interface ChannelDef extends ChannelBase {
-  description: string | null;
   priority: ChannelPriority;
+  description: string | null;
 }
 
-export type ChannelCreation = ChannelDef;
+export type ChannelEntCreation = ChannelDef;
 
-export interface ChannelUpdate {
+export interface ChannelEntUpdate {
   id: string;
   form: {
     ptype?: PlatformType;

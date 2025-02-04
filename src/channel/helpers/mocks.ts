@@ -1,10 +1,10 @@
-import { ChannelCreation, ChannelPriority } from '../persistence/channel.types.js';
+import { ChannelEntCreation, ChannelPriority } from '../persistence/channel.types.js';
 
 export function mockChannel(
   n: number,
   priority: ChannelPriority = 'must',
   followerCnt: number = 10,
-): ChannelCreation {
+): ChannelEntCreation {
   return {
     ptype: 'chzzk',
     pid: `chzzk${n}`,

@@ -7,11 +7,24 @@ import { Injectable } from '@nestjs/common';
 import { ChannelSortType } from './tag.types.js';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
-import { TagRepository } from './tag.repository.js';
+import { oneNullable } from '../../utils/list.js';
+import { TagQueryRepository } from './tag.query.repository.js';
 
 @Injectable()
 export class ChannelQueryRepository {
-  constructor(private readonly tagRepo: TagRepository) {}
+  constructor(private readonly tagQueryRepo: TagQueryRepository) {}
+
+  findAll(tx: Tx = db): Promise<ChannelEnt[]> {
+    return tx.select().from(channels);
+  }
+
+  async findById(channelId: string, tx: Tx = db): Promise<ChannelEnt | undefined> {
+    return oneNullable(await tx.select().from(channels).where(eq(channels.id, channelId)));
+  }
+
+  async findByUsername(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
+    return tx.select().from(channels).where(eq(channels.username, username));
+  }
 
   async findByQuery(
     page: { page: number; size: number } | undefined = undefined,
@@ -24,7 +37,7 @@ export class ChannelQueryRepository {
     const basis = this.withBasis(bqb, page, sorted, priority);
 
     if (tagName) {
-      const tag = await this.tagRepo.findByName(tagName, tx);
+      const tag = await this.tagQueryRepo.findByName(tagName, tx);
       if (!tag) return [];
       const withTags = await basis.qb
         .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
@@ -43,7 +56,7 @@ export class ChannelQueryRepository {
     priority: ChannelPriority | undefined = undefined,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
-    const tagIds = await this.tagRepo.findIdsByNames(tagNames, tx);
+    const tagIds = await this.tagQueryRepo.findIdsByNames(tagNames, tx);
     if (tagIds.length === 0) return [];
 
     const bqb = tx.selectDistinct({ channels }).from(channels).$dynamic();
@@ -63,7 +76,7 @@ export class ChannelQueryRepository {
     priority: ChannelPriority | undefined = undefined,
     tx: Tx = db,
   ) {
-    const tagIds = await this.tagRepo.findIdsByNames(tagNames, tx);
+    const tagIds = await this.tagQueryRepo.findIdsByNames(tagNames, tx);
     if (tagIds.length === 0) return [];
     const requiredTagCnt = tagIds.length;
 

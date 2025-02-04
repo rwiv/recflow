@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { TagRepository } from './tag.repository.js';
-import { ChannelRepository } from './channel.repository.js';
-import { ChannelQueryRepository } from './channel.repository.query.js';
+import { TagCommandRepository } from './tag.command.repository.js';
+import { ChannelCommandRepository } from './channel.command.repository.js';
+import { ChannelQueryRepository } from './channel.query.repository.js';
 
 @Module({
-  providers: [TagRepository, ChannelRepository, ChannelQueryRepository],
-  exports: [TagRepository, ChannelRepository, ChannelQueryRepository],
+  providers: [TagCommandRepository, ChannelCommandRepository, ChannelQueryRepository],
+  exports: [TagCommandRepository, ChannelCommandRepository, ChannelQueryRepository],
 })
 export class ChannelPersistenceModule {}

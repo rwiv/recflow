@@ -3,13 +3,13 @@ import path from 'path';
 import { readTestConf } from '../../common/helpers.js';
 import { getFetcher } from '../../live/helpers/utils.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
-import { ChannelService } from '../business/channel.service.js';
-import { ChannelCreation } from '../persistence/channel.types.js';
+import { ChannelCommander } from '../business/channel.commander.js';
+import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { faker } from '@faker-js/faker';
 import { randomElem } from '../../../web/src/lib/list.js';
 
 export class TestChannelInjector {
-  constructor(private readonly channelService: ChannelService) {}
+  constructor(private readonly channelService: ChannelCommander) {}
 
   async writeTestChannelInfos() {
     const conf = await readTestConf();
@@ -32,7 +32,7 @@ export class TestChannelInjector {
   async insertTestChannels() {
     const infos = await this.readTestChannelInfos();
     for (const info of infos) {
-      const req: ChannelCreation = {
+      const req: ChannelEntCreation = {
         username: info.username,
         profileImgUrl: info.profileImgUrl,
         ptype: info.ptype,

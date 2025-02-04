@@ -95,4 +95,9 @@ export class ChannelController {
   tags() {
     return this.tagFinder.findAll();
   }
+
+  @Get('/tags/{tagId}')
+  tag(@Param('tagId') tagId: string) {
+    return this.tagFinder.findById(tagId);
+  }
 }

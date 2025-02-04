@@ -19,14 +19,16 @@ export class LiveInjector extends Synchronizer {
 
   protected async check() {
     // --------------- check follow channels -------------------------------
-    const untrackedFollowChannelIds = (
-      await Promise.all(
-        this.query.followSoopUserIds.map(async (userId) => ({
-          userId,
-          live: await this.liveService.get(userId, { includeDeleted: true }),
-        })),
-      )
-    )
+    let channelIds: string[] = [];
+    if (this.ptype === 'chzzk') {
+      channelIds = this.query.followChzzkChanIds;
+    } else if (this.ptype === 'soop') {
+      channelIds = this.query.followSoopUserIds;
+    }
+    const promises = channelIds.map(async (userId) => {
+      return { userId, live: await this.liveService.get(userId, { includeDeleted: true }) };
+    });
+    const untrackedFollowChannelIds = (await Promise.all(promises))
       .filter(({ live }) => !live)
       .map(({ userId }) => userId);
 

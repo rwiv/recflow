@@ -72,3 +72,11 @@ export interface ChannelUpdate {
   };
   tagNames?: string[];
 }
+
+export interface TagEntUpdate {
+  tagId: string;
+  form: {
+    name?: string;
+    description?: string | null;
+  };
+}

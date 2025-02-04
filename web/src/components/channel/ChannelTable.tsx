@@ -1,5 +1,5 @@
 import { ChannelRecord } from '@/client/types.ts';
-import { ChannelTableContent } from '@/components/channel/ChannelTableContent.tsx';
+import { TableContent } from '@/components/channel/content/TableContent.tsx';
 import { useEffect } from 'react';
 import { fetchChannels } from '@/client/client.ts';
 import { PageNavigation } from '@/components/common/layout/ChannelNavigation.tsx';
@@ -74,9 +74,7 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
           </Button>
         </div>
       </div>
-      <div className="rounded-md border">
-        {channels && <ChannelTableContent channels={channels} />}
-      </div>
+      <div className="rounded-md border">{channels && <TableContent channels={channels} />}</div>
       <div className="my-7">
         <PageNavigation curPage={page} size={DEFAULT_PAGINATION_SIZE} endPage={DEFAULT_END_PAGE} />
       </div>

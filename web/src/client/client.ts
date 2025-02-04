@@ -6,6 +6,8 @@ import {
   ChannelRecord,
   TagRecord,
   ChannelCreation,
+  ChannelUpdate,
+  TagEntUpdate,
 } from '@/client/types.ts';
 import { configs } from '@/common/configs.ts';
 
@@ -49,5 +51,31 @@ export async function createChannel(req: ChannelCreation) {
     body: JSON.stringify(req),
     headers: { 'Content-Type': 'application/json' },
   });
-  return (await res.json()) as LiveRecord;
+  return (await res.json()) as ChannelRecord;
+}
+
+export async function updateChannel(req: ChannelUpdate) {
+  const url = `${configs.endpoint}/api/channels`;
+  const res = await fetch(url, {
+    method: 'Put',
+    body: JSON.stringify(req),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return (await res.json()) as ChannelRecord;
+}
+
+export async function deleteChannel(channelId: string) {
+  const url = `${configs.endpoint}/api/channels/${channelId}`;
+  const res = await fetch(url, { method: 'DELETE' });
+  return (await res.json()) as ChannelRecord;
+}
+
+export async function updateTag(req: TagEntUpdate) {
+  const url = `${configs.endpoint}/api/tags`;
+  const res = await fetch(url, {
+    method: 'Put',
+    body: JSON.stringify(req),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return (await res.json()) as TagRecord;
 }

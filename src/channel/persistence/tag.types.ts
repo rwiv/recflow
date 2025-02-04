@@ -13,7 +13,7 @@ export interface TagEntCreation {
 export interface TagEntUpdate {
   tagId: string;
   form: {
-    name: string;
+    name?: string;
     description?: string | null;
   };
 }

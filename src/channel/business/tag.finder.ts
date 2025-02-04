@@ -9,4 +9,8 @@ export class TagFinder {
   findAll(): Promise<TagRecord[]> {
     return this.tagQuery.findAll();
   }
+
+  findById(tagId: string): Promise<TagRecord | undefined> {
+    return this.tagQuery.findById(tagId);
+  }
 }

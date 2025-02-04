@@ -1,5 +1,5 @@
 import { ChannelEntCreation } from '../persistence/channel.types.js';
-import { ChannelCommandRepository } from '../persistence/channel.command.repository.js';
+import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
 import { ChannelCreation, ChannelRecord, ChannelUpdate } from './channel.types.js';
 import { TagRecord } from './tag.types.js';
@@ -8,8 +8,8 @@ import { ChannelValidator } from './channel.validator.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { assertNotNull } from '../../utils/null.js';
 import { TagWriter } from './tag.writer.js';
-import { ChannelQueryRepository } from '../persistence/channel.query.repository.js';
-import { TagQueryRepository } from '../persistence/tag.query.repository.js';
+import { ChannelQueryRepository } from '../persistence/channel.query.js';
+import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TagRecord } from './tag.types.js';
-import { TagQueryRepository } from '../persistence/tag.query.repository.js';
+import { TagQueryRepository } from '../persistence/tag.query.js';
 
 @Injectable()
 export class TagFinder {

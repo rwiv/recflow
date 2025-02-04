@@ -1,4 +1,4 @@
-import { TagCommandRepository } from '../persistence/tag.command.repository.js';
+import { TagCommandRepository } from '../persistence/tag.command.js';
 import {
   TagEnt,
   TagEntAttachment,
@@ -7,19 +7,19 @@ import {
 } from '../persistence/tag.types.js';
 import { TagRecord } from './tag.types.js';
 import { Injectable } from '@nestjs/common';
-import { TagQueryRepository } from '../persistence/tag.query.repository.js';
-import { channelsToTags, tags } from '../persistence/schema.js';
+import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { processSets } from '../../utils/set.js';
 import { assertNotNull } from '../../utils/null.js';
-import { and, eq } from 'drizzle-orm';
+import { ChannelQueryRepository } from '../persistence/channel.query.js';
 
 @Injectable()
 export class TagWriter {
   constructor(
     private readonly tagCmd: TagCommandRepository,
     private readonly tagQuery: TagQueryRepository,
+    private readonly chanQuery: ChannelQueryRepository,
   ) {}
 
   update(req: TagEntUpdate): Promise<TagRecord> {
@@ -32,21 +32,16 @@ export class TagWriter {
       if (!tag) {
         tag = await this.tagCmd.create({ name: req.tagName }, txx);
       }
-      const tbc = { channelId: req.channelId, tagId: tag.id, createdAt: new Date() };
-      await txx.insert(channelsToTags).values(tbc);
+      await this.tagCmd.bind(req.channelId, tag.id, txx);
       return tag;
     });
   }
 
   detach(req: TagEntDetachment, tx: Tx = db) {
     return tx.transaction(async (txx) => {
-      const cond = and(
-        eq(channelsToTags.channelId, req.channelId),
-        eq(channelsToTags.tagId, req.tagId),
-      );
-      await txx.delete(channelsToTags).where(cond);
-      if ((await this.tagQuery.findChannelsByTagId(req.tagId, 1, txx)).length === 0) {
-        await txx.delete(tags).where(eq(tags.id, req.tagId));
+      await this.tagCmd.unbind(req.channelId, req.tagId, txx);
+      if ((await this.chanQuery.findChannelsByTagId(req.tagId, 1, txx)).length === 0) {
+        await this.tagCmd.delete(req.tagId, txx);
       }
     });
   }

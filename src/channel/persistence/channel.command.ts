@@ -6,7 +6,7 @@ import { ChannelEntCreation, ChannelEnt, ChannelEntUpdate } from './channel.type
 import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelQueryRepository } from './channel.query.repository.js';
+import { ChannelQueryRepository } from './channel.query.js';
 
 @Injectable()
 export class ChannelCommandRepository {

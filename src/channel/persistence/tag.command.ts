@@ -1,12 +1,12 @@
 import { db } from '../../infra/db/db.js';
-import { tags } from './schema.js';
-import { eq } from 'drizzle-orm';
+import { channelsToTags, tags } from './schema.js';
+import { and, eq } from 'drizzle-orm';
 import { oneNotNull } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { TagEntCreation, TagEnt, TagEntUpdate } from './tag.types.js';
-import { TagQueryRepository } from './tag.query.repository.js';
+import { TagQueryRepository } from './tag.query.js';
 
 @Injectable()
 export class TagCommandRepository {
@@ -33,5 +33,18 @@ export class TagCommandRepository {
       updatedAt: new Date(),
     };
     return oneNotNull(await tx.update(tags).set(tbu).where(eq(tags.id, req.tagId)).returning());
+  }
+
+  async delete(tagId: string, tx: Tx = db) {
+    await tx.delete(tags).where(eq(tags.id, tagId));
+  }
+
+  async bind(channelId: string, tagId: string, tx: Tx = db) {
+    return tx.insert(channelsToTags).values({ channelId, tagId, createdAt: new Date() });
+  }
+
+  async unbind(channelId: string, tagId: string, tx: Tx = db) {
+    const cond = and(eq(channelsToTags.channelId, channelId), eq(channelsToTags.tagId, tagId));
+    await tx.delete(channelsToTags).where(cond);
   }
 }

@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { TagEnt } from './tag.types.js';
-import { channels, channelsToTags, tags } from './schema.js';
+import { channelsToTags, tags } from './schema.js';
 import { oneNullable } from '../../utils/list.js';
 import { eq, inArray } from 'drizzle-orm';
-import { ChannelEnt } from './channel.types.js';
 
 @Injectable()
 export class TagQueryRepository {
@@ -28,16 +27,6 @@ export class TagQueryRepository {
       .innerJoin(tags, eq(channelsToTags.tagId, tags.id))
       .where(eq(channelsToTags.channelId, channelId));
     return rows.map((row) => row.tags).filter((tag) => tag !== null);
-  }
-
-  async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
-    const rows = await tx
-      .select()
-      .from(channelsToTags)
-      .innerJoin(channels, eq(channelsToTags.channelId, channels.id))
-      .where(eq(channelsToTags.tagId, tagId))
-      .limit(limit);
-    return rows.map((row) => row.channels).filter((tag) => tag !== null);
   }
 
   async findIdsByNames(tagNames: string[], tx: Tx = db) {

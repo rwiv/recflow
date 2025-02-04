@@ -1,30 +1,17 @@
+import { ChannelSortType } from './tag.types.js';
+import { ChannelEnt, ChannelPriority } from './channel.types.js';
+import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { channels, channelsToTags } from './schema.js';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
-import { ChannelEnt, ChannelPriority } from './channel.types.js';
-import { Tx } from '../../infra/db/types.js';
-import { Injectable } from '@nestjs/common';
-import { ChannelSortType } from './tag.types.js';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
-import { oneNullable } from '../../utils/list.js';
-import { TagQueryRepository } from './tag.query.repository.js';
+import { TagQueryRepository } from './tag.query.js';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ChannelQueryRepository {
+export class ChannelSearchRepository {
   constructor(private readonly tagQuery: TagQueryRepository) {}
-
-  findAll(tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channels);
-  }
-
-  async findById(channelId: string, tx: Tx = db): Promise<ChannelEnt | undefined> {
-    return oneNullable(await tx.select().from(channels).where(eq(channels.id, channelId)));
-  }
-
-  async findByUsername(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channels).where(eq(channels.username, username));
-  }
 
   async findByQuery(
     page: { page: number; size: number } | undefined = undefined,

@@ -32,12 +32,12 @@ export class LiveController {
   }
 
   @Post('/schedule/start')
-  startSchedule(): void {
+  startSchedule() {
     this.scheduler.run();
   }
 
   @Post('/schedule/stop')
-  stopSchedule(): void {
+  stopSchedule() {
     this.scheduler.stop();
   }
 

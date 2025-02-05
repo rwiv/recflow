@@ -18,3 +18,18 @@ export async function deleteLive(uid: string, platform: PlatformType, cmd: ExitC
   const res = await fetch(url, { method: 'DELETE' });
   return (await res.json()) as LiveRecord;
 }
+
+export async function isScheduled() {
+  const res = await fetch(`${configs.endpoint}/api/lives/schedule/stat`);
+  return (await res.json()) as { status: boolean };
+}
+
+export async function startSchedule() {
+  const url = `${configs.endpoint}/api/lives/schedule/start`;
+  await fetch(url, { method: 'POST' });
+}
+
+export async function stopSchedule() {
+  const url = `${configs.endpoint}/api/lives/schedule/stop`;
+  await fetch(url, { method: 'POST' });
+}

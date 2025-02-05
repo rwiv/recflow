@@ -9,6 +9,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveCleaner } from './synchronizer/cleaner.js';
 import { LiveInjector } from './synchronizer/injector.js';
 import { LiveRefresher } from './synchronizer/refresher.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class LiveScheduler {
@@ -40,6 +41,7 @@ export class LiveScheduler {
     if (this.isObserving) {
       throw Error('already observing');
     }
+    log.info('LiveScheduler is running');
 
     this.inject();
     this.clean();
@@ -67,6 +69,7 @@ export class LiveScheduler {
   }
 
   stop() {
+    log.info('LiveScheduler is stopping');
     for (const interval of this.intervals) {
       clearInterval(interval);
     }

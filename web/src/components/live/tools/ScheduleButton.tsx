@@ -1,0 +1,41 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { SCHEDULE_QUERY_KEY } from '@/common/consts.ts';
+import { isScheduled, startSchedule, stopSchedule } from '@/client/live.client.ts';
+import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
+import { Button } from '@/components/ui/button.tsx';
+
+export function ScheduleButton() {
+  const queryClient = useQueryClient();
+  const { data: scheduleStatus } = useQuery({
+    queryKey: [SCHEDULE_QUERY_KEY],
+    queryFn: isScheduled,
+  });
+
+  const start = async () => {
+    await startSchedule();
+    await queryClient.invalidateQueries({ queryKey: [SCHEDULE_QUERY_KEY] });
+  };
+
+  const stop = async () => {
+    await stopSchedule();
+    await queryClient.invalidateQueries({ queryKey: [SCHEDULE_QUERY_KEY] });
+  };
+
+  if (!scheduleStatus) {
+    return <LoadingComponent />;
+  }
+
+  if (scheduleStatus.status) {
+    return (
+      <Button variant="outline" onClick={stop}>
+        Stop
+      </Button>
+    );
+  } else {
+    return (
+      <Button variant="outline" onClick={start}>
+        Start
+      </Button>
+    );
+  }
+}

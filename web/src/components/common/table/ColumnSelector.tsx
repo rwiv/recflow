@@ -16,7 +16,7 @@ export function ColumnSelector<T>({ table }: { table: Table<T> }) {
           Columns <ChevronDown />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent>
         {table
           .getAllColumns()
           .filter((column) => column.getCanHide())

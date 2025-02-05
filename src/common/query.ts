@@ -1,9 +1,12 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { NodeDef, NodeSelectMode, NodePriority } from '../live/node/types.js';
+import { ChannelPriorityConfig } from './config.types.js';
 
 export interface QueryConfig {
   options: PlatformOptions;
+
+  priority: ChannelPriorityConfig;
 
   followChzzkChanIds: string[];
   followSoopUserIds: string[];

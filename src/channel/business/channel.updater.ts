@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelDefUpdate, ChannelRecord, ChannelRecordUpdate } from './channel.types.js';
 import { db } from '../../infra/db/db.js';
 import { TagRecord } from './tag.types.js';
-import { ChannelPriority } from '../persistence/channel.types.js';
+import { ChannelPriority } from '../priority/types.js';
 
 @Injectable()
 export class ChannelUpdater {

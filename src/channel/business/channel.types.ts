@@ -1,6 +1,7 @@
-import { ChannelDef, ChannelPriority } from '../persistence/channel.types.js';
+import { ChannelDef } from '../persistence/channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { PlatformType } from '../../platform/types.js';
+import { ChannelPriority } from '../priority/types.js';
 
 export interface ChannelRecord extends ChannelDef {
   id: string;

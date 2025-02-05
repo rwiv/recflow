@@ -1,5 +1,5 @@
 import amqplib, { Channel, Connection } from 'amqplib';
-import { AmqpConfig } from '../../common/types.js';
+import { AmqpConfig } from '../../common/config.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config.module.js';
 import { Env } from '../../common/env.js';

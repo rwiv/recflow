@@ -1,11 +1,11 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { ChannelPriority } from '../persistence/channel.types.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { assertNotNull } from '../../utils/null.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
 import { ChannelRecordUpdate } from './channel.types.js';
 import { getChannelServies } from '../helpers/utils.js';
+import { ChannelPriority } from '../priority/types.js';
 
 const { chanFinder, chanWriter } = getChannelServies();
 

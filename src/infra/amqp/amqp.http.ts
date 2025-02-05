@@ -1,4 +1,4 @@
-import { AmqpConfig } from '../../common/types.js';
+import { AmqpConfig } from '../../common/config.types.js';
 
 interface QueueState {
   name: string;

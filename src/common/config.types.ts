@@ -20,3 +20,12 @@ export interface PostgresConfig {
   password: string;
   url: string;
 }
+
+export type ChannelPriorityShift = 'promote' | 'demote';
+
+export interface ChannelPriorityConfig {
+  noneRank: number;
+  should?: ChannelPriorityShift;
+  may?: ChannelPriorityShift;
+  review?: ChannelPriorityShift;
+}

@@ -1,4 +1,4 @@
-import { RedisConfig } from '../../common/types.js';
+import { RedisConfig } from '../../common/config.types.js';
 import { createClient, RedisClientType } from 'redis';
 import { log } from 'jslog';
 

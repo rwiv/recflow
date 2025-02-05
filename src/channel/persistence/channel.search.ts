@@ -1,5 +1,5 @@
 import { ChannelSortType } from './tag.types.js';
-import { ChannelEnt, ChannelPriority } from './channel.types.js';
+import { ChannelEnt } from './channel.types.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { channels, channelsToTags } from './schema.js';
@@ -8,6 +8,7 @@ import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from './tag.query.js';
 import { Injectable } from '@nestjs/common';
+import { ChannelPriority } from '../priority/types.js';
 
 @Injectable()
 export class ChannelSearchRepository {

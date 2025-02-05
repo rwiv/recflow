@@ -1,10 +1,9 @@
 import { ChannelBase } from '../../platform/wapper/channel.js';
 import { PlatformType } from '../../platform/types.js';
 import { channels } from './schema.js';
+import { ChannelPriority } from '../priority/types.js';
 
 export type ChannelEnt = typeof channels.$inferSelect;
-
-export type ChannelPriority = 'must' | 'should' | 'may' | 'review' | 'skip' | 'none';
 
 export interface ChannelDef extends ChannelBase {
   priority: ChannelPriority;

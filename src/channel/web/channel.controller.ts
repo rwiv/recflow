@@ -14,9 +14,10 @@ import { ChannelWriter } from '../business/channel.writer.js';
 import { ChannelCreation, ChannelDefUpdate } from '../business/channel.types.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
-import { CHANNEL_PRIORITIES, CHANNEL_SORTED_TYPES } from '../../common/enums.js';
+import { CHANNEL_SORTED_TYPES } from '../../common/enum.consts.js';
 import { assertNotNull } from '../../utils/null.js';
 import { checkType } from '../../utils/union.js';
+import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 
 @Controller('/api/channels')
 export class ChannelController {

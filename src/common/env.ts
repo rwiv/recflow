@@ -1,5 +1,5 @@
 import { DEFAULT_NTFY_TOPIC } from './consts.js';
-import { AmqpConfig, PostgresConfig, RedisConfig } from './types.js';
+import { AmqpConfig, PostgresConfig, RedisConfig } from './config.types.js';
 import dotenv from 'dotenv';
 
 export interface Env {

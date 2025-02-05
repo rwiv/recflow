@@ -3,7 +3,6 @@ import { AppModule } from './app.module.js';
 import { LiveScheduler } from './live/scheduler/scheduler.js';
 import { ENV } from './common/config.module.js';
 import { Env } from './common/env.js';
-import { log } from 'jslog';
 import { TestChannelInjector } from './channel/helpers/injector.js';
 import { dropAll } from './infra/db/utils.js';
 import { ChannelWriter } from './channel/business/channel.writer.js';
@@ -13,7 +12,6 @@ async function bootstrap() {
 
   const env = app.get<Env>(ENV);
   if (env.nodeEnv !== 'prod') {
-    log.info('Env', env);
     app.enableCors();
 
     await dropAll();

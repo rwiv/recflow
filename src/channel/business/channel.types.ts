@@ -10,8 +10,8 @@ export interface ChannelRecord extends ChannelDef {
 }
 
 export interface ChannelCreation {
-  ptype: PlatformType;
   pid: string;
+  platform: PlatformType;
   description: string | null;
   priority: ChannelPriority;
   tagNames: string[];
@@ -20,8 +20,8 @@ export interface ChannelCreation {
 export interface ChannelUpdate {
   id: string;
   form: {
-    ptype?: PlatformType;
     pid?: string;
+    platform?: PlatformType;
     description?: string | null;
     priority?: ChannelPriority;
   };

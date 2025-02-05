@@ -19,7 +19,7 @@ export const channels = pgTable(
   'channels',
   {
     id: char({ length: 32 }).primaryKey(),
-    ptype: platformEnum().notNull(),
+    platform: platformEnum().notNull(),
     pid: varchar({ length: 255 }).notNull().unique(),
     username: varchar({ length: 255 }).notNull(),
     profileImgUrl: text(),

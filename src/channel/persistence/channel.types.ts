@@ -16,7 +16,7 @@ export type ChannelEntCreation = ChannelDef;
 export interface ChannelEntUpdate {
   id: string;
   form: {
-    ptype?: PlatformType;
+    platform?: PlatformType;
     pid?: string;
     username?: string;
     profileImgUrl?: string | null;

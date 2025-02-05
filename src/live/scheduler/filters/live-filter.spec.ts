@@ -5,14 +5,14 @@ import { getFetcher } from '../../helpers/utils.js';
 import { getConf } from '../../../common/helpers.js';
 
 const [, query] = getConf();
-const ptype: PlatformType = 'chzzk';
+const platform: PlatformType = 'chzzk';
 
 it('test filtered', async () => {
   const fetcher = getFetcher();
   const filter = new ChzzkLiveFilter(query, fetcher);
   // const filter = new SoopLiveFilter(query, fetcher);
 
-  const infos = await fetcher.fetchLives(ptype);
+  const infos = await fetcher.fetchLives(platform);
   const filtered = await filter.getFiltered(infos);
 
   for (const info of filtered) {

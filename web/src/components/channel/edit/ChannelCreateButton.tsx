@@ -39,7 +39,7 @@ import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 
 const FormSchema = z.object({
-  ptype: z.enum(PLATFORM_TYPES),
+  platform: z.enum(PLATFORM_TYPES),
   pid: z.string().nonempty(),
   priority: z.enum(CHANNEL_PRIORITIES),
   description: z.string(),
@@ -72,7 +72,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      ptype: 'chzzk',
+      platform: 'chzzk',
       pid: '',
       priority: 'none',
       description: '',
@@ -117,7 +117,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
         />
         <FormField
           control={form.control}
-          name="ptype"
+          name="platform"
           render={({ field }) => (
             <FormItem css={formItemStyle}>
               <FormLabel>Type</FormLabel>

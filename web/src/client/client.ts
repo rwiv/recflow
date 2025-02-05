@@ -15,14 +15,14 @@ export async function fetchLives() {
   return (await res.json()) as LiveRecord[];
 }
 
-export async function createLive(uid: string, ptype: PlatformType) {
-  const url = `${configs.endpoint}/api/lives/${ptype}/${uid}`;
+export async function createLive(uid: string, platform: PlatformType) {
+  const url = `${configs.endpoint}/api/lives/${platform}/${uid}`;
   const res = await fetch(url, { method: 'POST' });
   return (await res.json()) as LiveRecord;
 }
 
-export async function deleteLive(uid: string, ptype: PlatformType, cmd: ExitCmd) {
-  const url = `${configs.endpoint}/api/lives/${ptype}/${uid}?cmd=${cmd}`;
+export async function deleteLive(uid: string, platform: PlatformType, cmd: ExitCmd) {
+  const url = `${configs.endpoint}/api/lives/${platform}/${uid}?cmd=${cmd}`;
   const res = await fetch(url, { method: 'DELETE' });
   return (await res.json()) as LiveRecord;
 }

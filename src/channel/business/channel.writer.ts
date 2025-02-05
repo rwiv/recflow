@@ -39,13 +39,13 @@ export class ChannelWriter {
 
   async createWithFetch(req: ChannelCreation): Promise<ChannelRecord> {
     req = this.validator.validateCreate(req);
-    const info = assertNotNull(await this.fetcher.fetchChannel(req.ptype, req.pid, false));
+    const info = assertNotNull(await this.fetcher.fetchChannel(req.platform, req.pid, false));
     const reqEnt: ChannelEntCreation = {
-      ptype: info.ptype,
       pid: info.pid,
       username: info.username,
       profileImgUrl: info.profileImgUrl,
       followerCnt: info.followerCnt,
+      platform: info.platform,
       priority: req.priority,
       description: req.description,
     };

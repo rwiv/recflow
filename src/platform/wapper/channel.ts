@@ -4,11 +4,11 @@ import { SoopChannelInfo } from '../raw/soop.js';
 import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
 
 export interface ChannelBase {
-  ptype: PlatformType;
   pid: string;
   username: string;
   profileImgUrl: string | null;
   followerCnt: number;
+  platform: PlatformType;
 }
 
 export interface ChannelInfo extends ChannelBase {
@@ -27,7 +27,7 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
     profileImgUrl = null;
   }
   return {
-    ptype: 'chzzk',
+    platform: 'chzzk',
     pid: info.channelId,
     username: info.channelName,
     profileImgUrl,
@@ -48,7 +48,7 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
     profileImgUrl = null;
   }
   return {
-    ptype: 'soop',
+    platform: 'soop',
     pid: info.userId,
     username: info.userNick,
     profileImgUrl,

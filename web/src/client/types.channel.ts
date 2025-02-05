@@ -3,11 +3,11 @@ import { ChannelPriority, PlatformType } from '@/client/types.common.ts';
 
 export interface ChannelRecord {
   id: string;
-  ptype: PlatformType;
   pid: string;
   username: string;
   profileImgUrl: string | null;
   followerCnt: number;
+  platform: PlatformType;
   description: string | null;
   priority: ChannelPriority;
   createdAt: Date;
@@ -17,11 +17,11 @@ export interface ChannelRecord {
 
 export interface ChannelRecord {
   id: string;
-  ptype: PlatformType;
   pid: string;
   username: string;
   profileImgUrl: string | null;
   followerCnt: number;
+  platform: PlatformType;
   description: string | null;
   priority: ChannelPriority;
   createdAt: Date;
@@ -30,8 +30,8 @@ export interface ChannelRecord {
 }
 
 export interface ChannelCreation {
-  ptype: PlatformType;
   pid: string;
+  platform: PlatformType;
   description: string | null;
   priority: ChannelPriority;
   tagNames: string[];
@@ -40,8 +40,8 @@ export interface ChannelCreation {
 export interface ChannelUpdate {
   id: string;
   form: {
-    ptype?: PlatformType;
     pid?: string;
+    platform?: PlatformType;
     description?: string | null;
     priority?: ChannelPriority;
   };

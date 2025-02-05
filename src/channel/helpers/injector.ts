@@ -35,9 +35,9 @@ export class TestChannelInjector {
       const req: ChannelEntCreation = {
         username: info.username,
         profileImgUrl: info.profileImgUrl,
-        ptype: info.ptype,
         pid: info.pid,
         followerCnt: info.followerCnt,
+        platform: info.platform,
         priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
         description: faker.lorem.sentence(),
       };

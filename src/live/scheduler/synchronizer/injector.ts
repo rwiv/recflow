@@ -8,7 +8,7 @@ import { LiveFilter } from '../filters/interface.js';
 
 export class LiveInjector extends Synchronizer {
   constructor(
-    private readonly ptype: PlatformType,
+    private readonly platform: PlatformType,
     private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
     private readonly liveService: TrackedLiveService,
@@ -20,9 +20,9 @@ export class LiveInjector extends Synchronizer {
   protected async check() {
     // --------------- check follow channels -------------------------------
     let channelIds: string[] = [];
-    if (this.ptype === 'chzzk') {
+    if (this.platform === 'chzzk') {
       channelIds = this.query.followChzzkChanIds;
-    } else if (this.ptype === 'soop') {
+    } else if (this.platform === 'soop') {
       channelIds = this.query.followSoopUserIds;
     }
     const promises = channelIds.map(async (userId) => {
@@ -35,7 +35,7 @@ export class LiveInjector extends Synchronizer {
     const untrackedLivedFollowChannels = (
       await Promise.all(
         untrackedFollowChannelIds.map((userId) =>
-          this.fetcher.fetchChannel(this.ptype, userId, false),
+          this.fetcher.fetchChannel(this.platform, userId, false),
         ),
       )
     )
@@ -43,7 +43,7 @@ export class LiveInjector extends Synchronizer {
       .filter((info) => info.openLive);
 
     for (const channel of untrackedLivedFollowChannels) {
-      const chanWithLiveInfo = await this.fetcher.fetchChannel(this.ptype, channel.pid, true);
+      const chanWithLiveInfo = await this.fetcher.fetchChannel(this.platform, channel.pid, true);
       if (!chanWithLiveInfo) throw Error('Not found channel');
       const live = chanWithLiveInfo.liveInfo;
       if (!live) throw Error('Not found Channel.liveInfo');
@@ -51,7 +51,7 @@ export class LiveInjector extends Synchronizer {
     }
 
     // --------------- check by query --------------------------------------
-    const queriedLives = await this.fetcher.fetchLives(this.ptype);
+    const queriedLives = await this.fetcher.fetchLives(this.platform);
     const filtered = await this.filter.getFiltered(queriedLives);
 
     // add new lives
@@ -71,7 +71,7 @@ export class LiveInjector extends Synchronizer {
    */
   private async isToBeAdded(newInfo: LiveInfo) {
     if (await this.liveService.get(newInfo.channelId, { includeDeleted: true })) return null;
-    const channel = await this.fetcher.fetchChannel(this.ptype, newInfo.channelId, false);
+    const channel = await this.fetcher.fetchChannel(this.platform, newInfo.channelId, false);
     if (!channel?.openLive) return null;
     return newInfo;
   }

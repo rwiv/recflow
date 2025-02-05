@@ -6,7 +6,7 @@ export function mockChannel(
   followerCnt: number = 10,
 ): ChannelEntCreation {
   return {
-    ptype: 'chzzk',
+    platform: 'chzzk',
     pid: `chzzk${n}`,
     username: `user${n}`,
     profileImgUrl: 'http://example.com',

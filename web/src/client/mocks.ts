@@ -39,11 +39,11 @@ export function mockNode(): NodeRecord {
 export function mockChannel(): ChannelRecord {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
-    ptype: randomElem(PLATFORM_TYPES),
     pid: faker.string.uuid().replace(/-/g, ''),
     username: faker.internet.username(),
     profileImgUrl: faker.image.avatar(),
     followerCnt: faker.number.int({ min: 10, max: 10000 }),
+    platform: randomElem(PLATFORM_TYPES),
     description: faker.lorem.sentence(),
     priority: randomElem(CHANNEL_PRIORITIES),
     createdAt: faker.date.anytime(),

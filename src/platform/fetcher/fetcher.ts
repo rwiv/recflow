@@ -12,10 +12,10 @@ export class PlatformFetcher {
     private readonly soopFetcher: SoopFetcher,
   ) {}
 
-  fetchLives(ptype: PlatformType): Promise<LiveInfo[]> {
-    if (ptype === 'chzzk') {
+  fetchLives(platform: PlatformType): Promise<LiveInfo[]> {
+    if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchLives();
-    } else if (ptype === 'soop') {
+    } else if (platform === 'soop') {
       return this.soopFetcher.fetchLives();
     } else {
       throw Error('Invalid PlatformType');
@@ -23,13 +23,13 @@ export class PlatformFetcher {
   }
 
   fetchChannel(
-    ptype: PlatformType,
+    platform: PlatformType,
     uid: string,
     hasLiveInfo: boolean,
   ): Promise<ChannelInfo | null> {
-    if (ptype === 'chzzk') {
+    if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchChannel(uid, hasLiveInfo);
-    } else if (ptype === 'soop') {
+    } else if (platform === 'soop') {
       return this.soopFetcher.fetchChannel(uid, hasLiveInfo);
     } else {
       throw Error('Invalid PlatformType');

@@ -7,7 +7,7 @@ import { NodeRecord } from '@/client/node.types.ts';
 import { fetchNodes } from '@/client/node.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { useEffect } from 'react';
-import { defaultPageState } from '@/hooks/channel.page.state.ts';
+import { defaultPageState } from '@/hooks/ChannelPageState.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export function NodesPage() {

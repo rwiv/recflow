@@ -16,6 +16,10 @@ export class ChannelQueryRepository {
     return oneNullable(await tx.select().from(channels).where(eq(channels.id, channelId)));
   }
 
+  async findByPid(pid: string, tx: Tx = db): Promise<ChannelEnt[]> {
+    return tx.select().from(channels).where(eq(channels.pid, pid));
+  }
+
   async findByUsername(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
     return tx.select().from(channels).where(eq(channels.username, username));
   }

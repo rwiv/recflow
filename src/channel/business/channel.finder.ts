@@ -28,6 +28,16 @@ export class ChannelFinder {
     };
   }
 
+  async findByPid(pid: string, withTags: boolean = false): Promise<ChannelRecord[]> {
+    const channels = await this.chanQuery.findByPid(pid);
+    return this.solveTags(channels, withTags);
+  }
+
+  async findByUsername(username: string, withTags: boolean = false): Promise<ChannelRecord[]> {
+    const channels = await this.chanQuery.findByUsername(username);
+    return this.solveTags(channels, withTags);
+  }
+
   async findByQuery(
     page: number,
     size: number,

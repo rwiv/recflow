@@ -7,7 +7,7 @@ import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { LIVES_QUERY_KEY } from '@/common/consts.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { useEffect } from 'react';
-import { defaultPageState } from '@/hooks/channel.page.state.ts';
+import { defaultPageState } from '@/hooks/ChannelPageState.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export function LivesPage() {

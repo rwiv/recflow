@@ -1,7 +1,6 @@
 import { ChannelPriority, ChannelSortType } from '@/common/enum.types.ts';
-import { checkType } from '@/lib/union.ts';
-import { CHANNEL_PRIORITIES, CHANNEL_SORT_TYPES } from '@/common/enum.consts.ts';
-import { CHANNELS_QUERY_KEY, DEFAULT_PAGE_SIZE } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
+import { ChannelPageStateBuilder } from '@/hooks/ChannelPageStateBuilder.ts';
 
 export class ChannelPageState {
   curPageNum: number;
@@ -9,6 +8,9 @@ export class ChannelPageState {
   priority: ChannelPriority | undefined;
   tagName: string | undefined;
   sorted: ChannelSortType | undefined;
+  pid: string | undefined;
+  username: string | undefined;
+  isSingle: boolean = false;
 
   constructor(builder: ChannelPageStateBuilder) {
     this.curPageNum = builder.curPageNum;
@@ -16,6 +18,9 @@ export class ChannelPageState {
     this.priority = builder.priority;
     this.tagName = builder.tagName;
     this.sorted = builder.sorted;
+    this.pid = builder.pid;
+    this.username = builder.username;
+    this.isSingle = builder.isSingle;
   }
 
   new() {
@@ -39,6 +44,16 @@ export class ChannelPageState {
 
   toQueryString(): string {
     const params = new URLSearchParams();
+    if (this.isSingle) {
+      if (this.pid) {
+        params.set('pid', this.pid);
+      }
+      if (this.username) {
+        params.set('uname', this.username);
+      }
+      return params.toString();
+    }
+
     params.set('p', this.curPageNum.toString());
     params.set('s', this.pageSize.toString());
     if (this.priority) {
@@ -54,53 +69,16 @@ export class ChannelPageState {
   }
 
   queryKeys() {
-    return [CHANNELS_QUERY_KEY, this.curPageNum, this.priority, this.tagName, this.sorted];
-  }
-}
-
-export class ChannelPageStateBuilder {
-  curPageNum: number = -1;
-  pageSize: number = DEFAULT_PAGE_SIZE;
-  priority: ChannelPriority | undefined;
-  tagName: string | undefined;
-  sorted: ChannelSortType | undefined;
-
-  setCurPageNum(curPageNum: number): this {
-    this.curPageNum = curPageNum;
-    return this;
-  }
-
-  setPageSize(pageSize: number): this {
-    this.pageSize = pageSize;
-    return this;
-  }
-
-  setPriority(priority: string | null | undefined): this {
-    this.priority = checkType(priority, CHANNEL_PRIORITIES);
-    return this;
-  }
-
-  setTagName(tagName: string | null | undefined): this {
-    if (tagName === null) {
-      return this;
-    }
-    this.tagName = tagName;
-    return this;
-  }
-
-  setSorted(sorted: string | null | undefined): this {
-    if (!sorted) {
-      this.sorted = 'latest';
-    }
-    this.sorted = checkType(sorted, CHANNEL_SORT_TYPES);
-    return this;
-  }
-
-  build(): ChannelPageState {
-    if (this.curPageNum === -1) {
-      throw new Error('curPageNum is not set');
-    }
-    return new ChannelPageState(this);
+    return [
+      CHANNELS_QUERY_KEY,
+      this.curPageNum,
+      this.priority,
+      this.tagName,
+      this.sorted,
+      this.pid,
+      this.username,
+      this.isSingle,
+    ];
   }
 }
 

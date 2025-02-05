@@ -11,7 +11,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
 import { DEFAULT_END_PAGE, DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
-import { ChannelPageState } from '@/hooks/channel.page.state.ts';
+import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
 
 interface ChannelTableProps {
@@ -27,6 +27,7 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
   });
 
   useEffect(() => {
+    if (pageState.isSingle) return;
     const newPageState = pageState.calculated(1);
     queryClient.prefetchQuery({
       queryKey: newPageState.queryKeys(),

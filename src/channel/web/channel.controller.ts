@@ -28,13 +28,22 @@ export class ChannelController {
 
   @Get('/')
   channels(
-    @Query('p', ParseIntPipe) page: number,
-    @Query('s', ParseIntPipe) size: number,
     @Query('st') sorted?: string,
     @Query('pri') priority?: string,
     @Query('tn') tagName?: string,
+    @Query('pid') pid?: string,
+    @Query('uname') username?: string,
+    @Query('p', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('s', new ParseIntPipe({ optional: true })) size?: number,
     @Query('wt', new ParseBoolPipe({ optional: true })) withTags?: boolean,
   ) {
+    if (pid) {
+      return this.chanFinder.findByPid(pid, withTags);
+    }
+    if (username) {
+      return this.chanFinder.findByUsername(username, withTags);
+    }
+
     if (!page || !size) {
       throw new Error('page and size must be provided');
     }

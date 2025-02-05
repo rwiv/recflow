@@ -35,10 +35,9 @@ export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) =>
   };
 
   const onKeydown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
-    if (ev.key === 'Enter') {
-      onAddTagName(input);
-      setInput('');
-    }
+    if (ev.key !== 'Enter') return;
+    onAddTagName(input);
+    setInput('');
   };
 
   return (

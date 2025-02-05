@@ -7,6 +7,7 @@ import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { PriorityUpdateDialog } from '@/components/channel/edit/PriorityUpdateDialog.tsx';
+import { Skeleton } from '@/components/ui/skeleton.tsx';
 
 export function ChannelRow({ channel }: { channel: ChannelRecord }) {
   return (
@@ -16,7 +17,9 @@ export function ChannelRow({ channel }: { channel: ChannelRecord }) {
           <a href={getChannelUrl(channel.platform, channel.pid)}>
             <Avatar className="w-9 h-9">
               <AvatarImage src={channel.profileImgUrl ?? ''} />
-              <AvatarFallback>None</AvatarFallback>
+              <AvatarFallback>
+                <Skeleton className="rounded-full" />
+              </AvatarFallback>
             </Avatar>
           </a>
           <div className="center ml-5 mr-1 font-medium">

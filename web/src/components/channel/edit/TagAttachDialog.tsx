@@ -23,7 +23,7 @@ import {
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
-import { CHANNELS_QUERY_KEY, TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { css } from '@emotion/react';
 import { attachTag } from '@/client/tag.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
@@ -70,10 +70,11 @@ export function AttachForm({ channel, cb }: { channel: ChannelRecord; cb: () => 
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await attachTag({ channelId: channel.id, tagName: data.tagName });
-    queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
-    if (pageState) {
-      queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
-    }
+    if (!pageState) return;
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: pageState.queryKeys() }),
+    ]);
     cb();
   }
 

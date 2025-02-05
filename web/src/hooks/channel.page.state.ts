@@ -1,7 +1,7 @@
 import { ChannelPriority, ChannelSortType } from '@/common/enum.types.ts';
 import { checkType } from '@/lib/union.ts';
 import { CHANNEL_PRIORITIES, CHANNEL_SORT_TYPES } from '@/common/enum.consts.ts';
-import { DEFAULT_PAGE_SIZE } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY, DEFAULT_PAGE_SIZE } from '@/common/consts.ts';
 
 export class ChannelPageState {
   curPageNum: number;
@@ -51,6 +51,10 @@ export class ChannelPageState {
       params.set('st', this.sorted);
     }
     return params.toString();
+  }
+
+  queryKeys() {
+    return [CHANNELS_QUERY_KEY, this.curPageNum, this.priority, this.tagName, this.sorted];
   }
 }
 

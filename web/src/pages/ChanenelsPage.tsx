@@ -2,7 +2,7 @@ import { ChannelTable } from '@/components/channel/ChannelTable.tsx';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { Link, useSearchParams } from 'react-router';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { ChannelPageStateBuilder } from '@/common/channel.page.ts';
+import { ChannelPageStateBuilder } from '@/hooks/channel.page.state.ts';
 import { DEFAULT_PAGE_NUMBER } from '@/common/consts.ts';
 import { useEffect } from 'react';
 

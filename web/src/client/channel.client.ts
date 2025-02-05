@@ -2,7 +2,7 @@ import { ChannelCreation, ChannelDefUpdate, ChannelRecord } from '@/client/chann
 import { configs } from '@/common/configs.ts';
 import { ChannelPriority } from '@/common/enum.types.ts';
 import { getIngredients } from '@/client/utils.ts';
-import { ChannelPageState } from '@/common/channel.page.ts';
+import { ChannelPageState } from '@/hooks/channel.page.state.ts';
 
 export async function fetchChannels(pageState: ChannelPageState, withTags = true) {
   const { curPageNum: p, pageSize: s, sorted: st, priority: pri, tagName: tn } = pageState;

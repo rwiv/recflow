@@ -34,7 +34,6 @@ import {
 import { Badge } from '@/components/ui/badge.tsx';
 import { CHANNEL_PRIORITIES, PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
-import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
@@ -87,9 +86,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await createChannel(data);
-    if (pageState) {
-      await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
-    }
+    if (!pageState) return;
+    await queryClient.invalidateQueries({ queryKey: pageState.queryKeys() });
     cb();
   }
 

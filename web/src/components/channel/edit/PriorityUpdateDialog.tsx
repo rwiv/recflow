@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/select.tsx';
 import { CHANNEL_PRIORITIES } from '@/common/enum.consts.ts';
 import { css } from '@emotion/react';
-import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { updateChannelPriority } from '@/client/channel.client.ts';
 import { ChannelRecord } from '@/client/channel.types.ts';
@@ -75,9 +74,8 @@ function CreateForm({ channel, cb }: { channel: ChannelRecord; cb: () => void })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await updateChannelPriority(channel.id, data.priority);
-    if (pageState) {
-      await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
-    }
+    if (!pageState) return;
+    await queryClient.invalidateQueries({ queryKey: pageState.queryKeys() });
     cb();
   }
 

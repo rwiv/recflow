@@ -2,12 +2,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
-import { CHANNELS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/consts.ts';
+import { NODES_QUERY_KEY } from '@/common/consts.ts';
 import { NodeRecord } from '@/client/node.types.ts';
 import { fetchNodes } from '@/client/node.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { useEffect } from 'react';
-import { defaultPageState } from '@/common/channel.page.ts';
+import { defaultPageState } from '@/hooks/channel.page.state.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export function NodesPage() {
@@ -23,12 +23,11 @@ export function NodesPage() {
   }, []);
 
   useEffect(() => {
-    if (pageState) {
-      queryClient.prefetchQuery({
-        queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum],
-        queryFn: () => fetchChannels(pageState),
-      });
-    }
+    if (!pageState) return;
+    queryClient.prefetchQuery({
+      queryKey: pageState.queryKeys(),
+      queryFn: () => fetchChannels(pageState),
+    });
   }, [pageState, queryClient]);
 
   return (

@@ -4,10 +4,10 @@ import { fetchLives } from '@/client/live.client.ts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
-import { CHANNELS_QUERY_KEY, LIVES_QUERY_KEY } from '@/common/consts.ts';
+import { LIVES_QUERY_KEY } from '@/common/consts.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { useEffect } from 'react';
-import { defaultPageState } from '@/common/channel.page.ts';
+import { defaultPageState } from '@/hooks/channel.page.state.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export function LivesPage() {
@@ -23,12 +23,11 @@ export function LivesPage() {
   }, []);
 
   useEffect(() => {
-    if (pageState) {
-      queryClient.prefetchQuery({
-        queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum],
-        queryFn: () => fetchChannels(pageState),
-      });
-    }
+    if (!pageState) return;
+    queryClient.prefetchQuery({
+      queryKey: pageState.queryKeys(),
+      queryFn: () => fetchChannels(pageState),
+    });
   }, [pageState, queryClient]);
 
   return (

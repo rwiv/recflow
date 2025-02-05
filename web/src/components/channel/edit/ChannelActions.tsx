@@ -14,7 +14,6 @@ import { ChannelRecord } from '@/client/channel.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { deleteChannel, updateChannelFollowed } from '@/client/channel.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 export function ChannelActions({ channel }: { channel: ChannelRecord }) {
@@ -34,9 +33,8 @@ export function ChannelActions({ channel }: { channel: ChannelRecord }) {
   };
 
   const refresh = async () => {
-    if (pageState) {
-      await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
-    }
+    if (!pageState) return;
+    await queryClient.invalidateQueries({ queryKey: pageState.queryKeys() });
   };
 
   return (

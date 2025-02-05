@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { TagRecord } from '@/client/tag.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { useRef } from 'react';
-import { CHANNELS_QUERY_KEY, TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { detachTag } from '@/client/tag.client.ts';
@@ -25,11 +25,12 @@ export function TagBadge({ tag, channel }: TagBadgeProps) {
   const { pageState } = useChannelPageStore();
 
   const onDetach = async () => {
+    if (!pageState) return;
     await detachTag({ channelId: channel.id, tagId: tag.id });
-    queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
-    if (pageState) {
-      queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
-    }
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] }),
+      queryClient.invalidateQueries({ queryKey: pageState.queryKeys() }),
+    ]);
   };
 
   return (

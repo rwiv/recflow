@@ -1,19 +1,35 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
-import { NODES_QUERY_KEY } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/consts.ts';
 import { NodeRecord } from '@/client/node.types.ts';
 import { fetchNodes } from '@/client/node.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { toQueryString } from '@/common/channel.page.ts';
+import { useEffect } from 'react';
+import { defaultPageState } from '@/common/channel.page.ts';
+import { fetchChannels } from '@/client/channel.client.ts';
 
 export function NodesPage() {
+  const queryClient = useQueryClient();
   const { data: nodes } = useQuery<NodeRecord[]>({
     queryKey: [NODES_QUERY_KEY],
     queryFn: fetchNodes,
   });
-  const { pageState } = useChannelPageStore();
+  const { pageState, setPageState } = useChannelPageStore();
+
+  useEffect(() => {
+    setPageState(defaultPageState());
+  }, []);
+
+  useEffect(() => {
+    if (pageState) {
+      queryClient.prefetchQuery({
+        queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum],
+        queryFn: () => fetchChannels(pageState),
+      });
+    }
+  }, [pageState, queryClient]);
 
   return (
     <div>
@@ -23,7 +39,7 @@ export function NodesPage() {
             <Link to="/">Lives</Link>
           </TabButton>
           <TabButton>
-            {pageState && <Link to={`/channels?${toQueryString(pageState)}`}>Channels</Link>}
+            {pageState && <Link to={`/channels?${pageState.toQueryString()}`}>Channels</Link>}
           </TabButton>
           <TabButton active>Nodes</TabButton>
         </TabList>

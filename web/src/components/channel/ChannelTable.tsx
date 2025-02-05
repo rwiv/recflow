@@ -11,7 +11,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
 import { CHANNELS_QUERY_KEY, DEFAULT_END_PAGE, DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
-import { changedPageState, ChannelPageState } from '@/common/channel.page.ts';
+import { ChannelPageState } from '@/common/channel.page.ts';
+import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
 
 interface ChannelTableProps {
   pageState: ChannelPageState;
@@ -20,11 +21,7 @@ interface ChannelTableProps {
 export function ChannelTable({ pageState }: ChannelTableProps) {
   const queryClient = useQueryClient();
 
-  const {
-    data: channels,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: channels, isLoading } = useQuery({
     queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum],
     queryFn: () => fetchChannels(pageState),
   });
@@ -32,16 +29,12 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
   useEffect(() => {
     queryClient.prefetchQuery({
       queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum + 1],
-      queryFn: () => fetchChannels(changedPageState(pageState, pageState.curPageNum + 1)),
+      queryFn: () => fetchChannels(pageState.calculated(1)),
     });
   }, [pageState, queryClient]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error</div>;
+    return <LoadingComponent />;
   }
 
   return (

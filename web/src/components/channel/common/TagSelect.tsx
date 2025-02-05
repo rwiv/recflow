@@ -22,9 +22,15 @@ interface TagSelectProps {
   onSelectCallback: (tag: TagRecord) => void;
   triggerClassName?: string;
   contentStyle?: SerializedStyles;
+  existsTags?: TagRecord[];
 }
 
-export function TagSelect({ onSelectCallback, triggerClassName, contentStyle }: TagSelectProps) {
+export function TagSelect({
+  onSelectCallback,
+  triggerClassName,
+  contentStyle,
+  existsTags,
+}: TagSelectProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [isTriggered, setIsTriggered] = useState(false);
@@ -75,7 +81,7 @@ export function TagSelect({ onSelectCallback, triggerClassName, contentStyle }: 
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags &&
-                tags.map((tag) => (
+                getUnownedTags(existsTags, tags).map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                     <Check
@@ -89,4 +95,12 @@ export function TagSelect({ onSelectCallback, triggerClassName, contentStyle }: 
       </PopoverContent>
     </Popover>
   );
+}
+
+function getUnownedTags(exists: TagRecord[] | undefined, reqTags: TagRecord[]): TagRecord[] {
+  if (!exists) {
+    return reqTags;
+  }
+  const tagSet = new Set(exists.map((tag) => tag.id));
+  return reqTags.filter((tag) => !tagSet.has(tag.id));
 }

@@ -8,10 +8,11 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { TagRecord } from '@/client/tag.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { useRef } from 'react';
-import { LIVES_QUERY_KEY, TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY, TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { detachTag } from '@/client/tag.client.ts';
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 interface TagBadgeProps {
   tag: TagRecord;
@@ -21,11 +22,14 @@ interface TagBadgeProps {
 export function TagBadge({ tag, channel }: TagBadgeProps) {
   const queryClient = useQueryClient();
   const detachRef = useRef<HTMLButtonElement>(null);
+  const { pageState } = useChannelPageStore();
 
   const onDetach = async () => {
     await detachTag({ channelId: channel.id, tagId: tag.id });
-    await queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
-    await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
+    queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
+    if (pageState) {
+      queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
+    }
   };
 
   return (

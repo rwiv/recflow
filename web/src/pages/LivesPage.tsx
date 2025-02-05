@@ -1,19 +1,35 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
 import { LiveRecord } from '@/client/live.types.ts';
 import { fetchLives } from '@/client/live.client.ts';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
-import { LIVES_QUERY_KEY } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY, LIVES_QUERY_KEY } from '@/common/consts.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { toQueryString } from '@/common/channel.page.ts';
+import { useEffect } from 'react';
+import { defaultPageState } from '@/common/channel.page.ts';
+import { fetchChannels } from '@/client/channel.client.ts';
 
 export function LivesPage() {
+  const queryClient = useQueryClient();
   const { data: lives } = useQuery<LiveRecord[]>({
     queryKey: [LIVES_QUERY_KEY],
     queryFn: fetchLives,
   });
-  const { pageState } = useChannelPageStore();
+  const { pageState, setPageState } = useChannelPageStore();
+
+  useEffect(() => {
+    setPageState(defaultPageState());
+  }, []);
+
+  useEffect(() => {
+    if (pageState) {
+      queryClient.prefetchQuery({
+        queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum],
+        queryFn: () => fetchChannels(pageState),
+      });
+    }
+  }, [pageState, queryClient]);
 
   return (
     <div>
@@ -21,7 +37,7 @@ export function LivesPage() {
         <TabList className="my-3">
           <TabButton active>Lives</TabButton>
           <TabButton>
-            {pageState && <Link to={`/channels?${toQueryString(pageState)}`}>Channels</Link>}
+            {pageState && <Link to={`/channels?${pageState.toQueryString()}`}>Channels</Link>}
           </TabButton>
           <TabButton>
             <Link to="/nodes">Nodes</Link>

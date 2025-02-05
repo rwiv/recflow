@@ -7,7 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination.tsx';
-import { changedPageState, ChannelPageState, toQueryString } from '@/common/channel.page.ts';
+import { ChannelPageState } from '@/common/channel.page.ts';
 
 interface PageNavigationProps {
   pageState: ChannelPageState;
@@ -23,7 +23,7 @@ export function PageNavigation({ pageState: page, paginationSize, endPage }: Pag
         <PaginationItem>
           <PaginationPrevious
             className={page.curPageNum === 1 ? disabledCn : ''}
-            href={`/#/channels?${toQueryString(changedPageState(page, page.curPageNum - 1))}`}
+            href={`/#/channels?${page.calculated(-1).toQueryString()}`}
           />
         </PaginationItem>
         {getPagination(page.curPageNum, paginationSize, endPage).map((num, idx) => {
@@ -37,7 +37,7 @@ export function PageNavigation({ pageState: page, paginationSize, endPage }: Pag
           return (
             <PaginationItem key={idx}>
               <PaginationLink
-                href={`/#/channels?${toQueryString(changedPageState(page, num))}`}
+                href={`/#/channels?${page.withNewPageNum(num).toQueryString()}`}
                 isActive={num === page.curPageNum}
               >
                 {num}
@@ -48,7 +48,7 @@ export function PageNavigation({ pageState: page, paginationSize, endPage }: Pag
         <PaginationItem>
           <PaginationNext
             className={page.curPageNum === endPage ? disabledCn : ''}
-            href={`/#/channels?${toQueryString(changedPageState(page, page.curPageNum + 1))}`}
+            href={`/#/channels?${page.calculated(1).toQueryString()}`}
           />
         </PaginationItem>
       </PaginationContent>

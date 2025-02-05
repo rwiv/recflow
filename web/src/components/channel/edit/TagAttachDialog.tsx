@@ -23,14 +23,22 @@ import {
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
-import { TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY, TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { css } from '@emotion/react';
+import { attachTag } from '@/client/tag.client.ts';
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { ChannelRecord } from '@/client/channel.types.ts';
+
+interface TagAttachDialogProps {
+  channel: ChannelRecord;
+  triggerRef: RefObject<HTMLButtonElement>;
+}
 
 const FormSchema = z.object({
   tagName: z.string().nonempty(),
 });
 
-export function TagAttachDialog({ triggerRef }: { triggerRef: RefObject<HTMLButtonElement> }) {
+export function TagAttachDialog({ channel, triggerRef }: TagAttachDialogProps) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
     <Dialog>
@@ -42,15 +50,17 @@ export function TagAttachDialog({ triggerRef }: { triggerRef: RefObject<HTMLButt
           <DialogTitle>Update Channel Priority</DialogTitle>
           <DialogDescription>Click save when you're done.</DialogDescription>
         </DialogHeader>
-        <AttachForm cb={() => closeBtnRef.current?.click()} />
+        <AttachForm channel={channel} cb={() => closeBtnRef.current?.click()} />
         <DialogClose ref={closeBtnRef} />
       </DialogContent>
     </Dialog>
   );
 }
 
-export function AttachForm({ cb }: { cb: () => void }) {
+export function AttachForm({ channel, cb }: { channel: ChannelRecord; cb: () => void }) {
   const queryClient = useQueryClient();
+  const { pageState } = useChannelPageStore();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -59,9 +69,11 @@ export function AttachForm({ cb }: { cb: () => void }) {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    // await createChannel(data);
-    await queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
+    await attachTag({ channelId: channel.id, tagName: data.tagName });
+    queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
+    if (pageState) {
+      queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
+    }
     cb();
   }
 
@@ -79,6 +91,7 @@ export function AttachForm({ cb }: { cb: () => void }) {
                   triggerClassName="w-full"
                   contentStyle={css({ width: '25rem' })}
                   onSelectCallback={(tag) => form.setValue('tagName', tag.name)}
+                  existsTags={channel.tags}
                 />
               </FormControl>
               <FormMessage />

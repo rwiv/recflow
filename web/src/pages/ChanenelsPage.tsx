@@ -2,7 +2,7 @@ import { ChannelTable } from '@/components/channel/ChannelTable.tsx';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { Link, useSearchParams } from 'react-router';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { createChannelPageState } from '@/common/channel.page.ts';
+import { ChannelPageStateBuilder } from '@/common/channel.page.ts';
 import { DEFAULT_PAGE_NUMBER } from '@/common/consts.ts';
 import { useEffect } from 'react';
 
@@ -38,6 +38,7 @@ export function ChannelsPage() {
 
 function getPageState(params: URLSearchParams) {
   let page = DEFAULT_PAGE_NUMBER;
+  const builder = new ChannelPageStateBuilder();
   const pageStr = params.get('p');
   if (pageStr !== null) {
     const parsed = parseInt(pageStr, 10);
@@ -45,8 +46,9 @@ function getPageState(params: URLSearchParams) {
       page = parsed;
     }
   }
-  const sorted = params.get('st');
-  const priority = params.get('pri');
-  const tagName = params.get('tn');
-  return createChannelPageState(page, priority, tagName, sorted);
+  builder.setCurPageNum(page);
+  builder.setSorted(params.get('st'));
+  builder.setPriority(params.get('pri'));
+  builder.setTagName(params.get('tn'));
+  return builder.build();
 }

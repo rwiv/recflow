@@ -22,5 +22,5 @@ export async function attachTag(req: TagEntAttachment) {
 export async function detachTag(req: TagEntDetachment) {
   const url = `${configs.endpoint}/api/channels/tags/detach`;
   const { method, headers, body } = getIngredients('PATCH', req);
-  return (await (await fetch(url, { method, headers, body })).json()) as TagRecord;
+  return fetch(url, { method, headers, body });
 }

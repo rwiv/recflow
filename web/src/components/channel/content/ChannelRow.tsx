@@ -6,7 +6,7 @@ import { prettyDate } from '@/lib/date.ts';
 import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
 import { ChannelRecord } from '@/client/channel.types.ts';
-import { PriorityUpdate } from '@/components/channel/edit/PriorityUpdate.tsx';
+import { PriorityUpdateDialog } from '@/components/channel/edit/PriorityUpdateDialog.tsx';
 
 export function ChannelRow({ channel }: { channel: ChannelRecord }) {
   return (
@@ -28,11 +28,11 @@ export function ChannelRow({ channel }: { channel: ChannelRecord }) {
         </div>
       </TableCell>
       <TableCell>
-        <PriorityUpdate>
+        <PriorityUpdateDialog channel={channel}>
           <button className="uppercase">
             <Badge variant="default">{channel.priority}</Badge>
           </button>
-        </PriorityUpdate>
+        </PriorityUpdateDialog>
       </TableCell>
       <TableCell>
         <div className="flex flex-row flex-wrap items-center gap-1.5">
@@ -50,7 +50,7 @@ export function ChannelRow({ channel }: { channel: ChannelRecord }) {
       </TableCell>
       <TableCell>
         <div className="justify-self-end mr-8">
-          <ChannelActions />
+          <ChannelActions channel={channel} />
         </div>
       </TableCell>
     </TableRow>

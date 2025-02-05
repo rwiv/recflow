@@ -69,7 +69,7 @@ export class ChannelController {
     return this.chanUpdater.updateDescription(req.id, assertNotNull(req.form?.description));
   }
 
-  @Delete('/{channelId}')
+  @Delete('/:channelId')
   deleteChannel(@Param('channelId') channelId: string) {
     return this.chanWriter.delete(channelId);
   }

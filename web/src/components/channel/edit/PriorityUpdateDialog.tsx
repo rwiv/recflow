@@ -32,12 +32,20 @@ import { CHANNEL_PRIORITIES } from '@/common/enum.consts.ts';
 import { css } from '@emotion/react';
 import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { updateChannelPriority } from '@/client/channel.client.ts';
+import { ChannelRecord } from '@/client/channel.types.ts';
 
 const FormSchema = z.object({
   priority: z.enum(CHANNEL_PRIORITIES),
 });
 
-export function PriorityUpdate({ children }: { children: ReactNode }) {
+export function PriorityUpdateDialog({
+  channel,
+  children,
+}: {
+  channel: ChannelRecord;
+  children: ReactNode;
+}) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
     <Dialog>
@@ -47,26 +55,26 @@ export function PriorityUpdate({ children }: { children: ReactNode }) {
           <DialogTitle>Update Channel Priority</DialogTitle>
           <DialogDescription>Click save when you're done.</DialogDescription>
         </DialogHeader>
-        <CreateForm cb={() => closeBtnRef?.current?.click()} />
+        <CreateForm channel={channel} cb={() => closeBtnRef?.current?.click()} />
         <DialogClose ref={closeBtnRef} />
       </DialogContent>
     </Dialog>
   );
 }
 
-function CreateForm({ cb }: { cb: () => void }) {
+function CreateForm({ channel, cb }: { channel: ChannelRecord; cb: () => void }) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      priority: 'none',
+      priority: channel.priority,
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    // await createLive(data.uid, data.type);
+    await updateChannelPriority(channel.id, data.priority);
     if (pageState) {
       await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
     }

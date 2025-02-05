@@ -4,17 +4,41 @@ import { LiveInfo } from '../../platform/wapper/live.js';
 import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ExitCmd } from '../event/types.js';
+import { LiveScheduler } from '../scheduler/scheduler.js';
 
 @Controller('/api/lives')
 export class LiveController {
   constructor(
     private readonly liveService: TrackedLiveService,
     private readonly fetcher: PlatformFetcher,
+    private readonly scheduler: LiveScheduler,
   ) {}
 
   @Get('/')
   allActives(): Promise<LiveInfo[]> {
     return this.liveService.findAllActives();
+  }
+
+  @Get('/all')
+  all(): Promise<LiveInfo[]> {
+    return this.liveService.findAll();
+  }
+
+  @Get('/schedule/stat')
+  scheduled() {
+    return {
+      status: this.scheduler.isObserving,
+    };
+  }
+
+  @Post('/schedule/start')
+  startSchedule(): void {
+    this.scheduler.run();
+  }
+
+  @Post('/schedule/stop')
+  stopSchedule(): void {
+    this.scheduler.stop();
   }
 
   @Get('/nodes')
@@ -25,11 +49,6 @@ export class LiveController {
   @Post('/nodes/sync')
   async nodesSync(): Promise<void> {
     return this.liveService.syncNodes();
-  }
-
-  @Get('/all')
-  all(): Promise<LiveInfo[]> {
-    return this.liveService.findAll();
   }
 
   @Delete('/purge')

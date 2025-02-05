@@ -7,6 +7,7 @@ export interface RedisConfig {
 export interface AmqpConfig {
   host: string;
   port: number;
+  httpPort: number;
   username: string;
   password: string;
 }

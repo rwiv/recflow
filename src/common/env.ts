@@ -75,11 +75,13 @@ export function readEnv(): Env {
   // amqp
   const amqpHost = process.env.AMQP_HOST;
   const amqpPortStr = process.env.AMQP_PORT;
+  const qmpHttpPortStr = process.env.AMQP_HTTP_PORT;
   const amqpUsername = process.env.AMQP_USERNAME;
   const amqpPassword = process.env.AMQP_PASSWORD;
   if (
     amqpHost === undefined ||
     amqpPortStr === undefined ||
+    qmpHttpPortStr === undefined ||
     amqpUsername === undefined ||
     amqpPassword === undefined
   ) {
@@ -87,9 +89,12 @@ export function readEnv(): Env {
   }
   const amqpPort = parseInt(amqpPortStr);
   if (isNaN(amqpPort)) throw Error('amqpPort is NaN');
+  const amqpHttpPort = parseInt(qmpHttpPortStr);
+  if (isNaN(amqpHttpPort)) throw Error('amqpHttpPort is NaN');
   const amqp: AmqpConfig = {
     host: amqpHost,
     port: amqpPort,
+    httpPort: amqpHttpPort,
     username: amqpUsername,
     password: amqpPassword,
   };

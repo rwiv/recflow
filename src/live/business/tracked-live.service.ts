@@ -12,7 +12,7 @@ import { ExitCmd } from '../event/types.js';
 import { ChannelWriter } from '../../channel/business/channel.writer.js';
 
 export interface DeleteOptions {
-  isPurge?: boolean;
+  purge?: boolean;
   exitCmd?: ExitCmd;
 }
 
@@ -83,15 +83,15 @@ export class TrackedLiveService {
     if (exitCmd === undefined) {
       exitCmd = 'delete';
     }
-    let isPurge = opts.isPurge;
-    if (isPurge === undefined) {
-      isPurge = false;
+    let purge = opts.purge;
+    if (purge === undefined) {
+      purge = false;
     }
 
     const record = await this.get(id, { includeDeleted: true });
     if (!record) throw Error(`Not found liveRecord: ${id}`);
 
-    if (!isPurge) {
+    if (!purge) {
       if (record.isDeleted) throw Error(`Already deleted: ${id}`);
       record.isDeleted = true;
       record.deletedAt = new Date().toISOString();
@@ -111,7 +111,7 @@ export class TrackedLiveService {
 
   async purgeAll() {
     const records = await this.findAllDeleted();
-    const promises = records.map((it) => this.delete(it.channelId, { isPurge: true }));
+    const promises = records.map((it) => this.delete(it.channelId, { purge: true }));
     return Promise.all(promises);
   }
 

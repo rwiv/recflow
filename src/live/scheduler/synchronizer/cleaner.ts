@@ -20,7 +20,7 @@ export class LiveCleaner extends Synchronizer {
     ).filter((live) => live !== null);
 
     for (const live of toBeDeletedLives) {
-      await this.liveService.delete(live.channelId, { isPurge: true });
+      await this.liveService.delete(live.channelId, { purge: true });
     }
   }
 

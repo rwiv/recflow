@@ -12,8 +12,9 @@ import { LiveRefresher } from './synchronizer/refresher.js';
 
 @Injectable()
 export class LiveScheduler {
-  private curInterval: NodeJS.Timeout | undefined;
-  private isObserving: boolean = false;
+  isObserving: boolean = false;
+
+  private intervals: NodeJS.Timeout[] = [];
 
   private readonly chzzkCleaner: LiveCleaner;
   private readonly soopCleaner: LiveCleaner;
@@ -44,17 +45,9 @@ export class LiveScheduler {
     this.clean();
     this.refresh();
 
-    this.curInterval = setInterval(() => {
-      this.inject();
-    }, DEFAULT_INJECT_CYCLE);
-
-    this.curInterval = setInterval(() => {
-      this.clean();
-    }, DEFAULT_CLEAN_CYCLE);
-
-    this.curInterval = setInterval(() => {
-      this.refresh();
-    }, DEFAULT_REFRESH_CYCLE);
+    this.intervals.push(setInterval(() => this.inject(), DEFAULT_INJECT_CYCLE));
+    this.intervals.push(setInterval(() => this.clean(), DEFAULT_CLEAN_CYCLE));
+    this.intervals.push(setInterval(() => this.refresh(), DEFAULT_REFRESH_CYCLE));
 
     this.isObserving = true;
   }
@@ -74,8 +67,10 @@ export class LiveScheduler {
   }
 
   stop() {
-    clearInterval(this.curInterval);
-    this.curInterval = undefined;
+    for (const interval of this.intervals) {
+      clearInterval(interval);
+    }
+    this.intervals = [];
     this.isObserving = false;
   }
 }

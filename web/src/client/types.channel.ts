@@ -8,22 +8,9 @@ export interface ChannelRecord {
   profileImgUrl: string | null;
   followerCnt: number;
   platform: PlatformType;
-  description: string | null;
   priority: ChannelPriority;
-  createdAt: Date;
-  updatedAt: Date;
-  tags?: TagRecord[];
-}
-
-export interface ChannelRecord {
-  id: string;
-  pid: string;
-  username: string;
-  profileImgUrl: string | null;
-  followerCnt: number;
-  platform: PlatformType;
+  followed: boolean;
   description: string | null;
-  priority: ChannelPriority;
   createdAt: Date;
   updatedAt: Date;
   tags?: TagRecord[];
@@ -32,8 +19,9 @@ export interface ChannelRecord {
 export interface ChannelCreation {
   pid: string;
   platform: PlatformType;
-  description: string | null;
   priority: ChannelPriority;
+  followed: boolean;
+  description: string | null;
   tagNames: string[];
 }
 

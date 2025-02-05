@@ -11,7 +11,8 @@ export function mockChannel(
     username: `user${n}`,
     profileImgUrl: 'http://example.com',
     followerCnt,
-    description: '',
     priority,
+    followed: false,
+    description: '',
   };
 }

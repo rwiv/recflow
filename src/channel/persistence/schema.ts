@@ -1,4 +1,5 @@
 import {
+  boolean,
   char,
   index,
   integer,
@@ -24,8 +25,9 @@ export const channels = pgTable(
     username: varchar({ length: 255 }).notNull(),
     profileImgUrl: text(),
     followerCnt: integer().notNull(),
-    description: text(),
     priority: channelPriorityEnum().notNull(),
+    followed: boolean().notNull(),
+    description: text(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
   },

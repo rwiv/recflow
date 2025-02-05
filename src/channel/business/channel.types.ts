@@ -12,8 +12,9 @@ export interface ChannelRecord extends ChannelDef {
 export interface ChannelCreation {
   pid: string;
   platform: PlatformType;
-  description: string | null;
   priority: ChannelPriority;
+  followed: boolean;
+  description: string | null;
   tagNames: string[];
 }
 
@@ -22,8 +23,9 @@ export interface ChannelUpdate {
   form: {
     pid?: string;
     platform?: PlatformType;
-    description?: string | null;
     priority?: ChannelPriority;
+    followed?: boolean;
+    description?: string | null;
   };
   tagNames?: string[];
 }

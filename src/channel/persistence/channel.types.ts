@@ -8,6 +8,7 @@ export type ChannelPriority = 'must' | 'should' | 'may' | 'review' | 'skip' | 'n
 
 export interface ChannelDef extends ChannelBase {
   priority: ChannelPriority;
+  followed: boolean;
   description: string | null;
 }
 
@@ -21,7 +22,8 @@ export interface ChannelEntUpdate {
     username?: string;
     profileImgUrl?: string | null;
     followerCount?: number;
-    description?: string | null;
     priority?: ChannelPriority;
+    followed?: boolean;
+    description?: string | null;
   };
 }

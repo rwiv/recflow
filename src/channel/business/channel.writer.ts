@@ -47,6 +47,7 @@ export class ChannelWriter {
       followerCnt: info.followerCnt,
       platform: info.platform,
       priority: req.priority,
+      followed: req.followed,
       description: req.description,
     };
     return db.transaction(async (txx) => {

@@ -39,6 +39,7 @@ export class TestChannelInjector {
         followerCnt: info.followerCnt,
         platform: info.platform,
         priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
+        followed: randomElem([true, false]),
         description: faker.lorem.sentence(),
       };
 

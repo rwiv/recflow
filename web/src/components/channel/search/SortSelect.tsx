@@ -7,16 +7,27 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
+import { useNavigate } from 'react-router';
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 export function SortSelect() {
+  const navigate = useNavigate();
+  const { pageState } = useChannelPageStore();
+
+  const onChange = async (value: string) => {
+    if (!pageState) return;
+    const newPageState = pageState.new().setSorted(value).build();
+    navigate(`/channels?${newPageState.toQueryString()}`);
+  };
+
   return (
-    <Select defaultValue="updatedAy">
+    <Select defaultValue={pageState?.sorted ?? 'latest'} onValueChange={onChange}>
       <SelectTrigger css={css({ width: '10rem' })}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="updatedAy">Update Date</SelectItem>
+          <SelectItem value="latest">Update Date</SelectItem>
           <SelectItem value="followerCnt">Follower Count</SelectItem>
         </SelectGroup>
       </SelectContent>

@@ -17,6 +17,7 @@ import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { TagRecord } from '@/client/tag.types.ts';
 import { SerializedStyles } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 interface TagSelectProps {
   onSelectCallback: (tag: TagRecord) => void;
@@ -34,6 +35,7 @@ export function TagSelect({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [isTriggered, setIsTriggered] = useState(false);
+  const { pageState } = useChannelPageStore();
 
   const { data: tags } = useQuery({
     queryKey: [TAGS_QUERY_KEY],
@@ -60,6 +62,17 @@ export function TagSelect({
     }
   };
 
+  const getSelectedName = () => {
+    if (pageState?.tagName) {
+      return pageState.tagName;
+    }
+    if (tags && value) {
+      return tagMap.get(value)?.name;
+    } else {
+      return 'Select Tag...';
+    }
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -68,15 +81,15 @@ export function TagSelect({
           role="combobox"
           aria-expanded={open}
           onClick={onTrigger}
-          className={cn('w-[200px] justify-between', triggerClassName)}
+          className={cn('w-[200px] justify-between font-normal', triggerClassName)}
         >
-          {tags && value ? tagMap.get(value)?.name : 'Select Tag'}
+          {getSelectedName()}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" css={contentStyle}>
         <Command>
-          <CommandInput placeholder="Search Tag..." className="h-9" />
+          <CommandInput placeholder="Input Tag Name..." className="h-9" />
           <CommandList>
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>

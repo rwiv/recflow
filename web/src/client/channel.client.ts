@@ -4,10 +4,10 @@ import { ChannelPriority } from '@/common/enum.types.ts';
 import { getIngredients } from '@/client/utils.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 
-export async function fetchChannels(pageState: ChannelPageState, withTags = true) {
+export async function fetchChannels(pageState: ChannelPageState, withTags: boolean = true) {
   let qs = pageState.toQueryString();
   if (withTags) {
-    qs += '&withTags=true';
+    qs += '&wt=true';
   }
   const res = await fetch(`${configs.endpoint}/api/channels?${qs}`);
   return (await res.json()) as ChannelRecord[];

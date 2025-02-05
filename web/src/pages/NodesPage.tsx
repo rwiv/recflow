@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
@@ -6,8 +7,7 @@ import { NODES_QUERY_KEY } from '@/common/consts.ts';
 import { NodeRecord } from '@/client/node.types.ts';
 import { fetchNodes } from '@/client/node.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { useEffect } from 'react';
-import { defaultPageState } from '@/hooks/ChannelPageState.ts';
+import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export function NodesPage() {
@@ -19,7 +19,7 @@ export function NodesPage() {
   const { pageState, setPageState } = useChannelPageStore();
 
   useEffect(() => {
-    setPageState(defaultPageState());
+    setPageState(ChannelPageState.default());
   }, []);
 
   useEffect(() => {

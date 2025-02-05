@@ -35,7 +35,7 @@ export function KeywordSearchBar() {
     <div className="flex gap-2">
       <SearchCriteriaSelect criteria={criteria} setCriteria={setCriteria} />
       <Input
-        css={css({ width: '22rem' })}
+        css={css({ width: '20rem' })}
         value={input}
         onInput={(ev) => setInput(ev.currentTarget.value)}
         onKeyDown={onKeydown}
@@ -59,7 +59,7 @@ export function SearchCriteriaSelect({ criteria, setCriteria }: SearchCriteriaSe
 
   return (
     <Select defaultValue={criteria} onValueChange={onValueChange}>
-      <SelectTrigger css={css({ width: '9rem' })}>
+      <SelectTrigger css={css({ width: '8.5rem' })}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

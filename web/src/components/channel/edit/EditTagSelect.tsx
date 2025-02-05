@@ -47,9 +47,9 @@ export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) =>
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between"
+          className="w-full justify-between opacity-60 font-normal"
         >
-          Select Tag
+          Select Tags...
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>

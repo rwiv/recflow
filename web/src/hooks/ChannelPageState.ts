@@ -23,6 +23,10 @@ export class ChannelPageState {
     this.isSingle = builder.isSingle;
   }
 
+  static default() {
+    return new ChannelPageStateBuilder().setCurPageNum(1).setSorted('latest').build();
+  }
+
   new() {
     return new ChannelPageStateBuilder()
       .setCurPageNum(this.curPageNum)
@@ -80,8 +84,4 @@ export class ChannelPageState {
       this.isSingle,
     ];
   }
-}
-
-export function defaultPageState() {
-  return new ChannelPageStateBuilder().setCurPageNum(1).build();
 }

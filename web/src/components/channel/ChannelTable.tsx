@@ -2,7 +2,6 @@ import { TableContent } from '@/components/channel/content/TableContent.tsx';
 import { useEffect } from 'react';
 import { PageNavigation } from '@/components/channel/search/ChannelNavigation.tsx';
 import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
-import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { css } from '@emotion/react';
 import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.tsx';
@@ -13,6 +12,7 @@ import { DEFAULT_END_PAGE, DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
+import { TagQuerySelect } from '@/components/channel/search/TagQuerySelect.tsx';
 
 interface ChannelTableProps {
   pageState: ChannelPageState;
@@ -50,7 +50,7 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
         </div>
         <div className="flex gap-2">
           <PrioritySelect />
-          <TagSelect onSelectCallback={() => {}} />
+          <TagQuerySelect />
           <SortSelect />
           <Button variant="outline" css={css({ width: '5.5rem' })}>
             Refresh

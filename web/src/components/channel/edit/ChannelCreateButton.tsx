@@ -52,7 +52,7 @@ export function ChannelCreateButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="ml-1" css={css({ width: '5.5rem' })}>
+        <Button variant="secondary" className="ml-1" css={css({ width: '5.2rem' })}>
           Add
         </Button>
       </DialogTrigger>
@@ -124,7 +124,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
           name="platform"
           render={({ field }) => (
             <FormItem css={formItemStyle}>
-              <FormLabel>Type</FormLabel>
+              <FormLabel>Platform</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>

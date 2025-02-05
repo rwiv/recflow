@@ -10,19 +10,20 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { KeyboardEventHandler, useEffect, useState } from 'react';
-import { fetchTags } from '@/client/client.ts';
+import { KeyboardEventHandler, useState } from 'react';
 import { css } from '@emotion/react';
-import { TagRecord } from '@/client/types.tag.ts';
+import { fetchTags } from '@/client/tag.client.ts';
+import { useQuery } from '@tanstack/react-query';
+import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 
 export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) => void }) {
   const [open, setOpen] = useState(false);
-  const [tags, setTags] = useState<TagRecord[]>([]);
   const [input, setInput] = useState('');
 
-  useEffect(() => {
-    fetchTags().then(setTags);
-  }, []);
+  const { data: tags } = useQuery({
+    queryKey: [TAGS_QUERY_KEY],
+    queryFn: fetchTags,
+  });
 
   const onAddTagName = (tagName: string) => {
     addTagName(tagName);
@@ -65,11 +66,12 @@ export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) =>
           <CommandList>
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
-              {tags.map((tag) => (
-                <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
-                  {tag.name}
-                </CommandItem>
-              ))}
+              {tags &&
+                tags.map((tag) => (
+                  <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
+                    {tag.name}
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>

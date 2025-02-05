@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { baseColumnDef, createSelectColumn } from '@/components/common/table/column_utils.tsx';
-import { NodeRecord } from '@/client/types.node.ts';
+import { NodeRecord } from '@/client/node.types.ts';
 
 export const selectCid = 'select';
 export const nameCid = 'name';

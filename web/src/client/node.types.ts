@@ -1,4 +1,4 @@
-import { NodeType } from '@/client/types.common.ts';
+import { NodeType } from '@/common/types.ts';
 
 export interface NodeRecord {
   name: string;

@@ -1,5 +1,5 @@
-import { TagRecord } from '@/client/types.tag.ts';
-import { ChannelPriority, PlatformType } from '@/client/types.common.ts';
+import { TagRecord } from '@/client/tag.types.ts';
+import { ChannelPriority, PlatformType } from '@/common/types.ts';
 
 export interface ChannelRecord {
   id: string;
@@ -25,13 +25,11 @@ export interface ChannelCreation {
   tagNames: string[];
 }
 
-export interface ChannelUpdate {
+export interface ChannelDefUpdate {
   id: string;
   form: {
-    pid?: string;
-    platform?: PlatformType;
-    description?: string | null;
     priority?: ChannelPriority;
+    followed?: boolean;
+    description?: string | null;
   };
-  tagNames?: string[];
 }

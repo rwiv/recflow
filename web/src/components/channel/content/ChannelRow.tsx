@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { prettyDate } from '@/lib/date.ts';
 import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
-import { ChannelRecord } from '@/client/types.channel.ts';
+import { ChannelRecord } from '@/client/channel.types.ts';
 import { PriorityUpdate } from '@/components/channel/edit/PriorityUpdate.tsx';
 
 export function ChannelRow({ channel }: { channel: ChannelRecord }) {

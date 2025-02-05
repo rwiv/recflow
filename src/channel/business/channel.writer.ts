@@ -1,7 +1,7 @@
 import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
-import { ChannelCreation, ChannelRecord, ChannelUpdate } from './channel.types.js';
+import { ChannelCreation, ChannelRecord, ChannelRecordUpdate } from './channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
@@ -30,10 +30,7 @@ export class ChannelWriter {
       for (const tagName of reqTagNames) {
         tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
       }
-      return {
-        ...channel,
-        tags,
-      };
+      return { ...channel, tags };
     });
   }
 
@@ -64,7 +61,7 @@ export class ChannelWriter {
     });
   }
 
-  async update(req: ChannelUpdate): Promise<ChannelRecord> {
+  async update(req: ChannelRecordUpdate): Promise<ChannelRecord> {
     req = this.validator.validateUpdate(req);
     return db.transaction(async (txx) => {
       const channel = await this.chanCmd.update(req, txx);

@@ -34,9 +34,9 @@ import {
 import { Badge } from '@/components/ui/badge.tsx';
 import { CHANNEL_PRIORITIES, PLATFORM_TYPES } from '@/components/common/consts.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
-import { createChannel } from '@/client/client.ts';
 import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
+import { createChannel } from '@/client/channel.client.ts';
 
 const FormSchema = z.object({
   platform: z.enum(PLATFORM_TYPES),

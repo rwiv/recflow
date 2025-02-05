@@ -18,7 +18,16 @@ export interface ChannelCreation {
   tagNames: string[];
 }
 
-export interface ChannelUpdate {
+export interface ChannelDefUpdate {
+  id: string;
+  form: {
+    priority?: ChannelPriority;
+    followed?: boolean;
+    description?: string | null;
+  };
+}
+
+export interface ChannelRecordUpdate {
   id: string;
   form: {
     pid?: string;

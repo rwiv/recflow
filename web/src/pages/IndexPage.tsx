@@ -1,6 +1,6 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
-import { LiveRecord } from '@/client/types.live.ts';
-import { fetchLives } from '@/client/client.ts';
+import { LiveRecord } from '@/client/live.types.ts';
+import { fetchLives } from '@/client/live.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';

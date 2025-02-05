@@ -1,13 +1,13 @@
 import { Table } from '@tanstack/react-table';
-import { LiveRecord } from '@/client/types.live.ts';
+import { LiveRecord } from '@/client/live.types.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteLive } from '@/client/client.ts';
+import { deleteLive } from '@/client/live.client.ts';
 import { LiveCreateButton } from '@/components/live/tools/LiveCreateButton.tsx';
 import { ReactNode } from 'react';
 import { AlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { LIVES_QUERY_KEY } from '@/common/consts.ts';
-import { ExitCmd } from '@/client/types.common.ts';
+import { ExitCmd } from '@/common/types.ts';
 
 export function CommandTools({ table }: { table: Table<LiveRecord> }) {
   const queryClient = useQueryClient();

@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { createLive } from '@/client/client.ts';
+import { createLive } from '@/client/live.client.ts';
 import { useRef } from 'react';
 import {
   Dialog,

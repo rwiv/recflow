@@ -5,7 +5,7 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
-import { NodeRecord } from '@/client/types.node.ts';
+import { NodeRecord } from '@/client/node.types.ts';
 
 export function NodeTable({ data }: { data: NodeRecord[] }) {
   const table = useTable(data, nodeColumns);

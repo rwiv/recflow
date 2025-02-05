@@ -1,6 +1,5 @@
 import { TableContent } from '@/components/channel/content/TableContent.tsx';
 import { useEffect } from 'react';
-import { fetchChannels } from '@/client/client.ts';
 import { PageNavigation } from '@/components/common/layout/ChannelNavigation.tsx';
 import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
 import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
@@ -16,7 +15,8 @@ import {
   DEFAULT_PAGINATION_SIZE,
   PREFETCH_SIZE,
 } from '@/common/consts.ts';
-import { ChannelRecord } from '@/client/types.channel.ts';
+import { ChannelRecord } from '@/client/channel.types.ts';
+import { fetchChannels } from '@/client/channel.client.ts';
 
 export interface ChannelTableProps {
   page: number;

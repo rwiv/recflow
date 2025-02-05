@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { CHANNEL_PRIORITIES } from '@/components/common/consts.ts';
 import { css } from '@emotion/react';
-import {CHANNELS_QUERY_KEY} from "@/common/consts.ts";
+import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 
 const FormSchema = z.object({
   priority: z.enum(CHANNEL_PRIORITIES),

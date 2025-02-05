@@ -4,7 +4,7 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { LiveRecord } from '@/client/types.live.ts';
+import { LiveRecord } from '@/client/live.types.ts';
 import { assignedWebhookNameCid, liveColumns } from '@/components/live/liveColumns.tsx';
 import { CommandTools } from '@/components/live/tools/CommandTools.tsx';
 

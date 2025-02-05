@@ -4,7 +4,7 @@ import { dropAll } from '../../infra/db/utils.js';
 import { assertNotNull } from '../../utils/null.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
-import { ChannelUpdate } from './channel.types.js';
+import { ChannelRecordUpdate } from './channel.types.js';
 import { getChannelServies } from '../helpers/utils.js';
 
 const { chanFinder, chanWriter } = getChannelServies();
@@ -27,7 +27,7 @@ describe('ChannelService', () => {
 
   it('update', async () => {
     const channel = await chanWriter.create(mockChannel(1), ['tag1', 'tag2']);
-    const req: ChannelUpdate = {
+    const req: ChannelRecordUpdate = {
       id: channel.id,
       form: {
         description: 'new desc',

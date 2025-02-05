@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { useMemo, useState } from 'react';
-import { fetchTags } from '@/client/client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/consts.ts';
-import { TagRecord } from '@/client/types.tag.ts';
+import { TagRecord } from '@/client/tag.types.ts';
 import { SerializedStyles } from '@emotion/react';
+import { fetchTags } from '@/client/tag.client.ts';
 
 interface TagSelectProps {
   onSelectCallback: (tag: TagRecord) => void;

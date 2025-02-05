@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import { PLATFORM_TYPES } from '@/components/common/consts.ts';
+import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { LIVES_QUERY_KEY } from '@/common/consts.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 

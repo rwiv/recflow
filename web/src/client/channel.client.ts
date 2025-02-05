@@ -1,10 +1,21 @@
 import { ChannelCreation, ChannelDefUpdate, ChannelRecord } from '@/client/channel.types.ts';
 import { configs } from '@/common/configs.ts';
-import { ChannelPriority } from '@/common/types.ts';
+import { ChannelPriority } from '@/common/enum.types.ts';
 import { getIngredients } from '@/client/utils.ts';
+import { ChannelPageState } from '@/common/channel.page.ts';
 
-export async function fetchChannels(page: number, size: number = 10, withTags = true) {
-  const qs = `?p=${page}&s=${size}&wt=${withTags}`;
+export async function fetchChannels(pageState: ChannelPageState, withTags = true) {
+  const { curPageNum: p, pageSize: s, sorted: st, priority: pri, tagName: tn } = pageState;
+  let qs = `?p=${p}&s=${s}&wt=${withTags}`;
+  if (st) {
+    qs += `&st=${st}`;
+  }
+  if (pri) {
+    qs += `&pri=${pri}`;
+  }
+  if (tn) {
+    qs += `&tn=${tn}`;
+  }
   const res = await fetch(`${configs.endpoint}/api/channels${qs}`);
   return (await res.json()) as ChannelRecord[];
 }

@@ -32,11 +32,12 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { CHANNEL_PRIORITIES, PLATFORM_TYPES } from '@/components/common/consts.ts';
+import { CHANNEL_PRIORITIES, PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 const FormSchema = z.object({
   platform: z.enum(PLATFORM_TYPES),
@@ -70,6 +71,8 @@ export function ChannelCreateButton() {
 
 export function CreateForm({ cb }: { cb: () => void }) {
   const queryClient = useQueryClient();
+  const { pageState } = useChannelPageStore();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -84,7 +87,9 @@ export function CreateForm({ cb }: { cb: () => void }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     await createChannel(data);
-    await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY] });
+    if (pageState) {
+      await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
+    }
     cb();
   }
 

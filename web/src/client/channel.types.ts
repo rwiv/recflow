@@ -1,5 +1,5 @@
 import { TagRecord } from '@/client/tag.types.ts';
-import { ChannelPriority, PlatformType } from '@/common/types.ts';
+import { ChannelPriority, PlatformType } from '@/common/enum.types.ts';
 
 export interface ChannelRecord {
   id: string;

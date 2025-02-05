@@ -7,25 +7,26 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination.tsx';
+import { changedPageState, ChannelPageState, toQueryString } from '@/common/channel.page.ts';
 
 interface PageNavigationProps {
-  curPage: number;
-  size: number;
+  pageState: ChannelPageState;
+  paginationSize: number;
   endPage: number;
 }
 
-export function PageNavigation({ curPage, size, endPage }: PageNavigationProps) {
+export function PageNavigation({ pageState: page, paginationSize, endPage }: PageNavigationProps) {
   const disabledCn = 'pointer-events-none select-none opacity-50';
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            className={curPage === 1 ? disabledCn : ''}
-            href={`/#/channels?p=${curPage - 1}`}
+            className={page.curPageNum === 1 ? disabledCn : ''}
+            href={`/#/channels?${toQueryString(changedPageState(page, page.curPageNum - 1))}`}
           />
         </PaginationItem>
-        {getPagination(curPage, size, endPage).map((num, idx) => {
+        {getPagination(page.curPageNum, paginationSize, endPage).map((num, idx) => {
           if (num === -1) {
             return (
               <PaginationItem key={idx}>
@@ -35,7 +36,10 @@ export function PageNavigation({ curPage, size, endPage }: PageNavigationProps) 
           }
           return (
             <PaginationItem key={idx}>
-              <PaginationLink href={`/#/channels?p=${num}`} isActive={num === curPage}>
+              <PaginationLink
+                href={`/#/channels?${toQueryString(changedPageState(page, num))}`}
+                isActive={num === page.curPageNum}
+              >
                 {num}
               </PaginationLink>
             </PaginationItem>
@@ -43,8 +47,8 @@ export function PageNavigation({ curPage, size, endPage }: PageNavigationProps) 
         })}
         <PaginationItem>
           <PaginationNext
-            className={curPage === endPage ? disabledCn : ''}
-            href={`/#/channels?p=${curPage + 1}`}
+            className={page.curPageNum === endPage ? disabledCn : ''}
+            href={`/#/channels?${toQueryString(changedPageState(page, page.curPageNum + 1))}`}
           />
         </PaginationItem>
       </PaginationContent>

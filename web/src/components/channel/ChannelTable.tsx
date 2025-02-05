@@ -1,6 +1,6 @@
 import { TableContent } from '@/components/channel/content/TableContent.tsx';
 import { useEffect } from 'react';
-import { PageNavigation } from '@/components/common/layout/ChannelNavigation.tsx';
+import { PageNavigation } from '@/components/channel/search/ChannelNavigation.tsx';
 import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
 import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -11,13 +11,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
 import { CHANNELS_QUERY_KEY, DEFAULT_END_PAGE, DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
+import { changedPageState, ChannelPageState } from '@/common/channel.page.ts';
 
-export interface ChannelTableProps {
-  page: number;
-  size: number;
+interface ChannelTableProps {
+  pageState: ChannelPageState;
 }
 
-export function ChannelTable({ page, size }: ChannelTableProps) {
+export function ChannelTable({ pageState }: ChannelTableProps) {
   const queryClient = useQueryClient();
 
   const {
@@ -25,16 +25,16 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: [CHANNELS_QUERY_KEY, page],
-    queryFn: () => fetchChannels(page, size),
+    queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum],
+    queryFn: () => fetchChannels(pageState),
   });
 
   useEffect(() => {
     queryClient.prefetchQuery({
-      queryKey: [CHANNELS_QUERY_KEY, page + 1],
-      queryFn: () => fetchChannels(page + 1, size),
+      queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum + 1],
+      queryFn: () => fetchChannels(changedPageState(pageState, pageState.curPageNum + 1)),
     });
-  }, [page, queryClient]);
+  }, [pageState, queryClient]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -64,7 +64,11 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
       </div>
       <div className="rounded-md border">{channels && <TableContent channels={channels} />}</div>
       <div className="my-7">
-        <PageNavigation curPage={page} size={DEFAULT_PAGINATION_SIZE} endPage={DEFAULT_END_PAGE} />
+        <PageNavigation
+          pageState={pageState}
+          paginationSize={DEFAULT_PAGINATION_SIZE}
+          endPage={DEFAULT_END_PAGE}
+        />
       </div>
     </div>
   );

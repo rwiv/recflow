@@ -1,13 +1,18 @@
 import { ChannelTable } from '@/components/channel/ChannelTable.tsx';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { Link, useSearchParams } from 'react-router';
-
-const DEFAULT_PAGE_SIZE = 10;
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { createChannelPageState } from '@/common/channel.page.ts';
+import { DEFAULT_PAGE_NUMBER } from '@/common/consts.ts';
+import { useEffect } from 'react';
 
 export function ChannelsPage() {
   const [searchParams] = useSearchParams();
+  const { pageState, setPageState } = useChannelPageStore();
 
-  const page = convertToNumber(searchParams.get('p'), 1);
+  useEffect(() => {
+    setPageState(getPageState(searchParams));
+  }, [searchParams, setPageState]);
 
   return (
     <div>
@@ -22,20 +27,26 @@ export function ChannelsPage() {
           </TabButton>
         </TabList>
       </div>
-      <div className="mx-10 my-3">
-        <ChannelTable page={page} size={DEFAULT_PAGE_SIZE} />
-      </div>
+      {pageState && (
+        <div className="mx-10 my-3">
+          <ChannelTable pageState={pageState} />
+        </div>
+      )}
     </div>
   );
 }
 
-function convertToNumber(value: string | null, defaultValue: number): number {
-  if (value === null) {
-    return defaultValue;
+function getPageState(params: URLSearchParams) {
+  let page = DEFAULT_PAGE_NUMBER;
+  const pageStr = params.get('p');
+  if (pageStr !== null) {
+    const parsed = parseInt(pageStr, 10);
+    if (!isNaN(parsed)) {
+      page = parsed;
+    }
   }
-  const number = parseInt(value, 10);
-  if (isNaN(number)) {
-    return defaultValue;
-  }
-  return number;
+  const sorted = params.get('st');
+  const priority = params.get('pri');
+  const tagName = params.get('tn');
+  return createChannelPageState(page, priority, tagName, sorted);
 }

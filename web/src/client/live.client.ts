@@ -1,6 +1,6 @@
 import { LiveRecord } from '@/client/live.types.ts';
 import { configs } from '@/common/configs.ts';
-import { ExitCmd, PlatformType } from '@/common/types.ts';
+import { ExitCmd, PlatformType } from '@/common/enum.types.ts';
 
 export async function fetchLives() {
   const res = await fetch(`${configs.endpoint}/api/lives`);

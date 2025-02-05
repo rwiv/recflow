@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { LiveRecord } from '@/client/live.types.ts';
 import { randomElem } from '@/lib/list.ts';
-import { CHANNEL_PRIORITIES, NODE_PRIORITIES, PLATFORM_TYPES } from '@/components/common/consts.ts';
+import { CHANNEL_PRIORITIES, NODE_PRIORITIES, PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { TagRecord } from '@/client/tag.types.ts';
 import { NodeRecord } from '@/client/node.types.ts';

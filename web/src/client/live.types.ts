@@ -1,4 +1,4 @@
-import { PlatformType } from '@/common/types.ts';
+import { PlatformType } from '@/common/enum.types.ts';
 
 export interface LiveInfo {
   type: PlatformType;

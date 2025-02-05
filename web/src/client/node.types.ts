@@ -1,4 +1,4 @@
-import { NodeType } from '@/common/types.ts';
+import { NodeType } from '@/common/enum.types.ts';
 
 export interface NodeRecord {
   name: string;

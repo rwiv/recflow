@@ -28,9 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select.tsx';
-import { CHANNEL_PRIORITIES } from '@/components/common/consts.ts';
+import { CHANNEL_PRIORITIES } from '@/common/enum.consts.ts';
 import { css } from '@emotion/react';
 import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
+import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 const FormSchema = z.object({
   priority: z.enum(CHANNEL_PRIORITIES),
@@ -55,6 +56,8 @@ export function PriorityUpdate({ children }: { children: ReactNode }) {
 
 function CreateForm({ cb }: { cb: () => void }) {
   const queryClient = useQueryClient();
+  const { pageState } = useChannelPageStore();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -64,7 +67,9 @@ function CreateForm({ cb }: { cb: () => void }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     // await createLive(data.uid, data.type);
-    await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY] });
+    if (pageState) {
+      await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY, pageState.curPageNum] });
+    }
     cb();
   }
 

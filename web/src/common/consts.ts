@@ -5,4 +5,5 @@ export const NODES_QUERY_KEY = 'nodes';
 
 export const DEFAULT_PAGINATION_SIZE = 7;
 export const DEFAULT_END_PAGE = 1000000000;
-export const PREFETCH_SIZE = 2;
+export const DEFAULT_PAGE_NUMBER = 1;
+export const DEFAULT_PAGE_SIZE = 10;

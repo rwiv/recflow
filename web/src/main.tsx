@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { createHashRouter, RouteObject } from 'react-router-dom';
 import { RouterProvider } from 'react-router';
 import { configs } from '@/common/configs.ts';
-import { IndexPage } from '@/pages/IndexPage.tsx';
+import { LivesPage } from '@/pages/LivesPage.tsx';
 import { TestPage } from '@/pages/TestPage.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ChannelsPage } from '@/pages/ChanenelsPage.tsx';
 import { NodesPage } from '@/pages/NodesPage.tsx';
 
 const routes: RouteObject[] = [
-  { path: '/', element: <IndexPage /> },
+  { path: '/', element: <LivesPage /> },
   { path: '/channels', element: <ChannelsPage /> },
   { path: '/nodes', element: <NodesPage /> },
 ];

@@ -18,21 +18,21 @@ export async function createChannel(req: ChannelCreation) {
 export async function updateChannelPriority(id: string, priority: ChannelPriority) {
   const url = `${configs.endpoint}/api/channels/priority`;
   const req: ChannelDefUpdate = { id, form: { priority } };
-  const { method, headers, body } = getIngredients('PUT', req);
+  const { method, headers, body } = getIngredients('PATCH', req);
   return (await (await fetch(url, { method, headers, body })).json()) as ChannelRecord;
 }
 
 export async function updateChannelFollowed(id: string, followed: boolean) {
   const url = `${configs.endpoint}/api/channels/followed`;
   const req: ChannelDefUpdate = { id, form: { followed } };
-  const { method, headers, body } = getIngredients('PUT', req);
+  const { method, headers, body } = getIngredients('PATCH', req);
   return (await (await fetch(url, { method, headers, body })).json()) as ChannelRecord;
 }
 
 export async function updateChannelDescription(id: string, description: string) {
   const url = `${configs.endpoint}/api/channels/description`;
   const req: ChannelDefUpdate = { id, form: { description } };
-  const { method, headers, body } = getIngredients('PUT', req);
+  const { method, headers, body } = getIngredients('PATCH', req);
   return (await (await fetch(url, { method, headers, body })).json()) as ChannelRecord;
 }
 

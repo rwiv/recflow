@@ -42,6 +42,7 @@ const FormSchema = z.object({
   platform: z.enum(PLATFORM_TYPES),
   pid: z.string().nonempty(),
   priority: z.enum(CHANNEL_PRIORITIES),
+  followed: z.boolean(),
   description: z.string(),
   tagNames: z.array(z.string()),
 });
@@ -75,13 +76,13 @@ export function CreateForm({ cb }: { cb: () => void }) {
       platform: 'chzzk',
       pid: '',
       priority: 'none',
+      followed: false,
       description: '',
       tagNames: [],
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
     await createChannel(data);
     await queryClient.invalidateQueries({ queryKey: [CHANNELS_QUERY_KEY] });
     cb();

@@ -32,7 +32,7 @@ export function ChannelActions() {
           <DropdownMenuItem>Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <TagAttachDialog ref={attachRef} />
+      <TagAttachDialog triggerRef={attachRef} />
     </div>
   );
 }

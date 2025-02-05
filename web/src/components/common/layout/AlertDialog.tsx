@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, RefObject } from 'react';
 import {
   AlertDialog as AlertDialogContainer,
   AlertDialogAction,
@@ -11,6 +11,25 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx';
 
+interface DefaultAlertDialogProps {
+  onAction: () => void;
+  children?: ReactNode;
+  triggerRef?: RefObject<HTMLButtonElement>;
+}
+
+export function DefaultAlertDialog({ children, onAction, triggerRef }: DefaultAlertDialogProps) {
+  return (
+    <AlertDialog
+      title="Are you absolutely sure?"
+      description={'This action cannot be undone. This will permanently delete data.'}
+      triggerRef={triggerRef}
+      onAction={onAction}
+    >
+      {children}
+    </AlertDialog>
+  );
+}
+
 interface AlertDialogProps {
   title: string;
   description: string;
@@ -19,6 +38,7 @@ interface AlertDialogProps {
 
   cancelText?: string;
   actionText?: string;
+  triggerRef?: RefObject<HTMLButtonElement>;
 }
 
 export function AlertDialog({
@@ -28,12 +48,19 @@ export function AlertDialog({
   actionText,
   onAction,
   children,
+  triggerRef,
 }: AlertDialogProps) {
   cancelText = cancelText || 'Cancel';
   actionText = actionText || 'Continue';
   return (
     <AlertDialogContainer>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      {triggerRef ? (
+        <AlertDialogTrigger asChild>
+          <button ref={triggerRef} />
+        </AlertDialogTrigger>
+      ) : (
+        <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

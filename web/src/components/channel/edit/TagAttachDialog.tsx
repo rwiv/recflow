@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, useRef } from 'react';
+import { RefObject, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -30,12 +30,12 @@ const FormSchema = z.object({
   tagName: z.string().nonempty(),
 });
 
-export const TagAttachDialog = forwardRef((props, ref: ForwardedRef<HTMLButtonElement>) => {
+export function TagAttachDialog({ triggerRef }: { triggerRef: RefObject<HTMLButtonElement> }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button ref={ref} />
+        <button ref={triggerRef} />
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -47,7 +47,7 @@ export const TagAttachDialog = forwardRef((props, ref: ForwardedRef<HTMLButtonEl
       </DialogContent>
     </Dialog>
   );
-});
+}
 
 export function AttachForm({ cb }: { cb: () => void }) {
   const queryClient = useQueryClient();

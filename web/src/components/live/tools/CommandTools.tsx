@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/live.client.ts';
 import { LiveCreateButton } from '@/components/live/tools/LiveCreateButton.tsx';
 import { ReactNode } from 'react';
-import { AlertDialog } from '@/components/common/layout/AlertDialog.tsx';
+import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { LIVES_QUERY_KEY } from '@/common/consts.ts';
 import { ExitCmd } from '@/common/types.ts';
@@ -31,12 +31,8 @@ export function CommandTools({ table }: { table: Table<LiveRecord> }) {
 
 function ExitButton({ onClick, children }: { onClick: () => void; children: ReactNode }) {
   return (
-    <AlertDialog
-      title="Are you absolutely sure?"
-      description={'This action cannot be undone. This will permanently delete data.'}
-      onAction={onClick}
-    >
+    <DefaultAlertDialog onAction={onClick}>
       <Button variant="secondary">{children}</Button>
-    </AlertDialog>
+    </DefaultAlertDialog>
   );
 }

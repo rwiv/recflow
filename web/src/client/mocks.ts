@@ -44,6 +44,7 @@ export function mockChannel(): ChannelRecord {
     profileImgUrl: faker.image.avatar(),
     followerCnt: faker.number.int({ min: 10, max: 10000 }),
     platform: randomElem(PLATFORM_TYPES),
+    followed: randomElem([true, false]),
     priority: randomElem(CHANNEL_PRIORITIES),
     description: faker.lorem.sentence(),
     createdAt: faker.date.anytime(),

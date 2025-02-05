@@ -9,13 +9,7 @@ import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.t
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
-import {
-  CHANNELS_QUERY_KEY,
-  DEFAULT_END_PAGE,
-  DEFAULT_PAGINATION_SIZE,
-  PREFETCH_SIZE,
-} from '@/common/consts.ts';
-import { ChannelRecord } from '@/client/channel.types.ts';
+import { CHANNELS_QUERY_KEY, DEFAULT_END_PAGE, DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export interface ChannelTableProps {
@@ -25,7 +19,6 @@ export interface ChannelTableProps {
 
 export function ChannelTable({ page, size }: ChannelTableProps) {
   const queryClient = useQueryClient();
-  const prefetched1 = queryClient.getQueryData([CHANNELS_QUERY_KEY, page + 1]) as ChannelRecord[];
 
   const {
     data: channels,
@@ -37,17 +30,11 @@ export function ChannelTable({ page, size }: ChannelTableProps) {
   });
 
   useEffect(() => {
-    for (let i = 1; i <= PREFETCH_SIZE; i++) {
-      queryClient.prefetchQuery({
-        queryKey: [CHANNELS_QUERY_KEY, page + i],
-        queryFn: () => fetchChannels(page + i, size),
-      });
-    }
+    queryClient.prefetchQuery({
+      queryKey: [CHANNELS_QUERY_KEY, page + 1],
+      queryFn: () => fetchChannels(page + 1, size),
+    });
   }, [page, queryClient]);
-
-  useEffect(() => {
-    // console.log(prefetched1);
-  }, [prefetched1]);
 
   if (isLoading) {
     return <div>Loading...</div>;

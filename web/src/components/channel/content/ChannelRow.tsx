@@ -36,7 +36,7 @@ export function ChannelRow({ channel }: { channel: ChannelRecord }) {
       </TableCell>
       <TableCell>
         <div className="flex flex-row flex-wrap items-center gap-1.5">
-          {channel.tags?.map((tag) => <TagBadge key={tag.id} tag={tag} />)}
+          {channel.tags?.map((tag) => <TagBadge key={tag.id} tag={tag} channel={channel} />)}
         </div>
       </TableCell>
       <TableCell>

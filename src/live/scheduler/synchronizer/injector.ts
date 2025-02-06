@@ -6,6 +6,7 @@ import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/business/channel.finder.js';
 import { ChannelRecord } from '../../../channel/business/channel.types.js';
+import { ScheduleErrorHandler } from '../error.handler.js';
 
 export class LiveInjector extends Synchronizer {
   constructor(
@@ -14,8 +15,9 @@ export class LiveInjector extends Synchronizer {
     private readonly liveService: TrackedLiveService,
     private readonly chanFinder: ChannelFinder,
     private readonly filter: LiveFilter,
+    eh: ScheduleErrorHandler,
   ) {
-    super();
+    super(eh);
   }
 
   protected async check() {

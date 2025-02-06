@@ -6,10 +6,11 @@ import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { ChannelBusinessModule } from '../../channel/business/business.module.js';
+import { ScheduleErrorHandler } from './error.handler.js';
 
 @Module({
   imports: [ConfigModule, LiveBusinessModule, PlatformModule, ChannelBusinessModule],
-  providers: [LiveScheduler, ChzzkLiveFilter, SoopLiveFilter],
+  providers: [LiveScheduler, ChzzkLiveFilter, SoopLiveFilter, ScheduleErrorHandler],
   exports: [LiveScheduler],
 })
 export class LiveSchedulerModule {}

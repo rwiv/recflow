@@ -3,14 +3,16 @@ import { PlatformType } from '../../../platform/types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { LiveInfo } from '../../../platform/wapper/live.js';
+import { ScheduleErrorHandler } from '../error.handler.js';
 
 export class LiveCleaner extends Synchronizer {
   constructor(
     private readonly platform: PlatformType,
     private readonly fetcher: PlatformFetcher,
     private readonly liveService: TrackedLiveService,
+    eh: ScheduleErrorHandler,
   ) {
-    super();
+    super(eh);
   }
 
   protected async check() {

@@ -1,11 +1,13 @@
-import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query, UseFilters } from '@nestjs/common';
 import { NodeRecord } from '../../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ExitCmd } from '../event/types.js';
 import { LiveScheduler } from '../scheduler/scheduler.js';
+import { HttpErrorFilter } from '../../common/error.filter.js';
 
+@UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
 export class LiveController {
   constructor(

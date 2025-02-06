@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { ChannelWriter } from '../business/channel.writer.js';
 import { ChannelCreation, ChannelDefUpdate } from '../business/channel.types.js';
@@ -18,7 +19,9 @@ import { CHANNEL_SORTED_TYPES } from '../../common/enum.consts.js';
 import { assertNotNull } from '../../utils/null.js';
 import { checkType } from '../../utils/union.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
+import { HttpErrorFilter } from '../../common/error.filter.js';
 
+@UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
 export class ChannelController {
   constructor(

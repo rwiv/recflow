@@ -1,8 +1,10 @@
 import { log } from 'jslog';
-import { FatalError } from '../../../utils/errors/errors/FatalError.js';
+import { ScheduleErrorHandler } from '../error.handler.js';
 
 export abstract class Synchronizer {
   private isChecking: boolean = false;
+
+  constructor(private readonly eh: ScheduleErrorHandler) {}
 
   async sync() {
     if (this.isChecking) {
@@ -14,7 +16,7 @@ export abstract class Synchronizer {
     try {
       await this.check();
     } catch (e) {
-      throw new FatalError('Failed to sync', { cause: e });
+      this.eh.handle(e);
     }
 
     this.isChecking = false;

@@ -22,23 +22,24 @@ export interface ChannelCreation extends ChannelCreationBase {
   platform: PlatformType;
 }
 
+export interface ChannelDefForm {
+  priority?: ChannelPriority;
+  followed?: boolean;
+  description?: string | null;
+}
+
+export interface ChannelRecordForm extends ChannelDefForm {
+  pid?: string;
+  platform?: PlatformType;
+}
+
 export interface ChannelDefUpdate {
   id: string;
-  form: {
-    priority?: ChannelPriority;
-    followed?: boolean;
-    description?: string | null;
-  };
+  form: ChannelDefForm;
 }
 
 export interface ChannelRecordUpdate {
   id: string;
-  form: {
-    pid?: string;
-    platform?: PlatformType;
-    priority?: ChannelPriority;
-    followed?: boolean;
-    description?: string | null;
-  };
+  form: ChannelRecordForm;
   tagNames?: string[];
 }

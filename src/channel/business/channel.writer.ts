@@ -1,12 +1,7 @@
 import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
-import {
-  ChannelCreation,
-  ChannelCreationBase,
-  ChannelRecord,
-  ChannelRecordUpdate,
-} from './channel.types.js';
+import { ChannelCreation, ChannelCreationBase, ChannelRecord } from './channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
@@ -29,15 +24,19 @@ export class ChannelWriter {
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async create(req: ChannelEntCreation, tagNames: string[]): Promise<ChannelRecord> {
-    req = this.validator.validateCreateEnt(req, tagNames);
+  async create(req: ChannelEntCreation, tagNames: string[] | undefined): Promise<ChannelRecord> {
+    await this.validator.validateForm(req, tagNames);
     return db.transaction(async (txx) => {
       const channel = await this.chanCmd.create(req, txx);
+      let result: ChannelRecord = { ...channel };
       const tags: TagRecord[] = [];
-      for (const tagName of tagNames) {
-        tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
+      if (tagNames && tagNames.length > 0) {
+        for (const tagName of tagNames) {
+          tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
+        }
+        result = { ...channel, tags };
       }
-      return { ...channel, tags };
+      return result;
     });
   }
 
@@ -47,7 +46,6 @@ export class ChannelWriter {
   }
 
   async createWithChannelInfo(req: ChannelCreationBase, info: ChannelInfo): Promise<ChannelRecord> {
-    req = this.validator.validateCreateBase(req);
     const reqEnt: ChannelEntCreation = {
       pid: info.pid,
       username: info.username,
@@ -58,32 +56,7 @@ export class ChannelWriter {
       followed: req.followed,
       description: req.description,
     };
-    return db.transaction(async (txx) => {
-      const channel = await this.chanCmd.create(reqEnt, txx);
-      let result: ChannelRecord = { ...channel };
-      const tags: TagRecord[] = [];
-      if (req.tagNames && req.tagNames.length > 0) {
-        for (const tagName of req.tagNames) {
-          tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
-        }
-        result = { ...channel, tags };
-      }
-      return result;
-    });
-  }
-
-  async update(req: ChannelRecordUpdate): Promise<ChannelRecord> {
-    req = this.validator.validateUpdate(req);
-    return db.transaction(async (txx) => {
-      const channel = await this.chanCmd.update(req, txx);
-      let result: ChannelRecord = { ...channel };
-      let tags: TagRecord[] = [];
-      if (req.tagNames && req.tagNames.length > 0) {
-        tags = await this.tagWriter.applyTags(channel.id, req.tagNames, txx);
-        result = { ...result, tags };
-      }
-      return result;
-    });
+    return this.create(reqEnt, req.tagNames);
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {

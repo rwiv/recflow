@@ -1,39 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelCreationBase, ChannelRecordUpdate } from './channel.types.js';
+import { ChannelRecordForm } from './channel.types.js';
 import { hasDuplicates } from '../../utils/list.js';
-import { ChannelEntCreation } from '../persistence/channel.types.js';
+import { ChannelQueryRepository } from '../persistence/channel.query.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class ChannelValidator {
-  validateCreateEnt(req: ChannelEntCreation, tagNames: string[]): ChannelEntCreation {
-    this.assertTagNames(tagNames);
-    let result = { ...req };
-    if (req.description === '') {
-      result = { ...result, description: null };
-    }
-    return result;
-  }
+  constructor(private readonly chanQuery: ChannelQueryRepository) {}
 
-  validateCreateBase(req: ChannelCreationBase): ChannelCreationBase {
-    if (req.tagNames) {
-      this.assertTagNames(req.tagNames);
+  async validateForm(req: ChannelRecordForm, tagNames: string[] | undefined = undefined) {
+    if (tagNames) {
+      this.assertTagNames(tagNames);
     }
-    let result = { ...req };
     if (req.description === '') {
-      result = { ...result, description: null };
+      throw new ValidationError('Empty description');
     }
-    return result;
-  }
-
-  validateUpdate(req: ChannelRecordUpdate): ChannelRecordUpdate {
-    if (req.tagNames) {
-      this.assertTagNames(req.tagNames);
+    const { pid, platform } = req;
+    if (pid && platform) {
+      const channels = await this.chanQuery.findByPidAndPlatform(pid, platform);
+      if (channels.length > 0) {
+        throw new ValidationError('Channel already exists');
+      }
     }
-    let result = { ...req, form: { ...req.form } };
-    if (req.form.description === '') {
-      result = { ...result, form: { ...req.form, description: null } };
-    }
-    return result;
   }
 
   private assertTagNames(tagNames: string[]) {
@@ -41,10 +29,10 @@ export class ChannelValidator {
       return;
     }
     if (tagNames.filter((name) => name.length === 0).length > 0) {
-      throw new Error('Empty tag name');
+      throw new ValidationError('Empty tag name');
     }
     if (hasDuplicates(tagNames)) {
-      throw new Error('Duplicate tag names');
+      throw new ValidationError('Duplicate tag names');
     }
   }
 }

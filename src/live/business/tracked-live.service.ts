@@ -58,7 +58,7 @@ export class TrackedLiveService {
       const req: ChannelCreationBase = {
         priority: 'none',
         followed: false,
-        description: '',
+        description: null,
         tagNames: [],
       };
       channel = await this.chanWriter.createWithChannelInfo(req, channelInfo);

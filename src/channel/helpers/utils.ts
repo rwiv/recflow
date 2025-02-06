@@ -9,6 +9,7 @@ import { TagWriter } from '../business/tag.writer.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { TagFinder } from '../business/tag.finder.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
+import { ChannelUpdater } from '../business/channel.updater.js';
 
 export function getChannelServies() {
   const tagQuery = new TagQueryRepository();
@@ -16,11 +17,12 @@ export function getChannelServies() {
   const chanQuery = new ChannelQueryRepository();
   const chanSearch = new ChannelSearchRepository(tagQuery);
   const chanCmd = new ChannelCommandRepository(chanQuery);
-  const validator = new ChannelValidator();
+  const validator = new ChannelValidator(chanQuery);
   const fetcher = getFetcher();
   const tagWriter = new TagWriter(tagCmd, tagQuery, chanQuery);
   const tagFinder = new TagFinder(tagQuery);
   const chanWriter = new ChannelWriter(chanCmd, chanQuery, tagWriter, tagQuery, validator, fetcher);
+  const chanUpdater = new ChannelUpdater(chanCmd, validator);
   const chanFinder = new ChannelFinder(chanQuery, chanSearch, tagQuery);
-  return { chanWriter, chanFinder, tagWriter, tagFinder };
+  return { chanWriter, chanUpdater, chanFinder, tagWriter, tagFinder };
 }

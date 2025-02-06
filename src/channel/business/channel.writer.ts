@@ -1,7 +1,12 @@
 import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
-import { ChannelCreation, ChannelRecord, ChannelRecordUpdate } from './channel.types.js';
+import {
+  ChannelCreation,
+  ChannelCreationBase,
+  ChannelRecord,
+  ChannelRecordUpdate,
+} from './channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
@@ -11,6 +16,7 @@ import { TagWriter } from './tag.writer.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
+import { ChannelInfo } from '../../platform/wapper/channel.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -23,11 +29,12 @@ export class ChannelWriter {
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async create(req: ChannelEntCreation, reqTagNames: string[]): Promise<ChannelRecord> {
+  async create(req: ChannelEntCreation, tagNames: string[]): Promise<ChannelRecord> {
+    req = this.validator.validateCreateEnt(req, tagNames);
     return db.transaction(async (txx) => {
       const channel = await this.chanCmd.create(req, txx);
       const tags: TagRecord[] = [];
-      for (const tagName of reqTagNames) {
+      for (const tagName of tagNames) {
         tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
       }
       return { ...channel, tags };
@@ -35,8 +42,12 @@ export class ChannelWriter {
   }
 
   async createWithFetch(req: ChannelCreation): Promise<ChannelRecord> {
-    req = this.validator.validateCreate(req);
     const info = assertNotNull(await this.fetcher.fetchChannel(req.platform, req.pid, false));
+    return this.createWithChannelInfo(req, info);
+  }
+
+  async createWithChannelInfo(req: ChannelCreationBase, info: ChannelInfo): Promise<ChannelRecord> {
+    req = this.validator.validateCreateBase(req);
     const reqEnt: ChannelEntCreation = {
       pid: info.pid,
       username: info.username,

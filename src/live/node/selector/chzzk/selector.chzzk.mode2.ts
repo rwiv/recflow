@@ -1,9 +1,9 @@
-import { NodeSelector, NodeRecord, NodePriority } from '../../types.js';
+import { INodeSelector, NodeRecord, NodePriority } from '../../types.js';
 import { QueryConfig } from '../../../../common/query.js';
 import { findChzzkCandidate } from '../utils.js';
 import { LiveInfo } from '../../../../platform/wapper/live.js';
 
-export class ChzzkNodeSelectorMode2 implements NodeSelector {
+export class ChzzkNodeSelectorMode2 implements INodeSelector {
   constructor(private readonly query: QueryConfig) {}
 
   match(live: LiveInfo, nodes: NodeRecord[]): NodeRecord | null {

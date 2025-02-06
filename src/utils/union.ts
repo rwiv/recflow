@@ -1,4 +1,4 @@
-export function checkType<T>(value: string | null | undefined, list: readonly T[]): T | undefined {
+export function checkType<T, R>(value: T | null | undefined, list: readonly R[]): R | undefined {
   if (value === null || value === undefined) {
     return undefined;
   }

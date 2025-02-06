@@ -58,12 +58,14 @@ export class LiveController {
 
   @Post('/chzzk/:channelId')
   async addChzzk(@Param('channelId') channelId: string) {
-    return this.liveService.add(await this.getChzzkLive(channelId));
+    const { live, channel } = await this.getChzzkLive(channelId);
+    return this.liveService.add(live, channel);
   }
 
   @Post('/soop/:userId')
   async addSoop(@Param('userId') userId: string) {
-    return this.liveService.add(await this.getSoopLive(userId));
+    const { live, channel } = await this.getSoopLive(userId);
+    return this.liveService.add(live, channel);
   }
 
   @Delete('/chzzk/:channelId')
@@ -84,14 +86,14 @@ export class LiveController {
   }
 
   private async getChzzkLive(channelId: string) {
-    const live = (await this.fetcher.fetchChannel('chzzk', channelId, true))?.liveInfo;
-    if (!live) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
-    return live;
+    const channel = await this.fetcher.fetchChannel('chzzk', channelId, true);
+    if (!channel?.liveInfo) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
+    return { live: channel.liveInfo, channel };
   }
 
   private async getSoopLive(userId: string) {
-    const live = (await this.fetcher.fetchChannel('soop', userId, true))?.liveInfo;
-    if (!live) throw Error('Not found soopChannel.liveInfo');
-    return live;
+    const channel = await this.fetcher.fetchChannel('soop', userId, true);
+    if (!channel?.liveInfo) throw Error('Not found soopChannel.liveInfo');
+    return { live: channel.liveInfo, channel };
   }
 }

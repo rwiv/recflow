@@ -16,6 +16,6 @@ export interface NodeRecord extends NodeDef {
   soopAssignedCnt: number;
 }
 
-export interface NodeSelector {
+export interface INodeSelector {
   match(live: LiveInfo, webhooks: NodeRecord[]): NodeRecord | null;
 }

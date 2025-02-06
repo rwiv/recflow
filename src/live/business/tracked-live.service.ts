@@ -7,9 +7,12 @@ import { LIVE_MAP } from '../persistence/persistence.module.js';
 import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
-import { PlatformNodeSelector } from './node.selector.js';
 import { ExitCmd } from '../event/types.js';
 import { ChannelWriter } from '../../channel/business/channel.writer.js';
+import { NodeSelector } from '../node/node.selector.js';
+import { ChannelInfo } from '../../platform/wapper/channel.js';
+import { ChannelCreationBase } from '../../channel/business/channel.types.js';
+import { ChannelFinder } from '../../channel/business/channel.finder.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -17,7 +20,7 @@ export interface DeleteOptions {
 }
 
 export interface FindOptions {
-  includeDeleted?: boolean;
+  withDeleted?: boolean;
 }
 
 @Injectable()
@@ -27,12 +30,13 @@ export class TrackedLiveService {
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
     private readonly nodeService: NodeService,
-    private readonly nodeSelector: PlatformNodeSelector,
-    private readonly channelService: ChannelWriter,
+    private readonly nodeSelector: NodeSelector,
+    private readonly chanWriter: ChannelWriter,
+    private readonly chanFinder: ChannelFinder,
   ) {}
 
   async get(id: string, opts: FindOptions = {}) {
-    let includeDeleted = opts.includeDeleted;
+    let includeDeleted = opts.withDeleted;
     if (includeDeleted === undefined) {
       includeDeleted = false;
     }
@@ -43,32 +47,42 @@ export class TrackedLiveService {
     return value;
   }
 
-  async add(info: LiveInfo): Promise<LiveRecord> {
-    const exists = await this.get(info.channelId);
+  async add(live: LiveInfo, channelInfo: ChannelInfo): Promise<LiveRecord> {
+    const exists = await this.get(live.channelId);
     if (exists && !exists.isDeleted) {
-      throw Error(`Already exists: ${info.channelId}`);
+      throw Error(`Already exists: ${live.channelId}`);
     }
-    const node = this.nodeSelector.matchNode(info, await this.nodes());
+    let channel = await this.chanFinder.findByPidOne(live.channelId, live.type);
+    if (!channel) {
+      const req: ChannelCreationBase = {
+        priority: 'none',
+        followed: false,
+        description: '',
+        tagNames: [],
+      };
+      channel = await this.chanWriter.createWithChannelInfo(req, channelInfo);
+    }
+    const node = this.nodeSelector.match(channel, await this.nodes());
     if (node === null) {
       // TODO: use ntfy
-      throw Error(`No node matched for ${info.channelId}`);
+      throw Error(`No node matched for ${live.channelId}`);
     }
     const record = {
-      ...info,
+      ...live,
       savedAt: new Date().toISOString(),
       updatedAt: undefined,
       deletedAt: undefined,
       isDeleted: false,
       assignedWebhookName: node.name,
     };
-    await this.liveMap.set(info.channelId, record);
-    await this.nodeService.updateCnt(node.name, info.type, 1);
+    await this.liveMap.set(live.channelId, record);
+    await this.nodeService.updateCnt(node.name, live.type, 1);
     await this.listener.onCreate(record, node.url);
     return record;
   }
 
   async update(newRecord: LiveRecord) {
-    const exists = await this.get(newRecord.channelId, { includeDeleted: true });
+    const exists = await this.get(newRecord.channelId, { withDeleted: true });
     if (!exists) throw Error(`Not found liveRecord: ${newRecord.channelId}`);
     if (exists.assignedWebhookName !== newRecord.assignedWebhookName) {
       await this.nodeService.updateCnt(exists.assignedWebhookName, exists.type, -1);
@@ -88,7 +102,7 @@ export class TrackedLiveService {
       purge = false;
     }
 
-    const record = await this.get(id, { includeDeleted: true });
+    const record = await this.get(id, { withDeleted: true });
     if (!record) throw Error(`Not found liveRecord: ${id}`);
 
     if (!purge) {

@@ -5,6 +5,7 @@ import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelPriority } from '../priority/types.js';
+import { PlatformType } from '../../platform/types.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -15,7 +16,7 @@ export class ChannelFinder {
   ) {}
 
   async findAll(withTags: boolean = false): Promise<ChannelRecord[]> {
-    return this.solveTags(await this.chanQuery.findAll(), withTags);
+    return this.solveChannels(await this.chanQuery.findAll(), withTags);
   }
 
   async findById(channelId: string, withTags: boolean = false): Promise<ChannelRecord | undefined> {
@@ -30,12 +31,19 @@ export class ChannelFinder {
 
   async findByPid(pid: string, withTags: boolean = false): Promise<ChannelRecord[]> {
     const channels = await this.chanQuery.findByPid(pid);
-    return this.solveTags(channels, withTags);
+    return this.solveChannels(channels, withTags);
+  }
+
+  async findByPidOne(pid: string, platform: PlatformType, withTags: boolean = false) {
+    const channels = await this.chanQuery.findByPidAndPlatform(pid, platform);
+    if (channels.length === 0) return undefined;
+    if (channels.length > 1) throw new Error(`Multiple channels with pid: ${pid}`);
+    return this.solveChannel(channels[0], withTags);
   }
 
   async findByUsername(username: string, withTags: boolean = false): Promise<ChannelRecord[]> {
     const channels = await this.chanQuery.findByUsername(username);
-    return this.solveTags(channels, withTags);
+    return this.solveChannels(channels, withTags);
   }
 
   async findByQuery(
@@ -47,7 +55,7 @@ export class ChannelFinder {
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
     const channels = await this.chanSearch.findByQuery({ page, size }, sorted, priority, tagName);
-    return this.solveTags(channels, withTags);
+    return this.solveChannels(channels, withTags);
   }
 
   async findByAnyTag(
@@ -59,7 +67,7 @@ export class ChannelFinder {
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
     const channels = await this.chanSearch.findByAnyTag(tagNames, { page, size }, sorted, priority);
-    return this.solveTags(channels, withTags);
+    return this.solveChannels(channels, withTags);
   }
 
   async findByAllTags(
@@ -69,15 +77,23 @@ export class ChannelFinder {
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
     const channels = await this.chanSearch.findByAllTags(tagNames, sorted, priority);
-    return this.solveTags(channels, withTags);
+    return this.solveChannels(channels, withTags);
   }
 
-  private async solveTags(channels: ChannelRecord[], withTags: boolean = false) {
+  private async solveChannels(channels: ChannelRecord[], withTags: boolean = false) {
     if (!withTags) return channels;
     const promises = channels.map(async (channel) => ({
       ...channel,
       tags: await this.tagQuery.findTagsByChannelId(channel.id),
     }));
     return Promise.all(promises);
+  }
+
+  private async solveChannel(channels: ChannelRecord, withTags: boolean = false) {
+    if (!withTags) return channels;
+    return {
+      ...channels,
+      tags: await this.tagQuery.findTagsByChannelId(channels.id),
+    };
   }
 }

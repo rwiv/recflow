@@ -20,7 +20,7 @@ async function bootstrap() {
   }
 
   const scheduler = app.get(LiveScheduler);
-  // scheduler.run();
+  scheduler.run();
 
   await app.listen(env.appPort);
 }

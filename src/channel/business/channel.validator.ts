@@ -1,11 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelCreation, ChannelRecordUpdate } from './channel.types.js';
+import { ChannelCreationBase, ChannelRecordUpdate } from './channel.types.js';
 import { hasDuplicates } from '../../utils/list.js';
+import { ChannelEntCreation } from '../persistence/channel.types.js';
 
 @Injectable()
 export class ChannelValidator {
-  validateCreate(req: ChannelCreation): ChannelCreation {
-    this.assertTagNames(req.tagNames);
+  validateCreateEnt(req: ChannelEntCreation, tagNames: string[]): ChannelEntCreation {
+    this.assertTagNames(tagNames);
+    let result = { ...req };
+    if (req.description === '') {
+      result = { ...result, description: null };
+    }
+    return result;
+  }
+
+  validateCreateBase(req: ChannelCreationBase): ChannelCreationBase {
+    if (req.tagNames) {
+      this.assertTagNames(req.tagNames);
+    }
     let result = { ...req };
     if (req.description === '') {
       result = { ...result, description: null };

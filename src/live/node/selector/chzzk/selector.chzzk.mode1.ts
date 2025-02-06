@@ -1,11 +1,11 @@
-import { NodeSelector, NodeRecord } from '../../types.js';
+import { INodeSelector, NodeRecord } from '../../types.js';
 import { findChzzkCandidate } from '../utils.js';
 import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../../../platform/wapper/live.js';
 import { QueryConfig } from '../../../../common/query.js';
 
 @Injectable()
-export class ChzzkNodeSelectorMode1 implements NodeSelector {
+export class ChzzkNodeSelectorMode1 implements INodeSelector {
   constructor(private readonly query: QueryConfig) {}
 
   match(live: LiveInfo, nodes: NodeRecord[]): NodeRecord | null {

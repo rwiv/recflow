@@ -1,16 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NODE_SELECTOR_CHZZK, NODE_SELECTOR_SOOP } from '../node/node.module.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import { NodeSelector, NodeRecord } from '../node/types.js';
+import { INodeSelector, NodeRecord } from '../node/types.js';
+import { ChannelRecord } from '../../channel/business/channel.types.js';
 
 @Injectable()
 export class PlatformNodeSelector {
   constructor(
-    @Inject(NODE_SELECTOR_CHZZK) private readonly chzzkMatcher: NodeSelector,
-    @Inject(NODE_SELECTOR_SOOP) private readonly soopMatcher: NodeSelector,
+    @Inject(NODE_SELECTOR_CHZZK) private readonly chzzkMatcher: INodeSelector,
+    @Inject(NODE_SELECTOR_SOOP) private readonly soopMatcher: INodeSelector,
   ) {}
 
-  matchNode(live: LiveInfo, nodes: NodeRecord[]): NodeRecord | null {
+  matchNode(live: LiveInfo, channel: ChannelRecord, nodes: NodeRecord[]): NodeRecord | null {
     const matcher = this.selectMatcher(live);
     return matcher.match(live, nodes);
   }

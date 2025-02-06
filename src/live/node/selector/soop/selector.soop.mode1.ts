@@ -1,9 +1,9 @@
-import { NodeSelector, NodeRecord } from '../../types.js';
+import { INodeSelector, NodeRecord } from '../../types.js';
 import { findChzzkCandidate, findSoopCandidate } from '../utils.js';
 import { LiveInfo } from '../../../../platform/wapper/live.js';
 import { QueryConfig } from '../../../../common/query.js';
 
-export class SoopNodeSelectorMode1 implements NodeSelector {
+export class SoopNodeSelectorMode1 implements INodeSelector {
   constructor(private readonly query: QueryConfig) {}
 
   match(live: LiveInfo, nodes: NodeRecord[]): NodeRecord | null {

@@ -26,7 +26,7 @@ export class LiveInjector extends Synchronizer {
       channelIds = this.query.followSoopUserIds;
     }
     const promises = channelIds.map(async (userId) => {
-      return { userId, live: await this.liveService.get(userId, { includeDeleted: true }) };
+      return { userId, live: await this.liveService.get(userId, { withDeleted: true }) };
     });
     const untrackedFollowChannelIds = (await Promise.all(promises))
       .filter(({ live }) => !live)
@@ -47,7 +47,7 @@ export class LiveInjector extends Synchronizer {
       if (!chanWithLiveInfo) throw Error('Not found channel');
       const live = chanWithLiveInfo.liveInfo;
       if (!live) throw Error('Not found Channel.liveInfo');
-      await this.liveService.add(live);
+      await this.liveService.add(live, chanWithLiveInfo);
     }
 
     // --------------- check by query --------------------------------------
@@ -55,12 +55,12 @@ export class LiveInjector extends Synchronizer {
     const filtered = await this.filter.getFiltered(queriedLives);
 
     // add new lives
-    const toBeAddedLives: LiveInfo[] = (
+    const toBeAdded = (
       await Promise.all(filtered.map(async (info) => this.isToBeAdded(info)))
     ).filter((info) => info !== null);
 
-    for (const live of toBeAddedLives) {
-      await this.liveService.add(live);
+    for (const { live, channel } of toBeAdded) {
+      await this.liveService.add(live, channel);
     }
   }
 
@@ -70,9 +70,9 @@ export class LiveInjector extends Synchronizer {
    * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
    */
   private async isToBeAdded(newInfo: LiveInfo) {
-    if (await this.liveService.get(newInfo.channelId, { includeDeleted: true })) return null;
+    if (await this.liveService.get(newInfo.channelId, { withDeleted: true })) return null;
     const channel = await this.fetcher.fetchChannel(this.platform, newInfo.channelId, false);
     if (!channel?.openLive) return null;
-    return newInfo;
+    return { live: newInfo, channel };
   }
 }

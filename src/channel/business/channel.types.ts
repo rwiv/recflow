@@ -10,13 +10,16 @@ export interface ChannelRecord extends ChannelDef {
   tags?: TagRecord[];
 }
 
-export interface ChannelCreation {
-  pid: string;
-  platform: PlatformType;
+export interface ChannelCreationBase {
   priority: ChannelPriority;
   followed: boolean;
   description: string | null;
-  tagNames: string[];
+  tagNames?: string[];
+}
+
+export interface ChannelCreation extends ChannelCreationBase {
+  pid: string;
+  platform: PlatformType;
 }
 
 export interface ChannelDefUpdate {

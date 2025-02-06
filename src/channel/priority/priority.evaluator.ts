@@ -1,25 +1,35 @@
-import { ChannelPriority } from './types.js';
-import { ChannelPriorityConfig, ChannelPriorityShift } from '../../common/config.types.js';
+import { ChannelPriority, ChannelPriorityRank } from './types.js';
+import { ChannelPriorityShift } from '../../common/config.types.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { QUERY } from '../../common/config.module.js';
+import { QueryConfig } from '../../common/query.js';
+import { checkType } from '../../utils/union.js';
+import { CHANNEL_PRIORITY_RANKS } from './consts.js';
 
+@Injectable()
 export class ChannelPriorityEvaluator {
-  readonly noneRank: number;
-  readonly should: ChannelPriorityShift | undefined;
-  readonly may: ChannelPriorityShift | undefined;
-  readonly review: ChannelPriorityShift | undefined;
+  private readonly noneRank: ChannelPriorityRank;
+  private readonly should: ChannelPriorityShift | undefined;
+  private readonly may: ChannelPriorityShift | undefined;
+  private readonly review: ChannelPriorityShift | undefined;
 
-  constructor(private readonly conf: ChannelPriorityConfig) {
-    this.noneRank = this.conf.noneRank;
-    this.should = this.conf.should;
-    this.may = this.conf.may;
-    this.review = this.conf.review;
+  constructor(@Inject(QUERY) private readonly query: QueryConfig) {
+    this.should = this.query.priority.should;
+    this.may = this.query.priority.may;
+    this.review = this.query.priority.review;
 
     if (this.should === 'demote') {
       this.may = 'demote';
     }
+    const noneRank = checkType(this.query.priority.noneRank, CHANNEL_PRIORITY_RANKS);
+    if (!noneRank) {
+      throw new Error('None rank must be 1, 2 or 3');
+    }
+    this.noneRank = noneRank;
     this.validateShift();
   }
 
-  getRank(priority: ChannelPriority): number {
+  getRank(priority: ChannelPriority): ChannelPriorityRank {
     switch (priority) {
       case 'must':
         return 1;
@@ -50,7 +60,7 @@ export class ChannelPriorityEvaluator {
     }
   }
 
-  validateShift() {
+  private validateShift() {
     if (![1, 2, 3].includes(this.noneRank)) {
       throw new Error('None rank must be 1, 2 or 3');
     }

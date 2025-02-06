@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { ChannelPriorityEvaluator } from './priority.evaluator.js';
 import { ChannelPriorityConfig, ChannelPriorityShift } from '../../common/config.types.js';
+import { QueryConfig } from '../../common/query.js';
 
 describe('ChannelPriorityChecker', () => {
   it('test noneRank', () => {
     const conf1 = conf(undefined, undefined, undefined, 2);
-    expect(checker(conf1).noneRank).eq(2);
+    expect(checker(conf1).getRank('none')).eq(2);
 
     const conf2 = conf(undefined, undefined, undefined, 4);
     expect(() => checker(conf2)).toThrow('None rank must be 1, 2 or 3');
@@ -39,7 +40,7 @@ describe('ChannelPriorityChecker', () => {
   });
 });
 
-function checker(conf: ChannelPriorityConfig): ChannelPriorityEvaluator {
+function checker(conf: QueryConfig): ChannelPriorityEvaluator {
   return new ChannelPriorityEvaluator(conf);
 }
 
@@ -48,6 +49,44 @@ function conf(
   may: ChannelPriorityShift | undefined = undefined,
   review: ChannelPriorityShift | undefined = undefined,
   noneRank: number = 1,
-): ChannelPriorityConfig {
-  return { noneRank, should, may, review };
+): QueryConfig {
+  return createQueryConfig({ noneRank, should, may, review });
+}
+
+function createQueryConfig(priority: ChannelPriorityConfig): QueryConfig {
+  return {
+    options: {
+      chzzk: {
+        forceCredentials: false,
+        forceWebhookType: null,
+      },
+      soop: {
+        forceCredentials: false,
+        forceWebhookType: null,
+      },
+    },
+    priority,
+    followChzzkChanIds: [],
+    followSoopUserIds: [],
+    chzzkMinUserCnt: 0,
+    chzzkMinFollowerCnt: 0,
+    soopMinUserCnt: 0,
+    soopMinFollowerCnt: 0,
+    chzzkTags: [],
+    chzzkKeywords: [],
+    chzzkWatchPartyNoList: [],
+    soopCateNoList: [],
+    excludedChzzkCates: [],
+    excludedChzzkTags: [],
+    excludedChzzkKeywords: [],
+    allowedSoopUserIds: [],
+    extraSoopUserIds: [],
+    excludedSoopUserIds: [],
+    allowedChzzkChanNames: [],
+    extraChzzkChanNames: [],
+    excludedChzzkChanNames: [],
+    excludedChzzkChanIds: [],
+    webhookMode: 'mode1',
+    webhooks: [],
+  };
 }

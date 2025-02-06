@@ -1,6 +1,6 @@
 import { createRedisClient } from '../../infra/storage/redis.js';
 import { RedisMap } from '../../infra/storage/map.redis.js';
-import { NodeRecord } from '../node/types.js';
+import { NodeRecord } from '../../node/types.js';
 import {
   LIVE_KEYS_KEY,
   LIVE_VALUE_PREFIX,
@@ -14,10 +14,9 @@ import { Env } from '../../common/env.js';
 import { QueryConfig } from '../../common/query.js';
 import { LiveRecord } from './types.js';
 import { createLiveEventListener } from '../event/test_utils.spec.js';
-import { PlatformNodeSelector } from './node.selector.js';
-import { ChzzkNodeSelectorMode1 } from '../node/selector/chzzk/selector.chzzk.mode1.js';
-import { SoopNodeSelectorMode1 } from '../node/selector/soop/selector.soop.mode1.js';
 import { getFetcher } from '../helpers/utils.js';
+import { NodeSelector } from '../../node/node.selector.js';
+import { ChannelPriorityEvaluator } from '../../channel/priority/priority.evaluator.js';
 
 export async function createRedisLiveService(env: Env, query: QueryConfig) {
   const redis = await createRedisClient(env.redis);
@@ -26,10 +25,7 @@ export async function createRedisLiveService(env: Env, query: QueryConfig) {
   const liveMap = new RedisMap<LiveRecord>(redis, LIVE_KEYS_KEY, LIVE_VALUE_PREFIX);
   const fetcher = getFetcher();
   const listener = createLiveEventListener(env, query);
-  const nodeSelector = new PlatformNodeSelector(
-    new ChzzkNodeSelectorMode1(query),
-    new SoopNodeSelectorMode1(query),
-  );
+  const nodeSelector = new NodeSelector(new ChannelPriorityEvaluator(query));
   return new TrackedLiveService(liveMap, fetcher, listener, nodeService, nodeSelector);
 }
 
@@ -39,9 +35,6 @@ export function createMemoryLiveService(env: Env, query: QueryConfig) {
   const liveMap = new MemoryMap<string, LiveRecord>();
   const fetcher = getFetcher();
   const listener = createLiveEventListener(env, query);
-  const nodeSelector = new PlatformNodeSelector(
-    new ChzzkNodeSelectorMode1(query),
-    new SoopNodeSelectorMode1(query),
-  );
+  const nodeSelector = new NodeSelector(new ChannelPriorityEvaluator(query));
   return new TrackedLiveService(liveMap, fetcher, listener, nodeService, nodeSelector);
 }

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NodeDef, NodeRecord } from '../node/types.js';
+import { NodeDef, NodeRecord } from '../../node/types.js';
 import { QueryConfig } from '../../common/query.js';
 import { PlatformType } from '../../platform/types.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NodeRecord } from '../node/types.js';
+import { NodeRecord } from '../../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { NodeService } from './node.service.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
@@ -9,7 +9,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/types.js';
 import { ChannelWriter } from '../../channel/business/channel.writer.js';
-import { NodeSelector } from '../node/node.selector.js';
+import { NodeSelector } from '../../node/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelCreationBase } from '../../channel/business/channel.types.js';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';

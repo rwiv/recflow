@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
-import { NodeRecord } from '../node/types.js';
+import { NodeRecord } from '../../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';

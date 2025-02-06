@@ -1,6 +1,6 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { NodeDef, NodeSelectMode, NodePriority } from '../live/node/types.js';
+import { NodeDef, NodeSelectMode, NodePriority } from '../node/types.js';
 import { ChannelPriorityConfig } from './config.types.js';
 
 export interface QueryConfig {

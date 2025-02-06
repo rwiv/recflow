@@ -1,4 +1,4 @@
-import { NodeRecord, NodePriority } from '../types.js';
+import { NodeRecord, NodePriority } from './types.js';
 
 export function findChzzkCandidate(nodes: NodeRecord[], type: NodePriority): NodeRecord | null {
   const candidates = nodes

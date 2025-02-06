@@ -3,7 +3,7 @@ import { ENV } from '../../common/config.module.js';
 import { Env } from '../../common/env.js';
 import { createRedisClient } from '../../infra/storage/redis.js';
 import { RedisMap } from '../../infra/storage/map.redis.js';
-import { NodeRecord } from '../node/types.js';
+import { NodeRecord } from '../../node/types.js';
 import { AsyncMap } from '../../infra/storage/interface.js';
 import { MemoryMap } from '../../infra/storage/map.mem.js';
 import { LIVE_KEYS_KEY, LIVE_VALUE_PREFIX, WH_KEYS_KEY, WH_VALUE_PREFIX } from './redis_keys.js';

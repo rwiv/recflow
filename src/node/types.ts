@@ -1,4 +1,4 @@
-import { LiveInfo } from '../../platform/wapper/live.js';
+import { LiveInfo } from '../platform/wapper/live.js';
 
 export type NodePriority = 'main' | 'sub' | 'extra';
 export type NodeSelectMode = 'mode1' | 'mode2' | 'mode3' | 'mode4';

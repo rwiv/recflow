@@ -22,15 +22,6 @@ export interface QueryConfig {
   excludedChzzkTags: string[];
   excludedChzzkKeywords: string[];
 
-  allowedSoopUserIds: string[];
-  extraSoopUserIds: string[];
-  excludedSoopUserIds: string[];
-
-  allowedChzzkChanNames: string[];
-  extraChzzkChanNames: string[];
-  excludedChzzkChanNames: string[];
-  excludedChzzkChanIds: string[];
-
   webhookMode: NodeSelectMode;
   webhooks: NodeDef[];
 }

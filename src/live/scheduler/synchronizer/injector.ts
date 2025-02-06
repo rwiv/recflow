@@ -34,7 +34,7 @@ export class LiveInjector extends Synchronizer {
   }
 
   private async processFollowedChannel(ch: ChannelRecord) {
-    if (!(await this.liveService.get(ch.pid, { withDeleted: true }))) return null;
+    if (await this.liveService.get(ch.pid, { withDeleted: true })) return null;
     const chanInfo = await this.fetcher.fetchChannel(this.platform, ch.pid, false);
     if (!chanInfo || !chanInfo.openLive) return null;
 

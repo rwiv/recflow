@@ -38,8 +38,9 @@ export class TestChannelInjector {
         pid: info.pid,
         followerCnt: info.followerCnt,
         platform: info.platform,
-        priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
-        followed: randomElem([true, false]),
+        priority: randomElem(['must', 'should', 'may', 'review', 'skip', 'none'] as const),
+        // followed: randomElem([true, false] as const),
+        followed: false,
         description: faker.lorem.sentence(),
       };
 

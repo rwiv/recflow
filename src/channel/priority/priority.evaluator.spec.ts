@@ -77,13 +77,6 @@ function createQueryConfig(priority: ChannelPriorityConfig): QueryConfig {
     excludedChzzkCates: [],
     excludedChzzkTags: [],
     excludedChzzkKeywords: [],
-    allowedSoopUserIds: [],
-    extraSoopUserIds: [],
-    excludedSoopUserIds: [],
-    allowedChzzkChanNames: [],
-    extraChzzkChanNames: [],
-    excludedChzzkChanNames: [],
-    excludedChzzkChanIds: [],
     webhookMode: 'mode1',
     webhooks: [],
   };

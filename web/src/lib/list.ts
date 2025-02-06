@@ -1,4 +1,4 @@
-export function randomElem<T>(array: readonly T[]) {
+export function randomElem<T>(array: readonly T[]): T {
   if (!Array.isArray(array) || array.length === 0) {
     throw new Error('Array is empty or not an array');
   }

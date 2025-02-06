@@ -7,9 +7,16 @@ import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { ChannelBusinessModule } from '../../channel/business/business.module.js';
 import { ScheduleErrorHandler } from './error.handler.js';
+import { ChannelPriorityModule } from '../../channel/priority/priority.module.js';
 
 @Module({
-  imports: [ConfigModule, LiveBusinessModule, PlatformModule, ChannelBusinessModule],
+  imports: [
+    ConfigModule,
+    LiveBusinessModule,
+    PlatformModule,
+    ChannelBusinessModule,
+    ChannelPriorityModule,
+  ],
   providers: [LiveScheduler, ChzzkLiveFilter, SoopLiveFilter, ScheduleErrorHandler],
   exports: [LiveScheduler],
 })

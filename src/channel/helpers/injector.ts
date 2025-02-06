@@ -5,13 +5,13 @@ import { getFetcher } from '../../live/helpers/utils.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../business/channel.writer.js';
 import { ChannelEntCreation } from '../persistence/channel.types.js';
-import { faker } from '@faker-js/faker';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { ChannelCreation } from '../business/channel.types.js';
 import { checkType } from '../../utils/union.js';
 import { PLATFORM_TYPES } from '../../common/enum.consts.js';
 import { log } from 'jslog';
-import {randomElem} from "../../utils/list.js";
+import { randomElem } from '../../utils/list.js';
+import { randomInt } from '../../utils/random.js';
 
 interface BatchInsertRequest {
   pids: string[];
@@ -53,15 +53,14 @@ export class TestChannelInjector {
         priority: randomElem(CHANNEL_PRIORITIES),
         // followed: randomElem([true, false] as const),
         followed: false,
-        description: faker.lorem.sentence(),
+        description: null,
       };
 
       const tags: string[] = [];
       for (let i = 1; i < 10; i++) {
         tags.push(`tag${i}`);
       }
-      const n = faker.number.int({ min: 0, max: 8 });
-      const tagNames = Array.from({ length: n }, () => randomElem(tags));
+      const tagNames = Array.from({ length: randomInt(0, 8) }, () => randomElem(tags));
       await this.channelWriter.create(req, Array.from(new Set(tagNames)).sort());
     }
   }

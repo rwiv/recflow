@@ -1,5 +1,4 @@
 import { it } from 'vitest';
-import path from 'path';
 import { TestChannelInjector } from './injector.js';
 import { getChannelServies } from './utils.js';
 

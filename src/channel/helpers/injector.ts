@@ -81,7 +81,7 @@ export class TestChannelInjector {
         priority,
         followed: false,
         description: null,
-        tagNames: breq.tagNames,
+        tagNames: breq.tagNames.filter((t: string) => t.length > 0),
       };
       await this.channelWriter.createWithFetch(req);
       log.info(`Inserted channel ${pid}`);

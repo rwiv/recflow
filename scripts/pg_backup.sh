@@ -15,6 +15,6 @@ export PGUSER="$PG_USERNAME"
 export PGDATABASE="$PG_DATABASE"
 
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-OUTFILE="bck_${TIMESTAMP}.sql"
+OUTFILE="bak_${TIMESTAMP}.sql"
 
 pg_dump -f "./dev/$OUTFILE"

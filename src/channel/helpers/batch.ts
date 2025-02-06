@@ -11,4 +11,4 @@ async function main() {
   await injector.batchInsertChannels(filePath, delay);
 }
 
-main();
+main().catch(console.log);

@@ -40,6 +40,9 @@ export class ChannelValidator {
     if (tagNames.length === 0) {
       return;
     }
+    if (tagNames.filter((name) => name.length === 0).length > 0) {
+      throw new Error('Empty tag name');
+    }
     if (hasDuplicates(tagNames)) {
       throw new Error('Duplicate tag names');
     }

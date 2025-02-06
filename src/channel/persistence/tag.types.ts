@@ -1,4 +1,4 @@
-import { channelsToTags, tags } from './schema.js';
+import { channelsToTags, tags } from '../../infra/db/schema.js';
 
 export type TagEnt = typeof tags.$inferSelect;
 export type ChannelToTagEnt = typeof channelsToTags.$inferSelect;

@@ -1,5 +1,5 @@
 import { db } from '../../infra/db/db.js';
-import { channelsToTags, tags } from './schema.js';
+import { channelsToTags, tags } from '../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { oneNotNull } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';

@@ -35,6 +35,7 @@ export const channels = pgTable(
     pidIndex: index('channels_pid_idx').on(t.pid),
     usernameIndex: index('channels_username_idx').on(t.username),
     followCntIndex: index('channels_followCnt_idx').on(t.followerCnt),
+    platformIndex: index('channels_platform_idx').on(t.platform),
     priorityIndex: index('channels_priority_idx').on(t.priority),
     createdAtIndex: index('channels_createdAt_idx').on(t.createdAt),
     updatedAtIndex: index('channels_updatedAt_idx').on(t.updatedAt),

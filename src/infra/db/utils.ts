@@ -1,5 +1,5 @@
 import { db } from './db.js';
-import { channels, channelsToTags, tags } from '../../channel/persistence/schema.js';
+import { channels, channelsToTags, tags } from './schema.js';
 
 export async function dropAll() {
   await db.delete(channelsToTags);

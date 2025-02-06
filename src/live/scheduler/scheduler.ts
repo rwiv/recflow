@@ -7,7 +7,7 @@ import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { DEFAULT_INJECT_CYCLE, DEFAULT_CLEAN_CYCLE, DEFAULT_REFRESH_CYCLE } from './consts.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveCleaner } from './synchronizer/cleaner.js';
-import { LiveInjector } from './synchronizer/injector.js';
+import { LiveAppender } from './synchronizer/injector.js';
 import { LiveRefresher } from './synchronizer/refresher.js';
 import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
@@ -21,8 +21,8 @@ export class LiveScheduler {
 
   private readonly chzzkCleaner: LiveCleaner;
   private readonly soopCleaner: LiveCleaner;
-  private readonly chzzkInjector: LiveInjector;
-  private readonly soopInjector: LiveInjector;
+  private readonly chzzkAppender: LiveAppender;
+  private readonly soopAppender: LiveAppender;
   private readonly refresher: LiveRefresher;
 
   constructor(
@@ -33,8 +33,8 @@ export class LiveScheduler {
     slf: SoopLiveFilter,
     eh: ScheduleErrorHandler,
   ) {
-    this.chzzkInjector = new LiveInjector('chzzk', ft, ls, cf, clf, eh);
-    this.soopInjector = new LiveInjector('soop', ft, ls, cf, slf, eh);
+    this.chzzkAppender = new LiveAppender('chzzk', ft, ls, cf, clf, eh);
+    this.soopAppender = new LiveAppender('soop', ft, ls, cf, slf, eh);
     this.chzzkCleaner = new LiveCleaner('chzzk', ft, ls, eh);
     this.soopCleaner = new LiveCleaner('soop', ft, ls, eh);
     this.refresher = new LiveRefresher(ls, eh);
@@ -58,8 +58,8 @@ export class LiveScheduler {
   }
 
   private inject() {
-    this.chzzkInjector.sync();
-    this.soopInjector.sync();
+    this.chzzkAppender.sync();
+    this.soopAppender.sync();
   }
 
   private clean() {

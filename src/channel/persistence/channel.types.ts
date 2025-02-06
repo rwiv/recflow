@@ -1,6 +1,6 @@
 import { ChannelBase } from '../../platform/wapper/channel.js';
 import { PlatformType } from '../../platform/types.js';
-import { channels } from './schema.js';
+import { channels } from '../../infra/db/schema.js';
 import { ChannelPriority } from '../priority/types.js';
 
 export type ChannelEnt = typeof channels.$inferSelect;

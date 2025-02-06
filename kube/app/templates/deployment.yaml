@@ -51,6 +51,8 @@ spec:
               value: {{ .Values.app.rabbitmq.host }}
             - name: AMQP_PORT
               value: "{{ .Values.app.rabbitmq.port }}"
+            - name: AMQP_HTTP_PORT
+              value: "{{ .Values.app.rabbitmq.httpPort }}"
             - name: AMQP_USERNAME
               value: {{ .Values.app.rabbitmq.username }}
             - name: AMQP_PASSWORD
@@ -58,6 +60,22 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.rabbitmq.secretName }}
                   key: {{ .Values.app.rabbitmq.passwordKey }}
+            - name: PG_HOST
+              value: {{ .Values.app.postgres.host }}
+            - name: PG_PORT
+              value: {{ .Values.app.postgres.port }}
+            - name: PG_DATABASE
+              value: {{ .Values.app.postgres.database }}
+            - name: PG_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.postgres.secretName }}
+                  key: {{ .Values.app.postgres.usernameKey }}
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.postgres.secretName }}
+                  key: {{ .Values.app.postgres.passwordKey }}
           volumeMounts:
             - name: conf
               mountPath: {{ .Values.configMap.mountPath }}

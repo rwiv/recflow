@@ -8,7 +8,7 @@ import { ChannelFinder } from '../../../channel/business/channel.finder.js';
 import { ChannelRecord } from '../../../channel/business/channel.types.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 
-export class LiveInjector extends Synchronizer {
+export class LiveAppender extends Synchronizer {
   constructor(
     private readonly platform: PlatformType,
     private readonly fetcher: PlatformFetcher,

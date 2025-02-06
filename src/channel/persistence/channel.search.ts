@@ -2,7 +2,7 @@ import { ChannelSortType } from './tag.types.js';
 import { ChannelEnt } from './channel.types.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { channels, channelsToTags } from './schema.js';
+import { channels, channelsToTags } from '../../infra/db/schema.js';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';

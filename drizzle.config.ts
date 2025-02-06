@@ -6,7 +6,7 @@ const url = getPgUrl();
 
 export default defineConfig({
   dialect: 'postgresql',
-  schema: './src/**/schema.ts',
+  schema: './src/infra/db/schema.ts',
   dbCredentials: { url },
 });
 

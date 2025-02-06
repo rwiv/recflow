@@ -8,7 +8,7 @@ import { NodeRecord } from '@/client/node.types.ts';
 
 export function mockLiveRecord(): LiveRecord {
   return {
-    type: randomElem(['chzzk', 'soop', 'twitch']),
+    type: randomElem(PLATFORM_TYPES),
     channelId: faker.string.uuid().replace(/-/g, ''),
     channelName: faker.internet.username(),
     liveId: faker.number.int({ min: 100000, max: 999999 }),

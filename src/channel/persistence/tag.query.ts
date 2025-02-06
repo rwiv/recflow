@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { TagEnt } from './tag.types.js';
-import { channelsToTags, tags } from './schema.js';
+import { channelsToTags, tags } from '../../infra/db/schema.js';
 import { oneNullable } from '../../utils/list.js';
 import { eq, inArray } from 'drizzle-orm';
 

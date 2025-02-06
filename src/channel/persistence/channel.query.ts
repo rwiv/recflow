@@ -1,5 +1,5 @@
 import { db } from '../../infra/db/db.js';
-import { channels, channelsToTags } from './schema.js';
+import { channels, channelsToTags } from '../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { ChannelEnt } from './channel.types.js';
 import { Tx } from '../../infra/db/types.js';

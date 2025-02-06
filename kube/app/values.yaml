@@ -28,8 +28,16 @@ app:
   rabbitmq:
     host: rabbitmq.infra.svc.cluster.local
     port: 5672
+    httpPort: 15672
     username: admin
     secretName: rabbitmq-main
+    passwordKey: password
+  postgres:
+    host: stmgr-postgres-rw.infra.svc.cluster.local
+    port: 5432
+    database: stmgr
+    secretName: stmgr-postgres
+    usernameKey: username
     passwordKey: password
 
 externals:

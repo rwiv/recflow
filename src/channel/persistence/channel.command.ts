@@ -1,6 +1,6 @@
 import { oneNotNull } from '../../utils/list.js';
 import { db } from '../../infra/db/db.js';
-import { channels } from './schema.js';
+import { channels } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { ChannelEntCreation, ChannelEnt, ChannelEntUpdate } from './channel.types.js';
 import { uuid } from '../../utils/uuid.js';

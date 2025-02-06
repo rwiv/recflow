@@ -2,8 +2,8 @@ import { Synchronizer } from './synchronizer.js';
 import { PlatformType } from '../../../platform/types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { TrackedLiveService } from '../../business/tracked-live.service.js';
-import { LiveInfo } from '../../../platform/wapper/live.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
+import { LiveRecord } from '../../business/types.js';
 
 export class LiveCleaner extends Synchronizer {
   constructor(
@@ -15,20 +15,14 @@ export class LiveCleaner extends Synchronizer {
     super(eh);
   }
 
-  protected async check() {
+  protected override async check() {
     const lives = (await this.liveService.findAll()).filter((info) => info.type === this.platform);
-    const toBeDeletedLives = (
-      await Promise.all(lives.map(async (live) => this.isToBeDeleted(live)))
-    ).filter((live) => live !== null);
-
-    for (const live of toBeDeletedLives) {
-      await this.liveService.delete(live.channelId, { purge: true });
-    }
+    await Promise.all(lives.map((live) => this.processLive(live)));
   }
 
-  private async isToBeDeleted(existingInfo: LiveInfo) {
-    const channel = await this.fetcher.fetchChannel(this.platform, existingInfo.channelId, false);
+  private async processLive(live: LiveRecord) {
+    const channel = await this.fetcher.fetchChannel(this.platform, live.channelId, false);
     if (channel?.openLive) return null;
-    return existingInfo;
+    await this.liveService.delete(live.channelId, { purge: true });
   }
 }

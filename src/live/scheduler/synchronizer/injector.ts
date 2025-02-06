@@ -20,7 +20,7 @@ export class LiveAppender extends Synchronizer {
     super(eh);
   }
 
-  protected async check() {
+  protected override async check() {
     const followedChannels = await this.chanFinder.findFollowedChannels(this.platform);
     await Promise.all(followedChannels.map((ch) => this.processFollowedChannel(ch)));
 

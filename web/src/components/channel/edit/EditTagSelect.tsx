@@ -15,8 +15,14 @@ import { css } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { TagRecord } from '@/client/tag.types.ts';
 
-export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) => void }) {
+interface EditTagSelectProps {
+  existsTagNames: string[];
+  addTagName: (tagName: string) => void;
+}
+
+export function EditTagSelect({ existsTagNames, addTagName }: EditTagSelectProps) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
 
@@ -66,7 +72,7 @@ export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) =>
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags &&
-                tags.map((tag) => (
+                nonDuplicatedTags(existsTagNames, tags).map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                   </CommandItem>
@@ -77,4 +83,9 @@ export function EditTagSelect({ addTagName }: { addTagName: (tagName: string) =>
       </PopoverContent>
     </Popover>
   );
+}
+
+function nonDuplicatedTags(exists: string[], reqTags: TagRecord[]): TagRecord[] {
+  const tagSet = new Set(exists);
+  return reqTags.filter((tag) => !tagSet.has(tag.name));
 }

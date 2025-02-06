@@ -37,6 +37,7 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { ChannelCreation } from '@/client/channel.types.ts';
 
 const FormSchema = z.object({
   platform: z.enum(PLATFORM_TYPES),
@@ -85,7 +86,19 @@ export function CreateForm({ cb }: { cb: () => void }) {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await createChannel(data);
+    const req: ChannelCreation = { ...data };
+    if (req.description === '') {
+      req.description = null;
+    }
+    try {
+      await createChannel(req);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('already exists')) {
+        form.setError('pid', { message: 'Channel ID already exists' });
+        return;
+      }
+      throw e;
+    }
     if (!pageState) return;
     await queryClient.invalidateQueries({ queryKey: pageState.queryKeys() });
     cb();
@@ -205,7 +218,7 @@ function TagSelectField({ form, style }: TagSelectFieldProps) {
             <FormLabel>Tags</FormLabel>
             <FormControl>
               <div>
-                <EditTagSelect addTagName={addTagName} />
+                <EditTagSelect existsTagNames={tagNames} addTagName={addTagName} />
               </div>
             </FormControl>
             <FormMessage />

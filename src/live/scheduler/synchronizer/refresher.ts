@@ -10,7 +10,7 @@ export class LiveRefresher extends Synchronizer {
     super(eh);
   }
 
-  protected async check() {
+  protected override async check() {
     await this.liveService.refreshAllLives();
   }
 }

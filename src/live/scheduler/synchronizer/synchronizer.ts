@@ -4,7 +4,7 @@ import { ScheduleErrorHandler } from '../error.handler.js';
 export abstract class Synchronizer {
   private isChecking: boolean = false;
 
-  constructor(private readonly eh: ScheduleErrorHandler) {}
+  protected constructor(private readonly eh: ScheduleErrorHandler) {}
 
   async sync() {
     if (this.isChecking) {

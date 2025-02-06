@@ -94,7 +94,7 @@ export function TagSelect({
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags &&
-                getUnownedTags(existsTags, tags).map((tag) => (
+                nonDuplicatedTags(existsTags, tags).map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                     <Check
@@ -110,7 +110,7 @@ export function TagSelect({
   );
 }
 
-function getUnownedTags(exists: TagRecord[] | undefined, reqTags: TagRecord[]): TagRecord[] {
+function nonDuplicatedTags(exists: TagRecord[] | undefined, reqTags: TagRecord[]): TagRecord[] {
   if (!exists) {
     return reqTags;
   }

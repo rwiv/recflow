@@ -11,6 +11,7 @@ import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { ChannelCreation } from '../business/channel.types.js';
 import { checkType } from '../../utils/union.js';
 import { PLATFORM_TYPES } from '../../common/enum.consts.js';
+import { log } from 'jslog';
 
 interface BatchInsertRequest {
   pids: string[];
@@ -65,7 +66,7 @@ export class TestChannelInjector {
     }
   }
 
-  async batchInsertChannels(filePath: string) {
+  async batchInsertChannels(filePath: string, delay: number) {
     const text = await fs.promises.readFile(filePath, 'utf8');
     const breq = JSON.parse(text) as BatchInsertRequest;
     const priority = checkType(breq.priority, CHANNEL_PRIORITIES);
@@ -83,6 +84,8 @@ export class TestChannelInjector {
         tagNames: breq.tagNames,
       };
       await this.channelWriter.createWithFetch(req);
+      log.info(`Inserted channel ${pid}`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }

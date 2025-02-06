@@ -88,12 +88,14 @@ export function AttachForm({ channel, cb }: { channel: ChannelRecord; cb: () => 
             <FormItem css={formItemStyle}>
               <FormLabel>Tag</FormLabel>
               <FormControl>
-                <TagAttachSelect
-                  triggerClassName="w-full"
-                  contentStyle={css({ width: '25rem' })}
-                  onSelectCallback={(tag) => form.setValue('tagName', tag.name)}
-                  existsTags={channel.tags}
-                />
+                <div onWheel={(e) => e.stopPropagation()}>
+                  <TagAttachSelect
+                    existsTags={channel.tags ?? []}
+                    triggerClassName="w-full"
+                    contentStyle={css({ width: '25rem' })}
+                    onSelectCallback={(tag) => form.setValue('tagName', tag.name)}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

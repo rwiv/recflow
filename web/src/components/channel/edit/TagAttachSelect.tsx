@@ -17,19 +17,20 @@ import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { TagRecord } from '@/client/tag.types.ts';
 import { SerializedStyles } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
+import { sortedTags } from '@/common/utils.ts';
 
 interface TagSelectProps {
+  existsTags: TagRecord[];
   triggerClassName?: string;
   contentStyle?: SerializedStyles;
   onSelectCallback: (tag: TagRecord) => void;
-  existsTags?: TagRecord[];
 }
 
 export function TagAttachSelect({
+  existsTags,
   onSelectCallback,
   triggerClassName,
   contentStyle,
-  existsTags,
 }: TagSelectProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
@@ -89,7 +90,7 @@ export function TagAttachSelect({
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags &&
-                nonDuplicatedTags(existsTags, tags).map((tag) => (
+                nonDuplicatedSortedTags(existsTags, tags).map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                     <Check
@@ -105,10 +106,7 @@ export function TagAttachSelect({
   );
 }
 
-function nonDuplicatedTags(exists: TagRecord[] | undefined, reqTags: TagRecord[]): TagRecord[] {
-  if (!exists) {
-    return reqTags;
-  }
+function nonDuplicatedSortedTags(exists: TagRecord[], reqTags: TagRecord[]): TagRecord[] {
   const tagSet = new Set(exists.map((tag) => tag.id));
-  return reqTags.filter((tag) => !tagSet.has(tag.id));
+  return sortedTags(reqTags.filter((tag) => !tagSet.has(tag.id)));
 }

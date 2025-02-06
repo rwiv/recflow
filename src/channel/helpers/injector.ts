@@ -60,7 +60,7 @@ export class TestChannelInjector {
       for (let i = 1; i < 10; i++) {
         tags.push(`tag${i}`);
       }
-      const tagNames = Array.from({ length: randomInt(0, 8) }, () => randomElem(tags));
+      const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
       await this.channelWriter.create(req, Array.from(new Set(tagNames)).sort());
     }
   }

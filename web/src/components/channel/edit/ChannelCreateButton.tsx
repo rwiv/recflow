@@ -22,7 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form.tsx';
-import { EditTagSelect } from '@/components/channel/edit/EditTagSelect.tsx';
+import { TagCreateSelect } from '@/components/channel/edit/TagCreateSelect.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import {
   Select,
@@ -217,8 +217,8 @@ function TagSelectField({ form, style }: TagSelectFieldProps) {
           <FormItem css={style}>
             <FormLabel>Tags</FormLabel>
             <FormControl>
-              <div>
-                <EditTagSelect existsTagNames={tagNames} addTagName={addTagName} />
+              <div onWheel={(e) => e.stopPropagation()}>
+                <TagCreateSelect existsTagNames={tagNames} addTagName={addTagName} />
               </div>
             </FormControl>
             <FormMessage />

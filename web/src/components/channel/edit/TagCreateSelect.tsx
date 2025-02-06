@@ -16,13 +16,14 @@ import { fetchTags } from '@/client/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { TagRecord } from '@/client/tag.types.ts';
+import { sortedTags } from '@/common/utils.ts';
 
 interface EditTagSelectProps {
   existsTagNames: string[];
   addTagName: (tagName: string) => void;
 }
 
-export function EditTagSelect({ existsTagNames, addTagName }: EditTagSelectProps) {
+export function TagCreateSelect({ existsTagNames, addTagName }: EditTagSelectProps) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
 
@@ -72,7 +73,7 @@ export function EditTagSelect({ existsTagNames, addTagName }: EditTagSelectProps
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags &&
-                nonDuplicatedTags(existsTagNames, tags).map((tag) => (
+                nonDuplicatedSortedTags(existsTagNames, tags).map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                   </CommandItem>
@@ -85,7 +86,7 @@ export function EditTagSelect({ existsTagNames, addTagName }: EditTagSelectProps
   );
 }
 
-function nonDuplicatedTags(exists: string[], reqTags: TagRecord[]): TagRecord[] {
+function nonDuplicatedSortedTags(exists: string[], reqTags: TagRecord[]): TagRecord[] {
   const tagSet = new Set(exists);
-  return reqTags.filter((tag) => !tagSet.has(tag.name));
+  return sortedTags(reqTags.filter((tag) => !tagSet.has(tag.name)));
 }

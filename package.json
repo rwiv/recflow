@@ -11,9 +11,9 @@
     "prod": "node dist/main",
     "format": "prettier --write \"{src,test}/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
-    "gen": "drizzle-kit generate",
-    "mig": "drizzle-kit migrate",
-    "push": "drizzle-kit push",
+    "gen": "drizzle-kit generate --config=drizzle-prod.config.ts",
+    "mig": "drizzle-kit migrate --config=drizzle-prod.config.ts",
+    "push": "drizzle-kit push --config=drizzle-dev.config.ts",
     "export": "drizzle-kit export"
   },
   "engines": {

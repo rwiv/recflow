@@ -1,6 +1,7 @@
 dev
 public/**
-drizzle
+drizzle-dev
+drizzle-prod
 
 # Created by .ignore support plugin (hsz.mobi)
 ### JetBrains template

@@ -8,11 +8,12 @@ export default defineConfig({
   dialect: 'postgresql',
   schema: './src/infra/db/schema.ts',
   dbCredentials: { url },
+  out: "./drizzle-prod",
 });
 
 function getPgUrl() {
   const host = process.env.PG_HOST;
-  const portStr = process.env.PG_PORT;
+  const portStr = process.env.PG_PROD_PORT;
   const database = process.env.PG_DATABASE;
   const username = process.env.PG_USERNAME;
   const password = process.env.PG_PASSWORD;

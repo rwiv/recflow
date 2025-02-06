@@ -66,8 +66,6 @@ function createQueryConfig(priority: ChannelPriorityConfig): QueryConfig {
       },
     },
     priority,
-    followChzzkChanIds: [],
-    followSoopUserIds: [],
     chzzkMinUserCnt: 0,
     chzzkMinFollowerCnt: 0,
     soopMinUserCnt: 0,

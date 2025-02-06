@@ -13,6 +13,7 @@ import { NodeSelector } from '../../node/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelCreationBase } from '../../channel/business/channel.types.js';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
+import { FatalError } from '../../utils/errors/errors/FatalError.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -64,8 +65,7 @@ export class TrackedLiveService {
     }
     const node = this.nodeSelector.match(channel, await this.nodes());
     if (node === null) {
-      // TODO: use ntfy
-      throw Error(`No node matched for ${live.channelId}`);
+      throw new FatalError(`No node matched for ${live.channelId}`);
     }
     const record = {
       ...live,

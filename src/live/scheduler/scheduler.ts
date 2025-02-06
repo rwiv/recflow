@@ -10,6 +10,7 @@ import { LiveCleaner } from './synchronizer/cleaner.js';
 import { LiveInjector } from './synchronizer/injector.js';
 import { LiveRefresher } from './synchronizer/refresher.js';
 import { log } from 'jslog';
+import { ChannelFinder } from '../../channel/business/channel.finder.js';
 
 @Injectable()
 export class LiveScheduler {
@@ -25,13 +26,14 @@ export class LiveScheduler {
 
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
+    cf: ChannelFinder,
     ft: PlatformFetcher,
     ls: TrackedLiveService,
-    cf: ChzzkLiveFilter,
-    sf: SoopLiveFilter,
+    clf: ChzzkLiveFilter,
+    slf: SoopLiveFilter,
   ) {
-    this.chzzkInjector = new LiveInjector('chzzk', this.query, ft, ls, cf);
-    this.soopInjector = new LiveInjector('soop', this.query, ft, ls, sf);
+    this.chzzkInjector = new LiveInjector('chzzk', ft, ls, cf, clf);
+    this.soopInjector = new LiveInjector('soop', ft, ls, cf, slf);
     this.chzzkCleaner = new LiveCleaner('chzzk', ft, ls);
     this.soopCleaner = new LiveCleaner('soop', ft, ls);
     this.refresher = new LiveRefresher(ls);

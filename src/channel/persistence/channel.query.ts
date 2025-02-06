@@ -34,6 +34,15 @@ export class ChannelQueryRepository {
     return tx.select().from(channels).where(eq(channels.username, username));
   }
 
+  async findByFollowedFlag(
+    followed: boolean,
+    platform: PlatformType,
+    tx: Tx = db,
+  ): Promise<ChannelEnt[]> {
+    const cond = and(eq(channels.followed, followed), eq(channels.platform, platform));
+    return tx.select().from(channels).where(cond);
+  }
+
   async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
     const rows = await tx
       .select()

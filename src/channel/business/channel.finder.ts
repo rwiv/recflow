@@ -46,6 +46,10 @@ export class ChannelFinder {
     return this.solveChannels(channels, withTags);
   }
 
+  async findFollowedChannels(platform: PlatformType): Promise<ChannelRecord[]> {
+    return this.chanQuery.findByFollowedFlag(true, platform);
+  }
+
   async findByQuery(
     page: number,
     size: number,

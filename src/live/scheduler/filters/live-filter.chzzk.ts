@@ -5,12 +5,14 @@ import { LiveInfo } from '../../../platform/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../../common/config.module.js';
+import { ChannelFinder } from '../../../channel/business/channel.finder.js';
 
 @Injectable()
 export class ChzzkLiveFilter implements LiveFilter {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
+    private readonly chanFinder: ChannelFinder,
   ) {}
 
   async getFiltered(infos: LiveInfo[]): Promise<LiveInfo[]> {

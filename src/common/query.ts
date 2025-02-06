@@ -8,9 +8,6 @@ export interface QueryConfig {
 
   priority: ChannelPriorityConfig;
 
-  followChzzkChanIds: string[];
-  followSoopUserIds: string[];
-
   chzzkMinUserCnt: number;
   chzzkMinFollowerCnt: number;
   soopMinUserCnt: number;

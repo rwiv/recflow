@@ -1,4 +1,5 @@
 import { log } from 'jslog';
+import { FatalError } from '../../../utils/errors/errors/FatalError.js';
 
 export abstract class Synchronizer {
   private isChecking: boolean = false;
@@ -13,8 +14,7 @@ export abstract class Synchronizer {
     try {
       await this.check();
     } catch (e) {
-      // TODO: use ntfy
-      console.error(e);
+      throw new FatalError('Failed to sync', { cause: e });
     }
 
     this.isChecking = false;

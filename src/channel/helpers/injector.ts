@@ -6,12 +6,12 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../business/channel.writer.js';
 import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { faker } from '@faker-js/faker';
-import { randomElem } from '../../../web/src/lib/list.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { ChannelCreation } from '../business/channel.types.js';
 import { checkType } from '../../utils/union.js';
 import { PLATFORM_TYPES } from '../../common/enum.consts.js';
 import { log } from 'jslog';
+import {randomElem} from "../../utils/list.js";
 
 interface BatchInsertRequest {
   pids: string[];

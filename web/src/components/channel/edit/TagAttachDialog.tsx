@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/form.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { Button } from '@/components/ui/button.tsx';
-import { TagSelect } from '@/components/channel/common/TagSelect.tsx';
+import { TagAttachSelect } from '@/components/channel/edit/TagAttachSelect.tsx';
 import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { css } from '@emotion/react';
 import { attachTag } from '@/client/tag.client.ts';
@@ -47,7 +47,7 @@ export function TagAttachDialog({ channel, triggerRef }: TagAttachDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Update Channel Priority</DialogTitle>
+          <DialogTitle>Attach Tag</DialogTitle>
           <DialogDescription>Click save when you're done.</DialogDescription>
         </DialogHeader>
         <AttachForm channel={channel} cb={() => closeBtnRef.current?.click()} />
@@ -88,7 +88,7 @@ export function AttachForm({ channel, cb }: { channel: ChannelRecord; cb: () => 
             <FormItem css={formItemStyle}>
               <FormLabel>Tag</FormLabel>
               <FormControl>
-                <TagSelect
+                <TagAttachSelect
                   triggerClassName="w-full"
                   contentStyle={css({ width: '25rem' })}
                   onSelectCallback={(tag) => form.setValue('tagName', tag.name)}

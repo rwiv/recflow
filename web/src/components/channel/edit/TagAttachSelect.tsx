@@ -17,16 +17,15 @@ import { TAGS_QUERY_KEY } from '@/common/consts.ts';
 import { TagRecord } from '@/client/tag.types.ts';
 import { SerializedStyles } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 
 interface TagSelectProps {
-  onSelectCallback: (tag: TagRecord) => void;
   triggerClassName?: string;
   contentStyle?: SerializedStyles;
+  onSelectCallback: (tag: TagRecord) => void;
   existsTags?: TagRecord[];
 }
 
-export function TagSelect({
+export function TagAttachSelect({
   onSelectCallback,
   triggerClassName,
   contentStyle,
@@ -35,7 +34,6 @@ export function TagSelect({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [isTriggered, setIsTriggered] = useState(false);
-  const { pageState } = useChannelPageStore();
 
   const { data: tags } = useQuery({
     queryKey: [TAGS_QUERY_KEY],
@@ -62,10 +60,7 @@ export function TagSelect({
     }
   };
 
-  const getSelectedName = () => {
-    if (pageState?.tagName) {
-      return pageState.tagName;
-    }
+  const getSelectedNameImpl = () => {
     if (tags && value) {
       return tagMap.get(value)?.name;
     } else {
@@ -83,7 +78,7 @@ export function TagSelect({
           onClick={onTrigger}
           className={cn('w-[200px] justify-between font-normal', triggerClassName)}
         >
-          {getSelectedName()}
+          {getSelectedNameImpl()}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>

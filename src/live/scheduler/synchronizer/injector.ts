@@ -5,7 +5,7 @@ import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/business/channel.finder.js';
-import { ChannelRecord } from '../../../channel/business/channel.types.js';
+import { ChannelRecord } from '../../../channel/business/channel.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 
 export class LiveAppender extends Synchronizer {

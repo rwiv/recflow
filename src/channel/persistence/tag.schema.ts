@@ -3,8 +3,8 @@ import { uuid } from '../../common/schema.js';
 
 export const tagEnt = z.object({
   id: uuid,
-  name: z.string(),
-  description: z.string().nullable(),
+  name: z.string().nonempty(),
+  description: z.string().nonempty().nullable(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });

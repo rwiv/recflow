@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEnt } from './channel.schema.js';
-import { ChannelSortType } from '../business/channel.types.js';
+import { channelSortArg, ChannelSortType } from '../business/channel.schema.js';
 
 @Injectable()
 export class ChannelSearchRepository {
@@ -21,7 +21,7 @@ export class ChannelSearchRepository {
   async findByQuery(
     page: { page: number; size: number } | undefined = undefined,
     sorted: ChannelSortType = undefined,
-    priorityName: ChannelPriority | undefined = undefined,
+    priorityName: string | undefined = undefined,
     tagName: string | undefined = undefined,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
@@ -90,9 +90,10 @@ export class ChannelSearchRepository {
   }
 
   private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortType = undefined) {
-    if (sorted === 'latest') {
+    const sortType = channelSortArg.parse(sorted);
+    if (sortType === 'latest') {
       qb = qb.orderBy(desc(channels.updatedAt));
-    } else if (sorted === 'followerCnt') {
+    } else if (sortType === 'followerCnt') {
       qb = qb.orderBy(desc(channels.followerCnt));
     }
     return qb;

@@ -1,11 +1,12 @@
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
 import {
-  ChannelCreationWithFetch,
-  ChannelCreationBaseWithFetch,
+  ChannelAppendWithFetch,
+  ChannelAppendWithInfo,
   ChannelRecord,
-  ChannelCreation,
-} from './channel.types.js';
+  channelAppend,
+  ChannelAppend,
+} from './channel.schema.js';
 import { tagAttachment, tagDetachment, TagRecord } from './tag.schema.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
@@ -36,8 +37,8 @@ export class ChannelWriter {
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async create(req: ChannelCreation, tagNames: string[] | undefined): Promise<ChannelRecord> {
-    await this.validator.validateForm(req, tagNames);
+  async create(req: ChannelAppend, tagNames: string[] | undefined): Promise<ChannelRecord> {
+    await this.validator.validateForm(req.pid, req.platformName, tagNames);
     const platform = await this.pfRepo.findByName(req.platformName);
     if (!platform) throw new NotFoundError('Platform not found');
     const priority = await this.priRepo.findByName(req.priorityName);
@@ -63,25 +64,25 @@ export class ChannelWriter {
     });
   }
 
-  async createWithFetch(req: ChannelCreationWithFetch): Promise<ChannelRecord> {
-    const info = assertNotNull(await this.fetcher.fetchChannel(req.platform, req.pid, false));
+  async createWithFetch(req: ChannelAppendWithFetch): Promise<ChannelRecord> {
+    const info = assertNotNull(await this.fetcher.fetchChannel(req.platformName, req.pid, false));
     return this.createWithChannelInfo(req, info);
   }
 
   async createWithChannelInfo(
-    req: ChannelCreationBaseWithFetch,
+    req: ChannelAppendWithInfo,
     info: ChannelInfo,
   ): Promise<ChannelRecord> {
-    const reqEnt: ChannelCreation = {
+    const reqEnt = channelAppend.parse({
       pid: info.pid,
       username: info.username,
       profileImgUrl: info.profileImgUrl,
       followerCnt: info.followerCnt,
       platformName: info.platform,
-      priorityName: req.priority,
+      priorityName: req.priorityName,
       followed: req.followed,
       description: req.description,
-    };
+    });
     return this.create(reqEnt, req.tagNames);
   }
 

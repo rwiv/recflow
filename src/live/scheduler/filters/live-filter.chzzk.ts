@@ -41,7 +41,7 @@ export class ChzzkLiveFilter implements LiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidOne(live.channelId, 'chzzk');
     if (channel) {
-      if (this.evaluator.getRank(channel.priority) === 3) {
+      if (this.evaluator.getRank(channel.priorityName) === 3) {
         return null;
       } else {
         return live;

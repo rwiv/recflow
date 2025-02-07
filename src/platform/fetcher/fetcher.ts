@@ -18,7 +18,7 @@ export class PlatformFetcher {
     } else if (platform === 'soop') {
       return this.soopFetcher.fetchLives();
     } else {
-      throw Error('Invalid PlatformType');
+      throw Error(`Invalid PlatformType: ${platform}`);
     }
   }
 
@@ -32,7 +32,7 @@ export class PlatformFetcher {
     } else if (platform === 'soop') {
       return this.soopFetcher.fetchChannel(uid, hasLiveInfo);
     } else {
-      throw Error('Invalid PlatformType');
+      throw Error(`Invalid PlatformType: ${platform}`);
     }
   }
 }

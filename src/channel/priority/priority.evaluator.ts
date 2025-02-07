@@ -29,7 +29,7 @@ export class ChannelPriorityEvaluator {
     this.validateShift();
   }
 
-  getRank(priority: ChannelPriority): ChannelPriorityRank {
+  getRank(priority: string): ChannelPriorityRank {
     switch (priority) {
       case 'must':
         return 1;
@@ -57,6 +57,8 @@ export class ChannelPriorityEvaluator {
         return 3;
       case 'none':
         return this.noneRank;
+      default:
+        throw new Error('Invalid priority');
     }
   }
 

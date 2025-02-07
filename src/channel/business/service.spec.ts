@@ -3,7 +3,7 @@ import { dropAll } from '../../infra/db/utils.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { getChannelServices } from '../helpers/utils.js';
 import { ChannelPriority } from '../priority/types.js';
-import { ChannelSortType } from './channel.types.js';
+import { ChannelSortType } from './channel.schema.js';
 
 const { chFinder, chWriter, init } = getChannelServices();
 

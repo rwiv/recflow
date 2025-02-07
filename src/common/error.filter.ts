@@ -9,7 +9,6 @@ export class HttpErrorFilter implements ExceptionFilter {
   catch(raw: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
     const err = this.resolver.resolve(raw);
 
     response.status(err.status).json({

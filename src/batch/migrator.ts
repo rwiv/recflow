@@ -1,13 +1,10 @@
 import fs from 'fs';
 import { ChannelFinder } from '../channel/business/channel.finder.js';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
-import { checkEnum } from '../utils/union.js';
-import { PLATFORM_TYPES } from '../common/enum.consts.js';
-import { assertNotNull } from '../utils/null.js';
-import { CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
 import { log } from 'jslog';
-import { ChannelCreation } from '../channel/business/channel.types.js';
+import { channelAppend } from '../channel/business/channel.schema.js';
 import { AppInitializer } from '../common/initializer.js';
+import { platformType } from '../common/schema.js';
 
 export interface ChannelBackupRecord {
   id: string;
@@ -36,18 +33,18 @@ export class BatchMigrator {
     const text = await fs.promises.readFile(filePath, 'utf8');
     const channels = JSON.parse(text) as ChannelBackupRecord[];
     for (const channel of channels) {
-      const req: ChannelCreation = {
+      const req = channelAppend.parse({
         pid: channel.pid,
-        platformName: assertNotNull(checkEnum(channel.platform, PLATFORM_TYPES)),
+        platformName: platformType.parse(channel.platform),
         username: channel.username,
         profileImgUrl: channel.profileImgUrl,
         followerCnt: channel.followerCnt,
-        priorityName: assertNotNull(checkEnum(channel.priority, CHANNEL_PRIORITIES)),
+        priorityName: channel.priority,
         followed: channel.followed,
         description: channel.description,
         createdAt: new Date(channel.createdAt),
         updatedAt: new Date(channel.updatedAt),
-      };
+      });
       await this.chWriter.create(req, channel.tags);
       log.info(`Migrated channel: ${channel.username}`);
     }
@@ -70,8 +67,8 @@ export class BatchMigrator {
         username: c.username,
         profileImgUrl: c.profileImgUrl,
         followerCnt: c.followerCnt,
-        platform: c.platform,
-        priority: c.priority,
+        platform: c.platformName,
+        priority: c.priorityName,
         followed: c.followed,
         description: c.description,
         createdAt: c.createdAt.toISOString(),

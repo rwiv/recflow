@@ -1,20 +1,23 @@
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
-import { ChannelValidator } from './channel.validator.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelDefUpdate, ChannelRecord } from './channel.types.js';
-import { ChannelPriority } from '../priority/types.js';
+import { ChannelRecord } from './channel.schema.js';
 import { ChannelMapper } from './channel.mapper.js';
+import { ChannelEntUpdate } from '../persistence/channel.schema.js';
+import { ChannelPriorityRepository } from '../priority/priority.repository.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class ChannelUpdater {
   constructor(
     private readonly chCmd: ChannelCommandRepository,
+    private readonly priRepo: ChannelPriorityRepository,
     private readonly chMapper: ChannelMapper,
-    private readonly validator: ChannelValidator,
   ) {}
 
-  async updatePriority(id: string, priority: ChannelPriority): Promise<ChannelRecord> {
-    return this.updateRecord({ id, form: { priority } });
+  async updatePriority(id: string, priorityName: string): Promise<ChannelRecord> {
+    const priority = await this.priRepo.findByName(priorityName);
+    if (!priority) throw new NotFoundError('Priority not found');
+    return this.updateRecord({ id, form: { priorityId: priority.id } });
   }
 
   async updateFollowed(id: string, followed: boolean): Promise<ChannelRecord> {
@@ -25,8 +28,7 @@ export class ChannelUpdater {
     return this.updateRecord({ id, form: { description } });
   }
 
-  async updateRecord(req: ChannelDefUpdate): Promise<ChannelRecord> {
-    await this.validator.validateForm(req.form);
+  private async updateRecord(req: ChannelEntUpdate): Promise<ChannelRecord> {
     const ent = await this.chCmd.update(req);
     return this.chMapper.map(ent);
   }

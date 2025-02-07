@@ -40,9 +40,9 @@ import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { ChannelCreation } from '@/client/channel.types.ts';
 
 const FormSchema = z.object({
-  platform: z.enum(PLATFORM_TYPES),
+  platformName: z.enum(PLATFORM_TYPES),
   pid: z.string().nonempty(),
-  priority: z.enum(CHANNEL_PRIORITIES),
+  priorityName: z.enum(CHANNEL_PRIORITIES),
   followed: z.boolean(),
   description: z.string(),
   tagNames: z.array(z.string()),
@@ -76,9 +76,9 @@ export function CreateForm({ cb }: { cb: () => void }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      platform: 'chzzk',
+      platformName: 'chzzk',
       pid: '',
-      priority: 'none',
+      priorityName: 'none',
       followed: false,
       description: '',
       tagNames: [],
@@ -109,7 +109,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
-          name="priority"
+          name="priorityName"
           render={({ field }) => (
             <FormItem css={formItemStyle}>
               <FormLabel>Priority</FormLabel>
@@ -134,7 +134,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
         />
         <FormField
           control={form.control}
-          name="platform"
+          name="platformName"
           render={({ field }) => (
             <FormItem css={formItemStyle}>
               <FormLabel>Platform</FormLabel>

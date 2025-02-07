@@ -17,15 +17,15 @@ import { AppInitializer } from '../../common/initializer.js';
 
 export function getChannelServices() {
   const pfRepo = new PlatformRepository();
-  const cpRepo = new ChannelPriorityRepository();
+  const priRepo = new ChannelPriorityRepository();
   const tagQuery = new TagQueryRepository();
   const tagCmd = new TagCommandRepository(tagQuery);
   const chQuery = new ChannelQueryRepository();
-  const chSearch = new ChannelSearchRepository(tagQuery, cpRepo);
+  const chSearch = new ChannelSearchRepository(tagQuery, priRepo);
   const chCmd = new ChannelCommandRepository(chQuery);
 
   const validator = new ChannelValidator(chQuery);
-  const chMapper = new ChannelMapper(pfRepo, cpRepo);
+  const chMapper = new ChannelMapper(pfRepo, priRepo);
   const fetcher = getFetcher();
   const tagWriter = new TagWriter(tagCmd, tagQuery, chQuery);
   const tagFinder = new TagFinder(tagQuery);
@@ -33,15 +33,15 @@ export function getChannelServices() {
     chCmd,
     chQuery,
     pfRepo,
-    cpRepo,
+    priRepo,
     tagWriter,
     tagQuery,
     validator,
     chMapper,
     fetcher,
   );
-  const chUpdater = new ChannelUpdater(chCmd, chMapper, validator);
+  const chUpdater = new ChannelUpdater(chCmd, priRepo, chMapper);
   const chFinder = new ChannelFinder(chQuery, chSearch, chMapper, tagQuery);
-  const init = new AppInitializer(pfRepo, cpRepo, chWriter);
-  return { pfRepo, cpRepo, chWriter, chUpdater, chFinder, tagWriter, tagFinder, init };
+  const init = new AppInitializer(pfRepo, priRepo, chWriter);
+  return { pfRepo, priRepo, chWriter, chUpdater, chFinder, tagWriter, tagFinder, init };
 }

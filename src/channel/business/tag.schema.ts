@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { TagEnt } from '../persistence/tag.schema.js';
+import { tagEnt, TagEnt } from '../persistence/tag.schema.js';
 import { uuid } from '../../common/schema.js';
+
+export const tagRecord = tagEnt;
 
 export type TagRecord = TagEnt;
 

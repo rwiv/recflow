@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelRecord, ChannelSortType } from './channel.types.js';
+import { ChannelRecord, ChannelSortType } from './channel.schema.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
@@ -62,7 +62,7 @@ export class ChannelFinder {
     page: number,
     size: number,
     sorted: ChannelSortType = undefined,
-    priority: ChannelPriority | undefined = undefined,
+    priority: string | undefined = undefined,
     tagName: string | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {

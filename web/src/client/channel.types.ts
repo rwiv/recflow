@@ -7,8 +7,8 @@ export interface ChannelRecord {
   username: string;
   profileImgUrl: string | null;
   followerCnt: number;
-  platform: PlatformType;
-  priority: ChannelPriority;
+  platformName: PlatformType;
+  priorityName: ChannelPriority;
   followed: boolean;
   description: string | null;
   createdAt: Date;
@@ -18,8 +18,8 @@ export interface ChannelRecord {
 
 export interface ChannelCreation {
   pid: string;
-  platform: PlatformType;
-  priority: ChannelPriority;
+  platformName: PlatformType;
+  priorityName: ChannelPriority;
   followed: boolean;
   description: string | null;
   tagNames: string[];
@@ -28,7 +28,7 @@ export interface ChannelCreation {
 export interface ChannelDefUpdate {
   id: string;
   form: {
-    priority?: ChannelPriority;
+    priorityName?: ChannelPriority;
     followed?: boolean;
     description?: string | null;
   };

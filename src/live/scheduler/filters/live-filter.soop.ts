@@ -29,7 +29,7 @@ export class SoopLiveFilter implements LiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidOne(live.channelId, 'soop');
     if (channel) {
-      if (this.evaluator.getRank(channel.priority) === 3) {
+      if (this.evaluator.getRank(channel.priorityName) === 3) {
         return null;
       } else {
         return live;

@@ -12,14 +12,17 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import { ChannelWriter } from '../business/channel.writer.js';
-import { ChannelCreationWithFetch, ChannelDefUpdate } from '../business/channel.types.js';
+import {
+  ChannelAppendWithFetch,
+  ChannelUpdate,
+  channelSortArg,
+  channelUpdate,
+  channelAppendWithFetch,
+} from '../business/channel.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
-import { CHANNEL_SORTED_TYPES } from '../../common/enum.consts.js';
 import { assertNotNull } from '../../utils/null.js';
-import { checkEnum } from '../../utils/union.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
-import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -54,31 +57,33 @@ export class ChannelController {
     return this.chFinder.findByQuery(
       page,
       size,
-      checkEnum(sorted, CHANNEL_SORTED_TYPES),
-      checkEnum(priority, CHANNEL_PRIORITIES),
+      channelSortArg.parse(sorted),
+      priority,
       tagName,
       withTags,
     );
   }
 
   @Post('/')
-  createChannel(@Body() req: ChannelCreationWithFetch) {
-    return this.chWriter.createWithFetch(req);
+  createChannel(@Body() req: ChannelAppendWithFetch) {
+    return this.chWriter.createWithFetch(channelAppendWithFetch.parse(req));
   }
 
   @Patch('/priority')
-  patchPriority(@Body() req: ChannelDefUpdate) {
-    const priority = assertNotNull(checkEnum(req.form.priority, CHANNEL_PRIORITIES));
-    return this.chUpdater.updatePriority(req.id, priority);
+  patchPriority(@Body() req: ChannelUpdate) {
+    req = channelUpdate.parse(req);
+    return this.chUpdater.updatePriority(req.id, assertNotNull(req.form.priorityName));
   }
 
   @Patch('/followed')
-  patchFollowed(@Body() req: ChannelDefUpdate) {
+  patchFollowed(@Body() req: ChannelUpdate) {
+    req = channelUpdate.parse(req);
     return this.chUpdater.updateFollowed(req.id, assertNotNull(req.form?.followed));
   }
 
   @Patch('/description')
-  patchDescription(@Body() req: ChannelDefUpdate) {
+  patchDescription(@Body() req: ChannelUpdate) {
+    req = channelUpdate.parse(req);
     return this.chUpdater.updateDescription(req.id, assertNotNull(req.form?.description));
   }
 

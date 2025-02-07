@@ -1,11 +1,11 @@
 import { ChannelPriority } from '../priority/types.js';
-import { ChannelCreation } from '../business/channel.types.js';
+import { ChannelAppend } from '../business/channel.schema.js';
 
 export function mockChannel(
   n: number,
   priorityName: ChannelPriority = 'must',
   followerCnt: number = 10,
-): ChannelCreation {
+): ChannelAppend {
   return {
     platformName: 'chzzk',
     pid: `chzzk${n}`,

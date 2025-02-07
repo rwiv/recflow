@@ -20,9 +20,9 @@ export async function createChannel(req: ChannelCreation) {
   return (await res.json()) as ChannelRecord;
 }
 
-export async function updateChannelPriority(id: string, priority: ChannelPriority) {
+export async function updateChannelPriority(id: string, priorityName: ChannelPriority) {
   const url = `${configs.endpoint}/api/channels/priority`;
-  const req: ChannelDefUpdate = { id, form: { priority } };
+  const req: ChannelDefUpdate = { id, form: { priorityName } };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
   return (await res.json()) as ChannelRecord;

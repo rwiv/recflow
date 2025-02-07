@@ -1,11 +1,8 @@
 import { ChannelWriter } from '../channel/business/channel.writer.js';
 import fs from 'fs';
-import { checkEnum } from '../utils/union.js';
-import { PLATFORM_TYPES } from '../common/enum.consts.js';
-import { ChannelCreationWithFetch } from '../channel/business/channel.types.js';
+import { ChannelAppendWithFetch } from '../channel/business/channel.schema.js';
 import { log } from 'jslog';
-import { CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
-import { assertNotNull } from '../utils/null.js';
+import { platformType } from '../common/schema.js';
 
 interface BatchInsertRequest {
   pids: string[];
@@ -21,10 +18,10 @@ export class BatchInserter {
     const text = await fs.promises.readFile(filePath, 'utf8');
     const breq = JSON.parse(text) as BatchInsertRequest;
     for (const pid of breq.pids) {
-      const req: ChannelCreationWithFetch = {
+      const req: ChannelAppendWithFetch = {
         pid,
-        platform: assertNotNull(checkEnum(breq.platform, PLATFORM_TYPES)),
-        priority: assertNotNull(checkEnum(breq.priority, CHANNEL_PRIORITIES)),
+        platformName: platformType.parse(breq.platform),
+        priorityName: breq.priority,
         followed: false,
         description: null,
         tagNames: breq.tagNames.filter((t: string) => t.length > 0),

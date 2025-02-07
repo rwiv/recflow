@@ -10,7 +10,7 @@ export const channelEnt = z.object({
   followerCnt: z.number(),
   priorityId: uuid,
   followed: z.boolean(),
-  description: z.string().nullable(),
+  description: z.string().nonempty().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

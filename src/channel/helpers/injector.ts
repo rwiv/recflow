@@ -7,7 +7,7 @@ import { ChannelWriter } from '../business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
-import { ChannelCreation } from '../business/channel.types.js';
+import { ChannelAppend } from '../business/channel.schema.js';
 
 export class TestChannelInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}
@@ -33,7 +33,7 @@ export class TestChannelInjector {
   async insertTestChannels() {
     const infos = await this.readTestChannelInfos();
     for (const info of infos) {
-      const req: ChannelCreation = {
+      const req: ChannelAppend = {
         username: info.username,
         profileImgUrl: info.profileImgUrl,
         pid: info.pid,

@@ -68,7 +68,7 @@ function CreateForm({ channel, cb }: { channel: ChannelRecord; cb: () => void })
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      priority: channel.priority,
+      priority: channel.priorityName,
     },
   });
 

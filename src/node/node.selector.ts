@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NodePriority, NodeRecord } from './types.js';
 import { ChannelPriorityEvaluator } from '../channel/priority/priority.evaluator.js';
-import { ChannelRecord } from '../channel/business/channel.types.js';
+import { ChannelRecord } from '../channel/business/channel.schema.js';
 import { findChzzkCandidate, findSoopCandidate } from './utils.js';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class NodeSelector {
   constructor(private readonly evaluator: ChannelPriorityEvaluator) {}
 
   match(channel: ChannelRecord, nodes: NodeRecord[]): NodeRecord | null {
-    const rank = this.evaluator.getRank(channel.priority);
+    const rank = this.evaluator.getRank(channel.priorityName);
     if (rank === 3) {
       throw new Error('Rank 3 cannot be assigned to a node');
     }
@@ -17,9 +17,9 @@ export class NodeSelector {
     if (rank === 2) {
       type = 'sub';
     }
-    if (channel.platform === 'chzzk') {
+    if (channel.platformName === 'chzzk') {
       return findChzzkCandidate(nodes, type);
-    } else if (channel.platform === 'soop') {
+    } else if (channel.platformName === 'soop') {
       return findSoopCandidate(nodes, type);
     } else {
       throw new Error('Not supported platform');

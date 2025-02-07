@@ -1,25 +1,45 @@
-import { ChannelDef } from '../persistence/channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { PlatformType } from '../../platform/types.js';
 import { ChannelPriority } from '../priority/types.js';
 
-export interface ChannelRecord extends ChannelDef {
+export interface ChannelRecord {
   id: string;
+  pid: string;
+  username: string;
+  profileImgUrl: string | null;
+  followerCnt: number;
+  platform: PlatformType;
+  priority: ChannelPriority;
+  followed: boolean;
+  description: string | null;
   createdAt: Date;
   updatedAt: Date;
   tags?: TagRecord[];
 }
 
-export interface ChannelCreationBase {
+export interface ChannelCreationBaseWithFetch {
   priority: ChannelPriority;
   followed: boolean;
   description: string | null;
   tagNames?: string[];
 }
 
-export interface ChannelCreation extends ChannelCreationBase {
+export interface ChannelCreationWithFetch extends ChannelCreationBaseWithFetch {
   pid: string;
   platform: PlatformType;
+}
+
+export interface ChannelCreation {
+  pid: string;
+  username: string;
+  profileImgUrl: string | null;
+  followerCnt: number;
+  platformName: string;
+  priorityName: string;
+  followed: boolean;
+  description: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ChannelDefForm {

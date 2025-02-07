@@ -1,19 +1,19 @@
-import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { ChannelPriority } from '../priority/types.js';
+import { ChannelCreation } from '../business/channel.types.js';
 
 export function mockChannel(
   n: number,
-  priority: ChannelPriority = 'must',
+  priorityName: ChannelPriority = 'must',
   followerCnt: number = 10,
-): ChannelEntCreation {
+): ChannelCreation {
   return {
-    platform: 'chzzk',
+    platformName: 'chzzk',
     pid: `chzzk${n}`,
     username: `user${n}`,
     profileImgUrl: 'http://example.com',
     followerCnt,
-    priority,
+    priorityName,
     followed: false,
-    description: '',
+    description: null,
   };
 }

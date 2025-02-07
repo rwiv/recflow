@@ -13,7 +13,7 @@ export class ChzzkLiveFilter implements LiveFilter {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly chanFinder: ChannelFinder,
+    private readonly chFinder: ChannelFinder,
     private readonly evaluator: ChannelPriorityEvaluator,
   ) {}
 
@@ -39,7 +39,7 @@ export class ChzzkLiveFilter implements LiveFilter {
     }
 
     // by channel
-    const channel = await this.chanFinder.findByPidOne(live.channelId, 'chzzk');
+    const channel = await this.chFinder.findByPidOne(live.channelId, 'chzzk');
     if (channel) {
       if (this.evaluator.getRank(channel.priority) === 3) {
         return null;

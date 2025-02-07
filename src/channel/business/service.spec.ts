@@ -5,7 +5,7 @@ import { ChannelSortType } from '../persistence/tag.types.js';
 import { getChannelServies } from '../helpers/utils.js';
 import { ChannelPriority } from '../priority/types.js';
 
-const { chanFinder, chanWriter, chanUpdater } = getChannelServies();
+const { chFinder, chWriter } = getChannelServies();
 
 describe('ChannelService', () => {
   beforeEach(async () => {
@@ -17,16 +17,16 @@ describe('ChannelService', () => {
   });
 
   it('create', async () => {
-    const channel = await chanWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
     console.log(channel);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });
 
   it('delete', async () => {
-    const channel = await chanWriter.create(mockChannel(1), ['tag1', 'tag2']);
-    await chanWriter.delete(channel.id);
-    expect(await chanFinder.findById(channel.id)).toBeUndefined();
+    const channel = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    await chWriter.delete(channel.id);
+    expect(await chFinder.findById(channel.id)).toBeUndefined();
   });
 
   it('findPage', async () => {
@@ -61,12 +61,12 @@ describe('ChannelService', () => {
     const tagNames = ['tag4', 'tag5'];
     // const tagNames = undefined;
 
-    const result = await chanFinder.findByQuery(1, 20, sorted, prioirty, tagName, true);
+    const result = await chFinder.findByQuery(1, 20, sorted, prioirty, tagName, true);
     // const result = await chanService.findByAnyTag(tagNames, 1, 20, sorted, prioirty, true);
     // const result = await chanService.findByAllTags(tagNames, sorted, prioirty, true);
     console.log(result.map((r) => r.username));
 
-    const all = await chanFinder.findAll(true);
+    const all = await chFinder.findAll(true);
     for (const r of all) {
       console.log(`${r.username}: [${r.tags?.map((t) => t.name).join(',')}]`);
     }
@@ -74,5 +74,5 @@ describe('ChannelService', () => {
 });
 
 function add(n: number, priority: ChannelPriority, followerCnt: number, tagNames: string[]) {
-  return chanWriter.create(mockChannel(n, priority, followerCnt), tagNames);
+  return chWriter.create(mockChannel(n, priority, followerCnt), tagNames);
 }

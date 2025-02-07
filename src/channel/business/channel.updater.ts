@@ -3,11 +3,13 @@ import { ChannelValidator } from './channel.validator.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelDefUpdate, ChannelRecord } from './channel.types.js';
 import { ChannelPriority } from '../priority/types.js';
+import { ChannelMapper } from './channel.mapper.js';
 
 @Injectable()
 export class ChannelUpdater {
   constructor(
-    private readonly chanCmd: ChannelCommandRepository,
+    private readonly chCmd: ChannelCommandRepository,
+    private readonly chMapper: ChannelMapper,
     private readonly validator: ChannelValidator,
   ) {}
 
@@ -25,6 +27,7 @@ export class ChannelUpdater {
 
   async updateRecord(req: ChannelDefUpdate): Promise<ChannelRecord> {
     await this.validator.validateForm(req.form);
-    return this.chanCmd.update(req);
+    const ent = await this.chCmd.update(req);
+    return this.chMapper.map(ent);
   }
 }

@@ -6,21 +6,26 @@ import { TagQueryRepository } from '../persistence/tag.query.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelPriority } from '../priority/types.js';
 import { PlatformType } from '../../platform/types.js';
+import { ChannelMapper } from './channel.mapper.js';
 
 @Injectable()
 export class ChannelFinder {
   constructor(
-    private readonly chanQuery: ChannelQueryRepository,
-    private readonly chanSearch: ChannelSearchRepository,
+    private readonly chQuery: ChannelQueryRepository,
+    private readonly chSearch: ChannelSearchRepository,
+    private readonly chMapper: ChannelMapper,
     private readonly tagQuery: TagQueryRepository,
   ) {}
 
   async findAll(withTags: boolean = false): Promise<ChannelRecord[]> {
-    return this.solveChannels(await this.chanQuery.findAll(), withTags);
+    const entities = await this.chQuery.findAll();
+    const records = await this.chMapper.mapAll(entities);
+    return this.solveChannels(records, withTags);
   }
 
   async findById(channelId: string, withTags: boolean = false): Promise<ChannelRecord | undefined> {
-    const channel = await this.chanQuery.findById(channelId);
+    const ent = await this.chQuery.findById(channelId);
+    const channel = await this.chMapper.mapNullable(ent);
     if (!channel) return undefined;
     if (!withTags) return channel;
     return {
@@ -30,24 +35,28 @@ export class ChannelFinder {
   }
 
   async findByPid(pid: string, withTags: boolean = false): Promise<ChannelRecord[]> {
-    const channels = await this.chanQuery.findByPid(pid);
+    const entities = await this.chQuery.findByPid(pid);
+    const channels = await this.chMapper.mapAll(entities);
     return this.solveChannels(channels, withTags);
   }
 
   async findByPidOne(pid: string, platform: PlatformType, withTags: boolean = false) {
-    const channels = await this.chanQuery.findByPidAndPlatform(pid, platform);
+    const entities = await this.chQuery.findByPidAndPlatform(pid, platform);
+    const channels = await this.chMapper.mapAll(entities);
     if (channels.length === 0) return undefined;
     if (channels.length > 1) throw new Error(`Multiple channels with pid: ${pid}`);
     return this.solveChannel(channels[0], withTags);
   }
 
   async findByUsername(username: string, withTags: boolean = false): Promise<ChannelRecord[]> {
-    const channels = await this.chanQuery.findByUsername(username);
+    const entities = await this.chQuery.findByUsername(username);
+    const channels = await this.chMapper.mapAll(entities);
     return this.solveChannels(channels, withTags);
   }
 
   async findFollowedChannels(platform: PlatformType): Promise<ChannelRecord[]> {
-    return this.chanQuery.findByFollowedFlag(true, platform);
+    const entities = await this.chQuery.findByFollowedFlag(true, platform);
+    return this.chMapper.mapAll(entities);
   }
 
   async findByQuery(
@@ -58,7 +67,8 @@ export class ChannelFinder {
     tagName: string | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanSearch.findByQuery({ page, size }, sorted, priority, tagName);
+    const entities = await this.chSearch.findByQuery({ page, size }, sorted, priority, tagName);
+    const channels = await this.chMapper.mapAll(entities);
     return this.solveChannels(channels, withTags);
   }
 
@@ -70,17 +80,8 @@ export class ChannelFinder {
     priority: ChannelPriority | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const channels = await this.chanSearch.findByAnyTag(tagNames, { page, size }, sorted, priority);
-    return this.solveChannels(channels, withTags);
-  }
-
-  async findByAllTags(
-    tagNames: string[],
-    sorted: ChannelSortType = undefined,
-    priority: ChannelPriority | undefined = undefined,
-    withTags: boolean = false,
-  ): Promise<ChannelRecord[]> {
-    const channels = await this.chanSearch.findByAllTags(tagNames, sorted, priority);
+    const entities = await this.chSearch.findByAnyTag(tagNames, { page, size }, sorted, priority);
+    const channels = await this.chMapper.mapAll(entities);
     return this.solveChannels(channels, withTags);
   }
 

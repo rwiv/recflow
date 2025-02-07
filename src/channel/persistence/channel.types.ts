@@ -1,17 +1,16 @@
-import { ChannelBase } from '../../platform/wapper/channel.js';
-import { PlatformType } from '../../platform/types.js';
-import { channels } from '../../infra/db/schema.js';
-import { ChannelPriority } from '../priority/types.js';
+import { channelsV2 } from '../../infra/db/schema.js';
 
-export type ChannelEnt = typeof channels.$inferSelect;
+export type ChannelEntV2 = typeof channelsV2.$inferSelect;
 
-export interface ChannelDef extends ChannelBase {
-  priority: ChannelPriority;
+export interface ChannelEntCreation {
+  pid: string;
+  username: string;
+  profileImgUrl: string | null;
+  followerCnt: number;
+  platformId: string;
+  priorityId: string;
   followed: boolean;
   description: string | null;
-}
-
-export interface ChannelEntCreation extends ChannelDef {
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,12 +18,12 @@ export interface ChannelEntCreation extends ChannelDef {
 export interface ChannelEntUpdate {
   id: string;
   form: {
-    platform?: PlatformType;
+    platformId?: string;
     pid?: string;
     username?: string;
     profileImgUrl?: string | null;
     followerCount?: number;
-    priority?: ChannelPriority;
+    priorityId?: string;
     followed?: boolean;
     description?: string | null;
   };

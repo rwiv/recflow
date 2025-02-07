@@ -4,10 +4,10 @@ import { readTestConf } from '../../common/helpers.js';
 import { getFetcher } from '../../live/helpers/utils.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../business/channel.writer.js';
-import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
+import { ChannelCreation } from '../business/channel.types.js';
 
 export class TestChannelInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}
@@ -33,13 +33,13 @@ export class TestChannelInjector {
   async insertTestChannels() {
     const infos = await this.readTestChannelInfos();
     for (const info of infos) {
-      const req: ChannelEntCreation = {
+      const req: ChannelCreation = {
         username: info.username,
         profileImgUrl: info.profileImgUrl,
         pid: info.pid,
         followerCnt: info.followerCnt,
-        platform: info.platform,
-        priority: randomElem(CHANNEL_PRIORITIES),
+        platformName: info.platform,
+        priorityName: randomElem(CHANNEL_PRIORITIES),
         // followed: randomElem([true, false] as const),
         followed: false,
         description: null,

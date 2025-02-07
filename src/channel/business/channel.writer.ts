@@ -1,7 +1,12 @@
 import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
-import { ChannelCreation, ChannelCreationBase, ChannelRecord } from './channel.types.js';
+import {
+  ChannelCreationWithFetch,
+  ChannelCreationBaseWithFetch,
+  ChannelRecord,
+  ChannelCreation,
+} from './channel.types.js';
 import { TagRecord } from './tag.types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
@@ -12,22 +17,43 @@ import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
+import { ChannelMapper } from './channel.mapper.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { PlatformRepository } from '../persistence/platform.repository.js';
+import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
 
 @Injectable()
 export class ChannelWriter {
   constructor(
-    private readonly chanCmd: ChannelCommandRepository,
-    private readonly chanQuery: ChannelQueryRepository,
+    private readonly chCmd: ChannelCommandRepository,
+    private readonly chQuery: ChannelQueryRepository,
+    private readonly pfRepo: PlatformRepository,
+    private readonly priRepo: ChannelPriorityRepository,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
     private readonly validator: ChannelValidator,
+    private readonly chMapper: ChannelMapper,
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async create(req: ChannelEntCreation, tagNames: string[] | undefined): Promise<ChannelRecord> {
+  async create(req: ChannelCreation, tagNames: string[] | undefined): Promise<ChannelRecord> {
     await this.validator.validateForm(req, tagNames);
+    let platform = await this.pfRepo.findByName(req.platformName);
+    if (!platform) {
+      platform = await this.pfRepo.create(req.platformName);
+    }
+    let priority = await this.priRepo.findByName(req.priorityName);
+    if (!priority) {
+      priority = await this.priRepo.create(req.priorityName);
+    }
+    const reqEnt: ChannelEntCreation = {
+      ...req,
+      platformId: platform.id,
+      priorityId: priority.id,
+    };
     return db.transaction(async (txx) => {
-      const channel = await this.chanCmd.create(req, txx);
+      const ent = await this.chCmd.create(reqEnt, txx);
+      const channel = await this.chMapper.map(ent);
       let result: ChannelRecord = { ...channel };
       const tags: TagRecord[] = [];
       if (tagNames && tagNames.length > 0) {
@@ -40,19 +66,22 @@ export class ChannelWriter {
     });
   }
 
-  async createWithFetch(req: ChannelCreation): Promise<ChannelRecord> {
+  async createWithFetch(req: ChannelCreationWithFetch): Promise<ChannelRecord> {
     const info = assertNotNull(await this.fetcher.fetchChannel(req.platform, req.pid, false));
     return this.createWithChannelInfo(req, info);
   }
 
-  async createWithChannelInfo(req: ChannelCreationBase, info: ChannelInfo): Promise<ChannelRecord> {
-    const reqEnt: ChannelEntCreation = {
+  async createWithChannelInfo(
+    req: ChannelCreationBaseWithFetch,
+    info: ChannelInfo,
+  ): Promise<ChannelRecord> {
+    const reqEnt: ChannelCreation = {
       pid: info.pid,
       username: info.username,
       profileImgUrl: info.profileImgUrl,
       followerCnt: info.followerCnt,
-      platform: info.platform,
-      priority: req.priority,
+      platformName: info.platform,
+      priorityName: req.priority,
       followed: req.followed,
       description: req.description,
     };
@@ -60,14 +89,15 @@ export class ChannelWriter {
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {
-    const channel = await this.chanQuery.findById(channelId, tx);
-    if (!channel) throw new Error('Channel not found');
+    const ent = await this.chQuery.findById(channelId, tx);
+    const channel = await this.chMapper.mapNullable(ent);
+    if (!channel) throw new NotFoundError('Channel not found');
     const tags = await this.tagQuery.findTagsByChannelId(channel.id, tx);
     return tx.transaction(async (txx) => {
       for (const tag of tags) {
         await this.tagWriter.detach({ channelId: channel.id, tagId: tag.id }, txx);
       }
-      await this.chanCmd.delete(channel.id, txx);
+      await this.chCmd.delete(channel.id, txx);
       return channel;
     });
   }

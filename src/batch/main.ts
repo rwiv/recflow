@@ -5,9 +5,9 @@ import { BatchMigrator } from './migrator.js';
 import { BatchRunner } from './runner.js';
 
 async function main() {
-  const { chanWriter, chanFinder } = getChannelServies();
-  const inserter = new BatchInserter(chanWriter);
-  const migrator = new BatchMigrator(chanFinder, chanWriter);
+  const { chWriter, chFinder } = getChannelServies();
+  const inserter = new BatchInserter(chWriter);
+  const migrator = new BatchMigrator(chFinder, chWriter);
   const batch = new BatchRunner(migrator, inserter);
 
   await batch.backupChannels(path.join('dev', 'batch_backup.json'));

@@ -13,7 +13,7 @@ export class LiveAppender extends Synchronizer {
     private readonly platform: PlatformType,
     private readonly fetcher: PlatformFetcher,
     private readonly liveService: TrackedLiveService,
-    private readonly chanFinder: ChannelFinder,
+    private readonly chFinder: ChannelFinder,
     private readonly filter: LiveFilter,
     eh: ScheduleErrorHandler,
   ) {
@@ -21,7 +21,7 @@ export class LiveAppender extends Synchronizer {
   }
 
   protected override async check() {
-    const followedChannels = await this.chanFinder.findFollowedChannels(this.platform);
+    const followedChannels = await this.chFinder.findFollowedChannels(this.platform);
     await Promise.all(followedChannels.map((ch) => this.processFollowedChannel(ch)));
 
     const queriedLives = await this.fetcher.fetchLives(this.platform);

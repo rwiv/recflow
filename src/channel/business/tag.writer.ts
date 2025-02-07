@@ -19,7 +19,7 @@ export class TagWriter {
   constructor(
     private readonly tagCmd: TagCommandRepository,
     private readonly tagQuery: TagQueryRepository,
-    private readonly chanQuery: ChannelQueryRepository,
+    private readonly chQuery: ChannelQueryRepository,
   ) {}
 
   update(req: TagEntUpdate): Promise<TagRecord> {
@@ -40,7 +40,7 @@ export class TagWriter {
   detach(req: TagEntDetachment, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       await this.tagCmd.unbind(req.channelId, req.tagId, txx);
-      if ((await this.chanQuery.findChannelsByTagId(req.tagId, 1, txx)).length === 0) {
+      if ((await this.chQuery.findChannelsByTagId(req.tagId, 1, txx)).length === 0) {
         await this.tagCmd.delete(req.tagId, txx);
       }
     });

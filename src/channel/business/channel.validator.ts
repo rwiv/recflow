@@ -6,7 +6,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class ChannelValidator {
-  constructor(private readonly chanQuery: ChannelQueryRepository) {}
+  constructor(private readonly chQuery: ChannelQueryRepository) {}
 
   async validateForm(req: ChannelRecordForm, tagNames: string[] | undefined = undefined) {
     if (tagNames) {
@@ -17,8 +17,8 @@ export class ChannelValidator {
     }
     const { pid, platform } = req;
     if (pid && platform) {
-      const channels = await this.chanQuery.findByPidAndPlatform(pid, platform);
-      if (channels.length > 0) {
+      const entities = await this.chQuery.findByPidAndPlatform(pid, platform);
+      if (entities.length > 0) {
         throw new ValidationError('Channel already exists');
       }
     }

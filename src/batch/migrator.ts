@@ -1,12 +1,12 @@
 import fs from 'fs';
 import { ChannelFinder } from '../channel/business/channel.finder.js';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
-import { ChannelEntCreation } from '../channel/persistence/channel.types.js';
 import { checkEnum } from '../utils/union.js';
 import { PLATFORM_TYPES } from '../common/enum.consts.js';
 import { assertNotNull } from '../utils/null.js';
 import { CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
 import { log } from 'jslog';
+import { ChannelCreation } from '../channel/business/channel.types.js';
 
 export interface ChannelBackupRecord {
   id: string;
@@ -25,34 +25,34 @@ export interface ChannelBackupRecord {
 
 export class BatchMigrator {
   constructor(
-    private readonly chanFinder: ChannelFinder,
-    private readonly chanWriter: ChannelWriter,
+    private readonly chFinder: ChannelFinder,
+    private readonly chWriter: ChannelWriter,
   ) {}
 
   async migrateChannels(filePath: string) {
     const text = await fs.promises.readFile(filePath, 'utf8');
     const channels = JSON.parse(text) as ChannelBackupRecord[];
     for (const channel of channels) {
-      const req: ChannelEntCreation = {
+      const req: ChannelCreation = {
         pid: channel.pid,
-        platform: assertNotNull(checkEnum(channel.platform, PLATFORM_TYPES)),
+        platformName: assertNotNull(checkEnum(channel.platform, PLATFORM_TYPES)),
         username: channel.username,
         profileImgUrl: channel.profileImgUrl,
         followerCnt: channel.followerCnt,
-        priority: assertNotNull(checkEnum(channel.priority, CHANNEL_PRIORITIES)),
+        priorityName: assertNotNull(checkEnum(channel.priority, CHANNEL_PRIORITIES)),
         followed: channel.followed,
         description: channel.description,
         createdAt: new Date(channel.createdAt),
         updatedAt: new Date(channel.updatedAt),
       };
-      await this.chanWriter.create(req, channel.tags);
+      await this.chWriter.create(req, channel.tags);
       log.info(`Migrated channel: ${channel.username}`);
     }
     log.info(`Migrated ${channels.length} channels`);
   }
 
   async backupChannels(filePath: string) {
-    const channels = await this.chanFinder.findAll(true);
+    const channels = await this.chFinder.findAll(true);
     log.info(`Backing up ${channels.length} channels...`);
     const backupChannels: ChannelBackupRecord[] = channels.map((c) => {
       const tags = [];

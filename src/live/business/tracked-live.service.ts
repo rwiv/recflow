@@ -11,7 +11,7 @@ import { ExitCmd } from '../event/types.js';
 import { ChannelWriter } from '../../channel/business/channel.writer.js';
 import { NodeSelector } from '../../node/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
-import { ChannelCreationBase } from '../../channel/business/channel.types.js';
+import { ChannelCreationBaseWithFetch } from '../../channel/business/channel.types.js';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
 
@@ -32,8 +32,8 @@ export class TrackedLiveService {
     private readonly listener: LiveEventListener,
     private readonly nodeService: NodeService,
     private readonly nodeSelector: NodeSelector,
-    private readonly chanWriter: ChannelWriter,
-    private readonly chanFinder: ChannelFinder,
+    private readonly chWriter: ChannelWriter,
+    private readonly chFinder: ChannelFinder,
   ) {}
 
   async get(id: string, opts: FindOptions = {}) {
@@ -53,15 +53,15 @@ export class TrackedLiveService {
     if (exists && !exists.isDeleted) {
       throw Error(`Already exists: ${live.channelId}`);
     }
-    let channel = await this.chanFinder.findByPidOne(live.channelId, live.type);
+    let channel = await this.chFinder.findByPidOne(live.channelId, live.type);
     if (!channel) {
-      const req: ChannelCreationBase = {
+      const req: ChannelCreationBaseWithFetch = {
         priority: 'none',
         followed: false,
         description: null,
         tagNames: [],
       };
-      channel = await this.chanWriter.createWithChannelInfo(req, channelInfo);
+      channel = await this.chWriter.createWithChannelInfo(req, channelInfo);
     }
     const node = this.nodeSelector.match(channel, await this.nodes());
     if (node === null) {

@@ -2,8 +2,8 @@ import { it } from 'vitest';
 import { TestChannelInjector } from './injector.js';
 import { getChannelServies } from './utils.js';
 
-const { chanWriter } = getChannelServies();
-const injector = new TestChannelInjector(chanWriter);
+const { chWriter } = getChannelServies();
+const injector = new TestChannelInjector(chWriter);
 
 it('test readTestChannelInfos', async () => {
   const infos = await injector.readTestChannelInfos();

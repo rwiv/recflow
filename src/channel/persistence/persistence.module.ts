@@ -4,6 +4,8 @@ import { ChannelCommandRepository } from './channel.command.js';
 import { ChannelQueryRepository } from './channel.query.js';
 import { TagQueryRepository } from './tag.query.js';
 import { ChannelSearchRepository } from './channel.search.js';
+import { PlatformRepository } from './platform.repository.js';
+import { ChannelPriorityRepository } from './priority.repository.js';
 
 @Module({
   providers: [
@@ -12,6 +14,8 @@ import { ChannelSearchRepository } from './channel.search.js';
     ChannelCommandRepository,
     ChannelQueryRepository,
     ChannelSearchRepository,
+    ChannelPriorityRepository,
+    PlatformRepository,
   ],
   exports: [
     TagCommandRepository,
@@ -19,6 +23,8 @@ import { ChannelSearchRepository } from './channel.search.js';
     ChannelCommandRepository,
     ChannelQueryRepository,
     ChannelSearchRepository,
+    ChannelPriorityRepository,
+    PlatformRepository,
   ],
 })
 export class ChannelPersistenceModule {}

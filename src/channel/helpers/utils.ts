@@ -10,19 +10,36 @@ import { TagQueryRepository } from '../persistence/tag.query.js';
 import { TagFinder } from '../business/tag.finder.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
+import { PlatformRepository } from '../persistence/platform.repository.js';
+import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
+import { ChannelMapper } from '../business/channel.mapper.js';
 
 export function getChannelServies() {
+  const pfRepo = new PlatformRepository();
+  const priRepo = new ChannelPriorityRepository();
   const tagQuery = new TagQueryRepository();
   const tagCmd = new TagCommandRepository(tagQuery);
-  const chanQuery = new ChannelQueryRepository();
-  const chanSearch = new ChannelSearchRepository(tagQuery);
-  const chanCmd = new ChannelCommandRepository(chanQuery);
-  const validator = new ChannelValidator(chanQuery);
+  const chQuery = new ChannelQueryRepository();
+  const chSearch = new ChannelSearchRepository(tagQuery, priRepo);
+  const chCmd = new ChannelCommandRepository(chQuery);
+
+  const validator = new ChannelValidator(chQuery);
+  const chMapper = new ChannelMapper(pfRepo, priRepo);
   const fetcher = getFetcher();
-  const tagWriter = new TagWriter(tagCmd, tagQuery, chanQuery);
+  const tagWriter = new TagWriter(tagCmd, tagQuery, chQuery);
   const tagFinder = new TagFinder(tagQuery);
-  const chanWriter = new ChannelWriter(chanCmd, chanQuery, tagWriter, tagQuery, validator, fetcher);
-  const chanUpdater = new ChannelUpdater(chanCmd, validator);
-  const chanFinder = new ChannelFinder(chanQuery, chanSearch, tagQuery);
-  return { chanWriter, chanUpdater, chanFinder, tagWriter, tagFinder };
+  const chWriter = new ChannelWriter(
+    chCmd,
+    chQuery,
+    pfRepo,
+    priRepo,
+    tagWriter,
+    tagQuery,
+    validator,
+    chMapper,
+    fetcher,
+  );
+  const chUpdater = new ChannelUpdater(chCmd, chMapper, validator);
+  const chFinder = new ChannelFinder(chQuery, chSearch, chMapper, tagQuery);
+  return { chWriter, chUpdater, chFinder, tagWriter, tagFinder };
 }

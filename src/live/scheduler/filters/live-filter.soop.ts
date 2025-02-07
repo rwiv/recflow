@@ -12,7 +12,7 @@ export class SoopLiveFilter implements LiveFilter {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
-    private readonly chanFinder: ChannelFinder,
+    private readonly chFinder: ChannelFinder,
     private readonly evaluator: ChannelPriorityEvaluator,
   ) {}
 
@@ -27,7 +27,7 @@ export class SoopLiveFilter implements LiveFilter {
     }
 
     // by channel
-    const channel = await this.chanFinder.findByPidOne(live.channelId, 'soop');
+    const channel = await this.chFinder.findByPidOne(live.channelId, 'soop');
     if (channel) {
       if (this.evaluator.getRank(channel.priority) === 3) {
         return null;

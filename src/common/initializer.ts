@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../channel/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../channel/priority/priority.repository.js';
-import { CHANNEL_PRIORIES_MAP, CHANNEL_PRIORITIES } from '../../web/src/common/enum.consts.js';
 import { PLATFORM_TYPES } from './enum.consts.js';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
 import { dropAll } from '../infra/db/utils.js';
 import { TestChannelInjector } from '../channel/helpers/injector.js';
+import { CHANNEL_PRIORIES_MAP, CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
 
 @Injectable()
 export class AppInitializer {

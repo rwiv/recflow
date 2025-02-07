@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ChannelEnt } from '../persistence/channel.types.js';
 import { ChannelRecord } from './channel.types.js';
 import { assertNotNull } from '../../utils/null.js';
-import { checkType } from '../../../web/src/lib/union.js';
 import { PLATFORM_TYPES } from '../../common/enum.consts.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
+import { checkEnum } from '../../utils/union.js';
 
 @Injectable()
 export class ChannelMapper {
@@ -29,8 +29,8 @@ export class ChannelMapper {
     const priorityStr = assertNotNull(await this.priRepo.findById(ent.priorityId)).name;
     return {
       ...ent,
-      platform: assertNotNull(checkType(platformStr, PLATFORM_TYPES)),
-      priority: assertNotNull(checkType(priorityStr, CHANNEL_PRIORITIES)),
+      platform: assertNotNull(checkEnum(platformStr, PLATFORM_TYPES)),
+      priority: assertNotNull(checkEnum(priorityStr, CHANNEL_PRIORITIES)),
     };
   }
 }

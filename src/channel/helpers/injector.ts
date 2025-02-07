@@ -6,19 +6,8 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../business/channel.writer.js';
 import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
-import { ChannelCreation } from '../business/channel.types.js';
-import { checkType } from '../../utils/union.js';
-import { PLATFORM_TYPES } from '../../common/enum.consts.js';
-import { log } from 'jslog';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-
-interface BatchInsertRequest {
-  pids: string[];
-  platform: string;
-  priority: string;
-  tagNames: string[];
-}
 
 export class TestChannelInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}
@@ -62,29 +51,6 @@ export class TestChannelInjector {
       }
       const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
       await this.channelWriter.create(req, Array.from(new Set(tagNames)).sort());
-    }
-  }
-
-  async batchInsertChannels(filePath: string, delay: number) {
-    const text = await fs.promises.readFile(filePath, 'utf8');
-    const breq = JSON.parse(text) as BatchInsertRequest;
-    const priority = checkType(breq.priority, CHANNEL_PRIORITIES);
-    const platform = checkType(breq.platform, PLATFORM_TYPES);
-    if (!priority || !platform) {
-      throw Error('Invalid priority or platform');
-    }
-    for (const pid of breq.pids) {
-      const req: ChannelCreation = {
-        pid,
-        platform,
-        priority,
-        followed: false,
-        description: null,
-        tagNames: breq.tagNames.filter((t: string) => t.length > 0),
-      };
-      await this.channelWriter.createWithFetch(req);
-      log.info(`Inserted channel ${pid}`);
-      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }

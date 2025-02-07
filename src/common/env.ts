@@ -1,6 +1,8 @@
 import { DEFAULT_NTFY_TOPIC } from './consts.js';
 import { AmqpConfig, PostgresConfig, RedisConfig } from './config.types.js';
 import dotenv from 'dotenv';
+import { log } from 'jslog';
+import path from 'path';
 
 export interface Env {
   nodeEnv: string;
@@ -21,7 +23,8 @@ export function readEnv(): Env {
   // NODE_ENV
   let nodeEnv = process.env.NODE_ENV;
   if (nodeEnv !== 'prod') {
-    dotenv.config({ path: 'dev/.env' });
+    dotenv.config({ path: path.resolve('dev', '.env') });
+    log.info('dotenv loaded');
   }
   nodeEnv = process.env.NODE_ENV;
   if (!nodeEnv) {
@@ -101,7 +104,10 @@ export function readEnv(): Env {
 
   // postgres
   const pgHost = process.env.PG_HOST;
-  const pgPortStr = process.env.PG_PORT;
+  let pgPortStr = process.env.PG_PORT;
+  if (process.env.USING_PG_PROD_PORT === 'true') {
+    pgPortStr = process.env.PG_PROD_PORT;
+  }
   const pgDatabase = process.env.PG_DATABASE;
   const pgUsername = process.env.PG_USERNAME;
   const pgPassword = process.env.PG_PASSWORD;

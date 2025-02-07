@@ -6,7 +6,7 @@ import { checkType } from '../../../web/src/lib/union.js';
 import { PLATFORM_TYPES } from '../../common/enum.consts.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 
 @Injectable()
 export class ChannelMapper {

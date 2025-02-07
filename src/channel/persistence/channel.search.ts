@@ -9,7 +9,7 @@ import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from './tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
-import { ChannelPriorityRepository } from './priority.repository.js';
+import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 
 @Injectable()
 export class ChannelSearchRepository {

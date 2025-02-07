@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../channel/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../channel/persistence/priority.repository.js';
-import { CHANNEL_PRIORITIES } from '../../web/src/common/enum.consts.js';
+import { ChannelPriorityRepository } from '../channel/priority/priority.repository.js';
+import { CHANNEL_PRIORIES_MAP, CHANNEL_PRIORITIES } from '../../web/src/common/enum.consts.js';
 import { PLATFORM_TYPES } from './enum.consts.js';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
 import { dropAll } from '../infra/db/utils.js';
@@ -18,13 +18,15 @@ export class AppInitializer {
   private async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
     for (const name of PLATFORM_TYPES.filter((name) => !pfNames.includes(name))) {
-      // console.log(name)
       await this.pfRepo.create(name);
     }
     const cpNames = (await this.pfRepo.findAll()).map((pri) => pri.name);
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
-      // console.log(name)
-      await this.cpRepo.create(name);
+      const rank = CHANNEL_PRIORIES_MAP[name];
+      if (rank === undefined) {
+        throw new Error(`rank is undefined for ${name}`);
+      }
+      await this.cpRepo.create(name, rank);
     }
   }
 

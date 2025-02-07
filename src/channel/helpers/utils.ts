@@ -11,7 +11,7 @@ import { TagFinder } from '../business/tag.finder.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelMapper } from '../business/channel.mapper.js';
 
 export function getChannelServies() {

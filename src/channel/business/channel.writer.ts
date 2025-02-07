@@ -20,7 +20,7 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 
 @Injectable()
 export class ChannelWriter {

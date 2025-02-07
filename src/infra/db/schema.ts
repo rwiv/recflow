@@ -27,10 +27,14 @@ export const channelPriorities = pgTable(
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
+    rank: integer().notNull(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp(),
   },
-  (t) => [uniqueIndex('channel_priorities_name_idx').on(t.name)],
+  (t) => [
+    uniqueIndex('channel_priorities_name_idx').on(t.name),
+    index('channel_priorities_rank_idx').on(t.rank),
+  ],
 );
 
 export const channels = pgTable(
@@ -92,11 +96,11 @@ export const channelTags = pgTable(
   (t) => [uniqueIndex('tags_name_idx').on(t.name), index('tags_createdAt_idx').on(t.createdAt)],
 );
 
-// export const nodePriorities = pgTable(
-//   'node_priorities',
+// export const nodeGroups = pgTable(
+//   'node_groups',
 //   {
 //     id: char({ length: 32 }).primaryKey(),
-//     name: varchar({ length: 20 }).notNull(),
+//     name: varchar({ length: 50 }).notNull(),
 //     createdAt: timestamp().notNull(),
 //     updatedAt: timestamp(),
 //   },
@@ -109,9 +113,9 @@ export const channelTags = pgTable(
 //     id: char({ length: 32 }).primaryKey(),
 //     name: varchar({ length: 255 }).notNull(),
 //     endpoint: text(),
-//     priority: char({ length: 32 })
+//     group: char({ length: 32 })
 //       .notNull()
-//       .references(() => nodePriorities.id),
+//       .references(() => nodeGroups.id),
 //     createdAt: timestamp().notNull(),
 //     updatedAt: timestamp(),
 //   },

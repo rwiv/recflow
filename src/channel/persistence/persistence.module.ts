@@ -5,7 +5,7 @@ import { ChannelQueryRepository } from './channel.query.js';
 import { TagQueryRepository } from './tag.query.js';
 import { ChannelSearchRepository } from './channel.search.js';
 import { PlatformRepository } from './platform.repository.js';
-import { ChannelPriorityRepository } from './priority.repository.js';
+import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 
 @Module({
   providers: [

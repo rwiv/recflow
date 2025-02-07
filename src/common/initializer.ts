@@ -31,7 +31,7 @@ export class AppInitializer {
     for (const name of PLATFORM_TYPES.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create(name);
     }
-    const cpNames = (await this.pfRepo.findAll()).map((pri) => pri.name);
+    const cpNames = (await this.cpRepo.findAll()).map((pri) => pri.name);
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
       const rank = CHANNEL_PRIORIES_MAP[name];
       if (rank === undefined) {

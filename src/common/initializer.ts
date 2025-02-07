@@ -15,6 +15,17 @@ export class AppInitializer {
     private readonly chWriter: ChannelWriter,
   ) {}
 
+  async initProd() {
+    await this.checkDb();
+  }
+
+  async initDev() {
+    await dropAll();
+    await this.checkDb();
+    const injector = new TestChannelInjector(this.chWriter);
+    await injector.insertTestChannels();
+  }
+
   private async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
     for (const name of PLATFORM_TYPES.filter((name) => !pfNames.includes(name))) {
@@ -28,16 +39,5 @@ export class AppInitializer {
       }
       await this.cpRepo.create(name, rank);
     }
-  }
-
-  async initProd() {
-    await this.initDev();
-  }
-
-  async initDev() {
-    await dropAll();
-    await this.checkDb();
-    const injector = new TestChannelInjector(this.chWriter);
-    await injector.insertTestChannels();
   }
 }

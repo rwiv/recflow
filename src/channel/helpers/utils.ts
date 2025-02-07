@@ -14,17 +14,17 @@ import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelMapper } from '../business/channel.mapper.js';
 
-export function getChannelServies() {
+export function getChannelServices() {
   const pfRepo = new PlatformRepository();
-  const priRepo = new ChannelPriorityRepository();
+  const cpRepo = new ChannelPriorityRepository();
   const tagQuery = new TagQueryRepository();
   const tagCmd = new TagCommandRepository(tagQuery);
   const chQuery = new ChannelQueryRepository();
-  const chSearch = new ChannelSearchRepository(tagQuery, priRepo);
+  const chSearch = new ChannelSearchRepository(tagQuery, cpRepo);
   const chCmd = new ChannelCommandRepository(chQuery);
 
   const validator = new ChannelValidator(chQuery);
-  const chMapper = new ChannelMapper(pfRepo, priRepo);
+  const chMapper = new ChannelMapper(pfRepo, cpRepo);
   const fetcher = getFetcher();
   const tagWriter = new TagWriter(tagCmd, tagQuery, chQuery);
   const tagFinder = new TagFinder(tagQuery);
@@ -32,7 +32,7 @@ export function getChannelServies() {
     chCmd,
     chQuery,
     pfRepo,
-    priRepo,
+    cpRepo,
     tagWriter,
     tagQuery,
     validator,
@@ -41,5 +41,5 @@ export function getChannelServies() {
   );
   const chUpdater = new ChannelUpdater(chCmd, chMapper, validator);
   const chFinder = new ChannelFinder(chQuery, chSearch, chMapper, tagQuery);
-  return { chWriter, chUpdater, chFinder, tagWriter, tagFinder };
+  return { pfRepo, cpRepo, chWriter, chUpdater, chFinder, tagWriter, tagFinder };
 }

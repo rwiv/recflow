@@ -2,10 +2,10 @@ import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import { dropAll } from '../../infra/db/utils.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { ChannelSortType } from '../persistence/tag.types.js';
-import { getChannelServies } from '../helpers/utils.js';
+import { getChannelServices } from '../helpers/utils.js';
 import { ChannelPriority } from '../priority/types.js';
 
-const { chFinder, chWriter } = getChannelServies();
+const { chFinder, chWriter } = getChannelServices();
 
 describe('ChannelService', () => {
   beforeEach(async () => {

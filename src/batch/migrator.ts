@@ -7,6 +7,7 @@ import { assertNotNull } from '../utils/null.js';
 import { CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
 import { log } from 'jslog';
 import { ChannelCreation } from '../channel/business/channel.types.js';
+import { AppInitializer } from '../common/initializer.js';
 
 export interface ChannelBackupRecord {
   id: string;
@@ -27,9 +28,11 @@ export class BatchMigrator {
   constructor(
     private readonly chFinder: ChannelFinder,
     private readonly chWriter: ChannelWriter,
+    private readonly init: AppInitializer,
   ) {}
 
   async migrateChannels(filePath: string) {
+    await this.init.initProd();
     const text = await fs.promises.readFile(filePath, 'utf8');
     const channels = JSON.parse(text) as ChannelBackupRecord[];
     for (const channel of channels) {

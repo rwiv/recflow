@@ -1,9 +1,14 @@
 import { Body, Controller, Get, Param, Patch, Put, UseFilters } from '@nestjs/common';
 import { TagWriter } from '../business/tag.writer.js';
-import { TagEntAttachment, TagEntDetachment } from '../persistence/tag.types.js';
 import { TagFinder } from '../business/tag.finder.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
 import { TagEntUpdate } from '../persistence/tag.schema.js';
+import {
+  tagAttachment,
+  TagAttachment,
+  tagDetachment,
+  TagDetachment,
+} from '../business/tag.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels/tags')
@@ -19,13 +24,13 @@ export class TagController {
   }
 
   @Patch('/attach')
-  attachTag(@Body() req: TagEntAttachment) {
-    return this.tagWriter.attach(req);
+  attachTag(@Body() req: TagAttachment) {
+    return this.tagWriter.attach(tagAttachment.parse(req));
   }
 
   @Patch('/detach')
-  detachTag(@Body() req: TagEntDetachment) {
-    return this.tagWriter.detach(req);
+  detachTag(@Body() req: TagDetachment) {
+    return this.tagWriter.detach(tagDetachment.parse(req));
   }
 
   @Get('/')

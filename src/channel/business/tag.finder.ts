@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TagRecord } from './tag.types.js';
+import { TagRecord } from './tag.schema.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 
 @Injectable()

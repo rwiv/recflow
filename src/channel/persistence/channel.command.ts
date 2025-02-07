@@ -6,14 +6,20 @@ import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from './channel.query.js';
-import { ChannelEnt, channelEnt, ChannelEntCreation, ChannelEntUpdate } from './channel.schema.js';
+import {
+  ChannelEnt,
+  channelEnt,
+  ChannelEntAppend,
+  channelEntCreation,
+  ChannelEntUpdate,
+} from './channel.schema.js';
 
 @Injectable()
 export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
-  async create(req: ChannelEntCreation, tx: Tx = db): Promise<ChannelEnt> {
-    const toBeAdded = channelEnt.parse({
+  async create(req: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
+    const toBeAdded = channelEntCreation.parse({
       ...req,
       id: uuid(),
       createdAt: req.createdAt ?? new Date(),

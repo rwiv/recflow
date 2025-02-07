@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelRecord } from './channel.types.js';
-import { ChannelSortType } from '../persistence/tag.types.js';
+import { ChannelRecord, ChannelSortType } from './channel.types.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';

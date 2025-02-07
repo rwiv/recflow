@@ -1,6 +1,7 @@
-import { TagRecord } from './tag.types.js';
+import { TagRecord } from './tag.schema.js';
 import { PlatformType } from '../../platform/types.js';
 import { ChannelPriority } from '../priority/types.js';
+import { z } from 'zod';
 
 export interface ChannelRecord {
   id: string;
@@ -63,3 +64,7 @@ export interface ChannelRecordUpdate {
   form: ChannelRecordForm;
   tagNames?: string[];
 }
+
+export const channelSortEnum = z.enum(['latest', 'followerCnt']);
+export const channelSortArg = channelSortEnum.optional();
+export type ChannelSortType = z.infer<typeof channelSortArg>;

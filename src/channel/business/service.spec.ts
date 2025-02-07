@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import { dropAll } from '../../infra/db/utils.js';
 import { mockChannel } from '../helpers/mocks.js';
-import { ChannelSortType } from '../persistence/tag.types.js';
 import { getChannelServices } from '../helpers/utils.js';
 import { ChannelPriority } from '../priority/types.js';
+import { ChannelSortType } from './channel.types.js';
 
 const { chFinder, chWriter, init } = getChannelServices();
 

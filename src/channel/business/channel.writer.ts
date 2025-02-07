@@ -6,7 +6,7 @@ import {
   ChannelRecord,
   ChannelCreation,
 } from './channel.types.js';
-import { TagRecord } from './tag.types.js';
+import { tagAttachment, tagDetachment, TagRecord } from './tag.schema.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -20,7 +20,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
-import { channelEntCreation } from '../persistence/channel.schema.js';
+import { channelEntAppend } from '../persistence/channel.schema.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -42,7 +42,7 @@ export class ChannelWriter {
     if (!platform) throw new NotFoundError('Platform not found');
     const priority = await this.priRepo.findByName(req.priorityName);
     if (!priority) throw new NotFoundError('ChannelPriority not found');
-    const reqEnt = channelEntCreation.parse({
+    const reqEnt = channelEntAppend.parse({
       ...req,
       platformId: platform.id,
       priorityId: priority.id,
@@ -54,7 +54,8 @@ export class ChannelWriter {
       const tags: TagRecord[] = [];
       if (tagNames && tagNames.length > 0) {
         for (const tagName of tagNames) {
-          tags.push(await this.tagWriter.attach({ channelId: channel.id, tagName }, txx));
+          const req = tagAttachment.parse({ channelId: channel.id, tagName });
+          tags.push(await this.tagWriter.attach(req, txx));
         }
         result = { ...channel, tags };
       }
@@ -91,7 +92,8 @@ export class ChannelWriter {
     const tags = await this.tagQuery.findTagsByChannelId(channel.id, tx);
     return tx.transaction(async (txx) => {
       for (const tag of tags) {
-        await this.tagWriter.detach({ channelId: channel.id, tagId: tag.id }, txx);
+        const req = tagDetachment.parse({ channelId: channel.id, tagId: tag.id });
+        await this.tagWriter.detach(req, txx);
       }
       await this.chCmd.delete(channel.id, txx);
       return channel;

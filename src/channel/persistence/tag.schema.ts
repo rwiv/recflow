@@ -11,15 +11,19 @@ export const tagEnt = z.object({
 
 export type TagEnt = z.infer<typeof tagEnt>;
 
-export const tagCreation = tagEnt
+export const tagEntCreation = tagEnt.partial({ description: true, updatedAt: true });
+
+export type TagEntCreation = z.infer<typeof tagEntCreation>;
+
+export const tagAppend = tagEnt
   .omit({ id: true, createdAt: true, updatedAt: true })
   .partial({ description: true });
 
-export type TagEntCreation = z.infer<typeof tagCreation>;
+export type TagEntAppend = z.infer<typeof tagAppend>;
 
 export const tagUpdate = z.object({
   tagId: uuid,
-  form: tagCreation.partial(),
+  form: tagAppend.partial(),
 });
 
 export type TagEntUpdate = z.infer<typeof tagUpdate>;

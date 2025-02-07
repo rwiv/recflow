@@ -1,4 +1,3 @@
-import { ChannelSortType } from './tag.types.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { channelsToTags, channels } from '../../infra/db/schema.js';
@@ -10,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEnt } from './channel.schema.js';
+import { ChannelSortType } from '../business/channel.types.js';
 
 @Injectable()
 export class ChannelSearchRepository {

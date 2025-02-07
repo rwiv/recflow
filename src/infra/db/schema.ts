@@ -12,10 +12,12 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-export const CHANNEL_PRIORITIES = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
+const CHANNEL_PRIORITIES = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
+// const NODE_PRIORITIES = ['main', 'sub'] as const;
 
 export const platformEnum = pgEnum('platform', ['chzzk', 'soop', 'twitch']);
 export const channelPriorityEnum = pgEnum('channel_priority', CHANNEL_PRIORITIES);
+// export const nodePriorityEnum = pgEnum('node_priority', NODE_PRIORITIES);
 
 export const channels = pgTable(
   'channels',
@@ -73,3 +75,29 @@ export const channelsToTags = pgTable(
     }),
   ],
 );
+//
+// export const nodePriorities = pgTable(
+//   'node_priorities',
+//   {
+//     id: char({ length: 32 }).primaryKey(),
+//     name: varchar({ length: 20 }).notNull(),
+//     createdAt: timestamp().notNull(),
+//     updatedAt: timestamp(),
+//   },
+//   (t) => [index('node_priorities_name_idx').on(t.name)],
+// );
+//
+// export const nodes = pgTable(
+//   'nodes',
+//   {
+//     id: char({ length: 32 }).primaryKey(),
+//     name: varchar({ length: 255 }).notNull(),
+//     endpoint: text(),
+//     priority: char({ length: 32 })
+//       .notNull()
+//       .references(() => nodePriorities.id),
+//     createdAt: timestamp().notNull(),
+//     updatedAt: timestamp(),
+//   },
+//   (t) => [index('nodes_name_idx').on(t.name)],
+// );

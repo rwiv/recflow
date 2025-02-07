@@ -1,16 +1,19 @@
 import path from 'path';
 import { getChannelServies } from '../channel/helpers/utils.js';
-import { BatchRunner } from './batch.runner.js';
-
-const delay = 100;
-const filePath = path.join('dev', 'batch_insert.json');
+import { BatchInserter } from './inserter.js';
+import { BatchMigrator } from './migrator.js';
+import { BatchRunner } from './runner.js';
 
 async function main() {
-  process.env.USING_PG_PROD_PORT = 'true';
+  const { chanWriter, chanFinder } = getChannelServies();
+  const inserter = new BatchInserter(chanWriter);
+  const migrator = new BatchMigrator(chanFinder, chanWriter);
+  const batch = new BatchRunner(migrator, inserter);
 
-  const { chanWriter } = getChannelServies();
-  const batch = new BatchRunner(chanWriter);
-  await batch.batchInsertChannels(filePath, delay);
+  await batch.backupChannels(path.join('dev', 'batch_backup.json'));
+  // await batch.migrateChannels(path.join('dev', 'batch_backup.json'));
+
+  // await batch.batchInsertChannels(path.join('dev', 'batch_insert.json'), 100);
 }
 
 main().catch(console.log);

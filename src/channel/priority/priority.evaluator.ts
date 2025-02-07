@@ -3,7 +3,7 @@ import { ChannelPriorityShift } from '../../common/config.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../common/config.module.js';
 import { QueryConfig } from '../../common/query.js';
-import { checkType } from '../../utils/union.js';
+import { checkEnum } from '../../utils/union.js';
 import { CHANNEL_PRIORITY_RANKS } from './consts.js';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class ChannelPriorityEvaluator {
     if (this.should === 'demote') {
       this.may = 'demote';
     }
-    const noneRank = checkType(this.query.priority.noneRank, CHANNEL_PRIORITY_RANKS);
+    const noneRank = checkEnum(this.query.priority.noneRank, CHANNEL_PRIORITY_RANKS);
     if (!noneRank) {
       throw new Error('None rank must be 1, 2 or 3');
     }

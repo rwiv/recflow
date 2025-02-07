@@ -11,7 +11,10 @@ export interface ChannelDef extends ChannelBase {
   description: string | null;
 }
 
-export type ChannelEntCreation = ChannelDef;
+export interface ChannelEntCreation extends ChannelDef {
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 export interface ChannelEntUpdate {
   id: string;

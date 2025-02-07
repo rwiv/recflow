@@ -17,9 +17,9 @@ import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
 import { CHANNEL_SORTED_TYPES } from '../../common/enum.consts.js';
 import { assertNotNull } from '../../utils/null.js';
-import { checkType } from '../../utils/union.js';
-import { CHANNEL_PRIORITIES } from '../priority/consts.js';
+import { checkEnum } from '../../utils/union.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
+import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -54,8 +54,8 @@ export class ChannelController {
     return this.chanFinder.findByQuery(
       page,
       size,
-      checkType(sorted, CHANNEL_SORTED_TYPES),
-      checkType(priority, CHANNEL_PRIORITIES),
+      checkEnum(sorted, CHANNEL_SORTED_TYPES),
+      checkEnum(priority, CHANNEL_PRIORITIES),
       tagName,
       withTags,
     );
@@ -68,7 +68,7 @@ export class ChannelController {
 
   @Patch('/priority')
   patchPriority(@Body() req: ChannelDefUpdate) {
-    const priority = assertNotNull(checkType(req.form.priority, CHANNEL_PRIORITIES));
+    const priority = assertNotNull(checkEnum(req.form.priority, CHANNEL_PRIORITIES));
     return this.chanUpdater.updatePriority(req.id, priority);
   }
 

@@ -16,8 +16,8 @@ export class ChannelCommandRepository {
     const toBeAdded = {
       ...req,
       id: uuid(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: req.createdAt ?? new Date(),
+      updatedAt: req.updatedAt ?? new Date(),
     };
     return oneNotNull(await tx.insert(channels).values(toBeAdded).returning());
   }

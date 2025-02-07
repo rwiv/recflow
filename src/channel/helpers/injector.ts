@@ -5,9 +5,9 @@ import { getFetcher } from '../../live/helpers/utils.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../business/channel.writer.js';
 import { ChannelEntCreation } from '../persistence/channel.types.js';
-import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
+import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 
 export class TestChannelInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}

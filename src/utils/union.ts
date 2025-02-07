@@ -1,4 +1,4 @@
-export function checkType<T, R>(value: T | null | undefined, list: readonly R[]): R | undefined {
+export function checkEnum<T, R>(value: T | null | undefined, list: readonly R[]): R | undefined {
   if (value === null || value === undefined) {
     return undefined;
   }

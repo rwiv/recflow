@@ -5,8 +5,8 @@ import { oneNotNull } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
-import { TagEntCreation, TagEnt, TagEntUpdate } from './tag.types.js';
 import { TagQueryRepository } from './tag.query.js';
+import { TagEnt, tagEnt, TagEntCreation, TagEntUpdate } from './tag.schema.js';
 
 @Injectable()
 export class TagCommandRepository {
@@ -15,9 +15,16 @@ export class TagCommandRepository {
   async create(req: TagEntCreation, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findByName(req.name, tx);
     if (tag) throw new Error('Tag already exists');
+    // const tbc = tagEnt.parse({
+    //   ...req,
+    //   id: uuid(),
+    //   createdAt: new Date(),
+    //   updatedAt: null,
+    // });
     const tbc = {
-      ...req,
       id: uuid(),
+      name: req.name,
+      // description: req.description,
       createdAt: new Date(),
       updatedAt: null,
     };
@@ -27,11 +34,11 @@ export class TagCommandRepository {
   async update(req: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findById(req.tagId, tx);
     if (!tag) throw new Error('Tag not found');
-    const tbu = {
+    const tbu = tagEnt.parse({
       ...tag,
       ...req.form,
       updatedAt: new Date(),
-    };
+    });
     return oneNotNull(
       await tx.update(channelTags).set(tbu).where(eq(channelTags.id, req.tagId)).returning(),
     );

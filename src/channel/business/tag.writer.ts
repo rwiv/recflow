@@ -1,10 +1,5 @@
 import { TagCommandRepository } from '../persistence/tag.command.js';
-import {
-  TagEnt,
-  TagEntAttachment,
-  TagEntDetachment,
-  TagEntUpdate,
-} from '../persistence/tag.types.js';
+import { TagEntAttachment, TagEntDetachment } from '../persistence/tag.types.js';
 import { TagRecord } from './tag.types.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from '../persistence/tag.query.js';
@@ -13,6 +8,7 @@ import { db } from '../../infra/db/db.js';
 import { processSets } from '../../utils/set.js';
 import { assertNotNull } from '../../utils/null.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
+import { TagEnt, TagEntUpdate } from '../persistence/tag.schema.js';
 
 @Injectable()
 export class TagWriter {

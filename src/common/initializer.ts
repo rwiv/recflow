@@ -26,7 +26,7 @@ export class AppInitializer {
     await injector.insertTestChannels();
   }
 
-  private async checkDb() {
+  async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
     for (const name of PLATFORM_TYPES.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create(name);

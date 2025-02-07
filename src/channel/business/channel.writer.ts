@@ -1,4 +1,3 @@
-import { ChannelEntCreation } from '../persistence/channel.types.js';
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { db } from '../../infra/db/db.js';
 import {
@@ -21,6 +20,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
+import { channelEntCreation } from '../persistence/channel.schema.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -42,11 +42,11 @@ export class ChannelWriter {
     if (!platform) throw new NotFoundError('Platform not found');
     const priority = await this.priRepo.findByName(req.priorityName);
     if (!priority) throw new NotFoundError('ChannelPriority not found');
-    const reqEnt: ChannelEntCreation = {
+    const reqEnt = channelEntCreation.parse({
       ...req,
       platformId: platform.id,
       priorityId: priority.id,
-    };
+    });
     return db.transaction(async (txx) => {
       const ent = await this.chCmd.create(reqEnt, txx);
       const channel = await this.chMapper.map(ent);

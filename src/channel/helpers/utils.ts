@@ -13,6 +13,7 @@ import { ChannelUpdater } from '../business/channel.updater.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelMapper } from '../business/channel.mapper.js';
+import { AppInitializer } from '../../common/initializer.js';
 
 export function getChannelServices() {
   const pfRepo = new PlatformRepository();
@@ -41,5 +42,6 @@ export function getChannelServices() {
   );
   const chUpdater = new ChannelUpdater(chCmd, chMapper, validator);
   const chFinder = new ChannelFinder(chQuery, chSearch, chMapper, tagQuery);
-  return { pfRepo, cpRepo, chWriter, chUpdater, chFinder, tagWriter, tagFinder };
+  const init = new AppInitializer(pfRepo, cpRepo, chWriter);
+  return { pfRepo, cpRepo, chWriter, chUpdater, chFinder, tagWriter, tagFinder, init };
 }

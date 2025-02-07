@@ -5,11 +5,12 @@ import { ChannelSortType } from '../persistence/tag.types.js';
 import { getChannelServices } from '../helpers/utils.js';
 import { ChannelPriority } from '../priority/types.js';
 
-const { chFinder, chWriter } = getChannelServices();
+const { chFinder, chWriter, init } = getChannelServices();
 
 describe('ChannelService', () => {
   beforeEach(async () => {
     await dropAll();
+    await init.checkDb();
   });
 
   afterAll(async () => {

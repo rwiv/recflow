@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelEnt } from '../persistence/channel.types.js';
 import { ChannelRecord } from './channel.types.js';
 import { assertNotNull } from '../../utils/null.js';
 import { PLATFORM_TYPES } from '../../common/enum.consts.js';
@@ -7,6 +6,7 @@ import { CHANNEL_PRIORITIES } from '../priority/consts.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { checkEnum } from '../../utils/union.js';
+import { ChannelEnt } from '../persistence/channel.schema.js';
 
 @Injectable()
 export class ChannelMapper {

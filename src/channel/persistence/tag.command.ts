@@ -1,5 +1,5 @@
 import { db } from '../../infra/db/db.js';
-import { channelsToTags, tags } from '../../infra/db/schema.js';
+import { channelsToTags, channelTags } from '../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { oneNotNull } from '../../utils/list.js';
 import { uuid } from '../../utils/uuid.js';
@@ -21,7 +21,7 @@ export class TagCommandRepository {
       createdAt: new Date(),
       updatedAt: null,
     };
-    return oneNotNull(await tx.insert(tags).values(tbc).returning());
+    return oneNotNull(await tx.insert(channelTags).values(tbc).returning());
   }
 
   async update(req: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
@@ -32,11 +32,11 @@ export class TagCommandRepository {
       ...req.form,
       updatedAt: new Date(),
     };
-    return oneNotNull(await tx.update(tags).set(tbu).where(eq(tags.id, req.tagId)).returning());
+    return oneNotNull(await tx.update(channelTags).set(tbu).where(eq(channelTags.id, req.tagId)).returning());
   }
 
   async delete(tagId: string, tx: Tx = db) {
-    await tx.delete(tags).where(eq(tags.id, tagId));
+    await tx.delete(channelTags).where(eq(channelTags.id, tagId));
   }
 
   async bind(channelId: string, tagId: string, tx: Tx = db) {

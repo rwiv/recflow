@@ -1,8 +1,8 @@
 import { ChannelSortType } from './tag.types.js';
-import { ChannelEntV2 } from './channel.types.js';
+import { ChannelEnt } from './channel.types.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { channelsToTags, channelsV2 } from '../../infra/db/schema.js';
+import { channelsToTags, channels } from '../../infra/db/schema.js';
 import { and, desc, eq, inArray } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
@@ -24,8 +24,8 @@ export class ChannelSearchRepository {
     priorityName: ChannelPriority | undefined = undefined,
     tagName: string | undefined = undefined,
     tx: Tx = db,
-  ): Promise<ChannelEntV2[]> {
-    const bqb = tx.select().from(channelsV2).$dynamic();
+  ): Promise<ChannelEnt[]> {
+    const bqb = tx.select().from(channels).$dynamic();
     let priorityId = undefined;
     if (priorityName) {
       priorityId = (await this.priRepo.findByName(priorityName, tx))?.id;
@@ -36,9 +36,9 @@ export class ChannelSearchRepository {
       const tag = await this.tagQuery.findByName(tagName, tx);
       if (!tag) return [];
       const withTags = await basis.qb
-        .innerJoin(channelsToTags, eq(channelsToTags.channelId, channelsV2.id))
+        .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
         .where(and(...basis.c, eq(channelsToTags.tagId, tag.id)));
-      return withTags.map((r) => r.channels_v2);
+      return withTags.map((r) => r.channels);
     }
 
     return basis.qb.where(and(...basis.c));
@@ -51,11 +51,11 @@ export class ChannelSearchRepository {
     sorted: ChannelSortType = undefined,
     priorityName: ChannelPriority | undefined = undefined,
     tx: Tx = db,
-  ): Promise<ChannelEntV2[]> {
+  ): Promise<ChannelEnt[]> {
     const tagIds = await this.tagQuery.findIdsByNames(tagNames, tx);
     if (tagIds.length === 0) return [];
 
-    const bqb = tx.selectDistinct({ channels: channelsV2 }).from(channelsV2).$dynamic();
+    const bqb = tx.selectDistinct({ channels: channels }).from(channels).$dynamic();
     let priorityId = undefined;
     if (priorityName) {
       priorityId = (await this.priRepo.findByName(priorityName, tx))?.id;
@@ -63,7 +63,7 @@ export class ChannelSearchRepository {
     const basis = this.withBasis(bqb, page, sorted, priorityId);
 
     const byTags = await basis.qb
-      .innerJoin(channelsToTags, eq(channelsToTags.channelId, channelsV2.id))
+      .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
       .where(and(...basis.c, inArray(channelsToTags.tagId, tagIds)));
 
     return byTags.map((r) => r.channels);
@@ -84,16 +84,16 @@ export class ChannelSearchRepository {
 
     const conds: SQLWrapper[] = [];
     if (priorityId) {
-      conds.push(eq(channelsV2.priorityId, priorityId));
+      conds.push(eq(channels.priorityId, priorityId));
     }
     return { qb, c: conds };
   }
 
   private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortType = undefined) {
     if (sorted === 'latest') {
-      qb = qb.orderBy(desc(channelsV2.updatedAt));
+      qb = qb.orderBy(desc(channels.updatedAt));
     } else if (sorted === 'followerCnt') {
-      qb = qb.orderBy(desc(channelsV2.followerCnt));
+      qb = qb.orderBy(desc(channels.followerCnt));
     }
     return qb;
   }

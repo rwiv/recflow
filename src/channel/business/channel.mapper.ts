@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelEntV2 } from '../persistence/channel.types.js';
+import { ChannelEnt } from '../persistence/channel.types.js';
 import { ChannelRecord } from './channel.types.js';
 import { assertNotNull } from '../../utils/null.js';
 import { checkType } from '../../../web/src/lib/union.js';
@@ -15,16 +15,16 @@ export class ChannelMapper {
     private readonly priRepo: ChannelPriorityRepository,
   ) {}
 
-  async mapAll(entities: ChannelEntV2[]): Promise<ChannelRecord[]> {
+  async mapAll(entities: ChannelEnt[]): Promise<ChannelRecord[]> {
     return Promise.all(entities.map((ent) => this.map(ent)));
   }
 
-  async mapNullable(ent: ChannelEntV2 | undefined): Promise<ChannelRecord | undefined> {
+  async mapNullable(ent: ChannelEnt | undefined): Promise<ChannelRecord | undefined> {
     if (!ent) return undefined;
     return this.map(ent);
   }
 
-  async map(ent: ChannelEntV2): Promise<ChannelRecord> {
+  async map(ent: ChannelEnt): Promise<ChannelRecord> {
     const platformStr = assertNotNull(await this.pfRepo.findById(ent.platformId)).name;
     const priorityStr = assertNotNull(await this.priRepo.findById(ent.priorityId)).name;
     return {

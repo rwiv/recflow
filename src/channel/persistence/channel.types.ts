@@ -1,6 +1,6 @@
-import { channelsV2 } from '../../infra/db/schema.js';
+import { channels } from '../../infra/db/schema.js';
 
-export type ChannelEntV2 = typeof channelsV2.$inferSelect;
+export type ChannelEnt = typeof channels.$inferSelect;
 
 export interface ChannelEntCreation {
   pid: string;

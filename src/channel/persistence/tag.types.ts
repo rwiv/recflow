@@ -1,6 +1,6 @@
-import { channelsToTags, tags } from '../../infra/db/schema.js';
+import { channelsToTags, channelTags } from '../../infra/db/schema.js';
 
-export type TagEnt = typeof tags.$inferSelect;
+export type TagEnt = typeof channelTags.$inferSelect;
 export type ChannelToTagEnt = typeof channelsToTags.$inferSelect;
 
 export type ChannelSortType = 'latest' | 'followerCnt' | undefined;

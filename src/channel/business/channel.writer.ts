@@ -38,14 +38,10 @@ export class ChannelWriter {
 
   async create(req: ChannelCreation, tagNames: string[] | undefined): Promise<ChannelRecord> {
     await this.validator.validateForm(req, tagNames);
-    let platform = await this.pfRepo.findByName(req.platformName);
-    if (!platform) {
-      platform = await this.pfRepo.create(req.platformName);
-    }
-    let priority = await this.priRepo.findByName(req.priorityName);
-    if (!priority) {
-      priority = await this.priRepo.create(req.priorityName);
-    }
+    const platform = await this.pfRepo.findByName(req.platformName);
+    if (!platform) throw new NotFoundError('Platform not found');
+    const priority = await this.priRepo.findByName(req.priorityName);
+    if (!priority) throw new NotFoundError('ChannelPriority not found');
     const reqEnt: ChannelEntCreation = {
       ...req,
       platformId: platform.id,

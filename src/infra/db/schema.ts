@@ -15,22 +15,22 @@ export const platforms = pgTable(
   'platforms',
   {
     id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull(),
+    name: varchar({ length: 50 }).notNull().unique(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp(),
   },
-  (t) => [index('platforms_name_idx').on(t.name)],
+  (t) => [uniqueIndex('platforms_name_idx').on(t.name)],
 );
 
 export const channelPriorities = pgTable(
   'channel_priorities',
   {
     id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull(),
+    name: varchar({ length: 50 }).notNull().unique(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp(),
   },
-  (t) => [index('channel_priorities_name_idx').on(t.name)],
+  (t) => [uniqueIndex('channel_priorities_name_idx').on(t.name)],
 );
 
 export const channels = pgTable(

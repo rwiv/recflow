@@ -13,6 +13,10 @@ export class ChannelPriorityRepository {
     return oneNotNull(await tx.insert(channelPriorities).values(req).returning());
   }
 
+  async findAll(tx: Tx = db) {
+    return tx.select().from(channelPriorities);
+  }
+
   async findById(priorityId: string, tx: Tx = db) {
     return oneNullable(
       await tx.select().from(channelPriorities).where(eq(channelPriorities.id, priorityId)),

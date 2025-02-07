@@ -30,7 +30,10 @@ export class TagQueryRepository {
   }
 
   async findIdsByNames(tagNames: string[], tx: Tx = db) {
-    const records = await tx.select({ id: channelTags.id }).from(channelTags).where(inArray(channelTags.name, tagNames));
+    const records = await tx
+      .select({ id: channelTags.id })
+      .from(channelTags)
+      .where(inArray(channelTags.name, tagNames));
     return records.map((tag) => tag.id);
   }
 }

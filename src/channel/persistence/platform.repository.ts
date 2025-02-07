@@ -13,6 +13,10 @@ export class PlatformRepository {
     return oneNotNull(await tx.insert(platforms).values(req).returning());
   }
 
+  async findAll(tx: Tx = db) {
+    return tx.select().from(platforms);
+  }
+
   async findById(platformId: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(platforms).where(eq(platforms.id, platformId)));
   }

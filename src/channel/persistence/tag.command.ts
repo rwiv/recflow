@@ -32,7 +32,9 @@ export class TagCommandRepository {
       ...req.form,
       updatedAt: new Date(),
     };
-    return oneNotNull(await tx.update(channelTags).set(tbu).where(eq(channelTags.id, req.tagId)).returning());
+    return oneNotNull(
+      await tx.update(channelTags).set(tbu).where(eq(channelTags.id, req.tagId)).returning(),
+    );
   }
 
   async delete(tagId: string, tx: Tx = db) {

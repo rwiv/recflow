@@ -12,9 +12,10 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+export const CHANNEL_PRIORITIES = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
+
 export const platformEnum = pgEnum('platform', ['chzzk', 'soop', 'twitch']);
-const channelPriorities = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
-export const channelPriorityEnum = pgEnum('channel_priority', channelPriorities);
+export const channelPriorityEnum = pgEnum('channel_priority', CHANNEL_PRIORITIES);
 
 export const channels = pgTable(
   'channels',
@@ -31,15 +32,15 @@ export const channels = pgTable(
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().notNull(),
   },
-  (t) => ({
-    pidIndex: index('channels_pid_idx').on(t.pid),
-    usernameIndex: index('channels_username_idx').on(t.username),
-    followCntIndex: index('channels_followCnt_idx').on(t.followerCnt),
-    platformIndex: index('channels_platform_idx').on(t.platform),
-    priorityIndex: index('channels_priority_idx').on(t.priority),
-    createdAtIndex: index('channels_createdAt_idx').on(t.createdAt),
-    updatedAtIndex: index('channels_updatedAt_idx').on(t.updatedAt),
-  }),
+  (t) => [
+    index('channels_pid_idx').on(t.pid),
+    index('channels_username_idx').on(t.username),
+    index('channels_followCnt_idx').on(t.followerCnt),
+    index('channels_platform_idx').on(t.platform),
+    index('channels_priority_idx').on(t.priority),
+    index('channels_createdAt_idx').on(t.createdAt),
+    index('channels_updatedAt_idx').on(t.updatedAt),
+  ],
 );
 
 export const tags = pgTable(
@@ -51,10 +52,7 @@ export const tags = pgTable(
     createdAt: timestamp().notNull(),
     updatedAt: timestamp(),
   },
-  (t) => ({
-    nameIndex: uniqueIndex('tags_name_idx').on(t.name),
-    createdAtIndex: index('tags_createdAt_idx').on(t.createdAt),
-  }),
+  (t) => [uniqueIndex('tags_name_idx').on(t.name), index('tags_createdAt_idx').on(t.createdAt)],
 );
 
 export const channelsToTags = pgTable(
@@ -68,10 +66,10 @@ export const channelsToTags = pgTable(
       .references(() => tags.id),
     createdAt: timestamp().notNull(),
   },
-  (t) => ({
-    pk: primaryKey({
+  (t) => [
+    primaryKey({
       name: 'id',
       columns: [t.channelId, t.tagId],
     }),
-  }),
+  ],
 );

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Patch, Put, UseFilters } from '@nestjs/co
 import { TagWriter } from '../business/tag.writer.js';
 import { TagFinder } from '../business/tag.finder.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
-import { TagEntUpdate } from '../persistence/tag.schema.js';
+import { tagEntUpdate, TagEntUpdate } from '../persistence/tag.schema.js';
 import {
   tagAttachment,
   TagAttachment,
@@ -20,7 +20,7 @@ export class TagController {
 
   @Put('/')
   updateTag(@Body() req: TagEntUpdate) {
-    return this.tagWriter.update(req);
+    return this.tagWriter.update(tagEntUpdate.parse(req));
   }
 
   @Patch('/attach')

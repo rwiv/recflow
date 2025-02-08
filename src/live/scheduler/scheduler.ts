@@ -12,6 +12,7 @@ import { LiveRefresher } from './synchronizer/refresher.js';
 import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
 import { ScheduleErrorHandler } from './error.handler.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class LiveScheduler {
@@ -42,7 +43,7 @@ export class LiveScheduler {
 
   run() {
     if (this.isObserving) {
-      throw Error('already observing');
+      throw new ConflictError('already observing');
     }
     log.info('LiveScheduler is running');
 

@@ -15,6 +15,8 @@ import { channelAppendWithInfo } from '../../channel/business/channel.schema.js'
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
 import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority/consts.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -52,7 +54,7 @@ export class TrackedLiveService {
   async add(live: LiveInfo, channelInfo: ChannelInfo): Promise<LiveRecord> {
     const exists = await this.get(live.channelId);
     if (exists && !exists.isDeleted) {
-      throw Error(`Already exists: ${live.channelId}`);
+      throw new ConflictError(`Already exists: ${live.channelId}`);
     }
     let channel = await this.chFinder.findByPidOne(live.channelId, live.type);
     if (!channel) {
@@ -102,10 +104,10 @@ export class TrackedLiveService {
     }
 
     const record = await this.get(id, { withDeleted: true });
-    if (!record) throw Error(`Not found liveRecord: ${id}`);
+    if (!record) throw new NotFoundError(`Not found liveRecord: ${id}`);
 
     if (!purge) {
-      if (record.isDeleted) throw Error(`Already deleted: ${id}`);
+      if (record.isDeleted) throw new ConflictError(`Already deleted: ${id}`);
       record.isDeleted = true;
       record.deletedAt = new Date().toISOString();
       await this.liveMap.set(id, record);

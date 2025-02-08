@@ -3,6 +3,7 @@ import { hasDuplicates } from '../../utils/list.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { PlatformType } from '../../common/schema.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class ChannelValidator {
@@ -14,12 +15,12 @@ export class ChannelValidator {
     tagNames: string[] | undefined = undefined,
   ) {
     if (tagNames && hasDuplicates(tagNames)) {
-      throw new ValidationError('Duplicate tag names');
+      throw new ConflictError('Duplicate tag names');
     }
     if (pid && platform) {
       const entities = await this.chQuery.findByPidAndPlatform(pid, platform);
       if (entities.length > 0) {
-        throw new ValidationError('Channel already exists');
+        throw new ConflictError('Channel already exists');
       }
     }
   }

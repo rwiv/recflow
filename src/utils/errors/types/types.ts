@@ -8,7 +8,7 @@ export type ErrorCode =
   // | 'Not Acceptable'
   // | 'Proxy Authentication Required'
   // | 'Request Timeout'
-  // | 'Conflict'
+  | 'Conflict'
   // | 'Gone'
   // | 'Length Required'
   // | 'Precondition Failed'
@@ -50,7 +50,7 @@ export type HttpStatusCode =
   // | 406
   // | 407
   // | 408
-  // | 409
+  | 409
   // | 410
   // | 411
   // | 412

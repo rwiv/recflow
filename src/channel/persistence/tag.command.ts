@@ -7,41 +7,45 @@ import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from './tag.query.js';
 import {
+  ChannelsToTagsEnt,
   channelsToTagsEnt,
   TagEnt,
   tagEnt,
   TagEntAppend,
-  tagEntCreation,
+  TagEntAppendRequest,
+  tagEntAppendRequest,
   TagEntUpdate,
 } from './tag.schema.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class TagCommandRepository {
   constructor(private readonly tagQuery: TagQueryRepository) {}
 
-  async create(req: TagEntAppend, tx: Tx = db): Promise<TagEnt> {
-    const tag = await this.tagQuery.findByName(req.name, tx);
-    if (tag) throw new Error('Tag already exists');
-    const tbc = tagEntCreation.parse({
-      ...req,
+  async create(append: TagEntAppend, tx: Tx = db): Promise<TagEnt> {
+    const tag = await this.tagQuery.findByName(append.name, tx);
+    if (tag) throw new ConflictError('Tag already exists');
+    const entReq: TagEntAppendRequest = {
+      ...append,
       id: uuid(),
       createdAt: new Date(),
       updatedAt: null,
-    });
-    return oneNotNull(await tx.insert(channelTags).values(tbc).returning());
+    };
+    const ent = await tx.insert(channelTags).values(tagEntAppendRequest.parse(entReq)).returning();
+    return oneNotNull(ent);
   }
 
-  async update(req: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
-    const tag = await this.tagQuery.findById(req.tagId, tx);
-    if (!tag) throw new Error('Tag not found');
-    const tbu = tagEnt.parse({
-      ...tag,
-      ...req.form,
-      updatedAt: new Date(),
-    });
-    return oneNotNull(
-      await tx.update(channelTags).set(tbu).where(eq(channelTags.id, req.tagId)).returning(),
-    );
+  async update(update: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
+    const tag = await this.tagQuery.findById(update.tagId, tx);
+    if (!tag) throw new NotFoundError('Tag not found');
+    const entReq: TagEnt = { ...tag, ...update.form, updatedAt: new Date() };
+    const ent = await tx
+      .update(channelTags)
+      .set(tagEnt.parse(entReq))
+      .where(eq(channelTags.id, update.tagId))
+      .returning();
+    return oneNotNull(ent);
   }
 
   async delete(tagId: string, tx: Tx = db) {
@@ -49,8 +53,8 @@ export class TagCommandRepository {
   }
 
   async bind(channelId: string, tagId: string, tx: Tx = db) {
-    const req = channelsToTagsEnt.parse({ channelId, tagId, createdAt: new Date() });
-    return tx.insert(channelsToTags).values(req);
+    const ent: ChannelsToTagsEnt = { channelId, tagId, createdAt: new Date() };
+    return tx.insert(channelsToTags).values(channelsToTagsEnt.parse(ent));
   }
 
   async unbind(channelId: string, tagId: string, tx: Tx = db) {

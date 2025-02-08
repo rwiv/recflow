@@ -11,22 +11,22 @@ export const tagEnt = z.object({
 
 export type TagEnt = z.infer<typeof tagEnt>;
 
-export const tagEntCreation = tagEnt.partial({ description: true, updatedAt: true });
+export const tagEntAppendRequest = tagEnt.partial({ description: true, updatedAt: true });
 
-export type TagEntCreation = z.infer<typeof tagEntCreation>;
+export type TagEntAppendRequest = z.infer<typeof tagEntAppendRequest>;
 
-export const tagAppend = tagEnt
+export const tagEntAppend = tagEnt
   .omit({ id: true, createdAt: true, updatedAt: true })
   .partial({ description: true });
 
-export type TagEntAppend = z.infer<typeof tagAppend>;
+export type TagEntAppend = z.infer<typeof tagEntAppend>;
 
-export const tagUpdate = z.object({
+export const tagEntUpdate = z.object({
   tagId: uuid,
-  form: tagAppend.partial(),
+  form: tagEntAppend.partial(),
 });
 
-export type TagEntUpdate = z.infer<typeof tagUpdate>;
+export type TagEntUpdate = z.infer<typeof tagEntUpdate>;
 
 export const channelsToTagsEnt = z.object({
   channelId: uuid,

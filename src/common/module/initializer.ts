@@ -10,6 +10,10 @@ import {
 } from '../../channel/priority/priority.constants.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { platformTypeEnum } from '../../platform/platform.schema.js';
+import { NodeTypeRepository } from '../../node/persistence/node-type.repository.js';
+import { nodeTypeEnum } from '../../node/node.schema.js';
+import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
+import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
 
 @Injectable()
 export class AppInitializer {
@@ -17,6 +21,8 @@ export class AppInitializer {
     private readonly pfRepo: PlatformRepository,
     private readonly priRepo: ChannelPriorityRepository,
     private readonly chWriter: ChannelWriter,
+    private readonly ntRepo: NodeTypeRepository,
+    private readonly ngRepo: NodeGroupRepository,
   ) {}
 
   async initProd() {
@@ -35,13 +41,27 @@ export class AppInitializer {
     for (const name of platformTypeEnum.options.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create(name);
     }
+
     const cpNames = (await this.priRepo.findAll()).map((pri) => pri.name);
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
       const tier = CHANNEL_PRIORIES_TIER_MAP[name];
       if (tier === undefined) {
-        throw new NotFoundError(`rank is undefined for ${name}`);
+        throw new NotFoundError(`tier is undefined for ${name}`);
       }
       await this.priRepo.create(name, tier);
+    }
+
+    const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);
+    for (const name of nodeTypeEnum.options.filter((name) => !nodeTypes.includes(name))) {
+      await this.ntRepo.create(name);
+    }
+    const ngNames = (await this.ngRepo.findAll()).map((pri) => pri.name);
+    for (const name of NODE_TYPES.filter((name) => !ngNames.includes(name))) {
+      const tier = NODE_TYPES_TIER_MAP[name];
+      if (tier === undefined) {
+        throw new NotFoundError(`tier is undefined for ${name}`);
+      }
+      await this.ngRepo.create(name, tier);
     }
   }
 }

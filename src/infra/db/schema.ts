@@ -129,7 +129,7 @@ export const nodes = pgTable(
     name: varchar({ length: 255 }).notNull(),
     endpoint: text().notNull(),
     weight: integer().notNull(),
-    capacity: integer().notNull(),
+    totalCapacity: integer('total_capacity').notNull(),
     typeId: char('type_id', { length: 32 })
       .notNull()
       .references(() => nodeTypes.id),
@@ -154,4 +154,21 @@ export const nodeStates = pgTable('node_states', {
   assigned: integer().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
+});
+
+export const lives = pgTable('lives', {
+  id: char({ length: 32 }).primaryKey(),
+  channelId: char('channel_id', { length: 32 })
+    .notNull()
+    .references(() => channels.id),
+  platformId: char('platform_id', { length: 32 })
+    .notNull()
+    .references(() => platforms.id),
+  nodeId: char('node_id', { length: 32 })
+    .notNull()
+    .references(() => nodes.id),
+  liveTitle: text('live_title').notNull(),
+  viewCnt: integer('view_cnt').notNull(),
+  adult: boolean().notNull(),
+  raw: text().notNull(),
 });

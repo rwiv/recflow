@@ -14,6 +14,12 @@ import { ChannelPriorityRepository } from '../../channel/priority/priority.repos
 import { ChannelMapper } from '../../channel/channel/business/channel.mapper.js';
 import { AppInitializer } from '../module/initializer.js';
 import { ChannelSearcher } from '../../channel/channel/business/channel.searcher.js';
+import { NodeTypeRepository } from '../../node/persistence/node-type.repository.js';
+import { NodeRepository } from '../../node/persistence/node.repository.js';
+import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
+import { NodeStateRepository } from '../../node/persistence/node-state.repository.js';
+import { NodeService } from '../../node/business/node.service.js';
+import { NodeMapper } from '../../node/business/node.mapper.js';
 
 export function getChannelServices() {
   const pfRepo = new PlatformRepository();
@@ -23,6 +29,13 @@ export function getChannelServices() {
   const chQuery = new ChannelQueryRepository();
   const chSearch = new ChannelSearchRepository(tagQuery, priRepo);
   const chCmd = new ChannelCommandRepository(chQuery);
+
+  const nodeRepo = new NodeRepository();
+  const ngRepo = new NodeGroupRepository();
+  const nsRepo = new NodeStateRepository();
+  const ntRepo = new NodeTypeRepository();
+  const nodeMapper = new NodeMapper(ngRepo, ntRepo, nsRepo);
+  const nodeService = new NodeService(nodeRepo, ntRepo, nsRepo, pfRepo, nodeMapper);
 
   const chMapper = new ChannelMapper(pfRepo, priRepo, tagQuery);
   const fetcher = getFetcher();
@@ -41,6 +54,19 @@ export function getChannelServices() {
   const chUpdater = new ChannelUpdater(chCmd, priRepo, chMapper);
   const chFinder = new ChannelFinder(chQuery, chMapper, tagQuery);
   const chSearcher = new ChannelSearcher(chSearch, chMapper);
-  const init = new AppInitializer(pfRepo, priRepo, chWriter);
-  return { pfRepo, priRepo, chWriter, chUpdater, chFinder, chSearcher, tagWriter, tagFinder, init };
+
+  const init = new AppInitializer(pfRepo, priRepo, chWriter, ntRepo, ngRepo);
+  return {
+    pfRepo,
+    priRepo,
+    ngRepo,
+    chWriter,
+    chUpdater,
+    chFinder,
+    chSearcher,
+    tagWriter,
+    tagFinder,
+    init,
+    nodeService,
+  };
 }

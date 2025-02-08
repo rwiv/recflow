@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { nodeStateEnt, NodeStateEnt, NodeStateEntAppend } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { nodeStates, nodeTypes } from '../../infra/db/schema.js';
+import { nodeStates } from '../../infra/db/schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { eq } from 'drizzle-orm';
@@ -21,5 +21,9 @@ export class NodeStateRepository {
 
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(nodeStates).where(eq(nodeStates.id, id)));
+  }
+
+  async findByNodeId(nodeId: string, tx: Tx = db) {
+    return tx.select().from(nodeStates).where(eq(nodeStates.nodeId, nodeId));
   }
 }

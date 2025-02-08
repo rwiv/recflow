@@ -22,4 +22,12 @@ export class NodeTypeRepository {
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(nodeTypes).where(eq(nodeTypes.id, id)));
   }
+
+  async findByName(name: string, tx: Tx = db) {
+    return oneNullable(await tx.select().from(nodeTypes).where(eq(nodeTypes.name, name)));
+  }
+
+  async findAll() {
+    return db.select().from(nodeTypes);
+  }
 }

@@ -23,4 +23,12 @@ export class NodeGroupRepository {
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(nodeGroups).where(eq(nodeGroups.id, id)));
   }
+
+  async findByName(name: string, tx: Tx = db) {
+    return oneNullable(await tx.select().from(nodeGroups).where(eq(nodeGroups.name, name)));
+  }
+
+  async findAll() {
+    return db.select().from(nodeGroups);
+  }
 }

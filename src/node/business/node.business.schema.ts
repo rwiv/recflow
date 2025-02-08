@@ -8,11 +8,17 @@ export const nodeRecord = nodeEnt
   .partial({ group: true, states: true });
 export type NodeRecord = z.infer<typeof nodeRecord>;
 
-export const nodeAppend = nodeRecord.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  group: true,
-  states: true,
-});
+export const nodeAppend = nodeRecord
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    group: true,
+    states: true,
+  })
+  .extend({
+    capacityMap: z.array(
+      z.object({ name: z.string().nonempty(), capacity: z.number().nonnegative() }),
+    ),
+  });
 export type NodeAppend = z.infer<typeof nodeAppend>;

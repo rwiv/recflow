@@ -2,10 +2,10 @@ export const CHANNEL_PRIORITIES = ['must', 'should', 'may', 'review', 'skip', 'n
 export const CHANNEL_PRIORIES_TIER_MAP = {
   must: 1,
   should: 2,
-  may: 3,
-  review: 4,
-  skip: 5,
-  none: 6,
+  may: 2,
+  review: 3,
+  skip: 3,
+  none: 2,
 };
 
 export const CHANNEL_PRIORIES_VALUE_MAP = {

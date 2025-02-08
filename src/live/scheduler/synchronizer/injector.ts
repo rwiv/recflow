@@ -1,11 +1,11 @@
 import { Synchronizer } from './synchronizer.js';
 import { LiveInfo } from '../../../platform/wapper/live.js';
-import { PlatformType } from '../../../platform/types.js';
+import { PlatformType } from '../../../platform/platform.types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
-import { ChannelRecord } from '../../../channel/channel/business/channel.schema.js';
+import { ChannelRecord } from '../../../channel/channel/business/channel.business.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 

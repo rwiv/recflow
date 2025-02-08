@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ChannelBusinessModule } from '../business/business.module.js';
+import { ChannelBusinessModule } from '../business/channel.business.module.js';
 import { ChannelController } from './channel.controller.js';
 
 @Module({

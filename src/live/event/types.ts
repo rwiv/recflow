@@ -1,4 +1,4 @@
-import { PlatformType } from '../../platform/types.js';
+import { PlatformType } from '../../platform/platform.types.js';
 
 export type ExitCmd = 'delete' | 'cancel' | 'finish';
 

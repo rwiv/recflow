@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../wapper/live.js';
 import { ChannelInfo } from '../wapper/channel.js';
-import { PlatformType } from '../types.js';
+import { PlatformType } from '../platform.types.js';
 import { ChzzkFetcher } from './chzzk.fetcher.js';
 import { SoopFetcher } from './soop.fetcher.js';
 

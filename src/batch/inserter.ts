@@ -3,9 +3,9 @@ import fs from 'fs';
 import {
   ChannelAppendWithFetch,
   chAppendWithFetch,
-} from '../channel/channel/business/channel.schema.js';
+} from '../channel/channel/business/channel.business.schema.js';
 import { log } from 'jslog';
-import { platformType } from '../platform/schema.js';
+import { platformType } from '../platform/platform.schema.js';
 
 interface BatchInsertRequest {
   pids: string[];

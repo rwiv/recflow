@@ -1,5 +1,5 @@
 import { Synchronizer } from './synchronizer.js';
-import { PlatformType } from '../../../platform/types.js';
+import { PlatformType } from '../../../platform/platform.types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { TrackedLiveService } from '../../business/tracked-live.service.js';
 import { ScheduleErrorHandler } from '../error.handler.js';

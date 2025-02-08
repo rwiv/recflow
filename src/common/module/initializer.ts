@@ -4,9 +4,12 @@ import { ChannelPriorityRepository } from '../../channel/priority/priority.repos
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from '../helpers/injector.js';
-import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority/constants.js';
+import {
+  CHANNEL_PRIORIES_TIER_MAP,
+  CHANNEL_PRIORITIES,
+} from '../../channel/priority/priority.constants.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { platformType } from '../../platform/schema.js';
+import { platformType } from '../../platform/platform.schema.js';
 
 @Injectable()
 export class AppInitializer {

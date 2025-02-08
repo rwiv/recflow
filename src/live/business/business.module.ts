@@ -6,7 +6,7 @@ import { LivePersistenceModule } from '../persistence/persistence.module.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { LiveEventModule } from '../event/event.module.js';
 import { NodeModule } from '../../node/node.module.js';
-import { ChannelBusinessModule } from '../../channel/channel/business/business.module.js';
+import { ChannelBusinessModule } from '../../channel/channel/business/channel.business.module.js';
 
 @Module({
   imports: [

@@ -4,8 +4,8 @@ import { and, eq } from 'drizzle-orm';
 import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../../utils/list.js';
-import { PlatformType } from '../../../platform/types.js';
-import { ChannelEnt } from './channel.schema.js';
+import { PlatformType } from '../../../platform/platform.types.js';
+import { ChannelEnt } from './channel.persistence.schema.js';
 
 @Injectable()
 export class ChannelQueryRepository {

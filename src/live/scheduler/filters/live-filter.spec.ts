@@ -1,6 +1,6 @@
 import { ChzzkLiveFilter } from './live-filter.chzzk.js';
 import { it } from 'vitest';
-import { PlatformType } from '../../../platform/types.js';
+import { PlatformType } from '../../../platform/platform.types.js';
 import { getFetcher } from '../../../common/helpers/platform.deps.js';
 import { getConf } from '../../../common/helpers/common.js';
 

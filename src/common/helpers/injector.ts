@@ -6,8 +6,8 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-import { CHANNEL_PRIORITIES } from '../../channel/priority/constants.js';
-import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.schema.js';
+import { CHANNEL_PRIORITIES } from '../../channel/priority/priority.constants.js';
+import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
 
 export class DevInitInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}

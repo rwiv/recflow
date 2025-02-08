@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NodeDef, NodeRecord } from '../../node/types.js';
 import { QueryConfig } from '../../common/config/query.js';
-import { PlatformType } from '../../platform/types.js';
+import { PlatformType } from '../../platform/platform.types.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
 import { NODE_MAP } from '../persistence/persistence.module.js';
 import { QUERY } from '../../common/config/config.module.js';

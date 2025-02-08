@@ -8,7 +8,7 @@ import {
   TagAttachment,
   tagDetachment,
   TagDetachment,
-} from '../business/tag.schema.js';
+} from '../business/tag.business.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels/tags')

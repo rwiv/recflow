@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelSortArg, PageQuery, pageResult, PageResult } from './channel.schema.js';
-import { ChannelPriority } from '../../priority/types.js';
-import { pageEntResult, PageEntResult } from '../persistence/channel.schema.js';
+import { ChannelSortArg, PageQuery, pageResult, PageResult } from './channel.business.schema.js';
+import { ChannelPriority } from '../../priority/priority.types.js';
+import { pageEntResult, PageEntResult } from '../persistence/channel.persistence.schema.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelMapper } from './channel.mapper.js';
 

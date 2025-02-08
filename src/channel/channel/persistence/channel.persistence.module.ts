@@ -3,7 +3,7 @@ import { ChannelCommandRepository } from './channel.command.js';
 import { ChannelQueryRepository } from './channel.query.js';
 import { ChannelSearchRepository } from './channel.search.js';
 import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
-import { ChannelTagPersistenceModule } from '../../tag/persistence/persistence.module.js';
+import { ChannelTagPersistenceModule } from '../../tag/persistence/tag.persistence.module.js';
 
 @Module({
   imports: [ChannelTagPersistenceModule],

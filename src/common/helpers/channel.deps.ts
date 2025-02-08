@@ -1,4 +1,4 @@
-import { TagCommandRepository } from '../../channel/tag/persistence/tag.command.js';
+import { TagCommandRepository } from '../../channel/tag/persistence/tag.persistence.command.js';
 import { ChannelQueryRepository } from '../../channel/channel/persistence/channel.query.js';
 import { ChannelCommandRepository } from '../../channel/channel/persistence/channel.command.js';
 import { getFetcher } from './platform.deps.js';

@@ -6,7 +6,12 @@ import { uuid } from '../../../utils/uuid.js';
 import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from './channel.query.js';
-import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from './channel.schema.js';
+import {
+  ChannelEnt,
+  channelEnt,
+  ChannelEntAppend,
+  ChannelEntUpdate,
+} from './channel.persistence.schema.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 

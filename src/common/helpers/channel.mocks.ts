@@ -1,5 +1,5 @@
-import { ChannelPriority } from '../../channel/priority/types.js';
-import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.schema.js';
+import { ChannelPriority } from '../../channel/priority/priority.types.js';
+import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
 
 export function mockChannel(
   n: number,

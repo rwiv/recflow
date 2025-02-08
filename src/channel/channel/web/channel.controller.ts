@@ -20,7 +20,7 @@ import {
   chAppendWithFetch,
   PageQuery,
   pageQuery,
-} from '../business/channel.schema.js';
+} from '../business/channel.business.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
 import { notNull } from '../../../utils/null.js';

@@ -7,8 +7,8 @@ import {
   chAppend,
   ChannelAppend,
   chAppendWithInfo,
-} from './channel.schema.js';
-import { tagAttachment, tagDetachment, TagRecord } from '../../tag/business/tag.schema.js';
+} from './channel.business.schema.js';
+import { tagAttachment, tagDetachment, TagRecord } from '../../tag/business/tag.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { notNull } from '../../../utils/null.js';
@@ -21,7 +21,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
-import { ChannelEntAppend, chEntAppend } from '../persistence/channel.schema.js';
+import { ChannelEntAppend, chEntAppend } from '../persistence/channel.persistence.schema.js';
 import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 

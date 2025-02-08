@@ -4,7 +4,7 @@ import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
 import { SoopChannelInfo, SoopLiveInfo } from '../raw/soop.js';
 import { checkResponse } from '../utils/utils.js';
-import { IFetcher } from '../types.js';
+import { IFetcher } from '../platform.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../../common/config/config.module.js';
 

@@ -1,4 +1,4 @@
-import { PlatformLiveInfo, PlatformType } from '../types.js';
+import { PlatformLiveInfo, PlatformType } from '../platform.types.js';
 import { ChzzkLiveInfo } from '../raw/chzzk.js';
 import { SoopLiveInfo } from '../raw/soop.js';
 import { parseInteger } from '../../utils/number.js';

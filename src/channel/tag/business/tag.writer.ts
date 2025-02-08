@@ -1,5 +1,5 @@
-import { TagCommandRepository } from '../persistence/tag.command.js';
-import { TagAttachment, TagDetachment, TagRecord } from './tag.schema.js';
+import { TagCommandRepository } from '../persistence/tag.persistence.command.js';
+import { TagAttachment, TagDetachment, TagRecord } from './tag.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';

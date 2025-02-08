@@ -1,4 +1,4 @@
-import { PlatformChannelInfo, PlatformType } from '../types.js';
+import { PlatformChannelInfo, PlatformType } from '../platform.types.js';
 import { ChzzkChannelInfo } from '../raw/chzzk.js';
 import { SoopChannelInfo } from '../raw/soop.js';
 import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';

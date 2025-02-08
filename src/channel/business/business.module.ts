@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { ChannelPersistenceModule } from '../persistence/persistence.module.js';
 import { TagWriter } from './tag.writer.js';
 import { ChannelWriter } from './channel.writer.js';
-import { ChannelValidator } from './channel.validator.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { ChannelFinder } from './channel.finder.js';
 import { TagFinder } from './tag.finder.js';
 import { ChannelUpdater } from './channel.updater.js';
 import { ChannelMapper } from './channel.mapper.js';
+import { ChannelSolver } from './channel.solver.js';
+import { ChannelSearcher } from './channel.searcher.js';
 
 @Module({
   imports: [ChannelPersistenceModule, PlatformModule],
@@ -16,10 +17,11 @@ import { ChannelMapper } from './channel.mapper.js';
     TagFinder,
     ChannelWriter,
     ChannelFinder,
+    ChannelSearcher,
     ChannelUpdater,
-    ChannelValidator,
     ChannelMapper,
+    ChannelSolver,
   ],
-  exports: [TagWriter, TagFinder, ChannelWriter, ChannelFinder, ChannelUpdater],
+  exports: [TagWriter, TagFinder, ChannelWriter, ChannelFinder, ChannelSearcher, ChannelUpdater],
 })
 export class ChannelBusinessModule {}

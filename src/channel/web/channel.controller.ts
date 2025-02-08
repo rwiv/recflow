@@ -26,6 +26,7 @@ import { ChannelUpdater } from '../business/channel.updater.js';
 import { notNull } from '../../utils/null.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { ChannelSearcher } from '../business/channel.searcher.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -33,6 +34,7 @@ export class ChannelController {
   constructor(
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
+    private readonly chSearcher: ChannelSearcher,
     private readonly chUpdater: ChannelUpdater,
   ) {}
 
@@ -58,7 +60,7 @@ export class ChannelController {
       throw new ValidationError('page and size must be provided');
     }
     const pq: PageQuery = { page, size };
-    return this.chFinder.findByQuery(
+    return this.chSearcher.findByQuery(
       pageQuery.parse(pq),
       chSortArg.parse(sorted),
       priority,

@@ -1,14 +1,14 @@
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { channelsToTags, channels } from '../../infra/db/schema.js';
-import { and, desc, eq, inArray } from 'drizzle-orm';
+import { and, desc, eq, exists, inArray, notExists } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from './tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
-import { ChannelEnt, PageEntResult } from './channel.schema.js';
+import { PageEntResult } from './channel.schema.js';
 import {
   chSortArg,
   ChannelSortArg,
@@ -35,8 +35,6 @@ export class ChannelSearchRepository {
   ): Promise<PageEntResult> {
     let qb = tx.select().from(channels).$dynamic();
     const conds: SQLWrapper[] = [];
-    if (sorted) qb = this.withSorted(qb, sorted);
-    if (priorityName) await this.withPriority(conds, priorityName, tx);
 
     if (tagName) {
       const tag = await this.tagQuery.findByName(tagName, tx);
@@ -51,7 +49,10 @@ export class ChannelSearchRepository {
       return { total, channels: (await nqb).map((r) => r.channels) };
     }
 
+    if (sorted) qb = this.withSorted(qb, sorted);
+    if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));
+
     const total = await tx.$count(qb);
     if (page) qb = this.withPage(qb, page);
     return { total, channels: await qb };
@@ -59,14 +60,20 @@ export class ChannelSearchRepository {
 
   // using OR condition
   async findByAnyTag(
-    tagNames: string[],
+    includeTagNames: string[],
+    excludeTagNames: string[] | undefined,
     page: PageQueryOptional = undefined,
     sorted: ChannelSortArg = undefined,
     priorityName: ChannelPriority | undefined = undefined,
     tx: Tx = db,
-  ): Promise<ChannelEnt[]> {
-    const tagIds = await this.tagQuery.findIdsByNames(tagNames, tx);
-    if (tagIds.length === 0) return [];
+  ): Promise<PageEntResult> {
+    const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
+    if (tagIds.length === 0) return { total: 0, channels: [] };
+    let excludeIds: string[] = [];
+    if (excludeTagNames && excludeTagNames.length > 0) {
+      this.checkDuplicatedTags(includeTagNames, excludeTagNames);
+      excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
+    }
 
     let qb = tx
       .selectDistinct({ channels: channels })
@@ -75,12 +82,70 @@ export class ChannelSearchRepository {
       .$dynamic();
 
     const conds: SQLWrapper[] = [];
-    if (page) qb = this.withPage(qb, page);
+    for (const tagId of excludeIds) {
+      const subQuery = db
+        .select()
+        .from(channelsToTags)
+        .where(and(eq(channelsToTags.channelId, channels.id), eq(channelsToTags.tagId, tagId)));
+      conds.push(notExists(subQuery));
+    }
+
     if (sorted) qb = this.withSorted(qb, sorted);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds, inArray(channelsToTags.tagId, tagIds)));
 
-    return (await qb).map((r) => r.channels);
+    const total = await tx.$count(qb);
+    if (page) qb = this.withPage(qb, page);
+    return { total, channels: (await qb).map((r) => r.channels) };
+  }
+
+  async findByAllTags(
+    includeTagNames: string[],
+    excludeTagNames: string[] | undefined,
+    page: PageQueryOptional = undefined,
+    sorted: ChannelSortArg = undefined,
+    priorityName: string | undefined = undefined,
+    tx: Tx = db,
+  ): Promise<PageEntResult> {
+    const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
+    if (includeIds.length === 0) return { total: 0, channels: [] };
+    let excludeIds: string[] = [];
+    if (excludeTagNames && excludeTagNames.length > 0) {
+      this.checkDuplicatedTags(includeTagNames, excludeTagNames);
+      excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
+    }
+
+    let qb = tx.select().from(channels).$dynamic();
+    const conds: SQLWrapper[] = [];
+    for (const tagId of includeIds) {
+      const subQuery = db
+        .select()
+        .from(channelsToTags)
+        .where(and(eq(channelsToTags.channelId, channels.id), eq(channelsToTags.tagId, tagId)));
+      conds.push(exists(subQuery));
+    }
+    for (const tagId of excludeIds) {
+      const subQuery = db
+        .select()
+        .from(channelsToTags)
+        .where(and(eq(channelsToTags.channelId, channels.id), eq(channelsToTags.tagId, tagId)));
+      conds.push(notExists(subQuery));
+    }
+
+    if (sorted) qb = this.withSorted(qb, sorted);
+    if (priorityName) await this.withPriority(conds, priorityName, tx);
+    qb = qb.where(and(...conds));
+
+    const total = await tx.$count(qb);
+    if (page) qb = this.withPage(qb, page);
+    return { total, channels: await qb };
+  }
+
+  private checkDuplicatedTags(includeTagNames: string[], excludeTagNames: string[]) {
+    const set = new Set(includeTagNames);
+    for (const name of excludeTagNames) {
+      if (set.has(name)) throw new ValidationError('Duplicated tag names');
+    }
   }
 
   private async withPriority(conditions: SQLWrapper[], priorityName: string, tx: Tx = db) {

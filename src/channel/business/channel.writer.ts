@@ -10,7 +10,6 @@ import {
 } from './channel.schema.js';
 import { tagAttachment, tagDetachment, TagRecord } from './tag.schema.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelValidator } from './channel.validator.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { notNull } from '../../utils/null.js';
 import { TagWriter } from './tag.writer.js';
@@ -23,6 +22,8 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEntAppend, chEntAppend } from '../persistence/channel.schema.js';
+import { hasDuplicates } from '../../utils/list.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -33,13 +34,18 @@ export class ChannelWriter {
     private readonly priRepo: ChannelPriorityRepository,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
-    private readonly validator: ChannelValidator,
     private readonly chMapper: ChannelMapper,
     private readonly fetcher: PlatformFetcher,
   ) {}
 
   async create(append: ChannelAppend, tagNames: string[] | undefined): Promise<ChannelRecord> {
-    await this.validator.validateForm(append.pid, append.platformName, tagNames);
+    if (tagNames && hasDuplicates(tagNames)) {
+      throw new ConflictError('Duplicate tag names');
+    }
+    const entities = await this.chQuery.findByPidAndPlatform(append.pid, append.platformName);
+    if (entities.length > 0) {
+      throw new ConflictError('Channel already exists');
+    }
 
     const platform = await this.pfRepo.findByName(append.platformName);
     if (!platform) throw new NotFoundError('Platform not found');

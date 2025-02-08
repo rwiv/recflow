@@ -14,7 +14,7 @@ import { Env } from '../../common/config/env.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { LiveRecord } from './types.js';
 import { createLiveEventListener } from '../event/test_utils.spec.js';
-import { getFetcher } from '../helpers/utils.js';
+import { getFetcher } from '../../common/helpers/platform.deps.js';
 import { NodeSelector } from '../../node/node.selector.js';
 import { ChannelPriorityEvaluator } from '../../channel/priority/priority.evaluator.js';
 

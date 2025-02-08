@@ -8,11 +8,14 @@ import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/types.js';
-import { ChannelWriter } from '../../channel/business/channel.writer.js';
+import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { NodeSelector } from '../../node/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
-import { ChannelAppendWithInfo, chAppendWithInfo } from '../../channel/business/channel.schema.js';
-import { ChannelFinder } from '../../channel/business/channel.finder.js';
+import {
+  ChannelAppendWithInfo,
+  chAppendWithInfo,
+} from '../../channel/channel/business/channel.schema.js';
+import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
 import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority/constants.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';

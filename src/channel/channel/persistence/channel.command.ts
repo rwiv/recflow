@@ -1,13 +1,13 @@
-import { oneNotNull } from '../../utils/list.js';
-import { db } from '../../infra/db/db.js';
-import { channels } from '../../infra/db/schema.js';
+import { oneNotNull } from '../../../utils/list.js';
+import { db } from '../../../infra/db/db.js';
+import { channels } from '../../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { uuid } from '../../utils/uuid.js';
-import { Tx } from '../../infra/db/types.js';
+import { uuid } from '../../../utils/uuid.js';
+import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from './channel.query.js';
 import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from './channel.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
 const channelEntAppendReq = channelEnt.partial({ profileImgUrl: true, description: true });

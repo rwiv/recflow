@@ -1,6 +1,9 @@
-import { ChannelWriter } from '../channel/business/channel.writer.js';
+import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 import fs from 'fs';
-import { ChannelAppendWithFetch, chAppendWithFetch } from '../channel/business/channel.schema.js';
+import {
+  ChannelAppendWithFetch,
+  chAppendWithFetch,
+} from '../channel/channel/business/channel.schema.js';
 import { log } from 'jslog';
 import { platformType } from '../platform/schema.js';
 

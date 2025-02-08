@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { channelsToTags, channelTags } from '../../infra/db/schema.js';
-import { oneNullable } from '../../utils/list.js';
+import { Tx } from '../../../infra/db/types.js';
+import { db } from '../../../infra/db/db.js';
+import { channelsToTags, channelTags } from '../../../infra/db/schema.js';
+import { oneNullable } from '../../../utils/list.js';
 import { eq, inArray } from 'drizzle-orm';
 import { TagEnt } from './tag.schema.js';
 

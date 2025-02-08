@@ -23,9 +23,9 @@ import {
 } from '../business/channel.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
-import { notNull } from '../../utils/null.js';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { notNull } from '../../../utils/null.js';
+import { HttpErrorFilter } from '../../../common/module/error.filter.js';
+import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../business/channel.searcher.js';
 
 @UseFilters(HttpErrorFilter)

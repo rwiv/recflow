@@ -1,13 +1,13 @@
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { channelsToTags, channels } from '../../infra/db/schema.js';
+import { Tx } from '../../../infra/db/types.js';
+import { db } from '../../../infra/db/db.js';
+import { channelsToTags, channels } from '../../../infra/db/schema.js';
 import { and, desc, eq, exists, inArray, notExists } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
-import { TagQueryRepository } from './tag.query.js';
+import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelPriority } from '../priority/types.js';
-import { ChannelPriorityRepository } from '../priority/priority.repository.js';
+import { ChannelPriority } from '../../priority/types.js';
+import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { PageEntResult } from './channel.schema.js';
 import {
   chSortArg,
@@ -15,9 +15,9 @@ import {
   PageQueryOptional,
   PageQuery,
 } from '../business/channel.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
+import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
+import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
 export class ChannelSearchRepository {

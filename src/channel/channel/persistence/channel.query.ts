@@ -1,10 +1,10 @@
-import { db } from '../../infra/db/db.js';
-import { channelsToTags, channels, platforms } from '../../infra/db/schema.js';
+import { db } from '../../../infra/db/db.js';
+import { channelsToTags, channels, platforms } from '../../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
-import { Tx } from '../../infra/db/types.js';
+import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
-import { oneNullable } from '../../utils/list.js';
-import { PlatformType } from '../../platform/types.js';
+import { oneNullable } from '../../../utils/list.js';
+import { PlatformType } from '../../../platform/types.js';
 import { ChannelEnt } from './channel.schema.js';
 
 @Injectable()

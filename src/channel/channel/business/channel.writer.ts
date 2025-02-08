@@ -1,5 +1,5 @@
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
-import { db } from '../../infra/db/db.js';
+import { db } from '../../../infra/db/db.js';
 import {
   ChannelAppendWithFetch,
   ChannelAppendWithInfo,
@@ -8,22 +8,22 @@ import {
   ChannelAppend,
   chAppendWithInfo,
 } from './channel.schema.js';
-import { tagAttachment, tagDetachment, TagRecord } from './tag.schema.js';
+import { tagAttachment, tagDetachment, TagRecord } from '../../tag/business/tag.schema.js';
 import { Injectable } from '@nestjs/common';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { notNull } from '../../utils/null.js';
-import { TagWriter } from './tag.writer.js';
+import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
+import { notNull } from '../../../utils/null.js';
+import { TagWriter } from '../../tag/business/tag.writer.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
-import { TagQueryRepository } from '../persistence/tag.query.js';
-import { Tx } from '../../infra/db/types.js';
-import { ChannelInfo } from '../../platform/wapper/channel.js';
+import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
+import { Tx } from '../../../infra/db/types.js';
+import { ChannelInfo } from '../../../platform/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../priority/priority.repository.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
+import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
+import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { ChannelEntAppend, chEntAppend } from '../persistence/channel.schema.js';
-import { hasDuplicates } from '../../utils/list.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { hasDuplicates } from '../../../utils/list.js';
+import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class ChannelWriter {

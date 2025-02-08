@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { tagRecord } from './tag.schema.js';
+import { tagRecord } from '../../tag/business/tag.schema.js';
 import { channelEnt } from '../persistence/channel.schema.js';
-import { platformType } from '../../platform/schema.js';
-import { uuid } from '../../common/data/schema.js';
+import { platformType } from '../../../platform/schema.js';
+import { uuid } from '../../../common/data/schema.js';
 
 export const channelRecord = channelEnt
   .omit({ platformId: true, priorityId: true })

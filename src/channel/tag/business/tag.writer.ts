@@ -2,9 +2,9 @@ import { TagCommandRepository } from '../persistence/tag.command.js';
 import { TagAttachment, TagDetachment, TagRecord } from './tag.schema.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from '../persistence/tag.query.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { ChannelQueryRepository } from '../persistence/channel.query.js';
+import { Tx } from '../../../infra/db/types.js';
+import { db } from '../../../infra/db/db.js';
+import { ChannelQueryRepository } from '../../channel/persistence/channel.query.js';
 import { tagEntAppend, TagEntAppend, TagEntUpdate } from '../persistence/tag.schema.js';
 
 @Injectable()

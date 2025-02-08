@@ -1,7 +1,7 @@
 import fs from 'fs';
-import { ChannelWriter } from '../channel/business/channel.writer.js';
+import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 import { log } from 'jslog';
-import { channelRecord, chAppend } from '../channel/business/channel.schema.js';
+import { channelRecord, chAppend } from '../channel/channel/business/channel.schema.js';
 import { AppInitializer } from '../common/module/initializer.js';
 import { z } from 'zod';
 

@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
-import { TagQueryRepository } from '../persistence/tag.query.js';
-import { PlatformType } from '../../platform/types.js';
+import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
+import { PlatformType } from '../../../platform/types.js';
 import { ChannelMapper } from './channel.mapper.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { ChannelSolver } from './channel.solver.js';
+import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -12,13 +11,12 @@ export class ChannelFinder {
     private readonly chQuery: ChannelQueryRepository,
     private readonly chMapper: ChannelMapper,
     private readonly tagQuery: TagQueryRepository,
-    private readonly solver: ChannelSolver,
   ) {}
 
   async findAll(withTags: boolean = false) {
     const entities = await this.chQuery.findAll();
     const records = await this.chMapper.mapAll(entities);
-    return this.solver.solveChannels(records, withTags);
+    return this.chMapper.loadRelations(records, withTags);
   }
 
   async findById(channelId: string, withTags: boolean = false) {
@@ -35,7 +33,7 @@ export class ChannelFinder {
   async findByPid(pid: string, withTags: boolean = false) {
     const entities = await this.chQuery.findByPid(pid);
     const channels = await this.chMapper.mapAll(entities);
-    return this.solver.solveChannels(channels, withTags);
+    return this.chMapper.loadRelations(channels, withTags);
   }
 
   async findByPidOne(pid: string, platform: PlatformType, withTags: boolean = false) {
@@ -43,13 +41,13 @@ export class ChannelFinder {
     const channels = await this.chMapper.mapAll(entities);
     if (channels.length === 0) return undefined;
     if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
-    return this.solver.solveChannel(channels[0], withTags);
+    return this.chMapper.loadRelation(channels[0], withTags);
   }
 
   async findByUsername(username: string, withTags: boolean = false) {
     const entities = await this.chQuery.findByUsername(username);
     const channels = await this.chMapper.mapAll(entities);
-    return this.solver.solveChannels(channels, withTags);
+    return this.chMapper.loadRelations(channels, withTags);
   }
 
   async findFollowedChannels(platform: PlatformType) {

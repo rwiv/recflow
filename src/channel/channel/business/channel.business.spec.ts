@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { dropAll } from '../../infra/db/utils.js';
-import { mockChannel } from '../../common/helpers/channel.mocks.js';
-import { getChannelServices } from '../../common/helpers/channel.deps.js';
-import { ChannelPriority } from '../priority/types.js';
+import { dropAll } from '../../../infra/db/utils.js';
+import { mockChannel } from '../../../common/helpers/channel.mocks.js';
+import { getChannelServices } from '../../../common/helpers/channel.deps.js';
+import { ChannelPriority } from '../../priority/types.js';
 import { ChannelSortArg } from './channel.schema.js';
 
 const { chFinder, chSearcher, chWriter, init } = getChannelServices();

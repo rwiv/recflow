@@ -1,4 +1,5 @@
 import { AsyncMap } from './interface.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 export class MemoryMap<K, V> implements AsyncMap<K, V> {
   private map = new Map<K, V>();
@@ -14,7 +15,7 @@ export class MemoryMap<K, V> implements AsyncMap<K, V> {
 
   async delete(key: K): Promise<void> {
     if (!this.map.has(key)) {
-      throw Error('Not found');
+      throw new NotFoundError('Not found');
     }
     this.map.delete(key);
     return Promise.resolve();

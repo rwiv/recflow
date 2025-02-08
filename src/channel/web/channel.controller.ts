@@ -18,11 +18,14 @@ import {
   channelSortArg,
   channelUpdate,
   channelAppendWithFetch,
+  PageQuery,
+  pageQuery,
 } from '../business/channel.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
 import { assertNotNull } from '../../utils/null.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -52,11 +55,11 @@ export class ChannelController {
     }
 
     if (!page || !size) {
-      throw new Error('page and size must be provided');
+      throw new ValidationError('page and size must be provided');
     }
+    const pq: PageQuery = { page, size };
     return this.chFinder.findByQuery(
-      page,
-      size,
+      pageQuery.parse(pq),
       channelSortArg.parse(sorted),
       priority,
       tagName,

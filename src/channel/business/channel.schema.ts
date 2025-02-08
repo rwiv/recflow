@@ -60,3 +60,13 @@ export type ChannelUpdate = z.infer<typeof channelUpdate>;
 export const channelSortEnum = z.enum(['latest', 'followerCnt']);
 export const channelSortArg = channelSortEnum.optional();
 export type ChannelSortType = z.infer<typeof channelSortArg>;
+
+export const pageQuery = z.object({
+  page: z.number().int().positive(),
+  size: z.number().int().nonnegative(),
+});
+
+export type PageQuery = z.infer<typeof pageQuery>;
+
+export const pageQueryOptional = pageQuery.optional();
+export type PageQueryOptional = z.infer<typeof pageQueryOptional>;

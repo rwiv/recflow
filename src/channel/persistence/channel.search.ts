@@ -9,7 +9,8 @@ import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEnt } from './channel.schema.js';
-import { channelSortArg, ChannelSortType } from '../business/channel.schema.js';
+import { channelSortArg, ChannelSortType, PageQueryOptional } from '../business/channel.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class ChannelSearchRepository {
@@ -19,7 +20,7 @@ export class ChannelSearchRepository {
   ) {}
 
   async findByQuery(
-    page: { page: number; size: number } | undefined = undefined,
+    page: PageQueryOptional = undefined,
     sorted: ChannelSortType = undefined,
     priorityName: string | undefined = undefined,
     tagName: string | undefined = undefined,
@@ -47,7 +48,7 @@ export class ChannelSearchRepository {
   // using OR condition
   async findByAnyTag(
     tagNames: string[],
-    page: { page: number; size: number } | undefined = undefined,
+    page: PageQueryOptional = undefined,
     sorted: ChannelSortType = undefined,
     priorityName: ChannelPriority | undefined = undefined,
     tx: Tx = db,
@@ -71,12 +72,12 @@ export class ChannelSearchRepository {
 
   private withBasis<T extends PgSelect>(
     qb: T,
-    page: { page: number; size: number } | undefined = undefined,
+    page: PageQueryOptional = undefined,
     sorted: ChannelSortType = undefined,
     priorityId: string | undefined = undefined,
   ) {
     if (page) {
-      if (page.page < 1) throw new Error('Page must be greater than 0');
+      if (page.page < 1) throw new ValidationError('Page must be greater than 0');
       const offset = (page.page - 1) * page.size;
       qb = qb.offset(offset).limit(page.size);
     }

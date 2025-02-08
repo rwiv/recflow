@@ -3,6 +3,7 @@ import { AmqpConfig, PostgresConfig, RedisConfig } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
+import { parseInteger } from '../utils/number.js';
 
 export interface Env {
   nodeEnv: string;
@@ -36,17 +37,12 @@ export function readEnv(): Env {
   if (configPath === undefined) throw Error('configPath is undefined');
 
   // APP_PORT
-  const appPortStr = process.env.APP_PORT;
-  if (appPortStr === undefined) throw Error('appPort is undefined');
-  const appPort = parseInt(appPortStr);
-  if (isNaN(appPort)) throw Error('appPort is NaN');
+  const appPort = parseInteger(process.env.APP_PORT, 'appPort');
 
   // streamq
   const streamqUrl = process.env.STREAMQ_URL;
-  const qsizeStr = process.env.STREAMQ_QSIZE;
-  if (streamqUrl === undefined || qsizeStr === undefined) throw Error('streamq data is undefined');
-  const streamqQsize = parseInt(qsizeStr);
-  if (isNaN(streamqQsize)) throw Error('streamqQsize is NaN');
+  if (streamqUrl === undefined) throw Error('streamq data is undefined');
+  const streamqQsize = parseInteger(process.env.STREAMQ_QSIZE, 'streamqQsize');
 
   // authed
   const authedUrl = process.env.AUTHED_URL;
@@ -62,13 +58,11 @@ export function readEnv(): Env {
 
   // redis
   const redisHost = process.env.REDIS_HOST;
-  const redisPortStr = process.env.REDIS_PORT;
   const redisPassword = process.env.REDIS_PASSWORD;
-  if (redisHost === undefined || redisPortStr === undefined || redisPassword === undefined) {
+  const redisPort = parseInteger(process.env.REDIS_PORT, 'redisPort');
+  if (redisHost === undefined || redisPassword === undefined) {
     throw Error('redis data is undefined');
   }
-  const redisPort = parseInt(redisPortStr);
-  if (isNaN(redisPort)) throw Error('redisPort is NaN');
   const redis: RedisConfig = {
     host: redisHost,
     port: redisPort,
@@ -77,23 +71,13 @@ export function readEnv(): Env {
 
   // amqp
   const amqpHost = process.env.AMQP_HOST;
-  const amqpPortStr = process.env.AMQP_PORT;
-  const qmpHttpPortStr = process.env.AMQP_HTTP_PORT;
   const amqpUsername = process.env.AMQP_USERNAME;
   const amqpPassword = process.env.AMQP_PASSWORD;
-  if (
-    amqpHost === undefined ||
-    amqpPortStr === undefined ||
-    qmpHttpPortStr === undefined ||
-    amqpUsername === undefined ||
-    amqpPassword === undefined
-  ) {
+  if (amqpHost === undefined || amqpUsername === undefined || amqpPassword === undefined) {
     throw Error('amqp data is undefined');
   }
-  const amqpPort = parseInt(amqpPortStr);
-  if (isNaN(amqpPort)) throw Error('amqpPort is NaN');
-  const amqpHttpPort = parseInt(qmpHttpPortStr);
-  if (isNaN(amqpHttpPort)) throw Error('amqpHttpPort is NaN');
+  const amqpPort = parseInteger(process.env.AMQP_PORT, 'amqpPort');
+  const amqpHttpPort = parseInteger(process.env.AMQP_HTTP_PORT, 'amqpHttpPort');
   const amqp: AmqpConfig = {
     host: amqpHost,
     port: amqpPort,
@@ -120,8 +104,7 @@ export function readEnv(): Env {
   ) {
     throw Error('pg data is undefined');
   }
-  const pgPort = parseInt(pgPortStr);
-  if (isNaN(pgPort)) throw Error('pgPort is NaN');
+  const pgPort = parseInteger(pgPortStr, 'pgPort');
   const url = `postgres://${pgUsername}:${pgPassword}@${pgHost}:${pgPort}/${pgDatabase}`;
   const pg: PostgresConfig = {
     host: pgHost,

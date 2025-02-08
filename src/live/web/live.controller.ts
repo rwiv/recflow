@@ -6,6 +6,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ExitCmd } from '../event/types.js';
 import { LiveScheduler } from '../scheduler/scheduler.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -89,13 +90,14 @@ export class LiveController {
 
   private async getChzzkLive(channelId: string) {
     const channel = await this.fetcher.fetchChannel('chzzk', channelId, true);
-    if (!channel?.liveInfo) throw Error(`Not found chzzkChannel.liveInfo: ${channelId}`);
+    if (!channel?.liveInfo)
+      throw new NotFoundError(`Not found chzzkChannel.liveInfo: ${channelId}`);
     return { live: channel.liveInfo, channel };
   }
 
   private async getSoopLive(userId: string) {
     const channel = await this.fetcher.fetchChannel('soop', userId, true);
-    if (!channel?.liveInfo) throw Error('Not found soopChannel.liveInfo');
+    if (!channel?.liveInfo) throw new NotFoundError('Not found soopChannel.liveInfo');
     return { live: channel.liveInfo, channel };
   }
 }

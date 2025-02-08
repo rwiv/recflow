@@ -13,6 +13,7 @@ import {
   channelEntCreation,
   ChannelEntUpdate,
 } from './channel.schema.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class ChannelCommandRepository {
@@ -30,7 +31,7 @@ export class ChannelCommandRepository {
 
   async update(req: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.chQuery.findById(req.id, tx);
-    if (!channel) throw new Error('Channel not found');
+    if (!channel) throw new NotFoundError('Channel not found');
     const toBeUpdated = channelEnt.parse({
       ...channel,
       ...req.form,

@@ -6,6 +6,7 @@ import { ChannelWriter } from '../channel/business/channel.writer.js';
 import { dropAll } from '../infra/db/utils.js';
 import { TestChannelInjector } from '../channel/helpers/injector.js';
 import { CHANNEL_PRIORIES_RANK_MAP, CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
+import { NotFoundError } from '../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class AppInitializer {
@@ -35,7 +36,7 @@ export class AppInitializer {
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
       const rank = CHANNEL_PRIORIES_RANK_MAP[name];
       if (rank === undefined) {
-        throw new Error(`rank is undefined for ${name}`);
+        throw new NotFoundError(`rank is undefined for ${name}`);
       }
       await this.priRepo.create(name, rank);
     }

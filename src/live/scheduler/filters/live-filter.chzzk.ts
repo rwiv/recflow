@@ -7,6 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../../common/config.module.js';
 import { ChannelFinder } from '../../../channel/business/channel.finder.js';
 import { ChannelPriorityEvaluator } from '../../../channel/priority/priority.evaluator.js';
+import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
 export class ChzzkLiveFilter implements LiveFilter {
@@ -24,7 +25,7 @@ export class ChzzkLiveFilter implements LiveFilter {
 
   private async filter(live: LiveInfo): Promise<LiveInfo | null> {
     if (live.type !== 'chzzk') {
-      throw new Error('Invalid live type');
+      throw new EnumCheckError('Invalid live type');
     }
     const content = live.content as ChzzkLiveInfo;
     // ignore

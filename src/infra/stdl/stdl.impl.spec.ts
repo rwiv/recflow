@@ -3,6 +3,7 @@ import { it } from 'vitest';
 import { readQueryConfig } from '../../common/query.js';
 import { StdlImpl } from './stdl.impl.js';
 import { AuthedImpl } from '../authed/authed.impl.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const uid = '';
 
@@ -14,7 +15,7 @@ it('test', async () => {
 
   const stdlUrl = query.webhooks.find((wh) => (wh.type = 'main'))?.url;
   if (!stdlUrl) {
-    throw new Error('stdlUrl not found');
+    throw new NotFoundError('stdlUrl not found');
   }
   const cookies = await authClient.requestChzzkCookies();
   await stdl.requestChzzkLive(stdlUrl, uid, cookies);

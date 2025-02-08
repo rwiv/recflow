@@ -7,6 +7,7 @@ import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/business/channel.finder.js';
 import { ChannelRecord } from '../../../channel/business/channel.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 
 export class LiveAppender extends Synchronizer {
   constructor(
@@ -39,7 +40,7 @@ export class LiveAppender extends Synchronizer {
     if (!chanInfo || !chanInfo.openLive) return null;
 
     const chanWithLive = await this.fetcher.fetchChannel(this.platform, ch.pid, true);
-    if (!chanWithLive?.liveInfo) throw Error('Not found Channel.liveInfo');
+    if (!chanWithLive?.liveInfo) throw new NotFoundError('Not found Channel.liveInfo');
     await this.liveService.add(chanWithLive.liveInfo, chanWithLive);
   }
 

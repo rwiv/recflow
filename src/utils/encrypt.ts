@@ -1,9 +1,10 @@
 import crypto from 'crypto';
+import { ValidationError } from './errors/errors/ValidationError.js';
 
 // Encrypt function
 export function encrypt(plainText: string, key: string): string {
   if (key.length !== 32) {
-    throw new Error('Key must be 32 bytes');
+    throw new ValidationError('Key must be 32 bytes');
   }
 
   const iv = crypto.randomBytes(16); // Generate a random IV
@@ -17,7 +18,7 @@ export function encrypt(plainText: string, key: string): string {
 
 export function decrypt(encryptedText: string, key: string): string {
   if (key.length !== 32) {
-    throw new Error('Key must be 32 bytes');
+    throw new ValidationError('Key must be 32 bytes');
   }
 
   const inputBuffer = Buffer.from(encryptedText, 'base64');

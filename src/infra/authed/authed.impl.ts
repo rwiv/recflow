@@ -5,6 +5,7 @@ import { Cookie } from './types.js';
 import { log } from 'jslog';
 import { decrypt } from '../../utils/encrypt.js';
 import { Authed, EncryptedResponse, SoopCredential } from './authed.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class AuthedImpl implements Authed {
@@ -15,7 +16,7 @@ export class AuthedImpl implements Authed {
     this.authUrl = this.env.authedUrl;
     this.enckey = this.env.authedEncKey;
     if (this.enckey.length !== 32) {
-      throw new Error('enckey must be 32 bytes');
+      throw new ValidationError('enckey must be 32 bytes');
     }
   }
 

@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config.module.js';
 import { Env } from '../../common/env.js';
 import { Amqp } from './interface.js';
+import { UninitializedError } from '../../utils/errors/errors/UninitializedError.js';
 
 @Injectable()
 export class AmqpImpl implements Amqp {
@@ -23,14 +24,14 @@ export class AmqpImpl implements Amqp {
 
   createChannel() {
     if (this.conn === undefined) {
-      throw new Error('Connection is not initialized');
+      throw new UninitializedError('Connection is not initialized');
     }
     return this.conn.createChannel();
   }
 
   async checkQueue(queue: string): Promise<boolean> {
     if (this.ch === undefined) {
-      throw new Error('Channel is not initialized');
+      throw new UninitializedError('Channel is not initialized');
     }
     try {
       await this.ch.checkQueue(queue);
@@ -42,7 +43,7 @@ export class AmqpImpl implements Amqp {
 
   async assertQueue(queue: string) {
     if (this.ch === undefined) {
-      throw new Error('Channel is not initialized');
+      throw new UninitializedError('Channel is not initialized');
     }
     return this.ch.assertQueue(queue, {
       exclusive: false,
@@ -53,7 +54,7 @@ export class AmqpImpl implements Amqp {
 
   publish(queue: string, content: object) {
     if (this.ch === undefined) {
-      throw new Error('Channel is not initialized');
+      throw new UninitializedError('Channel is not initialized');
     }
     return this.ch.sendToQueue(queue, Buffer.from(JSON.stringify(content)));
   }

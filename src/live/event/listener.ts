@@ -12,6 +12,7 @@ import { Dispatcher } from './dispatcher.js';
 import { QueryConfig } from '../../common/query.js';
 import { LiveRecord } from '../business/types.js';
 import { ExitCmd } from './types.js';
+import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
 export class LiveEventListener {
@@ -62,7 +63,7 @@ export class LiveEventListener {
       }
       await this.stdl.requestSoopLive(whUrl, live.channelId, cred);
     } else {
-      throw new Error('Invalid live type');
+      throw new EnumCheckError('Invalid live type');
     }
   }
 }

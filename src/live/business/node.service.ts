@@ -6,6 +6,8 @@ import type { AsyncMap } from '../../infra/storage/interface.js';
 import { NODE_MAP } from '../persistence/persistence.module.js';
 import { QUERY } from '../../common/config.module.js';
 import { LiveRecord } from './types.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
 export class NodeService {
@@ -29,7 +31,7 @@ export class NodeService {
    */
   async updateCnt(whName: string, type: PlatformType, num: 1 | -1) {
     const node = await this.map.get(whName);
-    if (node === undefined) throw Error('Cannot found node');
+    if (node === undefined) throw new NotFoundError('Cannot found node');
 
     let value: NodeRecord;
     if (type === 'chzzk') {
@@ -45,7 +47,7 @@ export class NodeService {
         soopAssignedCnt: node.soopAssignedCnt + num,
       };
     } else {
-      throw Error('Invalid type');
+      throw new EnumCheckError('Invalid type');
     }
     await this.map.set(whName, value);
   }
@@ -73,7 +75,7 @@ export class NodeService {
     for (const [key, value] of existedEntries) {
       if (this.query.webhooks.map((it: NodeDef) => it.name).includes(key)) {
         const whDef = this.query.webhooks.find((it) => it.name === key);
-        if (!whDef) throw Error('Cannot found node');
+        if (!whDef) throw new NotFoundError('Cannot found node');
         if (
           value.type !== whDef.type ||
           value.url !== whDef.url ||
@@ -118,7 +120,7 @@ export class NodeService {
     for (const live of lives) {
       const wh = whMap.get(live.assignedWebhookName);
       if (!wh) {
-        throw Error('Cannot found node');
+        throw new NotFoundError('Cannot found node');
       }
 
       if (live.type === 'chzzk') {
@@ -126,7 +128,7 @@ export class NodeService {
       } else if (live.type === 'soop') {
         wh.soopAssignedCnt += 1;
       } else {
-        throw Error('Invalid platform');
+        throw new EnumCheckError('Invalid platform');
       }
     }
 

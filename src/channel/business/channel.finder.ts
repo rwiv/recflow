@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelRecord, ChannelSortType } from './channel.schema.js';
+import { ChannelRecord, ChannelSortType, PageQuery } from './channel.schema.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelPriority } from '../priority/types.js';
 import { PlatformType } from '../../platform/types.js';
 import { ChannelMapper } from './channel.mapper.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -43,7 +44,7 @@ export class ChannelFinder {
     const entities = await this.chQuery.findByPidAndPlatform(pid, platform);
     const channels = await this.chMapper.mapAll(entities);
     if (channels.length === 0) return undefined;
-    if (channels.length > 1) throw new Error(`Multiple channels with pid: ${pid}`);
+    if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
     return this.solveChannel(channels[0], withTags);
   }
 
@@ -59,14 +60,13 @@ export class ChannelFinder {
   }
 
   async findByQuery(
-    page: number,
-    size: number,
+    page: PageQuery,
     sorted: ChannelSortType = undefined,
     priority: string | undefined = undefined,
     tagName: string | undefined = undefined,
     withTags: boolean = false,
   ): Promise<ChannelRecord[]> {
-    const entities = await this.chSearch.findByQuery({ page, size }, sorted, priority, tagName);
+    const entities = await this.chSearch.findByQuery(page, sorted, priority, tagName);
     const channels = await this.chMapper.mapAll(entities);
     return this.solveChannels(channels, withTags);
   }

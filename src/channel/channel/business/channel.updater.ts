@@ -1,7 +1,7 @@
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelMapper } from './channel.mapper.js';
-import { chEntUpdate, ChannelEntUpdate } from '../persistence/channel.persistence.schema.js';
+import { ChannelEntUpdate } from '../persistence/channel.persistence.schema.js';
 import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 
@@ -17,17 +17,17 @@ export class ChannelUpdater {
     const priority = await this.priRepo.findByName(priorityName);
     if (!priority) throw new NotFoundError('Priority not found');
     const update: ChannelEntUpdate = { id, form: { priorityId: priority.id } };
-    return this.updateRecord(chEntUpdate.parse(update));
+    return this.updateRecord(update);
   }
 
   async updateFollowed(id: string, followed: boolean) {
     const update: ChannelEntUpdate = { id, form: { followed } };
-    return this.updateRecord(chEntUpdate.parse(update));
+    return this.updateRecord(update);
   }
 
   async updateDescription(id: string, description: string | null) {
     const update: ChannelEntUpdate = { id, form: { description } };
-    return this.updateRecord(chEntUpdate.parse(update));
+    return this.updateRecord(update);
   }
 
   private async updateRecord(req: ChannelEntUpdate) {

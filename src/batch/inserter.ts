@@ -1,9 +1,6 @@
 import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 import fs from 'fs';
-import {
-  ChannelAppendWithFetch,
-  chAppendWithFetch,
-} from '../channel/channel/business/channel.business.schema.js';
+import { ChannelAppendWithFetch } from '../channel/channel/business/channel.business.schema.js';
 import { log } from 'jslog';
 import { platformType } from '../platform/platform.schema.js';
 
@@ -29,7 +26,7 @@ export class BatchInserter {
         description: null,
         tagNames: breq.tagNames.filter((t: string) => t.length > 0),
       };
-      await this.channelWriter.createWithFetch(chAppendWithFetch.parse(req));
+      await this.channelWriter.createWithFetch(req);
       log.info(`Inserted channel ${pid}`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }

@@ -8,20 +8,17 @@ export const tagEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-
 export type TagEnt = z.infer<typeof tagEnt>;
 
-export const tagEntAppend = tagEnt
+const tagEntAppend = tagEnt
   .omit({ id: true, createdAt: true, updatedAt: true })
   .partial({ description: true });
-
 export type TagEntAppend = z.infer<typeof tagEntAppend>;
 
 export const tagEntUpdate = z.object({
   tagId: uuid,
   form: tagEntAppend.partial(),
 });
-
 export type TagEntUpdate = z.infer<typeof tagEntUpdate>;
 
 export const channelsToTagsEnt = z.object({
@@ -29,5 +26,4 @@ export const channelsToTagsEnt = z.object({
   tagId: uuid,
   createdAt: z.date(),
 });
-
 export type ChannelsToTagsEnt = z.infer<typeof channelsToTagsEnt>;

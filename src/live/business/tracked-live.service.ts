@@ -11,10 +11,7 @@ import { ExitCmd } from '../event/types.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { NodeSelector } from '../../node/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
-import {
-  ChannelAppendWithInfo,
-  chAppendWithInfo,
-} from '../../channel/channel/business/channel.business.schema.js';
+import { ChannelAppendWithInfo } from '../../channel/channel/business/channel.business.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
 import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority/priority.constants.js';
@@ -65,7 +62,7 @@ export class TrackedLiveService {
         priorityName: CHANNEL_PRIORIES_VALUE_MAP.none,
         followed: false,
       };
-      channel = await this.chWriter.createWithInfo(chAppendWithInfo.parse(append), channelInfo);
+      channel = await this.chWriter.createWithInfo(append, channelInfo);
     }
     const node = this.nodeSelector.match(channel, await this.nodes());
     if (node === null) {

@@ -8,5 +8,4 @@ export const chPriorityEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-
 export type ChannelPriorityEnt = z.infer<typeof chPriorityEnt>;

@@ -13,7 +13,7 @@ import {
   tagEnt,
   TagEntAppend,
   TagEntUpdate,
-} from './tag.schema.js';
+} from './tag.persistence.schema.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 import { z } from 'zod';

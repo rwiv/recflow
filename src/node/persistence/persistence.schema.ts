@@ -1,0 +1,46 @@
+import { z } from 'zod';
+import { uuid } from '../../common/data/common.schema.js';
+
+export const nodeEnt = z.object({
+  id: uuid,
+  name: z.string().nonempty(),
+  endpoint: z.string().nonempty(),
+  weight: z.number().int().positive(),
+  capacity: z.number().int().positive(),
+  typeId: uuid,
+  groupId: uuid,
+  createdAt: z.date(),
+  updatedAt: z.date().nullable(),
+});
+export type NodeEnt = z.infer<typeof nodeEnt>;
+
+export const nodeEntAppend = nodeEnt.omit({ id: true, createdAt: true, updatedAt: true });
+export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
+
+export const nodeTypeEnt = z.object({
+  id: uuid,
+  name: z.enum(['worker', 'argo']),
+  createdAt: z.date(),
+  updatedAt: z.date().nullable(),
+});
+export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
+
+export const nodeGroupEnt = z.object({
+  id: uuid,
+  name: z.string().nonempty(),
+  tier: z.number().int().positive(),
+  createdAt: z.date(),
+  updatedAt: z.date().nullable(),
+});
+export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
+
+export const nodeStateEnt = z.object({
+  id: uuid,
+  nodeId: uuid,
+  platformId: uuid,
+  capacity: z.number().int().positive(),
+  assigned: z.number().int().positive(),
+  createdAt: z.date(),
+  updatedAt: z.date().nullable(),
+});
+export type NodeStateEnt = z.infer<typeof nodeStateEnt>;

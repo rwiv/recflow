@@ -1,7 +1,10 @@
 import fs from 'fs';
 import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 import { log } from 'jslog';
-import { channelRecord, chAppend } from '../channel/channel/business/channel.business.schema.js';
+import {
+  ChannelAppend,
+  channelRecord,
+} from '../channel/channel/business/channel.business.schema.js';
 import { AppInitializer } from '../common/module/initializer.js';
 import { z } from 'zod';
 
@@ -26,12 +29,13 @@ export class BatchMigrator {
     await this.init.initProd();
     const text = await fs.promises.readFile(filePath, 'utf8');
     const channels = JSON.parse(text) as ChannelBackupRecord[];
-    for (const channel of channels) {
-      const req = chAppend.parse({
+    for (const chan of channels) {
+      const channel = channelBackupRecord.parse(chan);
+      const req: ChannelAppend = {
         ...channel,
         createdAt: new Date(channel.createdAt),
         updatedAt: new Date(channel.updatedAt),
-      });
+      };
       await this.chWriter.create(req, channel.tagNames);
       log.info(`Migrated channel: ${channel.username}`);
     }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TagCommandRepository } from './tag.persistence.command.js';
+import { TagCommandRepository } from './tag.command.js';
 import { TagQueryRepository } from './tag.query.js';
 
 @Module({

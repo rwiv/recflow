@@ -14,27 +14,22 @@ export const channelEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
-
 export type ChannelEnt = z.infer<typeof channelEnt>;
 
-export const chEntAppend = channelEnt
+const chEntAppend = channelEnt
   .omit({ id: true })
   .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
-
 export type ChannelEntAppend = z.infer<typeof chEntAppend>;
 
 const chEntUpdateForm = channelEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
-
-export const chEntUpdate = z.object({
+const chEntUpdate = z.object({
   id: z.string(),
   form: chEntUpdateForm,
 });
-
 export type ChannelEntUpdate = z.infer<typeof chEntUpdate>;
 
-export const pageEntResult = z.object({
+const pageEntResult = z.object({
   total: z.number().nonnegative(),
   channels: z.array(channelEnt),
 });
-
 export type PageEntResult = z.infer<typeof pageEntResult>;

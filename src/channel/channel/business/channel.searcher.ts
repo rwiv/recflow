@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelSortArg, PageQuery, pageResult, PageResult } from './channel.business.schema.js';
 import { ChannelPriority } from '../../priority/priority.types.js';
-import { pageEntResult, PageEntResult } from '../persistence/channel.persistence.schema.js';
+import { PageEntResult } from '../persistence/channel.persistence.schema.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelMapper } from './channel.mapper.js';
 
@@ -60,7 +60,7 @@ export class ChannelSearcher {
   }
 
   private async toPageResult(entRet: PageEntResult, withTags: boolean) {
-    const { total, channels: entities } = pageEntResult.parse(entRet);
+    const { total, channels: entities } = entRet;
     const chsNotTags = await this.chMapper.mapAll(entities);
     const channels = await this.chMapper.loadRelations(chsNotTags, withTags);
     const result: PageResult = { total, channels };

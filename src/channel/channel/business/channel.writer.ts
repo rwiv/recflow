@@ -4,11 +4,9 @@ import {
   ChannelAppendWithFetch,
   ChannelAppendWithInfo,
   ChannelRecord,
-  chAppend,
   ChannelAppend,
-  chAppendWithInfo,
 } from './channel.business.schema.js';
-import { tagAttachment, tagDetachment, TagRecord } from '../../tag/business/tag.business.schema.js';
+import { TagAttachment, TagDetachment, TagRecord } from '../../tag/business/tag.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { notNull } from '../../../utils/null.js';
@@ -21,7 +19,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
-import { ChannelEntAppend, chEntAppend } from '../persistence/channel.persistence.schema.js';
+import { ChannelEntAppend } from '../persistence/channel.persistence.schema.js';
 import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 
@@ -57,15 +55,14 @@ export class ChannelWriter {
       platformId: platform.id,
       priorityId: priority.id,
     };
-
     return db.transaction(async (txx) => {
-      const ent = await this.chCmd.create(chEntAppend.parse(entAppend), txx);
+      const ent = await this.chCmd.create(entAppend, txx);
       const channel = await this.chMapper.map(ent);
       let result: ChannelRecord = { ...channel };
       const tags: TagRecord[] = [];
       if (tagNames && tagNames.length > 0) {
         for (const tagName of tagNames) {
-          const attach = tagAttachment.parse({ channelId: channel.id, tagName });
+          const attach: TagAttachment = { channelId: channel.id, tagName };
           tags.push(await this.tagWriter.attach(attach, txx));
         }
         result = { ...channel, tags };
@@ -79,12 +76,12 @@ export class ChannelWriter {
       await this.fetcher.fetchChannel(appendFetch.platformName, appendFetch.pid, false),
     );
     const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
-    return this.createWithInfo(chAppendWithInfo.parse(appendInfo), info);
+    return this.createWithInfo(appendInfo, info);
   }
 
   async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo) {
     const append: ChannelAppend = { ...appendInfo, ...info, platformName: info.platform };
-    return this.create(chAppend.parse(append), appendInfo.tagNames);
+    return this.create(append, appendInfo.tagNames);
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {
@@ -94,7 +91,7 @@ export class ChannelWriter {
     const tags = await this.tagQuery.findTagsByChannelId(channel.id, tx);
     return tx.transaction(async (txx) => {
       for (const tag of tags) {
-        const detach = tagDetachment.parse({ channelId: channel.id, tagId: tag.id });
+        const detach: TagDetachment = { channelId: channel.id, tagId: tag.id };
         await this.tagWriter.detach(detach, txx);
       }
       await this.chCmd.delete(channel.id, txx);

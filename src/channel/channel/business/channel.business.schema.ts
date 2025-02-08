@@ -12,13 +12,11 @@ export const channelRecord = channelEnt
     tags: z.array(tagRecord),
   })
   .partial({ tags: true });
-
 export type ChannelRecord = z.infer<typeof channelRecord>;
 
 export const chAppend = channelRecord
   .omit({ id: true })
   .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
-
 export type ChannelAppend = z.infer<typeof chAppend>;
 
 export const chAppendWithFetch = chAppend
@@ -31,16 +29,14 @@ export const chAppendWithFetch = chAppend
   })
   .extend({ tagNames: z.array(z.string()) })
   .partial({ tagNames: true });
-
 export type ChannelAppendWithFetch = z.infer<typeof chAppendWithFetch>;
 
-export const chAppendWithInfo = chAppendWithFetch.pick({
+const chAppendWithInfo = chAppendWithFetch.pick({
   priorityName: true,
   followed: true,
   description: true,
   tagNames: true,
 });
-
 export type ChannelAppendWithInfo = z.infer<typeof chAppendWithInfo>;
 
 const chUpdateForm = channelRecord
@@ -50,12 +46,10 @@ const chUpdateForm = channelRecord
     description: true,
   })
   .partial();
-
 export const chUpdate = z.object({
   id: uuid,
   form: chUpdateForm,
 });
-
 export type ChannelUpdate = z.infer<typeof chUpdate>;
 
 export const chSortEnum = z.enum(['latest', 'followerCnt']);
@@ -74,5 +68,4 @@ export const pageResult = z.object({
   total: z.number().nonnegative(),
   channels: z.array(channelRecord),
 });
-
 export type PageResult = z.infer<typeof pageResult>;

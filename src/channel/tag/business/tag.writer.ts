@@ -1,11 +1,11 @@
-import { TagCommandRepository } from '../persistence/tag.persistence.command.js';
+import { TagCommandRepository } from '../persistence/tag.command.js';
 import { TagAttachment, TagDetachment, TagRecord } from './tag.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
 import { ChannelQueryRepository } from '../../channel/persistence/channel.query.js';
-import { tagEntAppend, TagEntAppend, TagEntUpdate } from '../persistence/tag.schema.js';
+import { TagEntAppend, TagEntUpdate } from '../persistence/tag.persistence.schema.js';
 
 @Injectable()
 export class TagWriter {
@@ -24,7 +24,7 @@ export class TagWriter {
       let tag = await this.tagQuery.findByName(attach.tagName, txx);
       if (!tag) {
         const append: TagEntAppend = { name: attach.tagName };
-        tag = await this.tagCmd.create(tagEntAppend.parse(append), txx);
+        tag = await this.tagCmd.create(append, txx);
       }
       await this.tagCmd.bind(attach.channelId, tag.id, txx);
       return tag;

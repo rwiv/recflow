@@ -8,7 +8,7 @@ import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.t
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
-import { DEFAULT_END_PAGE, DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
+import { DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
@@ -25,8 +25,6 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
     queryKey: pageState.queryKeys(),
     queryFn: () => fetchChannels(pageState),
   });
-  const channels = pageResult?.channels;
-  // const total = pageResult?.total;
 
   useEffect(() => {
     if (pageState.isSingle) return;
@@ -36,6 +34,18 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
       queryFn: () => fetchChannels(newPageState),
     });
   }, [pageState, queryClient]);
+
+  const pagination = () => {
+    const total = pageResult?.total;
+    if (!total || total < 1) return;
+    return (
+      <PageNavigation
+        pageState={pageState}
+        paginationSize={DEFAULT_PAGINATION_SIZE}
+        endPage={Math.ceil(total / pageState.pageSize)}
+      />
+    );
+  };
 
   if (isLoading) {
     return <LoadingComponent />;
@@ -59,14 +69,10 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
           </Button>
         </div>
       </div>
-      <div className="rounded-md border">{channels && <TableContent channels={channels} />}</div>
-      <div className="my-7">
-        <PageNavigation
-          pageState={pageState}
-          paginationSize={DEFAULT_PAGINATION_SIZE}
-          endPage={DEFAULT_END_PAGE}
-        />
+      <div className="rounded-md border">
+        {pageResult?.channels && <TableContent channels={pageResult.channels} />}
       </div>
+      <div className="my-7">{pagination()}</div>
     </div>
   );
 }

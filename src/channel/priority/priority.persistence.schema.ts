@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uuid } from 'src/common/data/common.schema.js';
+import { uuid } from '../../common/data/common.schema.js';
 
 export const chPriorityEnt = z.object({
   id: uuid,

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { tagRecord } from '../../tag/business/tag.business.schema.js';
 import { channelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformType } from '../../../platform/platform.schema.js';
+import { platformTypeEnum } from '../../../platform/platform.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
 
 export const channelRecord = channelEnt
   .omit({ platformId: true, priorityId: true })
   .extend({
-    platformName: platformType,
+    platformName: platformTypeEnum,
     priorityName: z.string().nonempty(),
     tags: z.array(tagRecord),
   })

@@ -19,11 +19,11 @@ export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
 
 export const nodeTypeEnt = z.object({
   id: uuid,
-  name: z.enum(['worker', 'argo']),
+  name: z.string().nonempty(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
+export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
 
 export const nodeGroupEnt = z.object({
   id: uuid,
@@ -32,7 +32,7 @@ export const nodeGroupEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
+export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
 
 export const nodeStateEnt = z.object({
   id: uuid,
@@ -44,3 +44,6 @@ export const nodeStateEnt = z.object({
   updatedAt: z.date().nullable(),
 });
 export type NodeStateEnt = z.infer<typeof nodeStateEnt>;
+
+export const nodeStateEntAppend = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true });
+export type NodeStateEntAppend = z.infer<typeof nodeStateEntAppend>;

@@ -28,23 +28,23 @@ export class TagCommandRepository {
   async create(append: TagEntAppend, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findByName(append.name, tx);
     if (tag) throw new ConflictError('Tag already exists');
-    const entReq: TagEntAppendRequest = {
+    const req: TagEntAppendRequest = {
       ...append,
       id: uuid(),
       createdAt: new Date(),
       updatedAt: null,
     };
-    const ent = await tx.insert(channelTags).values(tagEntAppendReq.parse(entReq)).returning();
+    const ent = await tx.insert(channelTags).values(tagEntAppendReq.parse(req)).returning();
     return oneNotNull(ent);
   }
 
   async update(update: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findById(update.tagId, tx);
     if (!tag) throw new NotFoundError('Tag not found');
-    const entReq: TagEnt = { ...tag, ...update.form, updatedAt: new Date() };
+    const req: TagEnt = { ...tag, ...update.form, updatedAt: new Date() };
     const ent = await tx
       .update(channelTags)
-      .set(tagEnt.parse(entReq))
+      .set(tagEnt.parse(req))
       .where(eq(channelTags.id, update.tagId))
       .returning();
     return oneNotNull(ent);

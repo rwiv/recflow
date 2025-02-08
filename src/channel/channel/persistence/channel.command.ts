@@ -22,31 +22,29 @@ type ChannelEntAppendRequest = z.infer<typeof channelEntAppendReq>;
 export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
-  async create(req: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
-    const toBeAdded: ChannelEntAppendRequest = {
-      ...req,
+  async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
+    const req: ChannelEntAppendRequest = {
+      ...append,
       id: uuid(),
-      createdAt: req.createdAt ?? new Date(),
-      updatedAt: req.updatedAt ?? new Date(),
+      createdAt: append.createdAt ?? new Date(),
+      updatedAt: append.updatedAt ?? new Date(),
     };
-    return oneNotNull(
-      await tx.insert(channels).values(channelEntAppendReq.parse(toBeAdded)).returning(),
-    );
+    return oneNotNull(await tx.insert(channels).values(channelEntAppendReq.parse(req)).returning());
   }
 
-  async update(req: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
-    const channel = await this.chQuery.findById(req.id, tx);
+  async update(update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
+    const channel = await this.chQuery.findById(update.id, tx);
     if (!channel) throw new NotFoundError('Channel not found');
-    const update: ChannelEnt = {
+    const req: ChannelEnt = {
       ...channel,
-      ...req.form,
+      ...update.form,
       updatedAt: new Date(),
     };
     return oneNotNull(
       await tx
         .update(channels)
-        .set(channelEnt.parse(update))
-        .where(eq(channels.id, req.id))
+        .set(channelEnt.parse(req))
+        .where(eq(channels.id, update.id))
         .returning(),
     );
   }

@@ -2,7 +2,7 @@ import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 import fs from 'fs';
 import { ChannelAppendWithFetch } from '../channel/channel/business/channel.business.schema.js';
 import { log } from 'jslog';
-import { platformType } from '../platform/platform.schema.js';
+import { platformTypeEnum } from '../platform/platform.schema.js';
 
 interface BatchInsertRequest {
   pids: string[];
@@ -20,7 +20,7 @@ export class BatchInserter {
     for (const pid of breq.pids) {
       const req: ChannelAppendWithFetch = {
         pid,
-        platformName: platformType.parse(breq.platform),
+        platformName: platformTypeEnum.parse(breq.platform),
         priorityName: breq.priority,
         followed: false,
         description: null,

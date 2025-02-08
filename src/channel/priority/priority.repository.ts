@@ -5,7 +5,7 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelPriorities } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../utils/uuid.js';
-import { ChannelPriorityEnt, chPriorityEnt } from './priority.schema.js';
+import { ChannelPriorityEnt, chPriorityEnt } from './priority.persistence.schema.js';
 
 @Injectable()
 export class ChannelPriorityRepository {

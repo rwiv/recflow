@@ -9,7 +9,7 @@ import {
   CHANNEL_PRIORITIES,
 } from '../../channel/priority/priority.constants.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { platformType } from '../../platform/platform.schema.js';
+import { platformTypeEnum } from '../../platform/platform.schema.js';
 
 @Injectable()
 export class AppInitializer {
@@ -32,7 +32,7 @@ export class AppInitializer {
 
   async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
-    for (const name of platformType.options.filter((name) => !pfNames.includes(name))) {
+    for (const name of platformTypeEnum.options.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create(name);
     }
     const cpNames = (await this.priRepo.findAll()).map((pri) => pri.name);

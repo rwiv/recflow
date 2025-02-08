@@ -4,7 +4,7 @@ import { notNull } from '../../../utils/null.js';
 import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformType } from '../../../platform/platform.schema.js';
+import { platformTypeEnum } from '../../../platform/platform.schema.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class ChannelMapper {
     const priorityStr = notNull(await this.priRepo.findById(ent.priorityId)).name;
     return {
       ...ent,
-      platformName: platformType.parse(platformStr),
+      platformName: platformTypeEnum.parse(platformStr),
       priorityName: priorityStr,
     };
   }

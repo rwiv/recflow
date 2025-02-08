@@ -8,9 +8,16 @@ import { TagQueryRepository } from './tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
-import { ChannelEnt } from './channel.schema.js';
-import { chSortArg, ChannelSortArg, PageQueryOptional } from '../business/channel.schema.js';
+import { ChannelEnt, PageEntResult } from './channel.schema.js';
+import {
+  chSortArg,
+  ChannelSortArg,
+  PageQueryOptional,
+  PageQuery,
+} from '../business/channel.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
 export class ChannelSearchRepository {
@@ -25,24 +32,29 @@ export class ChannelSearchRepository {
     priorityName: string | undefined = undefined,
     tagName: string | undefined = undefined,
     tx: Tx = db,
-  ): Promise<ChannelEnt[]> {
-    const bqb = tx.select().from(channels).$dynamic();
-    let priorityId = undefined;
-    if (priorityName) {
-      priorityId = (await this.priRepo.findByName(priorityName, tx))?.id;
-    }
-    const basis = this.withBasis(bqb, page, sorted, priorityId);
+  ): Promise<PageEntResult> {
+    let qb = tx.select().from(channels).$dynamic();
+    const conds: SQLWrapper[] = [];
+    if (sorted) qb = this.withSorted(qb, sorted);
+    if (priorityName) await this.withPriority(conds, priorityName, tx);
 
     if (tagName) {
       const tag = await this.tagQuery.findByName(tagName, tx);
-      if (!tag) return [];
-      const withTags = await basis.qb
+      if (!tag) return { total: 0, channels: [] };
+
+      let nqb = qb
         .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
-        .where(and(...basis.c, eq(channelsToTags.tagId, tag.id)));
-      return withTags.map((r) => r.channels);
+        .where(and(...conds, eq(channelsToTags.tagId, tag.id)));
+
+      const total = await tx.$count(qb);
+      if (page) nqb = this.withPage(nqb, page);
+      return { total, channels: (await nqb).map((r) => r.channels) };
     }
 
-    return basis.qb.where(and(...basis.c));
+    qb = qb.where(and(...conds));
+    const total = await tx.$count(qb);
+    if (page) qb = this.withPage(qb, page);
+    return { total, channels: await qb };
   }
 
   // using OR condition
@@ -56,46 +68,41 @@ export class ChannelSearchRepository {
     const tagIds = await this.tagQuery.findIdsByNames(tagNames, tx);
     if (tagIds.length === 0) return [];
 
-    const bqb = tx.selectDistinct({ channels: channels }).from(channels).$dynamic();
-    let priorityId = undefined;
-    if (priorityName) {
-      priorityId = (await this.priRepo.findByName(priorityName, tx))?.id;
-    }
-    const basis = this.withBasis(bqb, page, sorted, priorityId);
-
-    const byTags = await basis.qb
+    let qb = tx
+      .selectDistinct({ channels: channels })
+      .from(channels)
       .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
-      .where(and(...basis.c, inArray(channelsToTags.tagId, tagIds)));
-
-    return byTags.map((r) => r.channels);
-  }
-
-  private withBasis<T extends PgSelect>(
-    qb: T,
-    page: PageQueryOptional = undefined,
-    sorted: ChannelSortArg = undefined,
-    priorityId: string | undefined = undefined,
-  ) {
-    if (page) {
-      if (page.page < 1) throw new ValidationError('Page must be greater than 0');
-      const offset = (page.page - 1) * page.size;
-      qb = qb.offset(offset).limit(page.size);
-    }
-    qb = this.withSorted(qb, sorted);
+      .$dynamic();
 
     const conds: SQLWrapper[] = [];
-    if (priorityId) {
-      conds.push(eq(channels.priorityId, priorityId));
-    }
-    return { qb, c: conds };
+    if (page) qb = this.withPage(qb, page);
+    if (sorted) qb = this.withSorted(qb, sorted);
+    if (priorityName) await this.withPriority(conds, priorityName, tx);
+    qb = qb.where(and(...conds, inArray(channelsToTags.tagId, tagIds)));
+
+    return (await qb).map((r) => r.channels);
   }
 
-  private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortArg = undefined) {
+  private async withPriority(conditions: SQLWrapper[], priorityName: string, tx: Tx = db) {
+    const priority = await this.priRepo.findByName(priorityName, tx);
+    if (!priority) throw new NotFoundError('Priority not found');
+    conditions.push(eq(channels.priorityId, priority.id));
+  }
+
+  private withPage<T extends PgSelect>(qb: T, page: PageQuery) {
+    if (page.page < 1) throw new ValidationError('Page must be greater than 0');
+    const offset = (page.page - 1) * page.size;
+    return qb.offset(offset).limit(page.size);
+  }
+
+  private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortArg) {
     const sortType = chSortArg.parse(sorted);
     if (sortType === 'latest') {
       qb = qb.orderBy(desc(channels.updatedAt));
     } else if (sortType === 'followerCnt') {
       qb = qb.orderBy(desc(channels.followerCnt));
+    } else {
+      throw new EnumCheckError(`Invalid sort type: ${sortType}`);
     }
     return qb;
   }

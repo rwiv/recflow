@@ -21,10 +21,12 @@ interface ChannelTableProps {
 export function ChannelTable({ pageState }: ChannelTableProps) {
   const queryClient = useQueryClient();
 
-  const { data: channels, isLoading } = useQuery({
+  const { data: pageResult, isLoading } = useQuery({
     queryKey: pageState.queryKeys(),
     queryFn: () => fetchChannels(pageState),
   });
+  const channels = pageResult?.channels;
+  // const total = pageResult?.total;
 
   useEffect(() => {
     if (pageState.isSingle) return;

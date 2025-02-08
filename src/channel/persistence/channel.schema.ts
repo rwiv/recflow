@@ -31,3 +31,10 @@ export const chEntUpdate = z.object({
 });
 
 export type ChannelEntUpdate = z.infer<typeof chEntUpdate>;
+
+export const pageEntResult = z.object({
+  total: z.number().nonnegative(),
+  channels: z.array(channelEnt),
+});
+
+export type PageEntResult = z.infer<typeof pageEntResult>;

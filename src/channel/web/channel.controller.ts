@@ -23,7 +23,7 @@ import {
 } from '../business/channel.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
-import { assertNotNull } from '../../utils/null.js';
+import { notNull } from '../../utils/null.js';
 import { HttpErrorFilter } from '../../common/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
@@ -75,19 +75,19 @@ export class ChannelController {
   @Patch('/priority')
   patchPriority(@Body() req: ChannelUpdate) {
     const update = chUpdate.parse(req);
-    return this.chUpdater.updatePriority(update.id, assertNotNull(update.form.priorityName));
+    return this.chUpdater.updatePriority(update.id, notNull(update.form.priorityName));
   }
 
   @Patch('/followed')
   patchFollowed(@Body() req: ChannelUpdate) {
     const update = chUpdate.parse(req);
-    return this.chUpdater.updateFollowed(update.id, assertNotNull(update.form?.followed));
+    return this.chUpdater.updateFollowed(update.id, notNull(update.form?.followed));
   }
 
   @Patch('/description')
   patchDescription(@Body() req: ChannelUpdate) {
     const update = chUpdate.parse(req);
-    return this.chUpdater.updateDescription(update.id, assertNotNull(update.form?.description));
+    return this.chUpdater.updateDescription(update.id, notNull(update.form?.description));
   }
 
   @Delete('/:channelId')

@@ -12,7 +12,7 @@ import { tagAttachment, tagDetachment, TagRecord } from './tag.schema.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelValidator } from './channel.validator.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { assertNotNull } from '../../utils/null.js';
+import { notNull } from '../../utils/null.js';
 import { TagWriter } from './tag.writer.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
@@ -69,7 +69,7 @@ export class ChannelWriter {
   }
 
   async createWithFetch(appendFetch: ChannelAppendWithFetch) {
-    const info = assertNotNull(
+    const info = notNull(
       await this.fetcher.fetchChannel(appendFetch.platformName, appendFetch.pid, false),
     );
     const appendInfo: ChannelAppendWithInfo = { ...appendFetch };

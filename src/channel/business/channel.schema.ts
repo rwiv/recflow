@@ -68,3 +68,10 @@ export const pageQuery = z.object({
 export type PageQuery = z.infer<typeof pageQuery>;
 export const pageQueryOptional = pageQuery.optional();
 export type PageQueryOptional = z.infer<typeof pageQueryOptional>;
+
+export const pageResult = z.object({
+  total: z.number().nonnegative(),
+  channels: z.array(channelRecord),
+});
+
+export type PageResult = z.infer<typeof pageResult>;

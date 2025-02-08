@@ -1,4 +1,9 @@
-import { ChannelCreation, ChannelDefUpdate, ChannelRecord } from '@/client/channel.types.ts';
+import {
+  ChannelCreation,
+  ChannelDefUpdate,
+  ChannelRecord,
+  PageResult,
+} from '@/client/channel.types.ts';
 import { configs } from '@/common/configs.ts';
 import { ChannelPriority } from '@/common/enum.types.ts';
 import { getIngredients, request } from '@/client/utils.ts';
@@ -10,7 +15,7 @@ export async function fetchChannels(pageState: ChannelPageState, withTags: boole
     qs += '&wt=true';
   }
   const res = await request(`${configs.endpoint}/api/channels?${qs}`);
-  return (await res.json()) as ChannelRecord[];
+  return (await res.json()) as PageResult;
 }
 
 export async function createChannel(req: ChannelCreation) {

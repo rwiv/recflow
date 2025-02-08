@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelRecord, ChannelSortArg, PageQuery } from './channel.schema.js';
+import {
+  ChannelRecord,
+  ChannelSortArg,
+  PageQuery,
+  pageResult,
+  PageResult,
+} from './channel.schema.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
@@ -7,6 +13,7 @@ import { ChannelPriority } from '../priority/types.js';
 import { PlatformType } from '../../platform/types.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { pageEntResult } from '../persistence/channel.schema.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -66,9 +73,11 @@ export class ChannelFinder {
     tagName: string | undefined = undefined,
     withTags: boolean = false,
   ) {
-    const entities = await this.chSearch.findByQuery(page, sorted, priority, tagName);
-    const channels = await this.chMapper.mapAll(entities);
-    return this.solveChannels(channels, withTags);
+    const entRet = await this.chSearch.findByQuery(page, sorted, priority, tagName);
+    const { total, channels: entities } = pageEntResult.parse(entRet);
+    const chsNotTags = await this.chMapper.mapAll(entities);
+    const result: PageResult = { total, channels: await this.solveChannels(chsNotTags, withTags) };
+    return pageResult.parse(result);
   }
 
   async findByAnyTag(

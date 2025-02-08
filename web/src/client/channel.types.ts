@@ -33,3 +33,8 @@ export interface ChannelDefUpdate {
     description?: string | null;
   };
 }
+
+export interface PageResult {
+  total: number;
+  channels: ChannelRecord[];
+}

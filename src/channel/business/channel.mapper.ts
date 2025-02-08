@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { channelRecord, ChannelRecord } from './channel.schema.js';
-import { assertNotNull } from '../../utils/null.js';
+import { notNull } from '../../utils/null.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.schema.js';
@@ -23,8 +23,8 @@ export class ChannelMapper {
   }
 
   async map(ent: ChannelEnt): Promise<ChannelRecord> {
-    const platformStr = assertNotNull(await this.pfRepo.findById(ent.platformId)).name;
-    const priorityStr = assertNotNull(await this.priRepo.findById(ent.priorityId)).name;
+    const platformStr = notNull(await this.pfRepo.findById(ent.platformId)).name;
+    const priorityStr = notNull(await this.priRepo.findById(ent.priorityId)).name;
     const record: ChannelRecord = {
       ...ent,
       platformName: platformType.parse(platformStr),

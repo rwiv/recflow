@@ -3,7 +3,7 @@ import { dropAll } from '../../infra/db/utils.js';
 import { mockChannel } from '../helpers/mocks.js';
 import { getChannelServices } from '../helpers/utils.js';
 import { ChannelPriority } from '../priority/types.js';
-import { ChannelSortType } from './channel.schema.js';
+import { ChannelSortArg } from './channel.schema.js';
 
 const { chFinder, chWriter, init } = getChannelServices();
 
@@ -51,7 +51,7 @@ describe('ChannelService', () => {
     }
 
     // const sorted: ChannelSortType = 'latest';
-    const sorted: ChannelSortType = 'followerCnt';
+    const sorted: ChannelSortArg = 'followerCnt';
     // const sorted: ChannelSortType = undefined;
 
     const prioirty = 'should';

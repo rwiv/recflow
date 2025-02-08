@@ -2,7 +2,7 @@ import fs from 'fs';
 import { ChannelFinder } from '../channel/business/channel.finder.js';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
 import { log } from 'jslog';
-import { channelAppend } from '../channel/business/channel.schema.js';
+import { chAppend } from '../channel/business/channel.schema.js';
 import { AppInitializer } from '../common/initializer.js';
 import { platformType } from '../common/schema.js';
 
@@ -33,7 +33,7 @@ export class BatchMigrator {
     const text = await fs.promises.readFile(filePath, 'utf8');
     const channels = JSON.parse(text) as ChannelBackupRecord[];
     for (const channel of channels) {
-      const req = channelAppend.parse({
+      const req = chAppend.parse({
         pid: channel.pid,
         platformName: platformType.parse(channel.platform),
         username: channel.username,

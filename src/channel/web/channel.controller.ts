@@ -15,9 +15,9 @@ import { ChannelWriter } from '../business/channel.writer.js';
 import {
   ChannelAppendWithFetch,
   ChannelUpdate,
-  channelSortArg,
-  channelUpdate,
-  channelAppendWithFetch,
+  chSortArg,
+  chUpdate,
+  chAppendWithFetch,
   PageQuery,
   pageQuery,
 } from '../business/channel.schema.js';
@@ -60,7 +60,7 @@ export class ChannelController {
     const pq: PageQuery = { page, size };
     return this.chFinder.findByQuery(
       pageQuery.parse(pq),
-      channelSortArg.parse(sorted),
+      chSortArg.parse(sorted),
       priority,
       tagName,
       withTags,
@@ -69,25 +69,25 @@ export class ChannelController {
 
   @Post('/')
   createChannel(@Body() req: ChannelAppendWithFetch) {
-    return this.chWriter.createWithFetch(channelAppendWithFetch.parse(req));
+    return this.chWriter.createWithFetch(chAppendWithFetch.parse(req));
   }
 
   @Patch('/priority')
   patchPriority(@Body() req: ChannelUpdate) {
-    req = channelUpdate.parse(req);
-    return this.chUpdater.updatePriority(req.id, assertNotNull(req.form.priorityName));
+    const update = chUpdate.parse(req);
+    return this.chUpdater.updatePriority(update.id, assertNotNull(update.form.priorityName));
   }
 
   @Patch('/followed')
   patchFollowed(@Body() req: ChannelUpdate) {
-    req = channelUpdate.parse(req);
-    return this.chUpdater.updateFollowed(req.id, assertNotNull(req.form?.followed));
+    const update = chUpdate.parse(req);
+    return this.chUpdater.updateFollowed(update.id, assertNotNull(update.form?.followed));
   }
 
   @Patch('/description')
   patchDescription(@Body() req: ChannelUpdate) {
-    req = channelUpdate.parse(req);
-    return this.chUpdater.updateDescription(req.id, assertNotNull(req.form?.description));
+    const update = chUpdate.parse(req);
+    return this.chUpdater.updateDescription(update.id, assertNotNull(update.form?.description));
   }
 
   @Delete('/:channelId')

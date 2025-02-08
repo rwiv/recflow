@@ -13,11 +13,11 @@ export class ChannelMapper {
     private readonly priRepo: ChannelPriorityRepository,
   ) {}
 
-  async mapAll(entities: ChannelEnt[]): Promise<ChannelRecord[]> {
+  async mapAll(entities: ChannelEnt[]) {
     return Promise.all(entities.map((ent) => this.map(ent)));
   }
 
-  async mapNullable(ent: ChannelEnt | undefined): Promise<ChannelRecord | undefined> {
+  async mapNullable(ent: ChannelEnt | undefined) {
     if (!ent) return undefined;
     return this.map(ent);
   }
@@ -25,10 +25,11 @@ export class ChannelMapper {
   async map(ent: ChannelEnt): Promise<ChannelRecord> {
     const platformStr = assertNotNull(await this.pfRepo.findById(ent.platformId)).name;
     const priorityStr = assertNotNull(await this.priRepo.findById(ent.priorityId)).name;
-    return channelRecord.parse({
+    const record: ChannelRecord = {
       ...ent,
       platformName: platformType.parse(platformStr),
       priorityName: priorityStr,
-    });
+    };
+    return channelRecord.parse(record);
   }
 }

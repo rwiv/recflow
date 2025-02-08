@@ -12,12 +12,14 @@ import {
   TagEnt,
   tagEnt,
   TagEntAppend,
-  TagEntAppendRequest,
-  tagEntAppendRequest,
   TagEntUpdate,
 } from './tag.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { z } from 'zod';
+
+const tagEntAppendReq = tagEnt.partial({ description: true, updatedAt: true });
+type TagEntAppendRequest = z.infer<typeof tagEntAppendReq>;
 
 @Injectable()
 export class TagCommandRepository {
@@ -32,7 +34,7 @@ export class TagCommandRepository {
       createdAt: new Date(),
       updatedAt: null,
     };
-    const ent = await tx.insert(channelTags).values(tagEntAppendRequest.parse(entReq)).returning();
+    const ent = await tx.insert(channelTags).values(tagEntAppendReq.parse(entReq)).returning();
     return oneNotNull(ent);
   }
 

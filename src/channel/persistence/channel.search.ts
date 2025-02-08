@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../priority/types.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEnt } from './channel.schema.js';
-import { channelSortArg, ChannelSortType, PageQueryOptional } from '../business/channel.schema.js';
+import { chSortArg, ChannelSortArg, PageQueryOptional } from '../business/channel.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class ChannelSearchRepository {
 
   async findByQuery(
     page: PageQueryOptional = undefined,
-    sorted: ChannelSortType = undefined,
+    sorted: ChannelSortArg = undefined,
     priorityName: string | undefined = undefined,
     tagName: string | undefined = undefined,
     tx: Tx = db,
@@ -49,7 +49,7 @@ export class ChannelSearchRepository {
   async findByAnyTag(
     tagNames: string[],
     page: PageQueryOptional = undefined,
-    sorted: ChannelSortType = undefined,
+    sorted: ChannelSortArg = undefined,
     priorityName: ChannelPriority | undefined = undefined,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
@@ -73,7 +73,7 @@ export class ChannelSearchRepository {
   private withBasis<T extends PgSelect>(
     qb: T,
     page: PageQueryOptional = undefined,
-    sorted: ChannelSortType = undefined,
+    sorted: ChannelSortArg = undefined,
     priorityId: string | undefined = undefined,
   ) {
     if (page) {
@@ -90,8 +90,8 @@ export class ChannelSearchRepository {
     return { qb, c: conds };
   }
 
-  private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortType = undefined) {
-    const sortType = channelSortArg.parse(sorted);
+  private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortArg = undefined) {
+    const sortType = chSortArg.parse(sorted);
     if (sortType === 'latest') {
       qb = qb.orderBy(desc(channels.updatedAt));
     } else if (sortType === 'followerCnt') {

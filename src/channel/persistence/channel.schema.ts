@@ -17,23 +17,17 @@ export const channelEnt = z.object({
 
 export type ChannelEnt = z.infer<typeof channelEnt>;
 
-export const channelEntCreation = channelEnt.partial({ profileImgUrl: true, description: true });
-
-export type ChannelEntCreation = z.infer<typeof channelEntCreation>;
-
-export const channelEntAppend = channelEnt
+export const chEntAppend = channelEnt
   .omit({ id: true })
   .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
 
-export type ChannelEntAppend = z.infer<typeof channelEntAppend>;
+export type ChannelEntAppend = z.infer<typeof chEntAppend>;
 
-export const channelEntUpdateForm = channelEnt
-  .omit({ id: true, createdAt: true, updatedAt: true })
-  .partial();
+const chEntUpdateForm = channelEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 
-export const channelEntUpdate = z.object({
+export const chEntUpdate = z.object({
   id: z.string(),
-  form: channelEntUpdateForm,
+  form: chEntUpdateForm,
 });
 
-export type ChannelEntUpdate = z.infer<typeof channelEntUpdate>;
+export type ChannelEntUpdate = z.infer<typeof chEntUpdate>;

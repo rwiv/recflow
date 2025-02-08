@@ -1,8 +1,7 @@
 import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelRecord } from './channel.schema.js';
 import { ChannelMapper } from './channel.mapper.js';
-import { ChannelEntUpdate } from '../persistence/channel.schema.js';
+import { chEntUpdate, ChannelEntUpdate } from '../persistence/channel.schema.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
@@ -14,21 +13,24 @@ export class ChannelUpdater {
     private readonly chMapper: ChannelMapper,
   ) {}
 
-  async updatePriority(id: string, priorityName: string): Promise<ChannelRecord> {
+  async updatePriority(id: string, priorityName: string) {
     const priority = await this.priRepo.findByName(priorityName);
     if (!priority) throw new NotFoundError('Priority not found');
-    return this.updateRecord({ id, form: { priorityId: priority.id } });
+    const update: ChannelEntUpdate = { id, form: { priorityId: priority.id } };
+    return this.updateRecord(chEntUpdate.parse(update));
   }
 
-  async updateFollowed(id: string, followed: boolean): Promise<ChannelRecord> {
-    return this.updateRecord({ id, form: { followed } });
+  async updateFollowed(id: string, followed: boolean) {
+    const update: ChannelEntUpdate = { id, form: { followed } };
+    return this.updateRecord(chEntUpdate.parse(update));
   }
 
-  async updateDescription(id: string, description: string | null): Promise<ChannelRecord> {
-    return this.updateRecord({ id, form: { description } });
+  async updateDescription(id: string, description: string | null) {
+    const update: ChannelEntUpdate = { id, form: { description } };
+    return this.updateRecord(chEntUpdate.parse(update));
   }
 
-  private async updateRecord(req: ChannelEntUpdate): Promise<ChannelRecord> {
+  private async updateRecord(req: ChannelEntUpdate) {
     const ent = await this.chCmd.update(req);
     return this.chMapper.map(ent);
   }

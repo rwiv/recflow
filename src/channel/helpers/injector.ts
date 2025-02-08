@@ -7,7 +7,7 @@ import { ChannelWriter } from '../business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
 import { CHANNEL_PRIORITIES } from '../priority/consts.js';
-import { ChannelAppend } from '../business/channel.schema.js';
+import { ChannelAppend, chAppend } from '../business/channel.schema.js';
 
 export class TestChannelInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}
@@ -33,24 +33,19 @@ export class TestChannelInjector {
   async insertTestChannels() {
     const infos = await this.readTestChannelInfos();
     for (const info of infos) {
-      const req: ChannelAppend = {
-        username: info.username,
-        profileImgUrl: info.profileImgUrl,
-        pid: info.pid,
-        followerCnt: info.followerCnt,
+      const tags: string[] = [];
+      for (let i = 1; i < 10; i++) tags.push(`tag${i}`);
+      const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
+
+      const append: ChannelAppend = {
+        ...info,
         platformName: info.platform,
         priorityName: randomElem(CHANNEL_PRIORITIES),
         // followed: randomElem([true, false] as const),
         followed: false,
         description: null,
       };
-
-      const tags: string[] = [];
-      for (let i = 1; i < 10; i++) {
-        tags.push(`tag${i}`);
-      }
-      const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
-      await this.channelWriter.create(req, Array.from(new Set(tagNames)).sort());
+      await this.channelWriter.create(chAppend.parse(append), Array.from(new Set(tagNames)).sort());
     }
   }
 }

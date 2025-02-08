@@ -14,13 +14,13 @@ export const channelRecord = channelEnt
 
 export type ChannelRecord = z.infer<typeof channelRecord>;
 
-export const channelAppend = channelRecord
+export const chAppend = channelRecord
   .omit({ id: true })
   .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
 
-export type ChannelAppend = z.infer<typeof channelAppend>;
+export type ChannelAppend = z.infer<typeof chAppend>;
 
-export const channelAppendWithFetch = channelAppend
+export const chAppendWithFetch = chAppend
   .pick({
     pid: true,
     platformName: true,
@@ -31,18 +31,18 @@ export const channelAppendWithFetch = channelAppend
   .extend({ tagNames: z.array(z.string()) })
   .partial({ tagNames: true });
 
-export type ChannelAppendWithFetch = z.infer<typeof channelAppendWithFetch>;
+export type ChannelAppendWithFetch = z.infer<typeof chAppendWithFetch>;
 
-export const channelAppendWithInfo = channelAppendWithFetch.pick({
+export const chAppendWithInfo = chAppendWithFetch.pick({
   priorityName: true,
   followed: true,
   description: true,
   tagNames: true,
 });
 
-export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
+export type ChannelAppendWithInfo = z.infer<typeof chAppendWithInfo>;
 
-export const channelUpdateForm = channelRecord
+const chUpdateForm = channelRecord
   .pick({
     priorityName: true,
     followed: true,
@@ -50,23 +50,21 @@ export const channelUpdateForm = channelRecord
   })
   .partial();
 
-export const channelUpdate = z.object({
+export const chUpdate = z.object({
   id: uuid,
-  form: channelUpdateForm,
+  form: chUpdateForm,
 });
 
-export type ChannelUpdate = z.infer<typeof channelUpdate>;
+export type ChannelUpdate = z.infer<typeof chUpdate>;
 
-export const channelSortEnum = z.enum(['latest', 'followerCnt']);
-export const channelSortArg = channelSortEnum.optional();
-export type ChannelSortType = z.infer<typeof channelSortArg>;
+export const chSortEnum = z.enum(['latest', 'followerCnt']);
+export const chSortArg = chSortEnum.optional();
+export type ChannelSortArg = z.infer<typeof chSortArg>;
 
 export const pageQuery = z.object({
   page: z.number().int().positive(),
   size: z.number().int().nonnegative(),
 });
-
 export type PageQuery = z.infer<typeof pageQuery>;
-
 export const pageQueryOptional = pageQuery.optional();
 export type PageQueryOptional = z.infer<typeof pageQueryOptional>;

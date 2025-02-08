@@ -4,8 +4,9 @@ import {
   ChannelAppendWithFetch,
   ChannelAppendWithInfo,
   ChannelRecord,
-  channelAppend,
+  chAppend,
   ChannelAppend,
+  chAppendWithInfo,
 } from './channel.schema.js';
 import { tagAttachment, tagDetachment, TagRecord } from './tag.schema.js';
 import { Injectable } from '@nestjs/common';
@@ -21,7 +22,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
-import { ChannelEntAppend, channelEntAppend } from '../persistence/channel.schema.js';
+import { ChannelEntAppend, chEntAppend } from '../persistence/channel.schema.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -52,7 +53,7 @@ export class ChannelWriter {
     };
 
     return db.transaction(async (txx) => {
-      const ent = await this.chCmd.create(channelEntAppend.parse(entAppend), txx);
+      const ent = await this.chCmd.create(chEntAppend.parse(entAppend), txx);
       const channel = await this.chMapper.map(ent);
       let result: ChannelRecord = { ...channel };
       const tags: TagRecord[] = [];
@@ -67,17 +68,17 @@ export class ChannelWriter {
     });
   }
 
-  async createWithFetch(req: ChannelAppendWithFetch): Promise<ChannelRecord> {
-    const info = assertNotNull(await this.fetcher.fetchChannel(req.platformName, req.pid, false));
-    return this.createWithChannelInfo(req, info);
+  async createWithFetch(appendFetch: ChannelAppendWithFetch) {
+    const info = assertNotNull(
+      await this.fetcher.fetchChannel(appendFetch.platformName, appendFetch.pid, false),
+    );
+    const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
+    return this.createWithInfo(chAppendWithInfo.parse(appendInfo), info);
   }
 
-  async createWithChannelInfo(
-    req: ChannelAppendWithInfo,
-    info: ChannelInfo,
-  ): Promise<ChannelRecord> {
-    const reqEnt: ChannelAppend = { ...req, ...info, platformName: info.platform };
-    return this.create(channelAppend.parse(reqEnt), req.tagNames);
+  async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo) {
+    const append: ChannelAppend = { ...appendInfo, ...info, platformName: info.platform };
+    return this.create(chAppend.parse(append), appendInfo.tagNames);
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {

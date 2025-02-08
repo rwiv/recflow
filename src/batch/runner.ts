@@ -11,8 +11,8 @@ export class BatchRunner {
     return this.migrator.migrateChannels(filePath);
   }
 
-  backupChannels(filePath: string) {
-    return this.migrator.backupChannels(filePath);
+  backupChannels(filePath: string, endpoint: string) {
+    return this.migrator.backupChannels(filePath, endpoint);
   }
 
   batchInsertChannels(filePath: string, delay: number) {

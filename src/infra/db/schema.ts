@@ -16,8 +16,8 @@ export const platforms = pgTable(
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
-    createdAt: timestamp().notNull(),
-    updatedAt: timestamp(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
   },
   (t) => [uniqueIndex('platforms_name_idx').on(t.name)],
 );
@@ -27,13 +27,13 @@ export const channelPriorities = pgTable(
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
-    rank: integer().notNull(),
-    createdAt: timestamp().notNull(),
-    updatedAt: timestamp(),
+    tier: integer().notNull(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
   },
   (t) => [
     uniqueIndex('channel_priorities_name_idx').on(t.name),
-    index('channel_priorities_rank_idx').on(t.rank),
+    index('channel_priorities_tier_idx').on(t.tier),
   ],
 );
 
@@ -53,15 +53,15 @@ export const channels = pgTable(
       .references(() => channelPriorities.id),
     followed: boolean().notNull(),
     description: text(),
-    createdAt: timestamp().notNull(),
-    updatedAt: timestamp().notNull(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at').notNull(),
   },
   (t) => [
     index('channels_pid_idx').on(t.pid),
     index('channels_username_idx').on(t.username),
-    index('channels_followCnt_idx').on(t.followerCnt),
-    index('channels_createdAt_idx').on(t.createdAt),
-    index('channels_updatedAt_idx').on(t.updatedAt),
+    index('channels_follow_cnt_idx').on(t.followerCnt),
+    index('channels_created_at_idx').on(t.createdAt),
+    index('channels_updated_at_idx').on(t.updatedAt),
   ],
 );
 
@@ -74,7 +74,7 @@ export const channelsToTags = pgTable(
     tagId: char('tag_id', { length: 32 })
       .notNull()
       .references(() => channelTags.id),
-    createdAt: timestamp().notNull(),
+    createdAt: timestamp('created_at').notNull(),
   },
   (t) => [
     primaryKey({
@@ -90,34 +90,65 @@ export const channelTags = pgTable(
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 255 }).notNull().unique(),
     description: text(),
-    createdAt: timestamp().notNull(),
-    updatedAt: timestamp(),
+    createdAt: timestamp('create_at').notNull(),
+    updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('tags_name_idx').on(t.name), index('tags_createdAt_idx').on(t.createdAt)],
+  (t) => [
+    uniqueIndex('channel_tags_name_idx').on(t.name),
+    index('channel_tags_created_at_idx').on(t.createdAt),
+  ],
 );
 
-// export const nodeGroups = pgTable(
-//   'node_groups',
-//   {
-//     id: char({ length: 32 }).primaryKey(),
-//     name: varchar({ length: 50 }).notNull(),
-//     createdAt: timestamp().notNull(),
-//     updatedAt: timestamp(),
-//   },
-//   (t) => [index('node_priorities_name_idx').on(t.name)],
-// );
-//
-// export const nodes = pgTable(
-//   'nodes',
-//   {
-//     id: char({ length: 32 }).primaryKey(),
-//     name: varchar({ length: 255 }).notNull(),
-//     endpoint: text(),
-//     group: char({ length: 32 })
-//       .notNull()
-//       .references(() => nodeGroups.id),
-//     createdAt: timestamp().notNull(),
-//     updatedAt: timestamp(),
-//   },
-//   (t) => [index('nodes_name_idx').on(t.name)],
-// );
+export const nodeTypes = pgTable(
+  'node_types',
+  {
+    id: char({ length: 32 }).primaryKey(),
+    name: varchar({ length: 50 }).notNull().unique(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
+  },
+  (t) => [uniqueIndex('node_types_name_idx').on(t.name)],
+);
+
+export const nodeGroups = pgTable(
+  'node_groups',
+  {
+    id: char({ length: 32 }).primaryKey(),
+    name: varchar({ length: 50 }).notNull().unique(),
+    tier: integer().notNull(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
+  },
+  (t) => [uniqueIndex('node_groups_name_idx').on(t.name), index('node_groups_tier_idx').on(t.tier)],
+);
+
+export const nodes = pgTable(
+  'nodes',
+  {
+    id: char({ length: 32 }).primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    endpoint: text().notNull(),
+    weight: integer().notNull(),
+    capacity: integer().notNull(),
+    typeId: char('type_id', { length: 32 })
+      .notNull()
+      .references(() => nodeTypes.id),
+    groupId: char('group_id', { length: 32 })
+      .notNull()
+      .references(() => nodeGroups.id),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
+  },
+  (t) => [index('nodes_name_idx').on(t.name)],
+);
+
+export const nodeStates = pgTable('node_states', {
+  id: char({ length: 32 }).primaryKey(),
+  platformId: char('platform_id', { length: 32 })
+    .notNull()
+    .references(() => platforms.id),
+  capacity: integer().notNull(),
+  assigned: integer().notNull(),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at'),
+});

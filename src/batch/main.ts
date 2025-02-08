@@ -3,16 +3,16 @@ import { getChannelServices } from '../channel/helpers/utils.js';
 import { BatchInserter } from './inserter.js';
 import { BatchMigrator } from './migrator.js';
 import { BatchRunner } from './runner.js';
-import { AppInitializer } from '../common/initializer.js';
+import { readTestConf } from '../common/helpers.js';
 
 async function main() {
-  const { pfRepo, priRepo, chWriter, chFinder } = getChannelServices();
-  const initializer = new AppInitializer(pfRepo, priRepo, chWriter);
+  const { chWriter, init } = getChannelServices();
   const inserter = new BatchInserter(chWriter);
-  const migrator = new BatchMigrator(chFinder, chWriter, initializer);
+  const migrator = new BatchMigrator(chWriter, init);
   const batch = new BatchRunner(migrator, inserter);
 
-  await batch.backupChannels(path.join('dev', 'batch_backup.json'));
+  const conf = await readTestConf();
+  await batch.backupChannels(path.join('dev', 'batch_backup.json'), conf.endpoint);
   // await batch.migrateChannels(path.join('dev', 'batch_backup.json'));
 
   // await batch.batchInsertChannels(path.join('dev', 'batch_insert.json'), 100);

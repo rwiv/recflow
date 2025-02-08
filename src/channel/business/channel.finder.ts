@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../persistence/tag.query.js';
-import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { PlatformType } from '../../platform/types.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';

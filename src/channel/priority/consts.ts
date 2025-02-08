@@ -1,5 +1,5 @@
 export const CHANNEL_PRIORITIES = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
-export const CHANNEL_PRIORIES_RANK_MAP = {
+export const CHANNEL_PRIORIES_TIER_MAP = {
   must: 1,
   should: 2,
   may: 3,

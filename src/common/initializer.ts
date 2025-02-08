@@ -5,7 +5,7 @@ import { PLATFORM_TYPES } from './enum.consts.js';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
 import { dropAll } from '../infra/db/utils.js';
 import { TestChannelInjector } from '../channel/helpers/injector.js';
-import { CHANNEL_PRIORIES_RANK_MAP, CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
+import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
 import { NotFoundError } from '../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
@@ -34,11 +34,11 @@ export class AppInitializer {
     }
     const cpNames = (await this.priRepo.findAll()).map((pri) => pri.name);
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
-      const rank = CHANNEL_PRIORIES_RANK_MAP[name];
-      if (rank === undefined) {
+      const tier = CHANNEL_PRIORIES_TIER_MAP[name];
+      if (tier === undefined) {
         throw new NotFoundError(`rank is undefined for ${name}`);
       }
-      await this.priRepo.create(name, rank);
+      await this.priRepo.create(name, tier);
     }
   }
 }

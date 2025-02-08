@@ -23,4 +23,5 @@ export async function readTestConf() {
 export interface TestConfig {
   channelId: string;
   channelIds: string[];
+  endpoint: string;
 }

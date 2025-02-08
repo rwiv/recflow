@@ -8,8 +8,8 @@ import { uuid } from '../../utils/uuid.js';
 
 @Injectable()
 export class ChannelPriorityRepository {
-  async create(name: string, rank: number, tx: Tx = db) {
-    const req = { id: uuid(), name, rank, createdAt: new Date(), updatedAt: null };
+  async create(name: string, tier: number, tx: Tx = db) {
+    const req = { id: uuid(), name, tier, createdAt: new Date(), updatedAt: null };
     return oneNotNull(await tx.insert(channelPriorities).values(req).returning());
   }
 

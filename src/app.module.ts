@@ -3,7 +3,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { LiveModule } from './live/live.module.js';
 import { ChannelModule } from './channel/channel.module.js';
-import { InitModule } from './common/init.module.js';
+import { CommonModule } from './common/module/common.module.js';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { InitModule } from './common/init.module.js';
     }),
     LiveModule,
     ChannelModule,
-    InitModule,
+    CommonModule,
   ],
 })
 export class AppModule {}

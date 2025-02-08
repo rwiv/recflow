@@ -19,7 +19,7 @@ import { Tx } from '../../infra/db/types.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PlatformRepository } from '../persistence/platform.repository.js';
+import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../priority/priority.repository.js';
 import { ChannelEntAppend, chEntAppend } from '../persistence/channel.schema.js';
 import { hasDuplicates } from '../../utils/list.js';

@@ -1,15 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import { readTestConf } from '../../common/helpers.js';
+import { readTestConf } from './common.js';
 import { getFetcher } from '../../live/helpers/utils.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
-import { ChannelWriter } from '../business/channel.writer.js';
+import { ChannelWriter } from '../../channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-import { CHANNEL_PRIORITIES } from '../priority/consts.js';
-import { ChannelAppend, chAppend } from '../business/channel.schema.js';
+import { CHANNEL_PRIORITIES } from '../../channel/priority/constants.js';
+import { ChannelAppend, chAppend } from '../../channel/business/channel.schema.js';
 
-export class TestChannelInjector {
+export class DevInitInjector {
   constructor(private readonly channelWriter: ChannelWriter) {}
 
   async writeTestChannelInfos() {

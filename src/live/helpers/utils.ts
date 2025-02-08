@@ -1,7 +1,7 @@
 import { ChzzkFetcher } from '../../platform/fetcher/chzzk.fetcher.js';
 import { SoopFetcher } from '../../platform/fetcher/soop.fetcher.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { getConf } from '../../common/helpers.js';
+import { getConf } from '../../common/helpers/common.js';
 
 const [env, query] = getConf();
 

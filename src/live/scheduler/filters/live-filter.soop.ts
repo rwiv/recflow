@@ -1,9 +1,9 @@
-import { QueryConfig } from '../../../common/query.js';
+import { QueryConfig } from '../../../common/config/query.js';
 import { LiveFilter } from './interface.js';
 import { LiveInfo } from '../../../platform/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject } from '@nestjs/common';
-import { QUERY } from '../../../common/config.module.js';
+import { QUERY } from '../../../common/config/config.module.js';
 import { ChannelFinder } from '../../../channel/business/channel.finder.js';
 import { ChannelPriorityEvaluator } from '../../../channel/priority/priority.evaluator.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';

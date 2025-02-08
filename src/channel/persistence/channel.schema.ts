@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uuid } from '../../common/schema.js';
+import { uuid } from '../../common/data/schema.js';
 
 export const channelEnt = z.object({
   id: uuid,

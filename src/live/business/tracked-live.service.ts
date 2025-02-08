@@ -14,7 +14,7 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelAppendWithInfo, chAppendWithInfo } from '../../channel/business/channel.schema.js';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
-import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority/consts.js';
+import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority/constants.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 

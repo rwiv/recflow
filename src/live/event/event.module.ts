@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config.module.js';
+import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveEventListener } from './listener.js';
 import { Dispatcher } from './dispatcher.js';
 import { InfraModule } from '../../infra/infra.module.js';

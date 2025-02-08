@@ -1,5 +1,5 @@
 import { AmqpImpl } from './amqp.impl.js';
-import { readEnv } from '../../common/env.js';
+import { readEnv } from '../../common/config/env.js';
 import { it } from 'vitest';
 
 it('test all', async () => {

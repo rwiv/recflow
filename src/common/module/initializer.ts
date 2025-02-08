@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PlatformRepository } from '../channel/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../channel/priority/priority.repository.js';
-import { PLATFORM_TYPES } from './enum.consts.js';
-import { ChannelWriter } from '../channel/business/channel.writer.js';
-import { dropAll } from '../infra/db/utils.js';
-import { TestChannelInjector } from '../channel/helpers/injector.js';
-import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../channel/priority/consts.js';
-import { NotFoundError } from '../utils/errors/errors/NotFoundError.js';
+import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
+import { ChannelPriorityRepository } from '../../channel/priority/priority.repository.js';
+import { ChannelWriter } from '../../channel/business/channel.writer.js';
+import { dropAll } from '../../infra/db/utils.js';
+import { DevInitInjector } from '../helpers/injector.js';
+import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority/constants.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { platformType } from '../../platform/schema.js';
 
 @Injectable()
 export class AppInitializer {
@@ -23,13 +23,13 @@ export class AppInitializer {
   async initDev() {
     await dropAll();
     await this.checkDb();
-    const injector = new TestChannelInjector(this.chWriter);
+    const injector = new DevInitInjector(this.chWriter);
     await injector.insertTestChannels();
   }
 
   async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
-    for (const name of PLATFORM_TYPES.filter((name) => !pfNames.includes(name))) {
+    for (const name of platformType.options.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create(name);
     }
     const cpNames = (await this.priRepo.findAll()).map((pri) => pri.name);

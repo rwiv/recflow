@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { ChannelPriorityEvaluator } from './priority.evaluator.js';
-import { ChannelPriorityConfig, ChannelPriorityShift } from '../../common/config.types.js';
-import { QueryConfig } from '../../common/query.js';
+import { ChannelPriorityConfig, ChannelPriorityShift } from '../../common/config/config.types.js';
+import { QueryConfig } from '../../common/config/query.js';
 
 describe('ChannelPriorityChecker', () => {
   it('test noneRank', () => {

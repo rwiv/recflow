@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { readEnv } from '../../common/env.js';
+import { readEnv } from '../../common/config/env.js';
 import { AmqpHttp } from './amqp.http.js';
 
 const env = readEnv();

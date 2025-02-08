@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config.module.js';
+import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveBusinessModule } from '../business/business.module.js';
 import { LiveScheduler } from './scheduler.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';

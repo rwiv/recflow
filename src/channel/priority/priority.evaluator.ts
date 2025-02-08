@@ -1,10 +1,10 @@
-import { ChannelPriority, ChannelPriorityRank } from './types.js';
-import { ChannelPriorityShift } from '../../common/config.types.js';
+import { ChannelPriorityRank } from './types.js';
+import { ChannelPriorityShift } from '../../common/config/config.types.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { QUERY } from '../../common/config.module.js';
-import { QueryConfig } from '../../common/query.js';
+import { QUERY } from '../../common/config/config.module.js';
+import { QueryConfig } from '../../common/config/query.js';
 import { checkEnum } from '../../utils/union.js';
-import { CHANNEL_PRIORITY_RANKS } from './consts.js';
+import { CHANNEL_PRIORITY_RANKS } from './constants.js';
 
 @Injectable()
 export class ChannelPriorityEvaluator {

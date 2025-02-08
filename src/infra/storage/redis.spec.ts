@@ -1,6 +1,6 @@
 import { it } from 'vitest';
 import { allKeys, createRedisClient } from './redis.js';
-import { readEnv } from '../../common/env.js';
+import { readEnv } from '../../common/config/env.js';
 
 const env = readEnv();
 // const pattern = '*';

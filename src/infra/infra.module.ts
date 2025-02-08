@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../common/config.module.js';
+import { ConfigModule } from '../common/config/config.module.js';
 import { InfraFactory } from './infra.factory.js';
 import { NtfyNotifier } from './notify/notifier.ntfy.js';
 import { MockNotifier } from './notify/notifier.mock.js';

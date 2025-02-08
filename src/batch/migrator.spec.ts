@@ -1,8 +1,8 @@
 import { it } from 'vitest';
 import path from 'path';
 import { BatchMigrator } from './migrator.js';
-import { getChannelServices } from '../channel/helpers/utils.js';
-import { readTestConf } from '../common/helpers.js';
+import { getChannelServices } from '../common/helpers/channel.deps.js';
+import { readTestConf } from '../common/helpers/common.js';
 
 const { chWriter, init } = getChannelServices();
 const migrator = new BatchMigrator(chWriter, init);

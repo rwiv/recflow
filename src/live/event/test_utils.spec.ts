@@ -1,6 +1,6 @@
 import { LiveEventListener } from './listener.js';
-import { Env } from '../../common/env.js';
-import { QueryConfig } from '../../common/query.js';
+import { Env } from '../../common/config/env.js';
+import { QueryConfig } from '../../common/config/query.js';
 import { StdlMock } from '../../infra/stdl/stdl.mock.js';
 import { AuthedMock } from '../../infra/authed/authed.mock.js';
 import { MockNotifier } from '../../infra/notify/notifier.mock.js';

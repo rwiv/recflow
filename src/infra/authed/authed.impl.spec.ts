@@ -1,4 +1,4 @@
-import { readEnv } from '../../common/env.js';
+import { readEnv } from '../../common/config/env.js';
 import { it } from 'vitest';
 import { AuthedImpl } from './authed.impl.js';
 

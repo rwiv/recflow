@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config.module.js';
+import { ConfigModule } from '../../common/config/config.module.js';
 import { NodeService } from './node.service.js';
 import { TrackedLiveService } from './tracked-live.service.js';
 import { LivePersistenceModule } from '../persistence/persistence.module.js';

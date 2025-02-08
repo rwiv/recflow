@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import { it } from 'vitest';
-import { readEnv } from '../src/common/env.js';
+import { readEnv } from '../src/common/config/env';
 
 const env = readEnv();
 

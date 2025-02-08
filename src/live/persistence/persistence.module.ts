@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config.module.js';
+import { ConfigModule } from '../../common/config/config.module.js';
 import { PersistenceFactory } from './persistence.factory.js';
 
 export const LIVE_MAP = 'LiveMap';

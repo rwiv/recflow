@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config.module.js';
-import { Env } from '../../common/env.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 import { createRedisClient } from '../../infra/storage/redis.js';
 import { RedisMap } from '../../infra/storage/map.redis.js';
 import { NodeRecord } from '../../node/types.js';

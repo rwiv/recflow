@@ -1,9 +1,9 @@
-import { DEFAULT_NTFY_TOPIC } from './consts.js';
+import { DEFAULT_NTFY_TOPIC } from '../data/constants.js';
 import { AmqpConfig, PostgresConfig, RedisConfig } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
-import { parseInteger } from '../utils/number.js';
+import { parseInteger } from '../../utils/number.js';
 
 export interface Env {
   nodeEnv: string;

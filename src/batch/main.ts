@@ -1,9 +1,9 @@
 import path from 'path';
-import { getChannelServices } from '../channel/helpers/utils.js';
+import { getChannelServices } from '../common/helpers/channel.deps.js';
 import { BatchInserter } from './inserter.js';
 import { BatchMigrator } from './migrator.js';
 import { BatchRunner } from './runner.js';
-import { readTestConf } from '../common/helpers.js';
+import { readTestConf } from '../common/helpers/common.js';
 
 async function main() {
   const { chWriter, init } = getChannelServices();

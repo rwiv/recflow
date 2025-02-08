@@ -2,7 +2,7 @@ import fs from 'fs';
 import { ChannelWriter } from '../channel/business/channel.writer.js';
 import { log } from 'jslog';
 import { channelRecord, chAppend } from '../channel/business/channel.schema.js';
-import { AppInitializer } from '../common/initializer.js';
+import { AppInitializer } from '../common/module/initializer.js';
 import { z } from 'zod';
 
 const channelRecordJson = channelRecord.omit({ createdAt: true, updatedAt: true }).extend({

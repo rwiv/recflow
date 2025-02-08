@@ -1,6 +1,6 @@
 import { it } from 'vitest';
 import { SoopFetcher } from './soop.fetcher.js';
-import { getConf } from '../../common/helpers.js';
+import { getConf } from '../../common/helpers/common.js';
 
 const channelId = '123';
 

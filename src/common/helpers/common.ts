@@ -1,5 +1,5 @@
-import { readEnv } from './env.js';
-import { readQueryConfig } from './query.js';
+import { readEnv } from '../config/env.js';
+import { readQueryConfig } from '../config/query.js';
 import fs from 'fs';
 import path from 'path';
 

@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NodeDef, NodeRecord } from '../../node/types.js';
-import { QueryConfig } from '../../common/query.js';
+import { QueryConfig } from '../../common/config/query.js';
 import { PlatformType } from '../../platform/types.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
 import { NODE_MAP } from '../persistence/persistence.module.js';
-import { QUERY } from '../../common/config.module.js';
+import { QUERY } from '../../common/config/config.module.js';
 import { LiveRecord } from './types.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';

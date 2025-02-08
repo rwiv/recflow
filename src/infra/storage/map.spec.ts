@@ -1,5 +1,5 @@
 import { describe, it, afterEach, expect } from 'vitest';
-import { readEnv } from '../../common/env.js';
+import { readEnv } from '../../common/config/env.js';
 import { createRedisClient } from './redis.js';
 import { AsyncMap } from './interface.js';
 import { RedisMap } from './map.redis.js';

@@ -2,7 +2,7 @@ import { ChannelWriter } from '../channel/business/channel.writer.js';
 import fs from 'fs';
 import { ChannelAppendWithFetch, chAppendWithFetch } from '../channel/business/channel.schema.js';
 import { log } from 'jslog';
-import { platformType } from '../common/schema.js';
+import { platformType } from '../platform/schema.js';
 
 interface BatchInsertRequest {
   pids: string[];

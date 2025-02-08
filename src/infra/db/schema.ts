@@ -144,6 +144,9 @@ export const nodes = pgTable(
 
 export const nodeStates = pgTable('node_states', {
   id: char({ length: 32 }).primaryKey(),
+  nodeId: char('node_id', { length: 32 })
+    .notNull()
+    .references(() => nodes.id),
   platformId: char('platform_id', { length: 32 })
     .notNull()
     .references(() => platforms.id),

@@ -1,7 +1,7 @@
 import { it } from 'vitest';
 import { createRedisLiveService } from './test_utils.spec.js';
-import { readEnv } from '../../common/env.js';
-import { readQueryConfig } from '../../common/query.js';
+import { readEnv } from '../../common/config/env.js';
+import { readQueryConfig } from '../../common/config/query.js';
 
 const env = readEnv();
 const query = readQueryConfig(env.configPath);

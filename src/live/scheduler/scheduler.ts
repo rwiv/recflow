@@ -1,10 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { QUERY } from '../../common/config.module.js';
-import { QueryConfig } from '../../common/query.js';
+import { Injectable } from '@nestjs/common';
 import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
-import { DEFAULT_INJECT_CYCLE, DEFAULT_CLEAN_CYCLE, DEFAULT_REFRESH_CYCLE } from './consts.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveCleaner } from './synchronizer/cleaner.js';
 import { LiveAppender } from './synchronizer/injector.js';
@@ -13,6 +10,11 @@ import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/business/channel.finder.js';
 import { ScheduleErrorHandler } from './error.handler.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import {
+  DEFAULT_CLEAN_CYCLE,
+  DEFAULT_INJECT_CYCLE,
+  DEFAULT_REFRESH_CYCLE,
+} from '../../common/data/constants.js';
 
 @Injectable()
 export class LiveScheduler {

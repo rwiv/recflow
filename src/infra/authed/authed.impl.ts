@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config.module.js';
-import { Env } from '../../common/env.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 import { Cookie } from './types.js';
 import { log } from 'jslog';
 import { decrypt } from '../../utils/encrypt.js';

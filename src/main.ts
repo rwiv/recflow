@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { LiveScheduler } from './live/scheduler/scheduler.js';
-import { ENV } from './common/config.module.js';
-import { Env } from './common/env.js';
-import { AppInitializer } from './common/initializer.js';
+import { ENV } from './common/config/config.module.js';
+import { Env } from './common/config/env.js';
+import { AppInitializer } from './common/module/initializer.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

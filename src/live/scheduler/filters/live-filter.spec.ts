@@ -2,7 +2,7 @@ import { ChzzkLiveFilter } from './live-filter.chzzk.js';
 import { it } from 'vitest';
 import { PlatformType } from '../../../platform/types.js';
 import { getFetcher } from '../../helpers/utils.js';
-import { getConf } from '../../../common/helpers.js';
+import { getConf } from '../../../common/helpers/common.js';
 
 const [, query] = getConf();
 const platform: PlatformType = 'chzzk';

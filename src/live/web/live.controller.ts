@@ -5,7 +5,7 @@ import { TrackedLiveService } from '../business/tracked-live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ExitCmd } from '../event/types.js';
 import { LiveScheduler } from '../scheduler/scheduler.js';
-import { HttpErrorFilter } from '../../common/error.filter.js';
+import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @UseFilters(HttpErrorFilter)

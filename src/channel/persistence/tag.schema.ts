@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uuid } from '../../common/schema.js';
+import { uuid } from '../../common/data/schema.js';
 
 export const tagEnt = z.object({
   id: uuid,

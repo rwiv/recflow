@@ -22,4 +22,8 @@ export class NodeRepository {
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(nodes).where(eq(nodes.id, id)));
   }
+
+  async delete(id: string, tx: Tx = db) {
+    await tx.delete(nodes).where(eq(nodes.id, id));
+  }
 }

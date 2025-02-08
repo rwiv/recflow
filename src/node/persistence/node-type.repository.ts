@@ -30,4 +30,8 @@ export class NodeTypeRepository {
   async findAll() {
     return db.select().from(nodeTypes);
   }
+
+  async delete(id: string, tx: Tx = db) {
+    await tx.delete(nodeTypes).where(eq(nodeTypes.id, id));
+  }
 }

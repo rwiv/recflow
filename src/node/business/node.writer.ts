@@ -14,7 +14,7 @@ import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
 
 @Injectable()
-export class NodeService {
+export class NodeWriter {
   constructor(
     private readonly nodeRepo: NodeRepository,
     private readonly typeRepo: NodeTypeRepository,
@@ -48,6 +48,16 @@ export class NodeService {
       }
       const record = await this.mapper.map(ent, withGroup, false, tx);
       return { ...record, states };
+    });
+  }
+
+  async delete(id: string) {
+    const states = await this.stateRepo.findByNodeId(id);
+    return db.transaction(async (tx) => {
+      for (const state of states) {
+        await this.stateRepo.delete(state.id, tx);
+      }
+      await this.nodeRepo.delete(id, tx);
     });
   }
 }

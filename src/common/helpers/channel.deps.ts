@@ -18,8 +18,9 @@ import { NodeTypeRepository } from '../../node/persistence/node-type.repository.
 import { NodeRepository } from '../../node/persistence/node.repository.js';
 import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
 import { NodeStateRepository } from '../../node/persistence/node-state.repository.js';
-import { NodeService } from '../../node/business/node.service.js';
+import { NodeWriter } from '../../node/business/node.writer.js';
 import { NodeMapper } from '../../node/business/node.mapper.js';
+import { NodeFinder } from '../../node/business/node.finder.js';
 
 export function getChannelServices() {
   const pfRepo = new PlatformRepository();
@@ -35,7 +36,8 @@ export function getChannelServices() {
   const nsRepo = new NodeStateRepository();
   const ntRepo = new NodeTypeRepository();
   const nodeMapper = new NodeMapper(ngRepo, ntRepo, nsRepo);
-  const nodeService = new NodeService(nodeRepo, ntRepo, nsRepo, pfRepo, nodeMapper);
+  const nodeWriter = new NodeWriter(nodeRepo, ntRepo, nsRepo, pfRepo, nodeMapper);
+  const nodeFinder = new NodeFinder(nodeRepo, nodeMapper);
 
   const chMapper = new ChannelMapper(pfRepo, priRepo, tagQuery);
   const fetcher = getFetcher();
@@ -57,6 +59,7 @@ export function getChannelServices() {
 
   const init = new AppInitializer(pfRepo, priRepo, chWriter, ntRepo, ngRepo);
   return {
+    init,
     pfRepo,
     priRepo,
     ngRepo,
@@ -66,7 +69,7 @@ export function getChannelServices() {
     chSearcher,
     tagWriter,
     tagFinder,
-    init,
-    nodeService,
+    nodeWriter,
+    nodeFinder,
   };
 }

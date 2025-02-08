@@ -26,4 +26,8 @@ export class NodeStateRepository {
   async findByNodeId(nodeId: string, tx: Tx = db) {
     return tx.select().from(nodeStates).where(eq(nodeStates.nodeId, nodeId));
   }
+
+  async delete(id: string, tx: Tx = db) {
+    await tx.delete(nodeStates).where(eq(nodeStates.id, id));
+  }
 }

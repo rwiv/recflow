@@ -31,4 +31,8 @@ export class NodeGroupRepository {
   async findAll() {
     return db.select().from(nodeGroups);
   }
+
+  async delete(id: string, tx: Tx = db) {
+    await tx.delete(nodeGroups).where(eq(nodeGroups.id, id));
+  }
 }

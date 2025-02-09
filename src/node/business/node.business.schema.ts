@@ -17,8 +17,11 @@ export const nodeAppend = nodeRecord
     states: true,
   })
   .extend({
-    capacityMap: z.array(
-      z.object({ name: z.string().nonempty(), capacity: z.number().nonnegative() }),
+    capacities: z.array(
+      z.object({
+        platformName: z.string().nonempty(),
+        capacity: z.number().nonnegative(),
+      }),
     ),
   });
 export type NodeAppend = z.infer<typeof nodeAppend>;

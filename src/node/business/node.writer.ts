@@ -12,6 +12,7 @@ import {
 } from '../persistence/node.persistence.schema.js';
 import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class NodeWriter {
@@ -24,29 +25,28 @@ export class NodeWriter {
   ) {}
 
   async create(append: NodeAppend, withGroup: boolean = false): Promise<NodeRecord> {
-    const type = await this.typeRepo.findByName(append.typeName);
-    if (!type) throw new NotFoundError('node type not found');
-    const entAppend: NodeEntAppend = { ...append, typeId: type.id };
+    const nodeType = await this.typeRepo.findByName(append.typeName);
+    if (!nodeType) throw new NotFoundError(`"Not found node type: ${append.typeName}"`);
 
     return db.transaction(async (tx) => {
-      const ent = await this.nodeRepo.create(entAppend, tx);
-      const platforms = await this.pfRepo.findAll(tx);
+      const entAppend: NodeEntAppend = { ...append, typeId: nodeType.id };
+      const nodeEnt = await this.nodeRepo.create(entAppend, tx);
       const states: NodeStateEnt[] = [];
-      for (const platform of platforms) {
-        const map = new Map(append.capacityMap.map((c) => [c.name, c.capacity]));
+      for (const platform of await this.pfRepo.findAll(tx)) {
+        const map = new Map(append.capacities.map((c) => [c.platformName, c.capacity]));
         const capacity = map.get(platform.name);
         if (capacity === undefined) {
-          throw new NotFoundError(`"${platform.name}" capacity not found`);
+          throw new ValidationError(`"${platform.name}" platform is not included in the form`);
         }
         const stateEntAppend: NodeStateEntAppend = {
-          nodeId: ent.id,
+          nodeId: nodeEnt.id,
           platformId: platform.id,
           capacity,
           assigned: 0,
         };
         states.push(await this.stateRepo.create(stateEntAppend, tx));
       }
-      const record = await this.mapper.map(ent, withGroup, false, tx);
+      const record = await this.mapper.map(nodeEnt, withGroup, false, tx);
       return { ...record, states };
     });
   }

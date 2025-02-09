@@ -1,9 +1,9 @@
 import { ValidationError } from './errors/errors/ValidationError.js';
-import { NotFoundError } from './errors/errors/NotFoundError.js';
+import { MissingValueError } from './errors/errors/MissingValueError.js';
 
 export function oneNotNull<T>(list: T[]): T {
   if (list.length === 0) {
-    throw new NotFoundError('Expected exactly one element');
+    throw new MissingValueError('Expected exactly one element');
   }
   if (list.length > 1) {
     throw new ValidationError('Expected exactly one element');
@@ -27,7 +27,7 @@ export function hasDuplicates(arr: string[]): boolean {
 
 export function randomElem<T>(array: readonly T[]): T {
   if (!Array.isArray(array) || array.length === 0) {
-    throw new NotFoundError('Array is empty or not an array');
+    throw new MissingValueError('Array is empty or not an array');
   }
   const randomIndex = Math.floor(Math.random() * array.length);
   return array[randomIndex];

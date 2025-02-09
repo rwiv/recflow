@@ -63,7 +63,7 @@ export class LiveService {
       };
       channel = await this.chWriter.createWithInfo(append, channelInfo);
     }
-    const node = await this.nodeSelector.match2(channel);
+    const node = await this.nodeSelector.match(channel);
     if (node === null) {
       throw new FatalError(`No node matched for ${live.channelId}`);
     }

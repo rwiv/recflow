@@ -5,6 +5,7 @@ import { NodeRecord } from '@/client/node.schema.ts';
 export const selectCid = 'select';
 export const nameCid = 'name';
 export const typeCid = 'typeName';
+export const weightCid = 'weight';
 
 const chzzkColumn: ColumnDef<NodeRecord> = {
   accessorKey: 'chzzk',
@@ -48,6 +49,7 @@ export const nodeColumns: ColumnDef<NodeRecord>[] = [
   baseColumnDef(nameCid, 'Name'),
   group,
   baseColumnDef(typeCid, 'Type'),
+  baseColumnDef(weightCid, 'Weight'),
   chzzkColumn,
   soopColumn,
 ];

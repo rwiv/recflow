@@ -41,8 +41,8 @@ export class DevInitInjector {
         weight: randomInt(1, 2),
         totalCapacity: 10,
         capacities: [
-          { platformName: 'chzzk', capacity: 5 },
-          { platformName: 'soop', capacity: 5 },
+          { platformName: 'chzzk', capacity: 10 },
+          { platformName: 'soop', capacity: 10 },
           { platformName: 'twitch', capacity: 0 },
         ],
       };

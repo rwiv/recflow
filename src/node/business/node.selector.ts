@@ -1,28 +1,67 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from '../../channel/channel/business/channel.business.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from './node.finder.js';
+import { NodeRecord } from './node.business.schema.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { FatalError } from '../../utils/errors/errors/FatalError.js';
+
+const LIMIT_COUNT = 100;
 
 @Injectable()
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match2(channel: ChannelRecord) {
-    const nodes = await this.nodeFinder.findByNodeTier(channel.priority.tier);
-    if (nodes.length === 0) {
-      throw new NotFoundError(`Not found ${channel.priority.tier} tier Nodes`);
+  async match(channel: ChannelRecord) {
+    const pfId = channel.platform.id;
+    let curTier = channel.priority.tier;
+    let nodes: NodeRecord[] = [];
+
+    // search for nodes
+    while (true) {
+      if (curTier > LIMIT_COUNT) {
+        throw new FatalError('Node search limit exceeded');
+      }
+      const raw = await this.nodeFinder.findByNodeTier(curTier);
+      if (raw.length === 0) {
+        throw new NotFoundError(`No available nodes (channel="${channel.username}")`);
+      }
+      nodes = raw.filter((node) => {
+        const state = this.findState(node, pfId);
+        if (state) return state.assigned < state.capacity;
+        else return false;
+      });
+      if (nodes.length > 0) {
+        break;
+      }
+      curTier++;
     }
-    const filtered = nodes.filter((node) => {
-      const state = node.states?.find((state) => state.platform.id === channel.platform.id);
-      if (state) return state.assigned < state.capacity;
-      else return false;
-    });
-    let max = filtered[0];
-    for (let i = 1; i < filtered.length; i++) {
-      if (filtered[i].weight > max.weight) {
-        max = filtered[i];
+
+    // find minimum weight
+    let minWeight = nodes[0].weight;
+    for (let i = 1; i < nodes.length; i++) {
+      if (nodes[i].weight < minWeight) {
+        minWeight = nodes[i].weight;
       }
     }
-    return max;
+
+    // select the node with the minimum assigned count
+    const candidates = nodes.filter((node) => node.weight === minWeight);
+    let minNode = candidates[0];
+    for (let i = 1; i < candidates.length; i++) {
+      const curState = this.findState(candidates[i], pfId);
+      const minState = this.findState(minNode, pfId);
+      if (curState.assigned < minState.assigned) {
+        minNode = candidates[i];
+      }
+    }
+    return minNode;
+  }
+
+  private findState(node: NodeRecord, platformId: string) {
+    const target = node.states?.find((state) => state.platform.id === platformId);
+    if (!target) {
+      throw new NotFoundError(`No state found for ${platformId}`);
+    }
+    return target;
   }
 }

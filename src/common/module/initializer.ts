@@ -3,7 +3,7 @@ import { PlatformRepository } from '../../platform/persistence/platform.reposito
 import { ChannelPriorityRepository } from '../../channel/priority/priority.repository.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { dropAll } from '../../infra/db/utils.js';
-import { DevInitInjector } from '../helpers/injector.js';
+import { DevInitInjector } from './dev-injector.js';
 import {
   CHANNEL_PRIORIES_TIER_MAP,
   CHANNEL_PRIORITIES,
@@ -14,6 +14,8 @@ import { NodeTypeRepository } from '../../node/persistence/node-type.repository.
 import { nodeTypeEnum } from '../../node/node.schema.js';
 import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
+import { NodeWriter } from '../../node/business/node.writer.js';
+import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 
 @Injectable()
 export class AppInitializer {
@@ -23,6 +25,8 @@ export class AppInitializer {
     private readonly chWriter: ChannelWriter,
     private readonly ntRepo: NodeTypeRepository,
     private readonly ngRepo: NodeGroupRepository,
+    private readonly nodeWriter: NodeWriter,
+    private readonly fetcher: PlatformFetcher,
   ) {}
 
   async initProd() {
@@ -32,7 +36,7 @@ export class AppInitializer {
   async initDev() {
     await dropAll();
     await this.checkDb();
-    const injector = new DevInitInjector(this.chWriter);
+    const injector = new DevInitInjector(this.chWriter, this.nodeWriter, this.fetcher);
     await injector.insertTestChannels();
   }
 

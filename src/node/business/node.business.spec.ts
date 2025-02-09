@@ -1,13 +1,24 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { getChannelServices } from '../../common/helpers/channel.deps.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { mockNode } from '../../common/helpers/node.mocks.js';
 import { notNull } from '../../utils/null.js';
-import { SyncForm } from './node.updater.js';
+import { NodeUpdater, SyncForm } from './node.updater.js';
+import { createTestApp } from '../../common/helpers/helper.app.js';
+import { AppInitializer } from '../../common/module/initializer.js';
+import { NodeWriter } from './node.writer.js';
+import { NodeFinder } from './node.finder.js';
+import { NodeGroupRepository } from '../persistence/node-group.repository.js';
+import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 
-const { init, nodeWriter, nodeUpdater, nodeFinder, ngRepo, pfRepo } = getChannelServices();
+const app = await createTestApp();
+const init = app.get(AppInitializer);
+const nodeWriter = app.get(NodeWriter);
+const nodeFinder = app.get(NodeFinder);
+const nodeUpdater = app.get(NodeUpdater);
+const ngRepo = app.get(NodeGroupRepository);
+const pfRepo = app.get(PlatformRepository);
 
-describe('ChannelService', () => {
+describe('ChannelService', async () => {
   beforeEach(async () => {
     await dropAll();
     await init.checkDb();

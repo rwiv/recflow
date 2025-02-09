@@ -1,23 +1,27 @@
 import fs from 'fs';
 import path from 'path';
-import { readTestConf } from './common.js';
-import { getFetcher } from './platform.deps.js';
+import { readTestConf } from '../helpers/helper.configs.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
 import { CHANNEL_PRIORITIES } from '../../channel/priority/priority.constants.js';
 import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
+import { NodeWriter } from '../../node/business/node.writer.js';
+import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 
 export class DevInitInjector {
-  constructor(private readonly channelWriter: ChannelWriter) {}
+  constructor(
+    private readonly channelWriter: ChannelWriter,
+    private readonly nodeWriter: NodeWriter,
+    private readonly fetcher: PlatformFetcher,
+  ) {}
 
   async writeTestChannelInfos() {
     const conf = await readTestConf();
-    const fetcher = getFetcher();
     const infos = [];
     for (const id of conf.channelIds) {
-      infos.push(await fetcher.fetchChannel('chzzk', id, false));
+      infos.push(await this.fetcher.fetchChannel('chzzk', id, false));
     }
     await fs.promises.writeFile(
       path.join('dev', 'test_channel_infos.json'),

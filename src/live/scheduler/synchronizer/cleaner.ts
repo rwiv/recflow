@@ -1,7 +1,7 @@
 import { Synchronizer } from './synchronizer.js';
 import { PlatformType } from '../../../platform/platform.types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { TrackedLiveService } from '../../business/tracked-live.service.js';
+import { LiveService } from '../../business/live.service.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { LiveRecord } from '../../business/types.js';
 
@@ -9,7 +9,7 @@ export class LiveCleaner extends Synchronizer {
   constructor(
     private readonly platform: PlatformType,
     private readonly fetcher: PlatformFetcher,
-    private readonly liveService: TrackedLiveService,
+    private readonly liveService: LiveService,
     eh: ScheduleErrorHandler,
   ) {
     super(eh);

@@ -2,7 +2,7 @@ import { Synchronizer } from './synchronizer.js';
 import { LiveInfo } from '../../../platform/wapper/live.js';
 import { PlatformType } from '../../../platform/platform.types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { TrackedLiveService } from '../../business/tracked-live.service.js';
+import { LiveService } from '../../business/live.service.js';
 import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
 import { ChannelRecord } from '../../../channel/channel/business/channel.business.schema.js';
@@ -13,7 +13,7 @@ export class LiveAppender extends Synchronizer {
   constructor(
     private readonly platform: PlatformType,
     private readonly fetcher: PlatformFetcher,
-    private readonly liveService: TrackedLiveService,
+    private readonly liveService: LiveService,
     private readonly chFinder: ChannelFinder,
     private readonly filter: LiveFilter,
     eh: ScheduleErrorHandler,

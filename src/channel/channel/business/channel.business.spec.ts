@@ -1,11 +1,19 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import { dropAll } from '../../../infra/db/utils.js';
 import { mockChannel } from '../../../common/helpers/channel.mocks.js';
-import { getChannelServices } from '../../../common/helpers/channel.deps.js';
 import { ChannelPriority } from '../../priority/priority.types.js';
 import { ChannelSortArg } from './channel.business.schema.js';
+import { createTestApp } from '../../../common/helpers/helper.app.js';
+import { ChannelFinder } from './channel.finder.js';
+import { AppInitializer } from '../../../common/module/initializer.js';
+import { ChannelWriter } from './channel.writer.js';
+import { ChannelSearcher } from './channel.searcher.js';
 
-const { chFinder, chSearcher, chWriter, init } = getChannelServices();
+const app = await createTestApp();
+const init = app.get(AppInitializer);
+const chFinder = app.get(ChannelFinder);
+const chSearcher = app.get(ChannelSearcher);
+const chWriter = app.get(ChannelWriter);
 
 describe('ChannelService', () => {
   beforeEach(async () => {
@@ -19,7 +27,6 @@ describe('ChannelService', () => {
 
   it('create', async () => {
     const channel = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
-    console.log(channel);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });

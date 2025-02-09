@@ -1,12 +1,17 @@
 import path from 'path';
-import { getChannelServices } from '../common/helpers/channel.deps.js';
 import { BatchInserter } from './inserter.js';
 import { BatchMigrator } from './migrator.js';
 import { BatchRunner } from './runner.js';
-import { readTestConf } from '../common/helpers/common.js';
+import { readTestConf } from '../common/helpers/helper.configs.js';
+import { createCustomApp } from '../common/helpers/helper.app.js';
+import { AppInitializer } from '../common/module/initializer.js';
+import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 
 async function main() {
-  const { chWriter, init } = getChannelServices();
+  const app = await createCustomApp();
+  const init = app.get(AppInitializer);
+  const chWriter = app.get(ChannelWriter);
+
   const inserter = new BatchInserter(chWriter);
   const migrator = new BatchMigrator(chWriter, init);
   const batch = new BatchRunner(migrator, inserter);

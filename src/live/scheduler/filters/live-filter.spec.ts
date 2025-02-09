@@ -1,17 +1,17 @@
 import { ChzzkLiveFilter } from './live-filter.chzzk.js';
 import { it } from 'vitest';
 import { PlatformType } from '../../../platform/platform.types.js';
-import { getFetcher } from '../../../common/helpers/platform.deps.js';
-import { getConf } from '../../../common/helpers/common.js';
+import { createTestApp } from '../../../common/helpers/helper.app.js';
+import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 
-const [, query] = getConf();
+const app = await createTestApp();
+const fetcher = app.get(PlatformFetcher);
+const filter = app.get(ChzzkLiveFilter);
+// const filter = app.get(SoopLiveFilter);
+
 const platform: PlatformType = 'chzzk';
 
 it('test filtered', async () => {
-  const fetcher = getFetcher();
-  const filter = new ChzzkLiveFilter(query, fetcher);
-  // const filter = new SoopLiveFilter(query, fetcher);
-
   const infos = await fetcher.fetchLives(platform);
   const filtered = await filter.getFiltered(infos);
 

@@ -22,6 +22,4 @@ export class NodeController {
   create(@Body() append: NodeAppend) {
     return this.writer.create(nodeAppend.parse(append), true);
   }
-
-  f(node: NodeGroupEnt) {}
 }

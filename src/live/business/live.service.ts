@@ -28,7 +28,7 @@ export interface FindOptions {
 }
 
 @Injectable()
-export class TrackedLiveService {
+export class LiveService {
   constructor(
     @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,

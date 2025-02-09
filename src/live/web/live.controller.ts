@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Query, UseFilters } from '@nestjs/common';
 import { NodeRecord } from '../../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import { TrackedLiveService } from '../business/tracked-live.service.js';
+import { LiveService } from '../business/live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { ExitCmd } from '../event/types.js';
 import { LiveScheduler } from '../scheduler/scheduler.js';
@@ -12,7 +12,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 @Controller('/api/lives')
 export class LiveController {
   constructor(
-    private readonly liveService: TrackedLiveService,
+    private readonly liveService: LiveService,
     private readonly fetcher: PlatformFetcher,
     private readonly scheduler: LiveScheduler,
   ) {}

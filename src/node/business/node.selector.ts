@@ -1,28 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { NodePriority, NodeRecord } from '../types.js';
-import { ChannelPriorityEvaluator } from '../../channel/priority/priority.evaluator.js';
 import { ChannelRecord } from '../../channel/channel/business/channel.business.schema.js';
-import { findChzzkCandidate, findSoopCandidate } from '../utils.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NodeFinder } from './node.finder.js';
 
 @Injectable()
 export class NodeSelector {
-  constructor(private readonly evaluator: ChannelPriorityEvaluator) {}
+  constructor(private readonly nodeFinder: NodeFinder) {}
 
-  match(channel: ChannelRecord, nodes: NodeRecord[]): NodeRecord | null {
-    const rank = this.evaluator.getRank(channel.priority.name);
-    if (rank === 3) {
-      throw new Error('Rank 3 cannot be assigned to a node');
+  async match2(channel: ChannelRecord) {
+    const nodes = await this.nodeFinder.findByNodeTier(channel.priority.tier);
+    if (nodes.length === 0) {
+      throw new NotFoundError(`Not found ${channel.priority.tier} tier Nodes`);
     }
-    let type: NodePriority = 'main';
-    if (rank === 2) {
-      type = 'sub';
+    const filtered = nodes.filter((node) => {
+      const state = node.states?.find((state) => state.platform.id === channel.platform.id);
+      if (state) return state.assigned < state.capacity;
+      else return false;
+    });
+    let max = filtered[0];
+    for (let i = 1; i < filtered.length; i++) {
+      if (filtered[i].weight > max.weight) {
+        max = filtered[i];
+      }
     }
-    if (channel.platform.name === 'chzzk') {
-      return findChzzkCandidate(nodes, type);
-    } else if (channel.platform.name === 'soop') {
-      return findSoopCandidate(nodes, type);
-    } else {
-      throw new Error('Not supported platform');
-    }
+    return max;
   }
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channelPriorities } from '../../infra/db/schema.js';
+import { Tx } from '../../../infra/db/types.js';
+import { db } from '../../../infra/db/db.js';
+import { oneNotNull, oneNullable } from '../../../utils/list.js';
+import { channelPriorities } from '../../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { uuid } from '../../utils/uuid.js';
+import { uuid } from '../../../utils/uuid.js';
 import { ChannelPriorityEnt, chPriorityEnt } from './priority.schema.js';
 
 @Injectable()

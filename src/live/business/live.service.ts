@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NodeRecord } from '../../node/types.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import { NodeService } from './node.service.js';
 import type { AsyncMap } from '../../infra/storage/interface.js';
 import { LIVE_MAP } from '../persistence/persistence.module.js';
 import { LiveRecord } from './types.js';
@@ -14,9 +12,10 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/channel/business/channel.business.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
-import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority/priority.constants.js';
+import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority.constants.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NodeUpdater } from '../../node/business/node.updater.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -33,7 +32,7 @@ export class LiveService {
     @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
-    private readonly nodeService: NodeService,
+    private readonly nodeUpdater: NodeUpdater,
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
@@ -64,7 +63,7 @@ export class LiveService {
       };
       channel = await this.chWriter.createWithInfo(append, channelInfo);
     }
-    const node = this.nodeSelector.match(channel, await this.nodes());
+    const node = await this.nodeSelector.match2(channel);
     if (node === null) {
       throw new FatalError(`No node matched for ${live.channelId}`);
     }
@@ -74,11 +73,11 @@ export class LiveService {
       updatedAt: undefined,
       deletedAt: undefined,
       isDeleted: false,
-      assignedWebhookName: node.name,
+      assignedWebhookName: node.id,
     };
     await this.liveMap.set(live.channelId, record);
-    await this.nodeService.updateCnt(node.name, live.type, 1);
-    await this.listener.onCreate(record, node.url);
+    await this.nodeUpdater.updateCntWithPfId(node.id, channel.platform.id, 1);
+    await this.listener.onCreate(record, node.endpoint);
     return record;
   }
 
@@ -86,8 +85,8 @@ export class LiveService {
     const exists = await this.get(newRecord.channelId, { withDeleted: true });
     if (!exists) throw Error(`Not found liveRecord: ${newRecord.channelId}`);
     if (exists.assignedWebhookName !== newRecord.assignedWebhookName) {
-      await this.nodeService.updateCnt(exists.assignedWebhookName, exists.type, -1);
-      await this.nodeService.updateCnt(newRecord.assignedWebhookName, newRecord.type, 1);
+      await this.nodeUpdater.updateCnt(exists.assignedWebhookName, exists.type, -1);
+      await this.nodeUpdater.updateCnt(newRecord.assignedWebhookName, newRecord.type, 1);
     }
     await this.liveMap.set(newRecord.channelId, newRecord);
     return exists;
@@ -111,10 +110,10 @@ export class LiveService {
       record.isDeleted = true;
       record.deletedAt = new Date().toISOString();
       await this.liveMap.set(id, record);
-      await this.nodeService.updateCnt(record.assignedWebhookName, record.type, -1);
+      await this.nodeUpdater.updateCnt(record.assignedWebhookName, record.type, -1);
     } else {
       if (!record.isDeleted) {
-        await this.nodeService.updateCnt(record.assignedWebhookName, record.type, -1);
+        await this.nodeUpdater.updateCnt(record.assignedWebhookName, record.type, -1);
       }
       await this.liveMap.delete(id);
     }
@@ -140,14 +139,6 @@ export class LiveService {
 
   async findAllDeleted() {
     return (await this.findAll()).filter((it) => it.isDeleted);
-  }
-
-  async keys() {
-    return this.liveMap.keys();
-  }
-
-  async nodes(): Promise<NodeRecord[]> {
-    return this.nodeService.values();
   }
 
   async refreshAllLives() {
@@ -178,15 +169,5 @@ export class LiveService {
       });
     });
     return Promise.all(promises);
-  }
-
-  async syncNodes() {
-    const lives = await this.findAllActives();
-    await this.nodeService.synchronize(lives);
-  }
-
-  async clear() {
-    await this.liveMap.clear();
-    await this.nodeService.clear();
   }
 }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { platformTypeEnum } from '@/client/common.schema.ts';
+import { platformRecord, platformTypeEnum } from '@/client/common.schema.ts';
 
 export const nodeTypeEnum = z.enum(['worker', 'argo']);
 
@@ -15,7 +15,7 @@ export type NodeGroup = z.infer<typeof nodeGroup>;
 const nodeState = z.object({
   id: z.string(),
   nodeId: z.string(),
-  platformName: z.string(),
+  platform: platformRecord,
   capacity: z.number(),
   assigned: z.number(),
   createdAt: z.string().datetime(),

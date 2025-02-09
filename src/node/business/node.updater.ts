@@ -30,10 +30,10 @@ export class NodeUpdater {
   async updateCnt(nodeId: string, pfName: PlatformType, num: 1 | -1, tx: Tx = db) {
     const pf = await this.pfRepo.findByName(pfName);
     if (!pf) throw new NotFoundError(`Platform ${pfName} not found`);
-    return this.updateCntByPlatformId(nodeId, pf.id, num, tx);
+    return this.updateCntWithPfId(nodeId, pf.id, num, tx);
   }
 
-  async updateCntByPlatformId(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
+  async updateCntWithPfId(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       const states = await this.stateRepo.findByNodeIdAndPlatformIdForUpdate(nodeId, pfId, txx);
       if (!states) {

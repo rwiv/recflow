@@ -11,7 +11,7 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 import { PlatformEnt } from '../../platform/persistence/platform.schema.js';
-import { platformTypeEnum } from '../../platform/platform.schema.js';
+import { platformRecord } from '../../platform/platform.schema.js';
 
 @Injectable()
 export class NodeMapper {
@@ -21,6 +21,10 @@ export class NodeMapper {
     private readonly stateRepo: NodeStateRepository,
     private readonly pfRepo: PlatformRepository,
   ) {}
+
+  async mapAll(entities: NodeEnt[], withGroup: boolean = false, withStates: boolean = false) {
+    return Promise.all(entities.map((ent) => this.map(ent, withGroup, withStates)));
+  }
 
   async map(
     ent: NodeEnt,
@@ -35,7 +39,7 @@ export class NodeMapper {
     };
     if (withGroup) {
       const group = await this.groupRepo.findById(ent.groupId, tx);
-      if (!group) throw new NotFoundError('node group not found');
+      if (!group) throw new NotFoundError('Not found node group');
       result = { ...result, group };
     }
     if (withStates) {
@@ -48,10 +52,10 @@ export class NodeMapper {
 
   async mapState(ent: NodeStateEnt, tx: Tx = db): Promise<NodeState> {
     const platform = notNull(await this.pfRepo.findById(ent.platformId, tx));
-    return this.mapStateWithPlatform(ent, platform, tx);
+    return this.mapStateWithPlatform(ent, platform);
   }
 
-  mapStateWithPlatform(ent: NodeStateEnt, platform: PlatformEnt, tx: Tx = db): NodeState {
-    return { ...ent, platformName: platformTypeEnum.parse(platform.name) };
+  mapStateWithPlatform(ent: NodeStateEnt, platform: PlatformEnt): NodeState {
+    return { ...ent, platform: platformRecord.parse(platform) };
   }
 }

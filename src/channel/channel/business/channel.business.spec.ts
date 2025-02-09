@@ -1,7 +1,6 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import { dropAll } from '../../../infra/db/utils.js';
 import { mockChannel } from '../../../common/helpers/channel.mocks.js';
-import { ChannelPriority } from '../../priority/priority.types.js';
 import { ChannelSortArg } from './channel.business.schema.js';
 import { createTestApp } from '../../../common/helpers/helper.app.js';
 import { ChannelFinder } from './channel.finder.js';
@@ -85,6 +84,6 @@ describe('ChannelService', () => {
   });
 });
 
-function add(n: number, priority: ChannelPriority, followerCnt: number, tagNames: string[]) {
+function add(n: number, priority: string, followerCnt: number, tagNames: string[]) {
   return chWriter.create(mockChannel(n, priority, followerCnt), tagNames);
 }

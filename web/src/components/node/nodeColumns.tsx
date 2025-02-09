@@ -11,7 +11,7 @@ const chzzkColumn: ColumnDef<NodeRecord> = {
   header: 'Chzzk',
   cell: ({ row }) => {
     const node = row.original;
-    const state = node.states?.find((s) => s.platformName === 'chzzk');
+    const state = node.states?.find((s) => s.platform.name === 'chzzk');
     if (!state) {
       return <div>Not Found</div>;
     }
@@ -25,7 +25,7 @@ const soopColumn: ColumnDef<NodeRecord> = {
   header: 'Soop',
   cell: ({ row }) => {
     const node = row.original;
-    const state = node.states?.find((s) => s.platformName === 'soop');
+    const state = node.states?.find((s) => s.platform.name === 'soop');
     if (!state) {
       return <div>Not Found</div>;
     }

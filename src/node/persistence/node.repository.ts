@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { nodes } from '../../infra/db/schema.js';
-import { nodeEnt, NodeEnt, NodeEntAppend } from './node.persistence.schema.js';
+import { nodeGroups, nodes } from '../../infra/db/schema.js';
+import { nodeEnt, NodeEnt, NodeEntAppend, NodeGroupEnt } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
@@ -17,6 +17,15 @@ export class NodeRepository {
       updatedAt: null,
     };
     return oneNotNull(await tx.insert(nodes).values(nodeEnt.parse(req)).returning());
+  }
+
+  async findByNodeTier(tier: number, tx: Tx = db): Promise<[NodeEnt, NodeGroupEnt][]> {
+    const records = await tx
+      .select()
+      .from(nodes)
+      .innerJoin(nodeGroups, eq(nodes.groupId, nodeGroups.id))
+      .where(eq(nodeGroups.tier, tier));
+    return records.map((row) => [row.nodes, row.node_groups]);
   }
 
   async findById(id: string, tx: Tx = db) {

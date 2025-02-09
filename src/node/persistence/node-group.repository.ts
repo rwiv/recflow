@@ -28,6 +28,10 @@ export class NodeGroupRepository {
     return oneNullable(await tx.select().from(nodeGroups).where(eq(nodeGroups.name, name)));
   }
 
+  async findByTier(tier: number, tx: Tx = db) {
+    return tx.select().from(nodeGroups).where(eq(nodeGroups.tier, tier));
+  }
+
   async findAll() {
     return db.select().from(nodeGroups);
   }

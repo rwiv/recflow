@@ -6,10 +6,9 @@ import { NodeFinder } from './node.finder.js';
 import { NodeMapper } from './node.mapper.js';
 import { NodeUpdater } from './node.updater.js';
 import { NodeSelector } from './node.selector.js';
-import { ChannelPriorityModule } from '../../channel/priority/priority.module.js';
 
 @Module({
-  imports: [NodePersistenceModule, PlatformModule, ChannelPriorityModule],
+  imports: [NodePersistenceModule, PlatformModule],
   providers: [NodeMapper, NodeWriter, NodeUpdater, NodeFinder, NodeSelector],
   exports: [NodeWriter, NodeUpdater, NodeFinder, NodeSelector],
 })

@@ -1,21 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../../channel/priority/priority.repository.js';
-import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
+import { ChannelPriorityRepository } from '../../channel/channel/persistence/priority.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
-import {
-  CHANNEL_PRIORIES_TIER_MAP,
-  CHANNEL_PRIORITIES,
-} from '../../channel/priority/priority.constants.js';
+import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { platformTypeEnum } from '../../platform/platform.schema.js';
 import { NodeTypeRepository } from '../../node/persistence/node-type.repository.js';
 import { nodeTypeEnum } from '../../node/node.schema.js';
 import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
-import { NodeWriter } from '../../node/business/node.writer.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 
 @Injectable()
 export class AppInitializer {

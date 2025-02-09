@@ -6,8 +6,7 @@ import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelPriority } from '../../priority/priority.types.js';
-import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
+import { ChannelPriorityRepository } from './priority.repository.js';
 import { PageEntResult } from './channel.persistence.schema.js';
 import {
   chSortArg,
@@ -64,7 +63,7 @@ export class ChannelSearchRepository {
     excludeTagNames: string[] | undefined,
     page: PageQueryOptional = undefined,
     sorted: ChannelSortArg = undefined,
-    priorityName: ChannelPriority | undefined = undefined,
+    priorityName: string | undefined = undefined,
     tx: Tx = db,
   ): Promise<PageEntResult> {
     const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);

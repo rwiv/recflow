@@ -1,11 +1,12 @@
 export const CHANNEL_PRIORITIES = ['must', 'should', 'may', 'review', 'skip', 'none'] as const;
+// TODO: update or remove
 export const CHANNEL_PRIORIES_TIER_MAP = {
   must: 1,
-  should: 2,
+  should: 1,
   may: 2,
   review: 3,
   skip: 3,
-  none: 2,
+  none: 1,
 };
 
 export const CHANNEL_PRIORIES_VALUE_MAP = {

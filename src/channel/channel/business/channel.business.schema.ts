@@ -6,12 +6,15 @@ import {
   chEntUpdateForm,
 } from '../persistence/channel.persistence.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
-import { chPriorityRecord } from '../../priority/priority.schema.js';
+import { ChannelPriorityEnt, chPriorityEnt } from '../persistence/priority.schema.js';
 import { platformRecord, platformTypeEnum } from '../../../platform/platform.schema.js';
+
+const priorityRecord = chPriorityEnt;
+export type ChannelPriorityRecord = ChannelPriorityEnt;
 
 export const channelRecord = channelEnt.omit({ platformId: true, priorityId: true }).extend({
   platform: platformRecord,
-  priority: chPriorityRecord,
+  priority: priorityRecord,
   tags: z.array(tagRecord).optional(),
 });
 export type ChannelRecord = z.infer<typeof channelRecord>;

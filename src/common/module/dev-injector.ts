@@ -5,7 +5,7 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-import { CHANNEL_PRIORITIES } from '../../channel/priority/priority.constants.js';
+import { CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
 import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
 import { NodeWriter } from '../../node/business/node.writer.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -41,9 +41,9 @@ export class DevInitInjector {
         weight: randomInt(1, 2),
         totalCapacity: 10,
         capacities: [
-          { platformName: 'chzzk', capacity: 10 },
-          { platformName: 'soop', capacity: 10 },
-          { platformName: 'twitch', capacity: 10 },
+          { platformName: 'chzzk', capacity: 5 },
+          { platformName: 'soop', capacity: 5 },
+          { platformName: 'twitch', capacity: 0 },
         ],
       };
       await this.nodeWriter.create(nodeAppend.parse(append));

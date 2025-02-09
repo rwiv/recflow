@@ -44,16 +44,6 @@ export class LiveController {
     this.scheduler.stop();
   }
 
-  @Get('/nodes')
-  nodes(): Promise<NodeRecord[]> {
-    return this.liveService.nodes();
-  }
-
-  @Post('/nodes/sync')
-  async nodesSync(): Promise<void> {
-    return this.liveService.syncNodes();
-  }
-
   @Delete('/purge')
   async purge(): Promise<LiveInfo[]> {
     return this.liveService.purgeAll();

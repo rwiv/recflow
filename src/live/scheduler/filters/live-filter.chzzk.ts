@@ -6,8 +6,8 @@ import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
-import { ChannelPriorityEvaluator } from '../../../channel/priority/priority.evaluator.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
+import { NodeGroupRepository } from '../../../node/persistence/node-group.repository.js';
 
 @Injectable()
 export class ChzzkLiveFilter implements LiveFilter {
@@ -15,7 +15,7 @@ export class ChzzkLiveFilter implements LiveFilter {
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
     private readonly chFinder: ChannelFinder,
-    private readonly evaluator: ChannelPriorityEvaluator,
+    private readonly ngRepo: NodeGroupRepository,
   ) {}
 
   async getFiltered(lives: LiveInfo[]): Promise<LiveInfo[]> {
@@ -42,10 +42,11 @@ export class ChzzkLiveFilter implements LiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidOne(live.channelId, 'chzzk');
     if (channel) {
-      if (this.evaluator.getRank(channel.priority.name) === 3) {
-        return null;
-      } else {
+      const ng = await this.ngRepo.findByTier(channel.priority.tier);
+      if (ng) {
         return live;
+      } else {
+        return null;
       }
     }
 

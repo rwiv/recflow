@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelSortArg, PageQuery, pageResult, PageResult } from './channel.business.schema.js';
-import { ChannelPriority } from '../../priority/priority.types.js';
 import { PageEntResult } from '../persistence/channel.persistence.schema.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelMapper } from './channel.mapper.js';
@@ -28,7 +27,7 @@ export class ChannelSearcher {
     excludeTagNames: string[],
     page: PageQuery | undefined = undefined,
     sorted: ChannelSortArg = undefined,
-    priority: ChannelPriority | undefined = undefined,
+    priority: string | undefined = undefined,
     withTags: boolean = false,
   ) {
     const entRet = await this.chSearch.findByAnyTag(
@@ -46,7 +45,7 @@ export class ChannelSearcher {
     excludeTagNames: string[] | undefined = undefined,
     page: PageQuery | undefined = undefined,
     sorted: ChannelSortArg = undefined,
-    priority: ChannelPriority | undefined = undefined,
+    priority: string | undefined = undefined,
     withTags: boolean = false,
   ) {
     const entRet = await this.chSearch.findByAllTags(

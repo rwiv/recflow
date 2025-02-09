@@ -6,11 +6,9 @@ import {
   nodeStateEnt,
 } from '../persistence/node.persistence.schema.js';
 import { nodeTypeEnum } from '../node.schema.js';
-import { platformTypeEnum } from '../../platform/platform.schema.js';
+import { platformRecord } from '../../platform/platform.schema.js';
 
-const nodeState = nodeStateEnt
-  .omit({ platformId: true })
-  .extend({ platformName: platformTypeEnum });
+const nodeState = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformRecord });
 export type NodeState = z.infer<typeof nodeState>;
 
 export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({

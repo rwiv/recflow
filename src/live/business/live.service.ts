@@ -9,7 +9,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/types.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
-import { NodeSelector } from '../../node/node.selector.js';
+import { NodeSelector } from '../../node/business/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/channel/business/channel.business.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';

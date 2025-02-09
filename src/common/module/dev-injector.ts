@@ -32,14 +32,14 @@ export class DevInitInjector {
     if (groups.length === 0) {
       throw new FatalError('No node group found');
     }
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const append: NodeAppend = {
         name: `test${i}`,
         groupId: groups[randomInt(0, groups.length - 1)].id,
         typeName: randomElem(nodeTypeEnum.options),
         endpoint: 'http://localhost:3000',
-        weight: 1,
-        totalCapacity: 100,
+        weight: randomInt(1, 2),
+        totalCapacity: 10,
         capacities: [
           { platformName: 'chzzk', capacity: 10 },
           { platformName: 'soop', capacity: 10 },

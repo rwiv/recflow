@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NodePriority, NodeRecord } from './types.js';
-import { ChannelPriorityEvaluator } from '../channel/priority/priority.evaluator.js';
-import { ChannelRecord } from '../channel/channel/business/channel.business.schema.js';
-import { findChzzkCandidate, findSoopCandidate } from './utils.js';
+import { NodePriority, NodeRecord } from '../types.js';
+import { ChannelPriorityEvaluator } from '../../channel/priority/business/priority.evaluator.js';
+import { ChannelRecord } from '../../channel/channel/business/channel.business.schema.js';
+import { findChzzkCandidate, findSoopCandidate } from '../utils.js';
 
 @Injectable()
 export class NodeSelector {

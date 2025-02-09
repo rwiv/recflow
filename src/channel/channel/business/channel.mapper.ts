@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from './channel.business.schema.js';
 import { notNull } from '../../../utils/null.js';
 import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
+import { ChannelPriorityRepository } from '../../priority/persistence/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.persistence.schema.js';
 import { platformTypeEnum } from '../../../platform/platform.schema.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';

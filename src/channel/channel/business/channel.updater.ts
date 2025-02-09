@@ -2,7 +2,7 @@ import { ChannelCommandRepository } from '../persistence/channel.command.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelMapper } from './channel.mapper.js';
 import { ChannelEntUpdate } from '../persistence/channel.persistence.schema.js';
-import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
+import { ChannelPriorityRepository } from '../../priority/persistence/priority.repository.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()

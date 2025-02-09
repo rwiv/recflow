@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../../common/config/config.module.js';
-import { ChannelPriorityEvaluator } from './priority.evaluator.js';
+import { ChannelPriorityEvaluator } from './business/priority.evaluator.js';
 
 @Module({
   imports: [ConfigModule],

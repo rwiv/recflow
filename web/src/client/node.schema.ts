@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { platformTypeEnum } from '@/client/common.schema.ts';
 
 export const nodeTypeEnum = z.enum(['worker', 'argo']);
 
@@ -23,15 +24,15 @@ const nodeState = z.object({
 export type NodeState = z.infer<typeof nodeState>;
 
 export const nodeRecord = z.object({
-  id: z.string(),
-  name: z.string(),
-  endpoint: z.string(),
-  weight: z.number(),
-  totalCapacity: z.number(),
+  id: z.string().length(32),
+  name: z.string().nonempty(),
+  endpoint: z.string().nonempty(),
+  weight: z.coerce.number().nonnegative(),
+  totalCapacity: z.coerce.number().nonnegative(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
   typeName: nodeTypeEnum,
-  groupId: z.string(),
+  groupId: z.string().length(32),
   group: nodeGroup.optional(),
   states: z.array(nodeState).optional(),
 });
@@ -39,7 +40,7 @@ export type NodeRecord = z.infer<typeof nodeRecord>;
 
 const capacities = z.array(
   z.object({
-    platformName: z.string().nonempty(),
+    platformName: platformTypeEnum,
     capacity: z.number().nonnegative(),
   }),
 );

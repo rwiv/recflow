@@ -10,8 +10,8 @@ import { NodeStateRepository } from '../persistence/node-state.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
-import {PlatformEnt, platformEnt} from "../../platform/persistence/platform.schema.js";
-import {platformTypeEnum} from "../../platform/platform.schema.js";
+import { PlatformEnt } from '../../platform/persistence/platform.schema.js';
+import { platformTypeEnum } from '../../platform/platform.schema.js';
 
 @Injectable()
 export class NodeMapper {

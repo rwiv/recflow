@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { Button } from '@/components/ui/button.tsx';
 import {
   Form,
@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRef } from 'react';
+import { ChangeEvent, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -29,12 +29,16 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import { LIVES_QUERY_KEY, NODE_GROUPS_QUERY_KEY } from '@/common/constants.ts';
+import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { nodeAppend, NodeGroup } from '@/client/node.schema.ts';
-import { fetchNodeGroups } from '@/client/node.client.ts';
+import { createNode, fetchNodeGroups } from '@/client/node.client.ts';
 
-const FormSchema = nodeAppend;
+const FormSchema = nodeAppend.extend({
+  typeName: z.string().nonempty(),
+  weight: z.string().nonempty(),
+  totalCapacity: z.string().nonempty(),
+});
 
 export function NodeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -69,19 +73,47 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: ()
     defaultValues: {
       name: '',
       endpoint: '',
-      weight: 0,
-      totalCapacity: 0,
+      weight: '',
+      totalCapacity: '',
       groupId: '',
-      typeName: 'worker',
-      capacities: [],
+      typeName: '',
+      capacities: [
+        { platformName: 'chzzk', capacity: -1 },
+        { platformName: 'soop', capacity: -1 },
+        { platformName: 'twitch', capacity: -1 },
+      ],
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
+    try {
+      const res = await createNode(nodeAppend.parse(data));
+      console.log(res);
+    } catch (e) {
+      if (e instanceof ZodError) {
+        for (const err of e.errors) {
+          const path = z.enum(FormSchema.keyof()._def.values).parse(err.path.toString());
+          form.setError(path, { message: err.message });
+        }
+        return;
+      }
+    }
+    await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
     cb();
   }
+
+  const onChangeCapacity = (e: ChangeEvent<HTMLInputElement>, platformName: string) => {
+    const capacities = form.getValues('capacities');
+    const capacity = capacities.find((c) => c.platformName === platformName);
+    const rest = capacities.filter((c) => c.platformName !== platformName);
+    if (capacity) {
+      const newCapacity = {
+        ...capacity,
+        capacity: parseInt(e.target.value),
+      };
+      form.setValue('capacities', [...rest, newCapacity]);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -119,7 +151,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: ()
             <FormItem css={formItemStyle}>
               <FormLabel>Weight</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Endpoint" {...field} />
+                <Input placeholder="Enter Weight" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -179,6 +211,54 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: ()
                   <SelectItem value="argo">ARGO</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="capacities"
+          render={() => (
+            <FormItem css={formItemStyle}>
+              <FormLabel>Chzzk Capacity</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter Chzzk Capacity"
+                  onChange={(e) => onChangeCapacity(e, 'chzzk')}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="capacities"
+          render={() => (
+            <FormItem css={formItemStyle}>
+              <FormLabel>Soop Capacity</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter Soop Capacity"
+                  onChange={(e) => onChangeCapacity(e, 'soop')}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="capacities"
+          render={() => (
+            <FormItem css={formItemStyle}>
+              <FormLabel>Soop Capacity</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter Twitch Capacity"
+                  onChange={(e) => onChangeCapacity(e, 'twitch')}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

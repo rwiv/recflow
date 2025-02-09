@@ -20,7 +20,7 @@ export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({
 });
 export type NodeRecord = z.infer<typeof nodeRecord>;
 
-export const nodeAppend = nodeEntAppend.omit({typeId: true}).extend({
+export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
   typeName: nodeTypeEnum,
   capacities: z.array(
     z.object({

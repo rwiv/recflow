@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NodeRepository } from '../persistence/node.repository.js';
 import { NodeMapper } from './node.mapper.js';
-import {NodeGroupRepository} from "../persistence/node-group.repository.js";
+import { NodeGroupRepository } from '../persistence/node-group.repository.js';
 
 @Injectable()
 export class NodeFinder {

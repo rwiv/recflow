@@ -3,7 +3,6 @@ import { ConfigModule } from '../../common/config/config.module.js';
 import { PersistenceFactory } from './persistence.factory.js';
 
 export const LIVE_MAP = 'LiveMap';
-export const NODE_MAP = 'NodeMap';
 
 @Module({
   imports: [ConfigModule],
@@ -14,12 +13,7 @@ export const NODE_MAP = 'NodeMap';
       useFactory: (factory: PersistenceFactory) => factory.liveMap(),
       inject: [PersistenceFactory],
     },
-    {
-      provide: NODE_MAP,
-      useFactory: (factory: PersistenceFactory) => factory.nodeMap(),
-      inject: [PersistenceFactory],
-    },
   ],
-  exports: [LIVE_MAP, NODE_MAP],
+  exports: [LIVE_MAP],
 })
 export class LivePersistenceModule {}

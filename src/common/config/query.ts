@@ -1,6 +1,5 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { NodeDef, NodeSelectMode, NodePriority } from '../../node/types.js';
 import { ChannelPriorityConfig } from './config.types.js';
 
 export interface QueryConfig {
@@ -21,9 +20,6 @@ export interface QueryConfig {
   excludedChzzkCates: string[];
   excludedChzzkTags: string[];
   excludedChzzkKeywords: string[];
-
-  webhookMode: NodeSelectMode;
-  webhooks: NodeDef[];
 }
 
 export interface PlatformOptions {
@@ -33,7 +29,6 @@ export interface PlatformOptions {
 
 export interface QueryOption {
   forceCredentials: boolean;
-  forceWebhookType: NodePriority | undefined | null;
 }
 
 export function readQueryConfig(filePath: string): QueryConfig {
@@ -46,43 +41,11 @@ export function readQueryConfig(filePath: string): QueryConfig {
 function validate(query: QueryConfig) {
   validateQueryOptions(query.options.chzzk);
   validateQueryOptions(query.options.soop);
-  validateWebhookConfigs(query);
 }
 
 function validateQueryOptions(opts: QueryOption) {
   // forceCredentials
   if (opts.forceCredentials === undefined) {
     throw new Error('forceCredentials is required');
-  }
-
-  // forceWebhookType
-  if (opts.forceWebhookType) {
-    checkWebhookType(opts.forceWebhookType);
-  }
-}
-
-function validateWebhookConfigs(query: QueryConfig) {
-  if (!query.webhookMode) {
-    throw new Error('webhookMode is required');
-  }
-  if (!query.webhooks || query.webhooks.length === 0) {
-    throw new Error('webhooks is required');
-  }
-  if (query.webhooks.filter((wh) => wh.type === 'main').length === 0) {
-    throw new Error('webhooks must have at least one main webhook');
-  }
-  for (const whName of query.webhooks.map((wh) => wh.name)) {
-    if (query.webhooks.filter((wh) => wh.name === whName).length > 1) {
-      throw new Error(`webhook name must be unique: ${whName}`);
-    }
-  }
-  for (const wh of query.webhooks) {
-    checkWebhookType(wh.type);
-  }
-}
-
-function checkWebhookType(type: string) {
-  if (!['main', 'sub', 'extra'].includes(type)) {
-    throw new Error(`webhook type must be one of "main", "sub", "extra": ${type}`);
   }
 }

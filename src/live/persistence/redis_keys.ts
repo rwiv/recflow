@@ -1,7 +1,3 @@
 const liveBasePrefix = 'stmgr:lives:';
 export const LIVE_KEYS_KEY = liveBasePrefix + 'keys';
 export const LIVE_VALUE_PREFIX = liveBasePrefix + 'value:';
-
-const webhookBasePrefix = 'stmgr:webhooks:';
-export const WH_KEYS_KEY = webhookBasePrefix + 'keys';
-export const WH_VALUE_PREFIX = webhookBasePrefix + 'value:';

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from './channel.business.schema.js';
 import { notNull } from '../../../utils/null.js';
 import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../../priority/persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformTypeEnum } from '../../../platform/platform.schema.js';
+import { platformRecord, platformTypeEnum } from '../../../platform/platform.schema.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
@@ -27,13 +27,9 @@ export class ChannelMapper {
   }
 
   async map(ent: ChannelEnt, tx: Tx = db): Promise<ChannelRecord> {
-    const platformStr = notNull(await this.pfRepo.findById(ent.platformId, tx)).name;
-    const priorityStr = notNull(await this.priRepo.findById(ent.priorityId, tx)).name;
-    return {
-      ...ent,
-      platformName: platformTypeEnum.parse(platformStr),
-      priorityName: priorityStr,
-    };
+    const platform = platformRecord.parse(notNull(await this.pfRepo.findById(ent.platformId, tx)));
+    const priority = notNull(await this.priRepo.findById(ent.priorityId, tx));
+    return { ...ent, platform, priority };
   }
 
   async loadRelations(

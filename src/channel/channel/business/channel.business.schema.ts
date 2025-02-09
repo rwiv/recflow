@@ -1,12 +1,17 @@
 import { z } from 'zod';
 import { tagRecord } from '../../tag/business/tag.business.schema.js';
-import { channelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformTypeEnum } from '../../../platform/platform.schema.js';
+import {
+  channelEnt,
+  chEntAppend,
+  chEntUpdateForm,
+} from '../persistence/channel.persistence.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
+import { chPriorityRecord } from '../../priority/priority.schema.js';
+import { platformRecord, platformTypeEnum } from '../../../platform/platform.schema.js';
 
 export const channelRecord = channelEnt.omit({ platformId: true, priorityId: true }).extend({
-  platformName: platformTypeEnum,
-  priorityName: z.string().nonempty(),
+  platform: platformRecord,
+  priority: chPriorityRecord,
   tags: z.array(tagRecord).optional(),
 });
 export type ChannelRecord = z.infer<typeof channelRecord>;
@@ -20,14 +25,15 @@ export type ChannelRecord = z.infer<typeof channelRecord>;
 //   description: string | null;
 //   createdAt: Date;
 //   updatedAt: Date;
-//   platformName: PlatformType;
-//   priorityName: string;
+//   platform: PlatformRecord
+//   priority: ChannelPriorityRecord
 //   tags?: TagRecord[];
 // }
 
-export const chAppend = channelRecord
-  .omit({ id: true })
-  .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
+export const chAppend = chEntAppend.omit({ platformId: true, priorityId: true }).extend({
+  platformName: platformTypeEnum,
+  priorityName: z.string().nonempty(),
+});
 export type ChannelAppend = z.infer<typeof chAppend>;
 
 export const chAppendWithFetch = chAppend
@@ -38,7 +44,9 @@ export const chAppendWithFetch = chAppend
     followed: true,
     description: true,
   })
-  .extend({ tagNames: z.array(z.string().nonempty()).optional() });
+  .extend({
+    tagNames: z.array(z.string().nonempty()).optional(),
+  });
 export type ChannelAppendWithFetch = z.infer<typeof chAppendWithFetch>;
 
 const chAppendWithInfo = chAppendWithFetch.pick({
@@ -49,13 +57,14 @@ const chAppendWithInfo = chAppendWithFetch.pick({
 });
 export type ChannelAppendWithInfo = z.infer<typeof chAppendWithInfo>;
 
-const chUpdateForm = channelRecord
+const chUpdateForm = chEntUpdateForm
   .pick({
-    priorityName: true,
     followed: true,
     description: true,
   })
-  .partial();
+  .extend({
+    priorityName: z.string().nonempty().optional(),
+  });
 export const chUpdate = z.object({
   id: uuid,
   form: chUpdateForm,

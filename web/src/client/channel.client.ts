@@ -5,7 +5,6 @@ import {
   PageResult,
 } from '@/client/channel.types.ts';
 import { configs } from '@/common/configs.ts';
-import { ChannelPriority } from '@/common/enum.types.ts';
 import { getIngredients, request } from '@/client/utils.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 
@@ -25,7 +24,7 @@ export async function createChannel(req: ChannelCreation) {
   return (await res.json()) as ChannelRecord;
 }
 
-export async function updateChannelPriority(id: string, priorityName: ChannelPriority) {
+export async function updateChannelPriority(id: string, priorityName: string) {
   const url = `${configs.endpoint}/api/channels/priority`;
   const req: ChannelDefUpdate = { id, form: { priorityName } };
   const { method, headers, body } = getIngredients('PATCH', req);

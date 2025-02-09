@@ -33,6 +33,8 @@ export class BatchMigrator {
       const channel = channelBackupRecord.parse(chan);
       const req: ChannelAppend = {
         ...channel,
+        platformName: channel.platform.name,
+        priorityName: channel.priority.name,
         createdAt: new Date(channel.createdAt),
         updatedAt: new Date(channel.updatedAt),
       };

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { LiveRecord } from '@/client/live.types.ts';
 import { randomElem } from '@/lib/list.ts';
-import { CHANNEL_PRIORITIES, NODE_PRIORITIES, PLATFORM_TYPES } from '@/common/enum.consts.ts';
+import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { TagRecord } from '@/client/tag.types.ts';
 import { NodeRecord } from '@/client/node.schema.ts';
@@ -27,7 +27,7 @@ export function mockLiveRecord(): LiveRecord {
 export function mockNode(): NodeRecord {
   return {
     name: faker.lorem.word(),
-    type: randomElem(NODE_PRIORITIES),
+    type: randomElem(['main', 'sub']),
     url: faker.internet.url(),
     chzzkCapacity: faker.number.int({ min: 10, max: 100 }),
     soopCapacity: faker.number.int({ min: 10, max: 100 }),
@@ -43,9 +43,20 @@ export function mockChannel(): ChannelRecord {
     username: faker.internet.username(),
     profileImgUrl: faker.image.avatar(),
     followerCnt: faker.number.int({ min: 10, max: 10000 }),
-    platformName: randomElem(PLATFORM_TYPES),
+    platform: {
+      id: faker.string.uuid().replace(/-/g, ''),
+      name: randomElem(PLATFORM_TYPES),
+      createdAt: faker.date.anytime(),
+      updatedAt: faker.date.anytime(),
+    },
+    priority: {
+      id: faker.string.uuid().replace(/-/g, ''),
+      name: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
+      tier: faker.number.int({ min: 1, max: 3 }),
+      createdAt: faker.date.anytime(),
+      updatedAt: faker.date.anytime(),
+    },
     followed: randomElem([true, false]),
-    priorityName: randomElem(CHANNEL_PRIORITIES),
     description: faker.lorem.sentence(),
     createdAt: faker.date.anytime(),
     updatedAt: faker.date.anytime(),

@@ -6,7 +6,7 @@ import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
-import { ChannelPriorityEvaluator } from '../../../channel/priority/business/priority.evaluator.js';
+import { ChannelPriorityEvaluator } from '../../../channel/priority/priority.evaluator.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class ChzzkLiveFilter implements LiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidOne(live.channelId, 'chzzk');
     if (channel) {
-      if (this.evaluator.getRank(channel.priorityName) === 3) {
+      if (this.evaluator.getRank(channel.priority.name) === 3) {
         return null;
       } else {
         return live;

@@ -1,5 +1,20 @@
 import { TagRecord } from '@/client/tag.types.ts';
-import { ChannelPriority, PlatformType } from '@/common/enum.types.ts';
+import { PlatformType } from '@/common/enum.types.ts';
+
+export interface PlatformRecord {
+  id: string;
+  name: PlatformType;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
+
+export interface ChannelPriorityRecord {
+  id: string;
+  name: string;
+  tier: number;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
 
 export interface ChannelRecord {
   id: string;
@@ -7,8 +22,8 @@ export interface ChannelRecord {
   username: string;
   profileImgUrl: string | null;
   followerCnt: number;
-  platformName: PlatformType;
-  priorityName: ChannelPriority;
+  platform: PlatformRecord;
+  priority: ChannelPriorityRecord;
   followed: boolean;
   description: string | null;
   createdAt: Date;
@@ -19,7 +34,7 @@ export interface ChannelRecord {
 export interface ChannelCreation {
   pid: string;
   platformName: PlatformType;
-  priorityName: ChannelPriority;
+  priorityName: string;
   followed: boolean;
   description: string | null;
   tagNames: string[];
@@ -28,7 +43,7 @@ export interface ChannelCreation {
 export interface ChannelDefUpdate {
   id: string;
   form: {
-    priorityName?: ChannelPriority;
+    priorityName?: string;
     followed?: boolean;
     description?: string | null;
   };

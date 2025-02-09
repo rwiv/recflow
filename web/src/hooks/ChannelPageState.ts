@@ -1,11 +1,11 @@
-import { ChannelPriority, ChannelSortType } from '@/common/enum.types.ts';
+import { ChannelSortType } from '@/common/enum.types.ts';
 import { CHANNELS_QUERY_KEY } from '@/common/constants.ts';
 import { ChannelPageStateBuilder } from '@/hooks/ChannelPageStateBuilder.ts';
 
 export class ChannelPageState {
   curPageNum: number;
   pageSize: number;
-  priority: ChannelPriority | undefined;
+  priority: string | undefined;
   tagName: string | undefined;
   sorted: ChannelSortType | undefined;
   pid: string | undefined;

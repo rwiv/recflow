@@ -1,13 +1,13 @@
 import { DEFAULT_PAGE_SIZE } from '@/common/constants.ts';
-import { ChannelPriority, ChannelSortType } from '@/common/enum.types.ts';
+import { ChannelSortType } from '@/common/enum.types.ts';
 import { checkType } from '@/lib/union.ts';
-import { CHANNEL_PRIORITIES, CHANNEL_SORT_TYPES } from '@/common/enum.consts.ts';
+import { CHANNEL_SORT_TYPES } from '@/common/enum.consts.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;
   pageSize: number = DEFAULT_PAGE_SIZE;
-  priority: ChannelPriority | undefined;
+  priority: string | undefined;
   tagName: string | undefined;
   sorted: ChannelSortType | undefined;
   pid: string | undefined;
@@ -25,7 +25,9 @@ export class ChannelPageStateBuilder {
   }
 
   setPriority(priority: string | null | undefined): this {
-    this.priority = checkType(priority, CHANNEL_PRIORITIES);
+    if (priority !== null) {
+      this.priority = priority;
+    }
     return this;
   }
 

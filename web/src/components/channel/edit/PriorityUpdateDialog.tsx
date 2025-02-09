@@ -28,14 +28,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select.tsx';
-import { CHANNEL_PRIORITIES } from '@/common/enum.consts.ts';
 import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { updateChannelPriority } from '@/client/channel.client.ts';
 import { ChannelRecord } from '@/client/channel.types.ts';
 
 const FormSchema = z.object({
-  priority: z.enum(CHANNEL_PRIORITIES),
+  priority: z.string().nonempty(),
 });
 
 export function PriorityUpdateDialog({
@@ -68,7 +67,7 @@ function CreateForm({ channel, cb }: { channel: ChannelRecord; cb: () => void })
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      priority: channel.priorityName,
+      priority: channel.priority.name,
     },
   });
 

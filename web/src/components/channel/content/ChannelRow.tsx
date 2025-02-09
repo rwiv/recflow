@@ -14,7 +14,7 @@ export function ChannelRow({ channel }: { channel: ChannelRecord }) {
     <TableRow>
       <TableCell>
         <div className="flex flex-row flex-wrap items-center ml-1">
-          <a href={getChannelUrl(channel.platformName, channel.pid)}>
+          <a href={getChannelUrl(channel.platform.name, channel.pid)}>
             <Avatar className="w-9 h-9">
               <AvatarImage src={channel.profileImgUrl ?? ''} />
               <AvatarFallback>
@@ -23,17 +23,17 @@ export function ChannelRow({ channel }: { channel: ChannelRecord }) {
             </Avatar>
           </a>
           <div className="center ml-5 mr-1 font-medium">
-            <a href={getChannelUrl(channel.platformName, channel.pid)}>{channel.username}</a>
+            <a href={getChannelUrl(channel.platform.name, channel.pid)}>{channel.username}</a>
           </div>
           <div>
-            <img src={getSvgSrc(channel.platformName)} alt="platform type" />
+            <img src={getSvgSrc(channel.platform.name)} alt="platform type" />
           </div>
         </div>
       </TableCell>
       <TableCell>
         <PriorityUpdateDialog channel={channel}>
           <button className="uppercase">
-            <Badge variant="default">{channel.priorityName}</Badge>
+            <Badge variant="default">{channel.priority.name}</Badge>
           </button>
         </PriorityUpdateDialog>
       </TableCell>

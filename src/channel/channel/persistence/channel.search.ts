@@ -7,7 +7,7 @@ import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelPriority } from '../../priority/priority.types.js';
-import { ChannelPriorityRepository } from '../../priority/persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { PageEntResult } from './channel.persistence.schema.js';
 import {
   chSortArg,

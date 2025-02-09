@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../../channel/priority/persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../../channel/priority/priority.repository.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';

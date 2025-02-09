@@ -18,7 +18,7 @@ import { ChannelInfo } from '../../../platform/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
-import { ChannelPriorityRepository } from '../../priority/persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../../priority/priority.repository.js';
 import { ChannelEntAppend } from '../persistence/channel.persistence.schema.js';
 import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';

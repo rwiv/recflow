@@ -4,10 +4,10 @@ import { uuid } from '../../../common/data/common.schema.js';
 export const channelEnt = z.object({
   id: uuid,
   platformId: uuid,
-  pid: z.string(),
-  username: z.string(),
+  pid: z.string().nonempty(),
+  username: z.string().nonempty(),
   profileImgUrl: z.string().nullable(),
-  followerCnt: z.number(),
+  followerCnt: z.number().nonnegative(),
   priorityId: uuid,
   followed: z.boolean(),
   description: z.string().nonempty().nullable(),
@@ -16,12 +16,14 @@ export const channelEnt = z.object({
 });
 export type ChannelEnt = z.infer<typeof channelEnt>;
 
-const chEntAppend = channelEnt
+export const chEntAppend = channelEnt
   .omit({ id: true })
   .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
 export type ChannelEntAppend = z.infer<typeof chEntAppend>;
 
-const chEntUpdateForm = channelEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export const chEntUpdateForm = channelEnt
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .partial();
 const chEntUpdate = z.object({
   id: z.string(),
   form: chEntUpdateForm,

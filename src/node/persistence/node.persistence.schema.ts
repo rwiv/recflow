@@ -47,3 +47,12 @@ export type NodeStateEnt = z.infer<typeof nodeStateEnt>;
 
 export const nodeStateEntAppend = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true });
 export type NodeStateEntAppend = z.infer<typeof nodeStateEntAppend>;
+
+export const nodeStateEntUpdateForm = nodeStateEnt
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .partial();
+export const nodeEntUpdate = z.object({
+  id: z.string(),
+  form: nodeStateEntUpdateForm,
+});
+export type NodeStateEntUpdate = z.infer<typeof nodeEntUpdate>;

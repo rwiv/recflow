@@ -23,6 +23,14 @@ export class NodeRepository {
     return oneNullable(await tx.select().from(nodes).where(eq(nodes.id, id)));
   }
 
+  async findByName(name: string, tx: Tx = db) {
+    return oneNullable(await tx.select().from(nodes).where(eq(nodes.name, name)));
+  }
+
+  async findAll(tx: Tx = db) {
+    return tx.select().from(nodes);
+  }
+
   async delete(id: string, tx: Tx = db) {
     await tx.delete(nodes).where(eq(nodes.id, id));
   }

@@ -126,7 +126,7 @@ export const nodes = pgTable(
   'nodes',
   {
     id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 255 }).notNull(),
+    name: varchar({ length: 255 }).notNull().unique(),
     endpoint: text().notNull(),
     weight: integer().notNull(),
     totalCapacity: integer('total_capacity').notNull(),
@@ -139,7 +139,7 @@ export const nodes = pgTable(
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [index('nodes_name_idx').on(t.name)],
+  (t) => [uniqueIndex('nodes_name_idx').on(t.name)],
 );
 
 export const nodeStates = pgTable('node_states', {

@@ -21,6 +21,7 @@ import { NodeStateRepository } from '../../node/persistence/node-state.repositor
 import { NodeWriter } from '../../node/business/node.writer.js';
 import { NodeMapper } from '../../node/business/node.mapper.js';
 import { NodeFinder } from '../../node/business/node.finder.js';
+import { NodeUpdater } from '../../node/business/node.updater.js';
 
 export function getChannelServices() {
   const pfRepo = new PlatformRepository();
@@ -38,6 +39,7 @@ export function getChannelServices() {
   const nodeMapper = new NodeMapper(ngRepo, ntRepo, nsRepo);
   const nodeWriter = new NodeWriter(nodeRepo, ntRepo, nsRepo, pfRepo, nodeMapper);
   const nodeFinder = new NodeFinder(nodeRepo, nodeMapper);
+  const nodeUpdater = new NodeUpdater(nsRepo, pfRepo, nodeFinder);
 
   const chMapper = new ChannelMapper(pfRepo, priRepo, tagQuery);
   const fetcher = getFetcher();
@@ -71,5 +73,6 @@ export function getChannelServices() {
     tagFinder,
     nodeWriter,
     nodeFinder,
+    nodeUpdater,
   };
 }

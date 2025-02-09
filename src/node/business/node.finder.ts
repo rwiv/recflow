@@ -9,9 +9,20 @@ export class NodeFinder {
     private readonly mapper: NodeMapper,
   ) {}
 
-  async findById(id: string) {
+  async findById(id: string, withGroup: boolean = false, withState: boolean = false) {
     const ent = await this.nodeRepo.findById(id);
     if (!ent) return undefined;
-    return this.mapper.map(ent);
+    return this.mapper.map(ent, withGroup, withState);
+  }
+
+  async findByName(name: string, withGroup: boolean = false, withState: boolean = false) {
+    const ent = await this.nodeRepo.findByName(name);
+    if (!ent) return undefined;
+    return this.mapper.map(ent, withGroup, withState);
+  }
+
+  async findAll(withGroup: boolean = false, withState: boolean = false) {
+    const entities = await this.nodeRepo.findAll();
+    return Promise.all(entities.map((ent) => this.mapper.map(ent, withGroup, withState)));
   }
 }

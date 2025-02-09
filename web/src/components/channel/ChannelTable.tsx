@@ -8,7 +8,7 @@ import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.t
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
-import { DEFAULT_PAGINATION_SIZE } from '@/common/consts.ts';
+import { DEFAULT_PAGINATION_SIZE } from '@/common/constants.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';

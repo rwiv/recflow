@@ -5,6 +5,7 @@ import { ChannelBusinessModule } from '../../channel/channel/business/channel.bu
 import { PlatformModule } from '../../platform/platform.module.js';
 import { NodePersistenceModule } from '../../node/persistence/node.persistence.module.js';
 import { NodeBusinessModule } from '../../node/business/node.business.module.js';
+import { DevInitInjector } from './dev-injector.js';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { NodeBusinessModule } from '../../node/business/node.business.module.js'
     NodePersistenceModule,
     NodeBusinessModule,
   ],
-  providers: [AppInitializer],
+  providers: [AppInitializer, DevInitInjector],
   exports: [AppInitializer],
 })
 export class CommonModule {}

@@ -14,7 +14,7 @@ export type NodeGroup = z.infer<typeof nodeGroup>;
 const nodeState = z.object({
   id: z.string(),
   nodeId: z.string(),
-  platformId: z.string(),
+  platformName: z.string(),
   capacity: z.number(),
   assigned: z.number(),
   createdAt: z.string().datetime(),

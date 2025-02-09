@@ -1,5 +1,5 @@
 import { ChannelPriority, ChannelSortType } from '@/common/enum.types.ts';
-import { CHANNELS_QUERY_KEY } from '@/common/consts.ts';
+import { CHANNELS_QUERY_KEY } from '@/common/constants.ts';
 import { ChannelPageStateBuilder } from '@/hooks/ChannelPageStateBuilder.ts';
 
 export class ChannelPageState {

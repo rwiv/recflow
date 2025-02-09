@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
-import { LIVES_QUERY_KEY } from '@/common/consts.ts';
+import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 
 const FormSchema = z.object({

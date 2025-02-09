@@ -1,17 +1,21 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { baseColumnDef, createSelectColumn } from '@/components/common/table/column_utils.tsx';
-import { NodeRecord } from '@/client/node.types.ts';
+import { NodeRecord } from '@/client/node.schema.ts';
 
 export const selectCid = 'select';
 export const nameCid = 'name';
-export const nodeTypeCid = 'type';
+export const typeCid = 'typeName';
 
 const chzzkColumn: ColumnDef<NodeRecord> = {
   accessorKey: 'chzzk',
   header: 'Chzzk',
   cell: ({ row }) => {
-    const wh = row.original;
-    const content = `${wh.chzzkAssignedCnt} (${wh.chzzkCapacity})`;
+    const node = row.original;
+    const state = node.states?.find((s) => s.platformName === 'chzzk');
+    if (!state) {
+      return <div>Not Found</div>;
+    }
+    const content = `${state.assigned} (${state.capacity})`;
     return <div className="m-1">{content}</div>;
   },
 };
@@ -20,16 +24,30 @@ const soopColumn: ColumnDef<NodeRecord> = {
   accessorKey: 'soop',
   header: 'Soop',
   cell: ({ row }) => {
-    const wh = row.original;
-    const content = `${wh.soopAssignedCnt} (${wh.soopCapacity})`;
+    const node = row.original;
+    const state = node.states?.find((s) => s.platformName === 'soop');
+    if (!state) {
+      return <div>Not Found</div>;
+    }
+    const content = `${state.assigned} (${state.capacity})`;
     return <div className="m-1">{content}</div>;
+  },
+};
+
+const group: ColumnDef<NodeRecord> = {
+  accessorKey: 'group',
+  header: 'Group',
+  cell: ({ row }) => {
+    const name = row.original.group?.name;
+    return <div className="m-1">{name}</div>;
   },
 };
 
 export const nodeColumns: ColumnDef<NodeRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
-  baseColumnDef(nodeTypeCid, 'Type', 'uppercase'),
+  group,
+  baseColumnDef(typeCid, 'Type'),
   chzzkColumn,
   soopColumn,
 ];

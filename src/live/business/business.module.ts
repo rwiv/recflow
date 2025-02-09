@@ -13,7 +13,7 @@ import { ChannelBusinessModule } from '../../channel/channel/business/channel.bu
     ConfigModule,
     LivePersistenceModule,
     PlatformModule,
-    NodeModule,
+    NodeModule, // TODO: remove
     LiveEventModule,
     ChannelBusinessModule,
   ],

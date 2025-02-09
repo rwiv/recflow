@@ -10,6 +10,20 @@ export const channelRecord = channelEnt.omit({ platformId: true, priorityId: tru
   tags: z.array(tagRecord).optional(),
 });
 export type ChannelRecord = z.infer<typeof channelRecord>;
+// export interface ChannelRecord {
+//   id: string;
+//   pid: string;
+//   username: string;
+//   profileImgUrl: string | null;
+//   followerCnt: number;
+//   followed: boolean;
+//   description: string | null;
+//   createdAt: Date;
+//   updatedAt: Date;
+//   platformName: PlatformType;
+//   priorityName: string;
+//   tags?: TagRecord[];
+// }
 
 export const chAppend = channelRecord
   .omit({ id: true })

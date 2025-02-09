@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE_SIZE } from '@/common/consts.ts';
+import { DEFAULT_PAGE_SIZE } from '@/common/constants.ts';
 import { ChannelPriority, ChannelSortType } from '@/common/enum.types.ts';
 import { checkType } from '@/lib/union.ts';
 import { CHANNEL_PRIORITIES, CHANNEL_SORT_TYPES } from '@/common/enum.consts.ts';

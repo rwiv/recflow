@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { fetchTags } from '@/client/tag.client.ts';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { Button } from '@/components/ui/button.tsx';

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { TagRecord } from '@/client/tag.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { useRef } from 'react';
-import { TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { detachTag } from '@/client/tag.client.ts';

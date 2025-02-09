@@ -14,7 +14,7 @@ import { KeyboardEventHandler, useState } from 'react';
 import { css } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
-import { TAGS_QUERY_KEY } from '@/common/consts.ts';
+import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { TagRecord } from '@/client/tag.types.ts';
 import { sortedTags } from '@/common/utils.ts';
 

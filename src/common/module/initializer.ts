@@ -22,11 +22,9 @@ export class AppInitializer {
   constructor(
     private readonly pfRepo: PlatformRepository,
     private readonly priRepo: ChannelPriorityRepository,
-    private readonly chWriter: ChannelWriter,
     private readonly ntRepo: NodeTypeRepository,
     private readonly ngRepo: NodeGroupRepository,
-    private readonly nodeWriter: NodeWriter,
-    private readonly fetcher: PlatformFetcher,
+    private readonly devInjector: DevInitInjector,
   ) {}
 
   async initProd() {
@@ -36,8 +34,8 @@ export class AppInitializer {
   async initDev() {
     await dropAll();
     await this.checkDb();
-    const injector = new DevInitInjector(this.chWriter, this.nodeWriter, this.fetcher);
-    await injector.insertTestChannels();
+    await this.devInjector.insertTestChannels();
+    await this.devInjector.insertTestNodes();
   }
 
   async checkDb() {

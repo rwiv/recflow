@@ -3,7 +3,6 @@ import { NodeFinder } from '../business/node.finder.js';
 import { NodeWriter } from '../business/node.writer.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { nodeAppend, NodeAppend } from '../business/node.business.schema.js';
-import { NodeGroupEnt } from '../persistence/node.persistence.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/nodes')
@@ -15,7 +14,12 @@ export class NodeController {
 
   @Get('/')
   nodes() {
-    return this.finder.findAll();
+    return this.finder.findAll(true, true);
+  }
+
+  @Get('/groups')
+  groups() {
+    return this.finder.findGroups();
   }
 
   @Post('/')

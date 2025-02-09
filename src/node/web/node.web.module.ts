@@ -4,6 +4,6 @@ import { NodeController } from './node.controller.js';
 
 @Module({
   imports: [NodeBusinessModule],
-  providers: [NodeController],
+  controllers: [NodeController],
 })
 export class NodeWebModule {}

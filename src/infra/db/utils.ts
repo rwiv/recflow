@@ -9,9 +9,12 @@ import {
   nodeGroups,
   nodes,
   nodeStates,
+  lives,
 } from './schema.js';
 
 export async function dropAll() {
+  await db.delete(lives);
+
   await db.delete(channelsToTags);
   await db.delete(channelTags);
   await db.delete(channels);

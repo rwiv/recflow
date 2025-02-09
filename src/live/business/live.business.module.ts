@@ -6,6 +6,7 @@ import { PlatformModule } from '../../platform/platform.module.js';
 import { LiveEventModule } from '../event/event.module.js';
 import { ChannelBusinessModule } from '../../channel/channel/business/channel.business.module.js';
 import { NodeBusinessModule } from '../../node/business/node.business.module.js';
+import { LiveWriter } from './live.writer.js';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { NodeBusinessModule } from '../../node/business/node.business.module.js'
     LiveEventModule,
     ChannelBusinessModule,
   ],
-  providers: [LiveService],
-  exports: [LiveService],
+  providers: [LiveService, LiveWriter],
+  exports: [LiveService, LiveWriter],
 })
 export class LiveBusinessModule {}

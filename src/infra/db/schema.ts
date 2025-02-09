@@ -171,4 +171,6 @@ export const lives = pgTable('lives', {
   viewCnt: integer('view_cnt').notNull(),
   adult: boolean().notNull(),
   raw: text().notNull(),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at'),
 });

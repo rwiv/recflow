@@ -38,13 +38,13 @@ export class LiveService {
     private readonly chFinder: ChannelFinder,
   ) {}
 
-  async get(id: string, opts: FindOptions = {}) {
+  async get(pid: string, opts: FindOptions = {}) {
     let includeDeleted = opts.withDeleted;
     if (includeDeleted === undefined) {
       includeDeleted = false;
     }
 
-    const value = await this.liveMap.get(id);
+    const value = await this.liveMap.get(pid);
     if (!value) return undefined;
     if (value.isDeleted && !includeDeleted) return undefined;
     return value;

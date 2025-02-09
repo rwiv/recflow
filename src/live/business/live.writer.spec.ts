@@ -1,0 +1,41 @@
+import { describe, it, beforeEach, afterAll } from 'vitest';
+import { createTestApp } from '../../common/helpers/helper.app.js';
+import { AppInitializer } from '../../common/module/initializer.js';
+import { dropAll } from '../../infra/db/utils.js';
+import { LiveWriter } from './live.writer.js';
+import { mockLiveInfo } from '../../common/helpers/live.mocks.js';
+import { NodeWriter } from '../../node/business/node.writer.js';
+import { notNull } from '../../utils/null.js';
+import { mockNode } from '../../common/helpers/node.mocks.js';
+import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
+import { mockChannel } from '../../common/helpers/channel.mocks.js';
+import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
+
+const app = await createTestApp();
+const init = app.get(AppInitializer);
+const ngRepo = app.get(NodeGroupRepository);
+const nodeWriter = app.get(NodeWriter);
+const liveWriter = app.get(LiveWriter);
+const chWriter = app.get(ChannelWriter);
+
+describe('ChannelService', async () => {
+  beforeEach(async () => {
+    await dropAll();
+    await init.checkDb();
+  });
+
+  afterAll(async () => {
+    await dropAll();
+  });
+
+  it('create', async () => {
+    const ng = notNull(await ngRepo.findByName('main'));
+    const node = await nodeWriter.create(mockNode(1, ng.id), true);
+    const ch = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    const live1 = await liveWriter.create(mockLiveInfo(1, ch.pid), node.id);
+    console.log(live1);
+
+    const live2 = await liveWriter.update(live1.id, live1.channelId, mockLiveInfo(2, ch.pid));
+    console.log(live2);
+  });
+});

@@ -13,10 +13,10 @@ export class NodeSelector {
 
   async match(channel: ChannelRecord) {
     const pfId = channel.platform.id;
-    let curTier = channel.priority.tier;
-    let nodes: NodeRecord[] = [];
 
-    // search for nodes
+    // search for available nodes
+    let nodes: NodeRecord[] = [];
+    let curTier = channel.priority.tier;
     while (true) {
       if (curTier > LIMIT_COUNT) {
         throw new FatalError('Node search limit exceeded');

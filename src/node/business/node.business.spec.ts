@@ -69,7 +69,7 @@ async function print() {
   for (const node of await nodeFinder.findAll(false, true)) {
     const states = notNull(node.states);
     for (const state of states) {
-      const pf = notNull(await pfRepo.findById(state.platformId));
+      const pf = notNull(await pfRepo.findById(state.platform.id));
       console.log(`${node.name} ${pf.name} ${state.assigned}`);
     }
   }

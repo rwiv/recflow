@@ -23,11 +23,11 @@ export class ChzzkLiveFilter implements LiveFilter {
     return (await Promise.all(promises)).filter((info) => info !== null);
   }
 
-  private async filter(live: LiveInfo): Promise<LiveInfo | null> {
-    if (live.type !== 'chzzk') {
+  private async filter(liveInfo: LiveInfo): Promise<LiveInfo | null> {
+    if (liveInfo.type !== 'chzzk') {
       throw new EnumCheckError('Invalid live type');
     }
-    const content = live.content as ChzzkLiveInfo;
+    const content = liveInfo.content as ChzzkLiveInfo;
     // ignore
     for (const ignoredCategory of this.query.excludedChzzkCates) {
       if (content.liveCategory === ignoredCategory) return null;
@@ -40,31 +40,34 @@ export class ChzzkLiveFilter implements LiveFilter {
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidOne(live.channelId, 'chzzk');
+    const channel = await this.chFinder.findByPidOne(liveInfo.pid, 'chzzk');
     if (channel) {
       const ng = await this.ngRepo.findByTier(channel.priority.tier);
       if (ng) {
-        return live;
+        return liveInfo;
       } else {
         return null;
       }
     }
 
     // by user count
-    if (live.viewCnt >= this.query.chzzkMinUserCnt) {
-      return this.checkFollowerCnt(live, this.query.chzzkMinFollowerCnt);
+    if (liveInfo.viewCnt >= this.query.chzzkMinUserCnt) {
+      return this.checkFollowerCnt(liveInfo, this.query.chzzkMinFollowerCnt);
     }
 
     return null;
   }
 
-  private async checkFollowerCnt(live: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel('chzzk', live.channelId, false);
+  private async checkFollowerCnt(
+    liveInfo: LiveInfo,
+    minFollowerCnt: number,
+  ): Promise<LiveInfo | null> {
+    const channel = await this.fetcher.fetchChannel('chzzk', liveInfo.pid, false);
     if (!channel) {
       return null;
     }
     if (channel.followerCnt >= minFollowerCnt) {
-      return live;
+      return liveInfo;
     } else {
       return null;
     }

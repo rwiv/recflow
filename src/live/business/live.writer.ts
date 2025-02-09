@@ -8,6 +8,8 @@ import { LiveEntAppend, LiveEntUpdate } from '../persistence/live.persistence.sc
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { oneNullable } from '../../utils/list.js';
 import { LiveMapper } from './live.mapper.js';
+import { LiveUpdate } from './live.business.schema.js';
+import { platformRecord } from '../../platform/platform.schema.js';
 
 @Injectable()
 export class LiveWriter {
@@ -19,18 +21,11 @@ export class LiveWriter {
     private readonly mapper: LiveMapper,
   ) {}
 
-  // TODO: remove
-  async get(pid: string) {
-    const ent = oneNullable(await this.liveRepo.findByPid(pid));
-    if (!ent) return undefined;
-    return this.mapper.map(ent);
-  }
-
-  async create(live: LiveInfo, nodeId: string) {
+  async createByLive(live: LiveInfo, nodeId: string) {
     const platform = await this.pfRepo.findByName(live.type);
     if (!platform) throw new NotFoundError('Not Found Platform');
-    const channel = oneNullable(await this.channelFinder.findByPid(live.channelId));
-    if (!channel) throw new NotFoundError('Not Found Channel');
+    const channel = oneNullable(await this.channelFinder.findByPid(live.pid));
+    if (channel === undefined) throw new NotFoundError('Not Found Channel');
     const node = await this.nodeFinder.findById(nodeId);
     if (!node) throw new NotFoundError('Not Found Node');
     const req: LiveEntAppend = {
@@ -40,22 +35,27 @@ export class LiveWriter {
       channelId: channel.id,
       nodeId: node.id,
     };
-    return this.liveRepo.create(req);
+    const ent = await this.liveRepo.create(req);
+    return { ...ent, channel, platform: platformRecord.parse(platform), node };
   }
 
   async delete(id: string) {
     return this.liveRepo.delete(id);
   }
 
-  async update(id: string, channelId: string, live: LiveInfo) {
+  async updateByLive(id: string, live: LiveInfo) {
     const req: LiveEntUpdate = {
       id,
       form: {
         ...live,
-        channelId,
         raw: JSON.stringify(live),
       },
     };
-    return this.liveRepo.update(req);
+    const ent = await this.liveRepo.update(req);
+    return this.mapper.map(ent);
+  }
+
+  async update(update: LiveUpdate) {
+    return this.mapper.map(await this.liveRepo.update(update));
   }
 }

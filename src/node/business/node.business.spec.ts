@@ -40,25 +40,28 @@ describe('ChannelService', async () => {
   });
 
   it('update', async () => {
+    const chzzk = notNull(await pfRepo.findByName('chzzk'));
+    const soop = notNull(await pfRepo.findByName('soop'));
+    const twitch = notNull(await pfRepo.findByName('twitch'));
     const ng = notNull(await ngRepo.findByName('main'));
     const node1 = await nodeWriter.create(mockNode(1, ng.id));
     const node2 = await nodeWriter.create(mockNode(2, ng.id));
 
     await Promise.all([
-      nodeUpdater.updateCnt(node1.id, 'chzzk', 1),
-      nodeUpdater.updateCnt(node2.id, 'soop', 1),
-      nodeUpdater.updateCnt(node2.id, 'soop', 1),
-      nodeUpdater.updateCnt(node2.id, 'soop', 1),
-      nodeUpdater.updateCnt(node2.id, 'soop', -1),
+      nodeUpdater.updateCnt(node1.id, chzzk.id, 1),
+      nodeUpdater.updateCnt(node2.id, soop.id, 1),
+      nodeUpdater.updateCnt(node2.id, soop.id, 1),
+      nodeUpdater.updateCnt(node2.id, soop.id, 1),
+      nodeUpdater.updateCnt(node2.id, soop.id, -1),
     ]);
     await print();
 
     const syncForm: SyncForm = [
-      { nodeId: node1.id, pfName: 'twitch' },
-      { nodeId: node1.id, pfName: 'twitch' },
-      { nodeId: node1.id, pfName: 'soop' },
-      { nodeId: node2.id, pfName: 'chzzk' },
-      { nodeId: node2.id, pfName: 'twitch' },
+      { nodeId: node1.id, pfId: twitch.id },
+      { nodeId: node1.id, pfId: twitch.id },
+      { nodeId: node1.id, pfId: soop.id },
+      { nodeId: node2.id, pfId: chzzk.id },
+      { nodeId: node2.id, pfId: twitch.id },
     ];
     await nodeUpdater.synchronize(syncForm);
     // await print();

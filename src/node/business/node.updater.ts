@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { NodeStateRepository } from '../persistence/node-state.repository.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
-import { PlatformType, platformTypeEnum } from '../../platform/platform.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeStateEntUpdate } from '../persistence/node.persistence.schema.js';
@@ -14,7 +12,7 @@ import { uuid } from '../../common/data/common.schema.js';
 export const syncForm = z.array(
   z.object({
     nodeId: uuid,
-    pfName: platformTypeEnum,
+    pfId: uuid,
   }),
 );
 export type SyncForm = z.infer<typeof syncForm>;
@@ -23,17 +21,10 @@ export type SyncForm = z.infer<typeof syncForm>;
 export class NodeUpdater {
   constructor(
     private readonly stateRepo: NodeStateRepository,
-    private readonly pfRepo: PlatformRepository,
     private readonly finder: NodeFinder,
   ) {}
 
-  async updateCnt(nodeId: string, pfName: PlatformType, num: 1 | -1, tx: Tx = db) {
-    const pf = await this.pfRepo.findByName(pfName);
-    if (!pf) throw new NotFoundError(`Platform ${pfName} not found`);
-    return this.updateCntWithPfId(nodeId, pf.id, num, tx);
-  }
-
-  async updateCntWithPfId(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
+  async updateCnt(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       const states = await this.stateRepo.findByNodeIdAndPlatformIdForUpdate(nodeId, pfId, txx);
       if (!states) {
@@ -61,7 +52,7 @@ export class NodeUpdater {
       for (const live of liveStates) {
         const node = await this.finder.findById(live.nodeId);
         if (!node) throw new NotFoundError(`Node ${live.nodeId} not found`);
-        await this.updateCnt(node.id, live.pfName, 1, tx);
+        await this.updateCnt(node.id, live.pfId, 1, tx);
       }
     });
   }

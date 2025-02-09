@@ -1,8 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import { AsyncMap } from '../../infra/storage/interface.js';
-import { LIVE_MAP } from '../persistence/persistence.module.js';
-import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/types.js';
@@ -17,49 +14,36 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeUpdater } from '../../node/business/node.updater.js';
 import { LiveWriter } from './live.writer.js';
+import { LiveRecord, LiveUpdate } from './live.business.schema.js';
+import { LiveFinder } from './live.finder.js';
 
 export interface DeleteOptions {
   purge?: boolean;
   exitCmd?: ExitCmd;
 }
 
-export interface FindOptions {
-  withDeleted?: boolean;
-}
-
 @Injectable()
 export class LiveService {
   constructor(
-    @Inject(LIVE_MAP) private readonly liveMap: AsyncMap<string, LiveRecord>,
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
     private readonly nodeUpdater: NodeUpdater,
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
-    // private readonly liveMap: LiveWriter,
+    private readonly liveWriter: LiveWriter,
+    private readonly liveFinder: LiveFinder,
   ) {}
 
-  async get(pid: string, opts: FindOptions = {}) {
-    let includeDeleted = opts.withDeleted;
-    if (includeDeleted === undefined) {
-      includeDeleted = false;
-    }
-
-    const value = await this.liveMap.get(pid);
-    if (!value) return undefined;
-    if (value.isDeleted && !includeDeleted) return undefined;
-    return value;
-  }
-
-  async add(live: LiveInfo, channelInfo: ChannelInfo): Promise<LiveRecord> {
-    const exists = await this.get(live.channelId);
+  async add(liveInfo: LiveInfo, channelInfo: ChannelInfo) {
+    const exists = await this.liveFinder.findByPid(liveInfo.pid);
     if (exists && !exists.isDeleted) {
-      throw new ConflictError(`Already exists: ${live.channelId}`);
+      throw new ConflictError(`Already exists: ${liveInfo.pid}`);
     }
-    let channel = await this.chFinder.findByPidOne(live.channelId, live.type);
+    let channel = await this.chFinder.findByPidOne(liveInfo.pid, liveInfo.type);
     if (!channel) {
       const append: ChannelAppendWithInfo = {
+        // TODO: update
         priorityName: CHANNEL_PRIORIES_VALUE_MAP.none,
         followed: false,
       };
@@ -67,34 +51,15 @@ export class LiveService {
     }
     const node = await this.nodeSelector.match(channel);
     if (node === null) {
-      throw new FatalError(`No node matched for ${live.channelId}`);
+      throw new FatalError(`No node matched for ${liveInfo.pid}`);
     }
-    const record = {
-      ...live,
-      savedAt: new Date().toISOString(),
-      updatedAt: undefined,
-      deletedAt: undefined,
-      isDeleted: false,
-      assignedWebhookName: node.id,
-    };
-    await this.liveMap.set(live.channelId, record);
-    await this.nodeUpdater.updateCntWithPfId(node.id, channel.platform.id, 1);
-    await this.listener.onCreate(record, node.endpoint);
-    return record;
+    const created = await this.liveWriter.createByLive(liveInfo, node.id);
+    await this.nodeUpdater.updateCnt(node.id, channel.platform.id, 1);
+    await this.listener.onCreate(created, node.endpoint);
+    return created;
   }
 
-  async update(newRecord: LiveRecord) {
-    const exists = await this.get(newRecord.channelId, { withDeleted: true });
-    if (!exists) throw Error(`Not found liveRecord: ${newRecord.channelId}`);
-    if (exists.assignedWebhookName !== newRecord.assignedWebhookName) {
-      await this.nodeUpdater.updateCnt(exists.assignedWebhookName, exists.type, -1);
-      await this.nodeUpdater.updateCnt(newRecord.assignedWebhookName, newRecord.type, 1);
-    }
-    await this.liveMap.set(newRecord.channelId, newRecord);
-    return exists;
-  }
-
-  async delete(id: string, opts: DeleteOptions = {}) {
+  async delete(recordId: string, opts: DeleteOptions = {}) {
     let exitCmd = opts.exitCmd;
     if (exitCmd === undefined) {
       exitCmd = 'delete';
@@ -104,20 +69,22 @@ export class LiveService {
       purge = false;
     }
 
-    const record = await this.get(id, { withDeleted: true });
-    if (!record) throw new NotFoundError(`Not found liveRecord: ${id}`);
+    const record = await this.liveFinder.findById(recordId, { withDeleted: true });
+    if (!record) throw new NotFoundError(`Not found liveRecord: ${recordId}`);
 
     if (!purge) {
-      if (record.isDeleted) throw new ConflictError(`Already deleted: ${id}`);
-      record.isDeleted = true;
-      record.deletedAt = new Date().toISOString();
-      await this.liveMap.set(id, record);
-      await this.nodeUpdater.updateCnt(record.assignedWebhookName, record.type, -1);
+      if (record.isDeleted) throw new ConflictError(`Already deleted: ${recordId}`);
+      const update: LiveUpdate = {
+        id: record.id,
+        form: { isDeleted: true, deletedAt: new Date() },
+      };
+      await this.liveWriter.update(update);
+      await this.nodeUpdater.updateCnt(record.nodeId, record.platform.id, -1);
     } else {
       if (!record.isDeleted) {
-        await this.nodeUpdater.updateCnt(record.assignedWebhookName, record.type, -1);
+        await this.nodeUpdater.updateCnt(record.nodeId, record.platform.id, -1);
       }
-      await this.liveMap.delete(id);
+      await this.liveWriter.delete(recordId);
     }
 
     await this.listener.onDelete(record, exitCmd);
@@ -126,49 +93,30 @@ export class LiveService {
   }
 
   async purgeAll() {
-    const records = await this.findAllDeleted();
-    const promises = records.map((it) => this.delete(it.channelId, { purge: true }));
+    const records = await this.liveFinder.findAllDeleted();
+    const promises = records.map((record) => this.delete(record.id, { purge: true }));
     return Promise.all(promises);
   }
 
-  async findAll() {
-    return this.liveMap.values();
-  }
-
-  async findAllActives() {
-    return (await this.findAll()).filter((it) => !it.isDeleted);
-  }
-
-  async findAllDeleted() {
-    return (await this.findAll()).filter((it) => it.isDeleted);
-  }
-
   async refreshAllLives() {
-    const records = await this.findAllActives();
-    const entries = records.map((it) => [it.channelId, it] as const);
-    const recordMap = new Map<string, LiveRecord>(entries);
+    const records = await this.liveFinder.findAllActives();
+    const entries = records.map((it) => [it.channel.pid, it] as const);
+    const liveMap = new Map<string, LiveRecord>(entries);
 
     const fetchPromises = records.map(async (live) => {
-      return this.fetcher.fetchChannel(live.type, live.channelId, true);
+      return this.fetcher.fetchChannel(live.platform.name, live.channel.pid, true);
     });
     const newChannels = (await Promise.all(fetchPromises)).filter((it) => it !== null);
 
     const promises = newChannels.map(async (channel) => {
-      const record = recordMap.get(channel.pid);
+      const record = liveMap.get(channel.pid);
       if (!record) throw Error(`Record not found for ${channel.pid}`);
       // 방송이 종료되었으나 cleanup cycle 이전에 refresh가 진행되면
       // record는 active이나 fetchedChannel.liveInfo는 null이 될 수 있다.
       if (!channel.liveInfo) {
         return;
       }
-      await this.update({
-        ...channel.liveInfo,
-        savedAt: record.savedAt,
-        updatedAt: new Date().toISOString(),
-        deletedAt: record.deletedAt,
-        isDeleted: record.isDeleted,
-        assignedWebhookName: record.assignedWebhookName,
-      });
+      await this.liveWriter.updateByLive(record.id, channel.liveInfo);
     });
     return Promise.all(promises);
   }

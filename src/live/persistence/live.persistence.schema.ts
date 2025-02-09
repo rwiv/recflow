@@ -13,6 +13,7 @@ export const liveEnt = z.object({
   isDeleted: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
+  deletedAt: z.date().nullable(),
 });
 export type LiveEnt = z.infer<typeof liveEnt>;
 
@@ -21,6 +22,7 @@ export const liveEntAppend = liveEnt.omit({
   isDeleted: true,
   createdAt: true,
   updatedAt: true,
+  deletedAt: true,
 });
 export type LiveEntAppend = z.infer<typeof liveEntAppend>;
 

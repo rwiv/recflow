@@ -22,37 +22,40 @@ export class SoopLiveFilter implements LiveFilter {
     return (await Promise.all(promises)).filter((info) => info !== null);
   }
 
-  async filter(live: LiveInfo): Promise<LiveInfo | null> {
-    if (live.type !== 'soop') {
+  async filter(liveInfo: LiveInfo): Promise<LiveInfo | null> {
+    if (liveInfo.type !== 'soop') {
       throw new EnumCheckError('Invalid live type');
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidOne(live.channelId, 'soop');
+    const channel = await this.chFinder.findByPidOne(liveInfo.pid, 'soop');
     if (channel) {
       const ng = await this.ngRepo.findByTier(channel.priority.tier);
       if (ng) {
-        return live;
+        return liveInfo;
       } else {
         return null;
       }
     }
 
     // by user count
-    if (live.viewCnt >= this.query.soopMinUserCnt) {
-      return this.checkFollowerCnt(live, this.query.soopMinFollowerCnt);
+    if (liveInfo.viewCnt >= this.query.soopMinUserCnt) {
+      return this.checkFollowerCnt(liveInfo, this.query.soopMinFollowerCnt);
     }
 
     return null;
   }
 
-  private async checkFollowerCnt(live: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel('soop', live.channelId, false);
+  private async checkFollowerCnt(
+    liveInfo: LiveInfo,
+    minFollowerCnt: number,
+  ): Promise<LiveInfo | null> {
+    const channel = await this.fetcher.fetchChannel('soop', liveInfo.pid, false);
     if (channel === null) {
       return null;
     }
     if (channel.followerCnt >= minFollowerCnt) {
-      return live;
+      return liveInfo;
     } else {
       return null;
     }

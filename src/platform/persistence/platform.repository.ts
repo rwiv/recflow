@@ -6,6 +6,7 @@ import { platforms } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../utils/uuid.js';
 import { platformEnt, PlatformEnt } from './platform.schema.js';
+import { PlatformType } from '../platform.schema.js';
 
 @Injectable()
 export class PlatformRepository {
@@ -22,7 +23,7 @@ export class PlatformRepository {
     return oneNullable(await tx.select().from(platforms).where(eq(platforms.id, platformId)));
   }
 
-  async findByName(platformName: string, tx: Tx = db): Promise<PlatformEnt | undefined> {
+  async findByName(platformName: PlatformType, tx: Tx = db): Promise<PlatformEnt | undefined> {
     return oneNullable(await tx.select().from(platforms).where(eq(platforms.name, platformName)));
   }
 }

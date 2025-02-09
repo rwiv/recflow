@@ -17,6 +17,7 @@ export class LiveRepository {
       isDeleted: false,
       createdAt: new Date(),
       updatedAt: null,
+      deletedAt: null,
     };
     return oneNotNull(await tx.insert(lives).values(liveEnt.parse(ent)).returning());
   }
@@ -25,8 +26,16 @@ export class LiveRepository {
     await tx.delete(lives).where(eq(lives.id, id));
   }
 
+  findAll(tx: Tx = db) {
+    return tx.select().from(lives);
+  }
+
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(lives).where(eq(lives.id, id)));
+  }
+
+  async findByIsDeleted(isDeleted: boolean, tx: Tx = db) {
+    return tx.select().from(lives).where(eq(lives.isDeleted, isDeleted));
   }
 
   async findByPid(pid: string, tx: Tx = db) {

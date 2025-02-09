@@ -24,13 +24,13 @@ export class PlatformFetcher {
 
   fetchChannel(
     platform: PlatformType,
-    uid: string,
+    pid: string,
     hasLiveInfo: boolean,
   ): Promise<ChannelInfo | null> {
     if (platform === 'chzzk') {
-      return this.chzzkFetcher.fetchChannel(uid, hasLiveInfo);
+      return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);
     } else if (platform === 'soop') {
-      return this.soopFetcher.fetchChannel(uid, hasLiveInfo);
+      return this.soopFetcher.fetchChannel(pid, hasLiveInfo);
     } else {
       throw Error(`Invalid PlatformType: ${platform}`);
     }

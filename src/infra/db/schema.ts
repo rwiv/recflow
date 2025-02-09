@@ -174,4 +174,5 @@ export const lives = pgTable('lives', {
   isDeleted: boolean().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
+  deletedAt: timestamp('deleted_at'),
 });

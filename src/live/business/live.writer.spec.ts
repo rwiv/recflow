@@ -18,7 +18,7 @@ const nodeWriter = app.get(NodeWriter);
 const liveWriter = app.get(LiveWriter);
 const chWriter = app.get(ChannelWriter);
 
-describe('ChannelService', async () => {
+describe('ChannelService', () => {
   beforeEach(async () => {
     await dropAll();
     await init.checkDb();
@@ -32,10 +32,10 @@ describe('ChannelService', async () => {
     const ng = notNull(await ngRepo.findByName('main'));
     const node = await nodeWriter.create(mockNode(1, ng.id), true);
     const ch = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
-    const live1 = await liveWriter.create(mockLiveInfo(1, ch.pid), node.id);
+    const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), node.id);
     console.log(live1);
 
-    const live2 = await liveWriter.update(live1.id, live1.channelId, mockLiveInfo(2, ch.pid));
+    const live2 = await liveWriter.updateByLive(live1.id, mockLiveInfo(2, ch.pid));
     console.log(live2);
   });
 });

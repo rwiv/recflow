@@ -8,6 +8,7 @@ import { ChannelFinder } from '../../../channel/channel/business/channel.finder.
 import { ChannelRecord } from '../../../channel/channel/business/channel.business.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
+import { LiveFinder } from '../../business/live.finder.js';
 
 export class LiveAppender extends Synchronizer {
   constructor(
@@ -15,6 +16,7 @@ export class LiveAppender extends Synchronizer {
     private readonly fetcher: PlatformFetcher,
     private readonly liveService: LiveService,
     private readonly chFinder: ChannelFinder,
+    private readonly liveFinder: LiveFinder,
     private readonly filter: LiveFilter,
     eh: ScheduleErrorHandler,
   ) {
@@ -35,7 +37,7 @@ export class LiveAppender extends Synchronizer {
   }
 
   private async processFollowedChannel(ch: ChannelRecord) {
-    if (await this.liveService.get(ch.pid, { withDeleted: true })) return null;
+    if (await this.liveFinder.findByPid(ch.pid, { withDeleted: true })) return null;
     const chanInfo = await this.fetcher.fetchChannel(this.platform, ch.pid, false);
     if (!chanInfo || !chanInfo.openLive) return null;
 
@@ -50,8 +52,8 @@ export class LiveAppender extends Synchronizer {
    * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
    */
   private async processQueriedLive(newInfo: LiveInfo) {
-    if (await this.liveService.get(newInfo.channelId, { withDeleted: true })) return null;
-    const channel = await this.fetcher.fetchChannel(this.platform, newInfo.channelId, false);
+    if (await this.liveFinder.findByPid(newInfo.pid, { withDeleted: true })) return null;
+    const channel = await this.fetcher.fetchChannel(this.platform, newInfo.pid, false);
     if (!channel?.openLive) return null;
     await this.liveService.add(newInfo, channel);
   }

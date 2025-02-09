@@ -1,9 +1,9 @@
 import { ChzzkLiveInfo } from '../../platform/raw/chzzk.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 
-export function mockChzzkLiveInfo(n: number, channelId: string): ChzzkLiveInfo {
+export function mockChzzkLiveInfo(n: number, pid: string): ChzzkLiveInfo {
   return {
-    channelId,
+    channelId: pid,
     channelImageUrl: 'https://ch1.com',
     channelName: `ch${n}`,
     liveId: 1,
@@ -20,16 +20,16 @@ export function mockChzzkLiveInfo(n: number, channelId: string): ChzzkLiveInfo {
   };
 }
 
-export function mockLiveInfo(n: number, channelId: string): LiveInfo {
+export function mockLiveInfo(n: number, pid: string): LiveInfo {
   return {
     type: 'chzzk',
-    channelId,
+    pid,
     channelName: `ch${n}`,
     liveId: 1,
     liveTitle: `live${n}`,
     viewCnt: 1,
     adult: false,
     openDate: '2021-01-01',
-    content: mockChzzkLiveInfo(n, channelId),
+    content: mockChzzkLiveInfo(n, pid),
   };
 }

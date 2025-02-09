@@ -5,7 +5,7 @@ import { parseInteger } from '../../utils/number.js';
 
 export interface LiveInfo {
   type: PlatformType;
-  channelId: string;
+  pid: string;
   channelName: string;
   liveId: number;
   liveTitle: string;
@@ -18,7 +18,7 @@ export interface LiveInfo {
 export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
   return {
     type: 'chzzk',
-    channelId: info.channelId,
+    pid: info.channelId,
     channelName: info.channelName,
     liveId: info.liveId,
     liveTitle: info.liveTitle,
@@ -32,7 +32,7 @@ export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
 export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
   return {
     type: 'soop',
-    channelId: info.userId,
+    pid: info.userId,
     channelName: info.userNick,
     liveId: parseInteger(info.broadNo),
     liveTitle: info.broadTitle,

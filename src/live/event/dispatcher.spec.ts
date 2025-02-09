@@ -11,10 +11,10 @@ const conf = readTestConfSync();
 
 it('test cancel', async () => {
   await amqp.init();
-  await dispatcher.exit('cancel', 'chzzk', conf.channelId);
+  await dispatcher.exit('cancel', 'chzzk', conf.pid);
 });
 
 it('test finish', async () => {
   await amqp.init();
-  await dispatcher.exit('finish', 'chzzk', conf.channelId);
+  await dispatcher.exit('finish', 'chzzk', conf.pid);
 });

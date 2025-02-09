@@ -53,7 +53,7 @@ export class DevInitInjector {
   async writeTestChannelInfos() {
     const conf = await readTestConf();
     const infos = [];
-    for (const id of conf.channelIds) {
+    for (const id of conf.pids) {
       infos.push(await this.fetcher.fetchChannel('chzzk', id, false));
     }
     await fs.promises.writeFile(this.testChannelFilePath, JSON.stringify(infos, null, 2));

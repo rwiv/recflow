@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveService } from './live.service.js';
 import { LivePersistenceModule } from '../persistence/persistence.module.js';
 import { PlatformModule } from '../../platform/platform.module.js';
@@ -8,17 +7,17 @@ import { ChannelBusinessModule } from '../../channel/channel/business/channel.bu
 import { NodeBusinessModule } from '../../node/business/node.business.module.js';
 import { LiveWriter } from './live.writer.js';
 import { LiveMapper } from './live.mapper.js';
+import { LiveFinder } from './live.finder.js';
 
 @Module({
   imports: [
-    ConfigModule,
     LivePersistenceModule,
-    PlatformModule,
-    NodeBusinessModule,
-    LiveEventModule,
     ChannelBusinessModule,
+    NodeBusinessModule,
+    PlatformModule,
+    LiveEventModule,
   ],
-  providers: [LiveService, LiveWriter, LiveMapper],
-  exports: [LiveService, LiveWriter],
+  providers: [LiveService, LiveWriter, LiveFinder, LiveMapper],
+  exports: [LiveService, LiveWriter, LiveFinder],
 })
 export class LiveBusinessModule {}

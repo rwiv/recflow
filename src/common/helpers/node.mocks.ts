@@ -9,7 +9,7 @@ export function mockNode(n: number, groupId: string): NodeAppend {
     typeName: 'worker',
     groupId,
     capacities: [
-      { platformName : 'chzzk', capacity: 10 },
+      { platformName: 'chzzk', capacity: 10 },
       { platformName: 'soop', capacity: 5 },
       { platformName: 'twitch', capacity: 5 },
     ],

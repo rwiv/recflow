@@ -4,14 +4,11 @@ import { channelEnt } from '../persistence/channel.persistence.schema.js';
 import { platformTypeEnum } from '../../../platform/platform.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
 
-export const channelRecord = channelEnt
-  .omit({ platformId: true, priorityId: true })
-  .extend({
-    platformName: platformTypeEnum,
-    priorityName: z.string().nonempty(),
-    tags: z.array(tagRecord),
-  })
-  .partial({ tags: true });
+export const channelRecord = channelEnt.omit({ platformId: true, priorityId: true }).extend({
+  platformName: platformTypeEnum,
+  priorityName: z.string().nonempty(),
+  tags: z.array(tagRecord).optional(),
+});
 export type ChannelRecord = z.infer<typeof channelRecord>;
 
 export const chAppend = channelRecord
@@ -27,8 +24,7 @@ export const chAppendWithFetch = chAppend
     followed: true,
     description: true,
   })
-  .extend({ tagNames: z.array(z.string()) })
-  .partial({ tagNames: true });
+  .extend({ tagNames: z.array(z.string().nonempty()).optional() });
 export type ChannelAppendWithFetch = z.infer<typeof chAppendWithFetch>;
 
 const chAppendWithInfo = chAppendWithFetch.pick({

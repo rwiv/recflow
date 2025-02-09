@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { NodeRepository } from '../persistence/node.repository.js';
 import { NodeTypeRepository } from '../persistence/node-type.repository.js';
 import { NodeStateRepository } from '../persistence/node-state.repository.js';
-import { NodeAppend, NodeRecord } from './node.business.schema.js';
+import { NodeAppend, NodeRecord, NodeState } from './node.business.schema.js';
 import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import {
-  NodeEntAppend,
-  NodeStateEnt,
-  NodeStateEntAppend,
-} from '../persistence/node.persistence.schema.js';
+import { NodeEntAppend, NodeStateEntAppend } from '../persistence/node.persistence.schema.js';
 import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
@@ -31,7 +27,7 @@ export class NodeWriter {
     return db.transaction(async (tx) => {
       const entAppend: NodeEntAppend = { ...append, typeId: nodeType.id };
       const nodeEnt = await this.nodeRepo.create(entAppend, tx);
-      const states: NodeStateEnt[] = [];
+      const states: NodeState[] = [];
       for (const platform of await this.pfRepo.findAll(tx)) {
         const map = new Map(append.capacities.map((c) => [c.platformName, c.capacity]));
         const capacity = map.get(platform.name);

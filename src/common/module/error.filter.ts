@@ -2,6 +2,13 @@ import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Response } from 'express';
 import { HttpErrorResolver } from '../../utils/errors/resolver.http.js';
 
+export interface ErrorResponse {
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  code?: string;
+}
+
 @Catch(Error)
 export class HttpErrorFilter implements ExceptionFilter {
   readonly resolver = new HttpErrorResolver();
@@ -11,10 +18,14 @@ export class HttpErrorFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const err = this.resolver.resolve(raw);
 
-    response.status(err.status).json({
+    let body: ErrorResponse = {
       statusCode: err.status,
       message: err.message,
       timestamp: new Date().toISOString(),
-    });
+    };
+    if (err.code) {
+      body = { ...body, code: err.code };
+    }
+    response.status(err.status).json(body);
   }
 }

@@ -1,6 +1,6 @@
-import { ErrorCode, HttpStatusCode } from './types.js';
+import { ErrorType, HttpStatusCode } from './types.js';
 
-export const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatusCode> = {
+export const ErrorTypeToHttpStatus: Record<ErrorType, HttpStatusCode> = {
   'Bad Request': 400,
   Unauthorized: 401,
   // 'Payment Required': 402,
@@ -43,7 +43,7 @@ export const ErrorCodeToHttpStatus: Record<ErrorCode, HttpStatusCode> = {
   'Network Authentication Required': 511,
 };
 
-export const HttpStatusToErrorCode: Record<HttpStatusCode, ErrorCode> = {
+export const HttpStatusToErrorType: Record<HttpStatusCode, ErrorType> = {
   400: 'Bad Request',
   401: 'Unauthorized',
   // 402: 'Payment Required',

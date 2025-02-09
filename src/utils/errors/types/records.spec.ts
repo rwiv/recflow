@@ -1,6 +1,6 @@
 import { it, expect } from 'vitest';
-import { ErrorCodeToHttpStatus } from './records.js';
+import { ErrorTypeToHttpStatus } from './records.js';
 
 it('test', () => {
-  expect(ErrorCodeToHttpStatus['Not Found']).eq(404);
+  expect(ErrorTypeToHttpStatus['Not Found']).eq(404);
 });

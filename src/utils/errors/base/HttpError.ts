@@ -1,12 +1,12 @@
 import { BaseError } from './BaseError.js';
 import { HttpStatusCode } from '../types/types.js';
-import { HttpStatusToErrorCode } from '../types/records.js';
+import { HttpStatusToErrorType } from '../types/records.js';
 
 export class HttpError extends BaseError {
   readonly status: number;
 
   constructor(message: string, status: HttpStatusCode, options?: ErrorOptions) {
-    super(message, options, HttpStatusToErrorCode[status]);
+    super(message, options, HttpStatusToErrorType[status]);
     this.status = status;
   }
 }

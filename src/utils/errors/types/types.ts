@@ -1,4 +1,4 @@
-export type ErrorCode =
+export type ErrorType =
   | 'Bad Request'
   | 'Unauthorized'
   // | 'Payment Required'

@@ -1,8 +1,8 @@
 import { BaseError } from '../base/BaseError.js';
-import { ErrorCode } from '../types/types.js';
+import { ErrorType } from '../types/types.js';
 
 export class FatalError extends BaseError {
-  constructor(message: string, options?: ErrorOptions, code?: ErrorCode) {
+  constructor(message: string, options?: ErrorOptions, code?: ErrorType) {
     super(message, options, code);
   }
 }

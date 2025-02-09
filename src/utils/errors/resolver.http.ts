@@ -1,15 +1,15 @@
 import { HttpError } from './base/HttpError.js';
 import { BaseError } from './base/BaseError.js';
-import { ErrorCodeToHttpStatus } from './types/records.js';
+import { ErrorTypeToHttpStatus } from './types/records.js';
 import { HttpStatusCode } from './types/types.js';
 import { ZodError } from 'zod';
 
 const DEFAULT_HTTP_ERROR_STATUS = 500;
 
 export class HttpErrorResolver {
-  resolve(err: unknown) {
+  resolve(err: unknown): HttpError {
     if (err instanceof ZodError) {
-      return new HttpError('Validation Failure', ErrorCodeToHttpStatus['Unprocessable Entity'], {
+      return new HttpError('Validation Failure', ErrorTypeToHttpStatus['Unprocessable Entity'], {
         cause: err,
       });
     }
@@ -19,9 +19,9 @@ export class HttpErrorResolver {
     }
 
     if (err instanceof BaseError) {
-      let status: HttpStatusCode = ErrorCodeToHttpStatus['Internal Server Error'];
-      if (err.code) {
-        status = ErrorCodeToHttpStatus[err.code];
+      let status: HttpStatusCode = ErrorTypeToHttpStatus['Internal Server Error'];
+      if (err.type) {
+        status = ErrorTypeToHttpStatus[err.type];
       }
       return new HttpError(err.message, status, { cause: err });
     }

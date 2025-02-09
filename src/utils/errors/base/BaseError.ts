@@ -1,10 +1,14 @@
-import { ErrorCode } from '../types/types.js';
+import { ErrorType } from '../types/types.js';
 
 export class BaseError extends Error {
-  readonly code: ErrorCode | undefined;
+  readonly type: ErrorType | undefined;
+  readonly code: string | undefined;
 
-  constructor(message: string, options?: ErrorOptions, code?: ErrorCode) {
+  constructor(message: string, options?: ErrorOptions, type?: ErrorType, code?: string) {
     super(message, options);
+    if (type) {
+      this.type = type;
+    }
     if (code) {
       this.code = code;
     }

@@ -3,7 +3,7 @@ import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from './live.persisten
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { lives } from '../../infra/db/schema.js';
+import { channels, lives } from '../../infra/db/schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -14,6 +14,7 @@ export class LiveRepository {
     const ent: LiveEnt = {
       ...append,
       id: uuid(),
+      isDeleted: false,
       createdAt: new Date(),
       updatedAt: null,
     };
@@ -26,6 +27,15 @@ export class LiveRepository {
 
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(lives).where(eq(lives.id, id)));
+  }
+
+  async findByPid(pid: string, tx: Tx = db) {
+    const rows = await tx
+      .select({ lives })
+      .from(lives)
+      .innerJoin(channels, eq(lives.channelId, channels.id))
+      .where(eq(channels.pid, pid));
+    return rows.map((row) => row.lives);
   }
 
   async update(update: LiveEntUpdate, tx: Tx = db) {

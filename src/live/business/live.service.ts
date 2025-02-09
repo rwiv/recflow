@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../platform/wapper/live.js';
-import type { AsyncMap } from '../../infra/storage/interface.js';
+import { AsyncMap } from '../../infra/storage/interface.js';
 import { LIVE_MAP } from '../persistence/persistence.module.js';
 import { LiveRecord } from './types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -16,6 +16,7 @@ import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority.constants.js'
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeUpdater } from '../../node/business/node.updater.js';
+import { LiveWriter } from './live.writer.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -36,6 +37,7 @@ export class LiveService {
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
+    // private readonly liveMap: LiveWriter,
   ) {}
 
   async get(pid: string, opts: FindOptions = {}) {

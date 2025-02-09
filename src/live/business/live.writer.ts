@@ -7,15 +7,24 @@ import { PlatformRepository } from '../../platform/persistence/platform.reposito
 import { LiveEntAppend, LiveEntUpdate } from '../persistence/live.persistence.schema.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { oneNullable } from '../../utils/list.js';
+import { LiveMapper } from './live.mapper.js';
 
 @Injectable()
 export class LiveWriter {
   constructor(
     private readonly liveRepo: LiveRepository,
+    private readonly pfRepo: PlatformRepository,
     private readonly channelFinder: ChannelFinder,
     private readonly nodeFinder: NodeFinder,
-    private readonly pfRepo: PlatformRepository,
+    private readonly mapper: LiveMapper,
   ) {}
+
+  // TODO: remove
+  async get(pid: string) {
+    const ent = oneNullable(await this.liveRepo.findByPid(pid));
+    if (!ent) return undefined;
+    return this.mapper.map(ent);
+  }
 
   async create(live: LiveInfo, nodeId: string) {
     const platform = await this.pfRepo.findByName(live.type);

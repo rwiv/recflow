@@ -6,7 +6,7 @@ import { channelRecord } from '../../channel/channel/business/channel.business.s
 
 export const liveRecord = liveEnt.omit({ platformId: true }).extend({
   platform: platformRecord,
+  channel: channelRecord,
   node: nodeRecord.optional(),
-  channel: channelRecord.optional(),
 });
 export type LiveRecord = z.infer<typeof liveRecord>;

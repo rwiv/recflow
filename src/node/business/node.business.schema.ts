@@ -18,15 +18,18 @@ export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({
 });
 export type NodeRecord = z.infer<typeof nodeRecord>;
 
-export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
-  typeName: nodeTypeEnum,
-  capacities: z.array(
-    z.object({
-      platformName: z.string().nonempty(),
-      capacity: z.number().nonnegative(),
-    }),
-  ),
-});
+export const nodeAppend = nodeEntAppend
+  .omit({ typeId: true })
+  .partial({ id: true, description: true })
+  .extend({
+    typeName: nodeTypeEnum,
+    capacities: z.array(
+      z.object({
+        platformName: z.string().nonempty(),
+        capacity: z.number().nonnegative(),
+      }),
+    ),
+  });
 export type NodeAppend = z.infer<typeof nodeAppend>;
 
 const nodeGroup = nodeGroupEnt;

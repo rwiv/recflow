@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
@@ -7,17 +8,15 @@ import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
 
+const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true });
+type NodeEntAppendRequest = z.infer<typeof nodeEntAppendReq>;
+
 @Injectable()
 export class NodeRepository {
   async create(append: NodeEntAppend, tx: Tx = db): Promise<NodeEnt> {
     const id = append.id ?? uuid();
-    const req: NodeEnt = {
-      ...append,
-      id,
-      createdAt: new Date(),
-      updatedAt: null,
-    };
-    return oneNotNull(await tx.insert(nodes).values(nodeEnt.parse(req)).returning());
+    const req: NodeEntAppendRequest = { ...append, id, createdAt: new Date() };
+    return oneNotNull(await tx.insert(nodes).values(nodeEntAppendReq.parse(req)).returning());
   }
 
   async findByNodeTier(tier: number, tx: Tx = db): Promise<[NodeEnt, NodeGroupEnt][]> {

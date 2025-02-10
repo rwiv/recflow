@@ -1,23 +1,27 @@
+import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { nodeGroupEnt, NodeGroupEnt } from './node.persistence.schema.js';
+import { NodeGroupAppend, nodeGroupEnt, NodeGroupEnt } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeGroups } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 
+const nodeGroupEntAppendReq = nodeGroupEnt.partial({ description: true, updatedAt: true });
+type NodeGroupEntAppendRequest = z.infer<typeof nodeGroupEntAppendReq>;
+
 @Injectable()
 export class NodeGroupRepository {
-  async create(name: string, tier: number, tx: Tx = db): Promise<NodeGroupEnt> {
-    const req: NodeGroupEnt = {
-      id: uuid(),
-      name,
-      tier,
-      createdAt: new Date(),
-      updatedAt: null,
+  async create(append: NodeGroupAppend, tx: Tx = db): Promise<NodeGroupEnt> {
+    const req: NodeGroupEntAppendRequest = {
+      ...append,
+      id: append.id ?? uuid(),
+      createdAt: append.createdAt ?? new Date(),
+      updatedAt: append.createdAt ?? null,
     };
-    return oneNotNull(await tx.insert(nodeGroups).values(nodeGroupEnt.parse(req)).returning());
+    const ent = await tx.insert(nodeGroups).values(nodeGroupEntAppendReq.parse(req)).returning();
+    return oneNotNull(ent);
   }
 
   async findById(id: string, tx: Tx = db) {

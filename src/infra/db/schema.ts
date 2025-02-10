@@ -27,6 +27,7 @@ export const channelPriorities = pgTable(
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
+    description: text(),
     tier: integer().notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
@@ -115,6 +116,7 @@ export const nodeGroups = pgTable(
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
+    description: text(),
     tier: integer().notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
@@ -127,6 +129,7 @@ export const nodes = pgTable(
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 255 }).notNull().unique(),
+    description: text(),
     endpoint: text().notNull(),
     weight: integer().notNull(),
     totalCapacity: integer('total_capacity').notNull(),
@@ -174,4 +177,45 @@ export const lives = pgTable('lives', {
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),
+});
+
+export const liveCriteria = pgTable(
+  'live_criteria',
+  {
+    id: char({ length: 32 }).primaryKey(),
+    name: varchar({ length: 50 }).notNull().unique(),
+    description: text(),
+    platformId: char('platform_id', { length: 32 })
+      .notNull()
+      .references(() => platforms.id),
+    minUserCnt: integer('min_user_cnt').notNull(),
+    minFollowCnt: integer('min_follow_cnt').notNull(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
+  },
+  (t) => [uniqueIndex('live_criteria_name_idx').on(t.name)],
+);
+
+export const liveCriterionFilterTypes = pgTable(
+  'live_criterion_filter_types',
+  {
+    id: char({ length: 32 }).primaryKey(),
+    name: varchar({ length: 50 }).notNull().unique(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
+  },
+  (t) => [index('live_criterion_filter_types_name_idx').on(t.name)],
+);
+
+export const liveCriterionFilters = pgTable('live_criterion_filters', {
+  id: char({ length: 32 }).primaryKey(),
+  criterionId: char('criterion_id', { length: 32 })
+    .notNull()
+    .references(() => liveCriteria.id),
+  filterTypeId: char('filter_type_id', { length: 32 })
+    .notNull()
+    .references(() => liveCriterionFilterTypes.id),
+  value: text().notNull(),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at'),
 });

@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
@@ -5,19 +6,24 @@ import { oneNotNull, oneNullable } from '../../../utils/list.js';
 import { channelPriorities } from '../../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../../utils/uuid.js';
-import { ChannelPriorityEnt, chPriorityEnt } from './priority.schema.js';
+import { ChannelPriorityEnt, priorityEnt, PriorityEntAppend } from './priority.schema.js';
+
+const priorityEntAppendReq = priorityEnt.partial({ description: true, updatedAt: true });
+type PriorityEntAppendRequest = z.infer<typeof priorityEntAppendReq>;
 
 @Injectable()
 export class ChannelPriorityRepository {
-  async create(name: string, tier: number, tx: Tx = db): Promise<ChannelPriorityEnt> {
-    const append: ChannelPriorityEnt = {
-      id: uuid(),
-      name,
-      tier,
-      createdAt: new Date(),
-      updatedAt: null,
+  async create(append: PriorityEntAppend, tx: Tx = db): Promise<ChannelPriorityEnt> {
+    const reqEnt: PriorityEntAppendRequest = {
+      ...append,
+      id: append.id ?? uuid(),
+      createdAt: append.createdAt ?? new Date(),
+      updatedAt: append.updatedAt ?? null,
     };
-    const ent = await tx.insert(channelPriorities).values(chPriorityEnt.parse(append)).returning();
+    const ent = await tx
+      .insert(channelPriorities)
+      .values(priorityEntAppendReq.parse(reqEnt))
+      .returning();
     return oneNotNull(ent);
   }
 

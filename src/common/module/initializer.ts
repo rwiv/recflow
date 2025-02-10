@@ -10,6 +10,8 @@ import { NodeTypeRepository } from '../../node/persistence/node-type.repository.
 import { nodeTypeEnum } from '../../node/node.schema.js';
 import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
+import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
+import { NodeGroupAppend } from '../../node/persistence/node.persistence.schema.js';
 
 @Injectable()
 export class AppInitializer {
@@ -44,7 +46,8 @@ export class AppInitializer {
       if (tier === undefined) {
         throw new NotFoundError(`tier is undefined for ${name}`);
       }
-      await this.priRepo.create(name, tier);
+      const append: PriorityEntAppend = { name: name as string, tier };
+      await this.priRepo.create(append);
     }
 
     const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);
@@ -57,7 +60,8 @@ export class AppInitializer {
       if (tier === undefined) {
         throw new NotFoundError(`tier is undefined for ${name}`);
       }
-      await this.ngRepo.create(name, tier);
+      const append: NodeGroupAppend = { name, tier };
+      await this.ngRepo.create(append);
     }
   }
 }

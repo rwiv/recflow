@@ -4,6 +4,7 @@ import { uuid } from '../../common/data/common.schema.js';
 export const nodeEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
+  description: z.string().nonempty().nullable(),
   endpoint: z.string().nonempty(),
   weight: z.number().int().nonnegative(),
   totalCapacity: z.number().int().nonnegative(),
@@ -14,9 +15,12 @@ export const nodeEnt = z.object({
 });
 export type NodeEnt = z.infer<typeof nodeEnt>;
 
-export const nodeEntAppend = nodeEnt
-  .omit({ createdAt: true, updatedAt: true })
-  .partial({ id: true });
+export const nodeEntAppend = nodeEnt.partial({
+  id: true,
+  description: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
 
 export const nodeTypeEnt = z.object({
@@ -30,11 +34,20 @@ export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
 export const nodeGroupEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
+  description: z.string().nonempty().nullable(),
   tier: z.number().int().positive(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
 export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
+
+const nodeGroupAppend = nodeGroupEnt.partial({
+  id: true,
+  description: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type NodeGroupAppend = z.infer<typeof nodeGroupAppend>;
 
 export const nodeStateEnt = z.object({
   id: uuid,

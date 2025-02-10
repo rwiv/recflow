@@ -5,6 +5,7 @@ import { LiveModule } from './live/live.module.js';
 import { ChannelModule } from './channel/channel.module.js';
 import { CommonModule } from './common/module/common.module.js';
 import { NodeModule } from './node/node.module.js';
+import { CriterionModule } from './criterion/criterion.module.js';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { NodeModule } from './node/node.module.js';
     LiveModule,
     ChannelModule,
     NodeModule,
+    CriterionModule,
   ],
 })
 export class AppModule {}

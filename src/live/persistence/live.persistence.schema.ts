@@ -9,7 +9,6 @@ export const liveEnt = z.object({
   liveTitle: z.string().min(1),
   viewCnt: z.number().int().nonnegative(),
   adult: z.boolean(),
-  raw: z.string().min(1),
   isDeleted: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),

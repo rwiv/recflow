@@ -170,7 +170,6 @@ export const lives = pgTable('lives', {
   liveTitle: text('live_title').notNull(),
   viewCnt: integer('view_cnt').notNull(),
   adult: boolean().notNull(),
-  raw: text().notNull(),
   isDeleted: boolean().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),

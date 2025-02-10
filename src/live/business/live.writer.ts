@@ -30,7 +30,6 @@ export class LiveWriter {
     if (!node) throw new NotFoundError('Not Found Node');
     const req: LiveEntAppend = {
       ...live,
-      raw: JSON.stringify(live.content),
       platformId: platform.id,
       channelId: channel.id,
       nodeId: node.id,
@@ -44,13 +43,7 @@ export class LiveWriter {
   }
 
   async updateByLive(id: string, live: LiveInfo) {
-    const req: LiveEntUpdate = {
-      id,
-      form: {
-        ...live,
-        raw: JSON.stringify(live),
-      },
-    };
+    const req: LiveEntUpdate = { id, form: { ...live } };
     const ent = await this.liveRepo.update(req);
     return this.mapper.map(ent);
   }

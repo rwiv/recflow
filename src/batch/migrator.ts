@@ -1,23 +1,34 @@
 import fs from 'fs';
 import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
 import { log } from 'jslog';
-import {
-  ChannelAppend,
-  channelRecord,
-} from '../channel/channel/business/channel.business.schema.js';
+import { ChannelAppend } from '../channel/channel/business/channel.business.schema.js';
 import { AppInitializer } from '../common/module/initializer.js';
 import { z } from 'zod';
+import { uuid } from '../common/data/common.schema.js';
+import { platformTypeEnum } from '../platform/platform.schema.js';
 
-const channelRecordJson = channelRecord.omit({ createdAt: true, updatedAt: true }).extend({
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+const tagRecordFetched = z.object({
+  id: uuid,
+  name: z.string().nonempty(),
+  description: z.string().nonempty().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().optional(),
 });
-export type ChannelJsonRecord = z.infer<typeof channelRecordJson>;
-
-const channelBackupRecord = channelRecordJson
-  .omit({ tags: true })
-  .extend({ tagNames: z.array(z.string().nonempty()) });
-export type ChannelBackupRecord = z.infer<typeof channelBackupRecord>;
+const channelRecordFetched = z.object({
+  id: uuid,
+  pid: z.string().nonempty(),
+  username: z.string().nonempty(),
+  profileImgUrl: z.string().nullable(),
+  followerCnt: z.number().nonnegative(),
+  followed: z.boolean(),
+  description: z.string().nonempty().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  platformName: platformTypeEnum,
+  priorityName: z.string().nonempty(),
+  tags: z.array(tagRecordFetched).optional(),
+});
+export type ChannelRecordFetched = z.infer<typeof channelRecordFetched>;
 
 export class BatchMigrator {
   constructor(
@@ -28,17 +39,16 @@ export class BatchMigrator {
   async migrateChannels(filePath: string) {
     await this.init.initProd();
     const text = await fs.promises.readFile(filePath, 'utf8');
-    const channels = JSON.parse(text) as ChannelBackupRecord[];
+    const channels = JSON.parse(text) as ChannelRecordFetched[];
     for (const chan of channels) {
-      const channel = channelBackupRecord.parse(chan);
+      const channel = channelRecordFetched.parse(chan);
       const req: ChannelAppend = {
         ...channel,
-        platformName: channel.platform.name,
-        priorityName: channel.priority.name,
         createdAt: new Date(channel.createdAt),
         updatedAt: new Date(channel.updatedAt),
       };
-      await this.chWriter.create(req, channel.tagNames);
+      const tagIds = channel.tags?.map((t) => t.id) ?? [];
+      await this.chWriter.createWithTagIds(req, tagIds);
       log.info(`Migrated channel: ${channel.username}`);
     }
     log.info(`Migrated ${channels.length} channels`);
@@ -47,23 +57,15 @@ export class BatchMigrator {
   async backupChannels(filePath: string, endpoint: string) {
     const channels = await this.fetchAllChannels(endpoint);
     log.info(`Backing up ${channels.length} channels...`);
-    const backupChannels = channels.map((c) => this.recordToBatchDate(c));
-    const json = JSON.stringify(backupChannels, null, 2);
+    const json = JSON.stringify(channels, null, 2);
     await fs.promises.writeFile(filePath, json);
     log.info(`Writing backup to ${filePath}`);
-  }
-
-  private async fetchChannels(endpoint: string, page: number, pageSize: number) {
-    const url = `${endpoint}/api/channels?p=${page}&s=${pageSize}&wt=true`;
-    const res = await fetch(url);
-    const json = (await res.json()) as ChannelJsonRecord[];
-    return json.map((c) => this.recordToBatchDate(c));
   }
 
   private async fetchAllChannels(endpoint: string) {
     let page = 1;
     const pageSize = 100;
-    const allChannels: ChannelBackupRecord[] = [];
+    const allChannels: ChannelRecordFetched[] = [];
     while (true) {
       const channels = await this.fetchChannels(endpoint, page, pageSize);
       if (channels.length === 0) break;
@@ -73,12 +75,9 @@ export class BatchMigrator {
     return allChannels;
   }
 
-  private recordToBatchDate(ch: ChannelJsonRecord): ChannelBackupRecord {
-    const tagNames = [];
-    if (ch.tags) {
-      for (const t of ch.tags) tagNames.push(t.name);
-    }
-    const data: ChannelBackupRecord = { ...ch, tagNames };
-    return channelBackupRecord.parse(data);
+  private async fetchChannels(endpoint: string, page: number, pageSize: number) {
+    const url = `${endpoint}/api/channels?p=${page}&s=${pageSize}&wt=true`;
+    const res = await fetch(url);
+    return (await res.json()) as ChannelRecordFetched[];
   }
 }

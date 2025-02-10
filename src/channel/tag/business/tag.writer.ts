@@ -5,7 +5,12 @@ import { TagQueryRepository } from '../persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
 import { ChannelQueryRepository } from '../../channel/persistence/channel.query.js';
-import { TagEntAppend, TagEntUpdate } from '../persistence/tag.persistence.schema.js';
+import {
+  ChannelsToTagsEntAppend,
+  TagEntAppend,
+  TagEntUpdate,
+} from '../persistence/tag.persistence.schema.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class TagWriter {
@@ -26,9 +31,22 @@ export class TagWriter {
         const append: TagEntAppend = { name: attach.tagName };
         tag = await this.tagCmd.create(append, txx);
       }
-      await this.tagCmd.bind(attach.channelId, tag.id, txx);
+      const bind: ChannelsToTagsEntAppend = {
+        channelId: attach.channelId,
+        tagId: tag.id,
+      };
+      await this.tagCmd.bind(bind, txx);
       return tag;
     });
+  }
+
+  async bind(bind: ChannelsToTagsEntAppend, tx: Tx = db) {
+    const tag = await this.tagQuery.findById(bind.tagId, tx);
+    if (!tag) {
+      throw new NotFoundError('Tag not found');
+    }
+    await this.tagCmd.bind(bind, tx);
+    return tag;
   }
 
   detach(detach: TagDetachment, tx: Tx = db) {

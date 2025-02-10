@@ -23,9 +23,10 @@ export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
   async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
+    const id = append.id ?? uuid();
     const req: ChannelEntAppendRequest = {
       ...append,
-      id: uuid(),
+      id,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? new Date(),
     };

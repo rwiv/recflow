@@ -22,6 +22,11 @@ import { ChannelPriorityRepository } from '../persistence/priority.repository.js
 import { ChannelEntAppend } from '../persistence/channel.persistence.schema.js';
 import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
+import {
+  ChannelsToTagsEntAppend,
+  TagEntAppend,
+} from '../../tag/persistence/tag.persistence.schema.js';
+import { TagCommandRepository } from '../../tag/persistence/tag.command.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -34,10 +39,26 @@ export class ChannelWriter {
     private readonly tagQuery: TagQueryRepository,
     private readonly chMapper: ChannelMapper,
     private readonly fetcher: PlatformFetcher,
+    private readonly tagCmd: TagCommandRepository,
   ) {}
 
-  async create(append: ChannelAppend, tagNames: string[] | undefined): Promise<ChannelRecord> {
-    if (tagNames && hasDuplicates(tagNames)) {
+  async createWithTagNames(append: ChannelAppend, tagNames?: string[]) {
+    return db.transaction(async (tx) => {
+      const tagIds: string[] = [];
+      if (tagNames && tagNames.length > 0) {
+        for (const tagName of tagNames) {
+          const tag = await this.tagQuery.findByName(tagName, tx);
+          if (tag) continue;
+          const tagEntAppend: TagEntAppend = { name: tagName };
+          tagIds.push((await this.tagCmd.create(tagEntAppend, tx)).id);
+        }
+      }
+      return this.createWithTagIds(append, tagIds, tx);
+    });
+  }
+
+  async createWithTagIds(append: ChannelAppend, tagIds?: string[], tx: Tx = db) {
+    if (tagIds && hasDuplicates(tagIds)) {
       throw new ConflictError('Duplicate tag names');
     }
     const entities = await this.chQuery.findByPidAndPlatform(append.pid, append.platformName);
@@ -55,15 +76,15 @@ export class ChannelWriter {
       platformId: platform.id,
       priorityId: priority.id,
     };
-    return db.transaction(async (txx) => {
+    return tx.transaction(async (txx) => {
       const ent = await this.chCmd.create(entAppend, txx);
       const channel = await this.chMapper.map(ent);
       let result: ChannelRecord = { ...channel };
       const tags: TagRecord[] = [];
-      if (tagNames && tagNames.length > 0) {
-        for (const tagName of tagNames) {
-          const attach: TagAttachment = { channelId: channel.id, tagName };
-          tags.push(await this.tagWriter.attach(attach, txx));
+      if (tagIds && tagIds.length > 0) {
+        for (const tagId of tagIds) {
+          const bind: ChannelsToTagsEntAppend = { channelId: channel.id, tagId };
+          tags.push(await this.tagWriter.bind(bind, txx));
         }
         result = { ...channel, tags };
       }
@@ -81,7 +102,7 @@ export class ChannelWriter {
 
   async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo) {
     const append: ChannelAppend = { ...appendInfo, ...info, platformName: info.platform };
-    return this.create(append, appendInfo.tagNames);
+    return this.createWithTagNames(append, appendInfo.tagNames);
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {

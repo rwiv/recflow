@@ -10,9 +10,10 @@ import { eq } from 'drizzle-orm';
 @Injectable()
 export class NodeRepository {
   async create(append: NodeEntAppend, tx: Tx = db): Promise<NodeEnt> {
+    const id = append.id ?? uuid();
     const req: NodeEnt = {
       ...append,
-      id: uuid(),
+      id,
       createdAt: new Date(),
       updatedAt: null,
     };

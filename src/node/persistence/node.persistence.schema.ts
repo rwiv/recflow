@@ -14,7 +14,9 @@ export const nodeEnt = z.object({
 });
 export type NodeEnt = z.infer<typeof nodeEnt>;
 
-export const nodeEntAppend = nodeEnt.omit({ id: true, createdAt: true, updatedAt: true });
+export const nodeEntAppend = nodeEnt
+  .omit({ createdAt: true, updatedAt: true })
+  .partial({ id: true });
 export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
 
 export const nodeTypeEnt = z.object({

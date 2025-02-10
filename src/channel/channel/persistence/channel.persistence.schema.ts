@@ -16,9 +16,13 @@ export const channelEnt = z.object({
 });
 export type ChannelEnt = z.infer<typeof channelEnt>;
 
-export const chEntAppend = channelEnt
-  .omit({ id: true })
-  .partial({ profileImgUrl: true, description: true, createdAt: true, updatedAt: true });
+export const chEntAppend = channelEnt.partial({
+  id: true,
+  profileImgUrl: true,
+  description: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export type ChannelEntAppend = z.infer<typeof chEntAppend>;
 
 export const chEntUpdateForm = channelEnt

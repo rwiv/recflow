@@ -25,13 +25,13 @@ describe('ChannelService', () => {
   });
 
   it('create', async () => {
-    const channel = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chWriter.createWithTagNames(mockChannel(1), ['tag1', 'tag2']);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });
 
   it('delete', async () => {
-    const channel = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chWriter.createWithTagNames(mockChannel(1), ['tag1', 'tag2']);
     await chWriter.delete(channel.id);
     expect(await chFinder.findById(channel.id)).toBeUndefined();
   });
@@ -85,5 +85,5 @@ describe('ChannelService', () => {
 });
 
 function add(n: number, priority: string, followerCnt: number, tagNames: string[]) {
-  return chWriter.create(mockChannel(n, priority, followerCnt), tagNames);
+  return chWriter.createWithTagNames(mockChannel(n, priority, followerCnt), tagNames);
 }

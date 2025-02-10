@@ -9,6 +9,7 @@ import { TagQueryRepository } from './tag.query.js';
 import {
   ChannelsToTagsEnt,
   channelsToTagsEnt,
+  ChannelsToTagsEntAppend,
   TagEnt,
   tagEnt,
   TagEntAppend,
@@ -28,9 +29,10 @@ export class TagCommandRepository {
   async create(append: TagEntAppend, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findByName(append.name, tx);
     if (tag) throw new ConflictError('Tag already exists');
+    const id = append.id ?? uuid();
     const req: TagEntAppendRequest = {
       ...append,
-      id: uuid(),
+      id,
       createdAt: new Date(),
       updatedAt: null,
     };
@@ -54,8 +56,8 @@ export class TagCommandRepository {
     await tx.delete(channelTags).where(eq(channelTags.id, tagId));
   }
 
-  async bind(channelId: string, tagId: string, tx: Tx = db) {
-    const ent: ChannelsToTagsEnt = { channelId, tagId, createdAt: new Date() };
+  async bind(append: ChannelsToTagsEntAppend, tx: Tx = db) {
+    const ent: ChannelsToTagsEnt = { ...append, createdAt: new Date() };
     return tx.insert(channelsToTags).values(channelsToTagsEnt.parse(ent));
   }
 

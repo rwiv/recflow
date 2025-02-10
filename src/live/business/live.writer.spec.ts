@@ -31,7 +31,7 @@ describe('ChannelService', () => {
   it('create', async () => {
     const ng = notNull(await ngRepo.findByName('main'));
     const node = await nodeWriter.create(mockNode(1, ng.id), true);
-    const ch = await chWriter.create(mockChannel(1), ['tag1', 'tag2']);
+    const ch = await chWriter.createWithTagNames(mockChannel(1), ['tag1', 'tag2']);
     const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), node.id);
     console.log(live1);
 

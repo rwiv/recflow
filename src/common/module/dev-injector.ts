@@ -78,7 +78,10 @@ export class DevInitInjector {
         followed: false,
         description: null,
       };
-      await this.channelWriter.create(chAppend.parse(append), Array.from(new Set(tagNames)).sort());
+      await this.channelWriter.createWithTagNames(
+        chAppend.parse(append),
+        Array.from(new Set(tagNames)).sort(),
+      );
     }
   }
 }

@@ -19,7 +19,7 @@ export class NodeController {
 
   @Get('/groups')
   groups() {
-    return this.finder.findGroups();
+    return this.finder.findAllGroups();
   }
 
   @Post('/')

@@ -6,6 +6,7 @@ import { PlatformModule } from '../../platform/platform.module.js';
 import { NodePersistenceModule } from '../../node/persistence/node.persistence.module.js';
 import { NodeBusinessModule } from '../../node/business/node.business.module.js';
 import { DevInitInjector } from './dev-injector.js';
+import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { DevInitInjector } from './dev-injector.js';
     NodePersistenceModule,
     NodeBusinessModule,
   ],
-  providers: [AppInitializer, DevInitInjector],
+  providers: [AppInitializer, DevInitInjector, NodeBatchInserter],
   exports: [AppInitializer],
 })
 export class CommonModule {}

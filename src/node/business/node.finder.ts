@@ -38,7 +38,7 @@ export class NodeFinder {
     return this.mapper.mapAll(entities, withGroup, withStates);
   }
 
-  async findGroups() {
+  async findAllGroups() {
     return this.groupRepo.findAll();
   }
 }

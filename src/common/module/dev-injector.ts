@@ -1,71 +1,67 @@
 import fs from 'fs';
 import path from 'path';
-import { readTestConf } from '../helpers/helper.configs.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
 import { CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
 import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
-import { NodeWriter } from '../../node/business/node.writer.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { nodeAppend, NodeAppend } from '../../node/business/node.business.schema.js';
-import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
-import { FatalError } from '../../utils/errors/errors/FatalError.js';
 import { Injectable } from '@nestjs/common';
-import { nodeTypeEnum } from '../../node/node.schema.js';
+import { readBatchConfig } from '../../batch/batch.config.js';
+import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
 
 @Injectable()
 export class DevInitInjector {
   private readonly testChannelFilePath: string;
   constructor(
     private readonly channelWriter: ChannelWriter,
-    private readonly nodeWriter: NodeWriter,
     private readonly fetcher: PlatformFetcher,
-    private readonly groupRepo: NodeGroupRepository,
+    private readonly nodeInserter: NodeBatchInserter,
   ) {
     this.testChannelFilePath = path.join('dev', 'test_channel_infos.json');
   }
 
   async insertTestNodes() {
-    const groups = await this.groupRepo.findAll();
-    if (groups.length === 0) {
-      throw new FatalError('No node group found');
-    }
-    for (let i = 0; i < 5; i++) {
-      const append: NodeAppend = {
-        name: `test${i}`,
-        groupId: groups[randomInt(0, groups.length - 1)].id,
-        typeName: randomElem(nodeTypeEnum.options),
-        endpoint: 'http://localhost:3000',
-        weight: randomInt(1, 2),
-        totalCapacity: 10,
-        capacities: [
-          { platformName: 'chzzk', capacity: 10 },
-          { platformName: 'soop', capacity: 10 },
-          { platformName: 'twitch', capacity: 0 },
-        ],
-      };
-      await this.nodeWriter.create(nodeAppend.parse(append));
-    }
+    const conf = readBatchConfig(path.join('dev', 'batch_conf.yaml'));
+    await this.nodeInserter.insert(conf.nodes);
   }
 
-  async writeTestChannelInfos() {
-    const conf = await readTestConf();
+  // async insertTestNodes() {
+  //   const groups = await this.groupRepo.findAll();
+  //   if (groups.length === 0) {
+  //     throw new FatalError('No node group found');
+  //   }
+  //   for (let i = 0; i < 5; i++) {
+  //     const append: NodeAppend = {
+  //       name: `test${i}`,
+  //       groupId: groups[randomInt(0, groups.length - 1)].id,
+  //       typeName: randomElem(nodeTypeEnum.options),
+  //       endpoint: 'http://localhost:3000',
+  //       weight: randomInt(1, 2),
+  //       totalCapacity: 10,
+  //       capacities: [
+  //         { platformName: 'chzzk', capacity: 10 },
+  //         { platformName: 'soop', capacity: 10 },
+  //         { platformName: 'twitch', capacity: 0 },
+  //       ],
+  //     };
+  //     await this.nodeWriter.create(nodeAppend.parse(append));
+  //   }
+  // }
+
+  async writeTestChannelInfosFile(confPath: string) {
+    const conf = readBatchConfig(confPath);
     const infos = [];
-    for (const id of conf.pids) {
+    for (const id of conf.channels.pids) {
       infos.push(await this.fetcher.fetchChannel('chzzk', id, false));
     }
     await fs.promises.writeFile(this.testChannelFilePath, JSON.stringify(infos, null, 2));
   }
 
-  private async readTestChannelInfos() {
-    const text = await fs.promises.readFile(this.testChannelFilePath, 'utf8');
-    return JSON.parse(text) as ChannelInfo[];
-  }
-
   async insertTestChannels() {
-    const infos = await this.readTestChannelInfos();
+    const text = await fs.promises.readFile(this.testChannelFilePath, 'utf8');
+    const infos = JSON.parse(text) as ChannelInfo[];
     for (const info of infos) {
       const tags: string[] = [];
       for (let i = 1; i < 10; i++) tags.push(`tag${i}`);

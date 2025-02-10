@@ -6,7 +6,7 @@ import {
   ChannelRecord,
   ChannelAppend,
 } from './channel.business.schema.js';
-import { TagAttachment, TagDetachment, TagRecord } from '../../tag/business/tag.business.schema.js';
+import { TagDetachment, TagRecord } from '../../tag/business/tag.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { notNull } from '../../../utils/null.js';
@@ -22,10 +22,7 @@ import { ChannelPriorityRepository } from '../persistence/priority.repository.js
 import { ChannelEntAppend } from '../persistence/channel.persistence.schema.js';
 import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
-import {
-  ChannelsToTagsEntAppend,
-  TagEntAppend,
-} from '../../tag/persistence/tag.persistence.schema.js';
+import { ChannelsToTagsEntAppend } from '../../tag/persistence/tag.persistence.schema.js';
 import { TagCommandRepository } from '../../tag/persistence/tag.command.js';
 
 @Injectable()
@@ -48,9 +45,11 @@ export class ChannelWriter {
       if (tagNames && tagNames.length > 0) {
         for (const tagName of tagNames) {
           const tag = await this.tagQuery.findByName(tagName, tx);
-          if (tag) continue;
-          const tagEntAppend: TagEntAppend = { name: tagName };
-          tagIds.push((await this.tagCmd.create(tagEntAppend, tx)).id);
+          if (tag) {
+            tagIds.push(tag.id);
+          } else {
+            tagIds.push((await this.tagCmd.create({ name: tagName }, tx)).id);
+          }
         }
       }
       return this.createWithTagIds(append, tagIds, tx);

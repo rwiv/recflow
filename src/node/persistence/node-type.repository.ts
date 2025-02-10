@@ -4,7 +4,7 @@ import { db } from '../../infra/db/db.js';
 import { nodeTypeEnt, NodeTypeEnt } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { nodeTypes } from '../../infra/db/schema.js';
+import { nodeTypeTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 
 @Injectable()
@@ -16,22 +16,22 @@ export class NodeTypeRepository {
       createdAt: new Date(),
       updatedAt: null,
     };
-    return oneNotNull(await tx.insert(nodeTypes).values(nodeTypeEnt.parse(req)).returning());
+    return oneNotNull(await tx.insert(nodeTypeTable).values(nodeTypeEnt.parse(req)).returning());
   }
 
   async findById(id: string, tx: Tx = db) {
-    return oneNullable(await tx.select().from(nodeTypes).where(eq(nodeTypes.id, id)));
+    return oneNullable(await tx.select().from(nodeTypeTable).where(eq(nodeTypeTable.id, id)));
   }
 
   async findByName(name: string, tx: Tx = db) {
-    return oneNullable(await tx.select().from(nodeTypes).where(eq(nodeTypes.name, name)));
+    return oneNullable(await tx.select().from(nodeTypeTable).where(eq(nodeTypeTable.name, name)));
   }
 
   async findAll() {
-    return db.select().from(nodeTypes);
+    return db.select().from(nodeTypeTable);
   }
 
   async delete(id: string, tx: Tx = db) {
-    await tx.delete(nodeTypes).where(eq(nodeTypes.id, id));
+    await tx.delete(nodeTypeTable).where(eq(nodeTypeTable.id, id));
   }
 }

@@ -5,7 +5,7 @@ import { db } from '../../infra/db/db.js';
 import { NodeGroupAppend, nodeGroupEnt, NodeGroupEnt } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { nodeGroups } from '../../infra/db/schema.js';
+import { nodeGroupTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 
 const nodeGroupEntAppendReq = nodeGroupEnt.partial({ description: true, updatedAt: true });
@@ -20,27 +20,30 @@ export class NodeGroupRepository {
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.createdAt ?? null,
     };
-    const ent = await tx.insert(nodeGroups).values(nodeGroupEntAppendReq.parse(req)).returning();
+    const ent = await tx
+      .insert(nodeGroupTable)
+      .values(nodeGroupEntAppendReq.parse(req))
+      .returning();
     return oneNotNull(ent);
   }
 
   async findById(id: string, tx: Tx = db) {
-    return oneNullable(await tx.select().from(nodeGroups).where(eq(nodeGroups.id, id)));
+    return oneNullable(await tx.select().from(nodeGroupTable).where(eq(nodeGroupTable.id, id)));
   }
 
   async findByName(name: string, tx: Tx = db) {
-    return oneNullable(await tx.select().from(nodeGroups).where(eq(nodeGroups.name, name)));
+    return oneNullable(await tx.select().from(nodeGroupTable).where(eq(nodeGroupTable.name, name)));
   }
 
   async findByTier(tier: number, tx: Tx = db) {
-    return tx.select().from(nodeGroups).where(eq(nodeGroups.tier, tier));
+    return tx.select().from(nodeGroupTable).where(eq(nodeGroupTable.tier, tier));
   }
 
   async findAll() {
-    return db.select().from(nodeGroups);
+    return db.select().from(nodeGroupTable);
   }
 
   async delete(id: string, tx: Tx = db) {
-    await tx.delete(nodeGroups).where(eq(nodeGroups.id, id));
+    await tx.delete(nodeGroupTable).where(eq(nodeGroupTable.id, id));
   }
 }

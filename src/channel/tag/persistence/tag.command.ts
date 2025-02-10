@@ -1,5 +1,5 @@
 import { db } from '../../../infra/db/db.js';
-import { channelsToTags, channelTags } from '../../../infra/db/schema.js';
+import { channelTagMapTable, channelTagTable } from '../../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { oneNotNull } from '../../../utils/list.js';
 import { uuid } from '../../../utils/uuid.js';
@@ -36,7 +36,7 @@ export class TagCommandRepository {
       createdAt: new Date(),
       updatedAt: null,
     };
-    const ent = await tx.insert(channelTags).values(tagEntAppendReq.parse(req)).returning();
+    const ent = await tx.insert(channelTagTable).values(tagEntAppendReq.parse(req)).returning();
     return oneNotNull(ent);
   }
 
@@ -45,24 +45,27 @@ export class TagCommandRepository {
     if (!tag) throw new NotFoundError('Tag not found');
     const req: TagEnt = { ...tag, ...update.form, updatedAt: new Date() };
     const ent = await tx
-      .update(channelTags)
+      .update(channelTagTable)
       .set(tagEnt.parse(req))
-      .where(eq(channelTags.id, update.tagId))
+      .where(eq(channelTagTable.id, update.tagId))
       .returning();
     return oneNotNull(ent);
   }
 
   async delete(tagId: string, tx: Tx = db) {
-    await tx.delete(channelTags).where(eq(channelTags.id, tagId));
+    await tx.delete(channelTagTable).where(eq(channelTagTable.id, tagId));
   }
 
   async bind(append: ChannelsToTagsEntAppend, tx: Tx = db) {
     const ent: ChannelsToTagsEnt = { ...append, createdAt: new Date() };
-    return tx.insert(channelsToTags).values(channelsToTagsEnt.parse(ent));
+    return tx.insert(channelTagMapTable).values(channelsToTagsEnt.parse(ent));
   }
 
   async unbind(channelId: string, tagId: string, tx: Tx = db) {
-    const cond = and(eq(channelsToTags.channelId, channelId), eq(channelsToTags.tagId, tagId));
-    await tx.delete(channelsToTags).where(cond);
+    const cond = and(
+      eq(channelTagMapTable.channelId, channelId),
+      eq(channelTagMapTable.tagId, tagId),
+    );
+    await tx.delete(channelTagMapTable).where(cond);
   }
 }

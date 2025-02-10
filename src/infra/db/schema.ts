@@ -11,19 +11,19 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-export const platforms = pgTable(
-  'platforms',
+export const platformTable = pgTable(
+  'platform',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('platforms_name_idx').on(t.name)],
+  (t) => [uniqueIndex('platform_name_idx').on(t.name)],
 );
 
-export const channelPriorities = pgTable(
-  'channel_priorities',
+export const channelPriorityTable = pgTable(
+  'channel_priority',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
@@ -33,48 +33,48 @@ export const channelPriorities = pgTable(
     updatedAt: timestamp('updated_at'),
   },
   (t) => [
-    uniqueIndex('channel_priorities_name_idx').on(t.name),
-    index('channel_priorities_tier_idx').on(t.tier),
+    uniqueIndex('channel_priority_name_idx').on(t.name),
+    index('channel_priority_tier_idx').on(t.tier),
   ],
 );
 
-export const channels = pgTable(
-  'channels',
+export const channelTable = pgTable(
+  'channel',
   {
     id: char({ length: 32 }).primaryKey(),
     platformId: varchar({ length: 50 })
       .notNull()
-      .references(() => platforms.id),
+      .references(() => platformTable.id),
     pid: varchar({ length: 255 }).notNull(),
     username: varchar({ length: 255 }).notNull(),
     profileImgUrl: text(),
     followerCnt: integer().notNull(),
     priorityId: varchar({ length: 50 })
       .notNull()
-      .references(() => channelPriorities.id),
+      .references(() => channelPriorityTable.id),
     followed: boolean().notNull(),
     description: text(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),
   },
   (t) => [
-    index('channels_pid_idx').on(t.pid),
-    index('channels_username_idx').on(t.username),
-    index('channels_follow_cnt_idx').on(t.followerCnt),
-    index('channels_created_at_idx').on(t.createdAt),
-    index('channels_updated_at_idx').on(t.updatedAt),
+    index('channel_pid_idx').on(t.pid),
+    index('channel_username_idx').on(t.username),
+    index('channel_follow_cnt_idx').on(t.followerCnt),
+    index('channel_created_at_idx').on(t.createdAt),
+    index('channel_updated_at_idx').on(t.updatedAt),
   ],
 );
 
-export const channelsToTags = pgTable(
-  'channels_to_tags',
+export const channelTagMapTable = pgTable(
+  'channel_tag_map',
   {
     channelId: char('channel_id', { length: 32 })
       .notNull()
-      .references(() => channels.id),
+      .references(() => channelTable.id),
     tagId: char('tag_id', { length: 32 })
       .notNull()
-      .references(() => channelTags.id),
+      .references(() => channelTagTable.id),
     createdAt: timestamp('created_at').notNull(),
   },
   (t) => [
@@ -85,8 +85,8 @@ export const channelsToTags = pgTable(
   ],
 );
 
-export const channelTags = pgTable(
-  'channel_tags',
+export const channelTagTable = pgTable(
+  'channel_tag',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 255 }).notNull().unique(),
@@ -94,25 +94,22 @@ export const channelTags = pgTable(
     createdAt: timestamp('create_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [
-    uniqueIndex('channel_tags_name_idx').on(t.name),
-    index('channel_tags_created_at_idx').on(t.createdAt),
-  ],
+  (t) => [uniqueIndex('channel_tag_name_idx').on(t.name)],
 );
 
-export const nodeTypes = pgTable(
-  'node_types',
+export const nodeTypeTable = pgTable(
+  'node_type',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('node_types_name_idx').on(t.name)],
+  (t) => [uniqueIndex('node_type_name_idx').on(t.name)],
 );
 
-export const nodeGroups = pgTable(
-  'node_groups',
+export const nodeGroupTable = pgTable(
+  'node_group',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
@@ -121,11 +118,11 @@ export const nodeGroups = pgTable(
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('node_groups_name_idx').on(t.name), index('node_groups_tier_idx').on(t.tier)],
+  (t) => [uniqueIndex('node_group_name_idx').on(t.name), index('node_group_tier_idx').on(t.tier)],
 );
 
-export const nodes = pgTable(
-  'nodes',
+export const nodeTable = pgTable(
+  'node',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 255 }).notNull().unique(),
@@ -135,41 +132,41 @@ export const nodes = pgTable(
     totalCapacity: integer('total_capacity').notNull(),
     typeId: char('type_id', { length: 32 })
       .notNull()
-      .references(() => nodeTypes.id),
+      .references(() => nodeTypeTable.id),
     groupId: char('group_id', { length: 32 })
       .notNull()
-      .references(() => nodeGroups.id),
+      .references(() => nodeGroupTable.id),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('nodes_name_idx').on(t.name)],
+  (t) => [uniqueIndex('node_name_idx').on(t.name), index('node_weight_idx').on(t.weight)],
 );
 
-export const nodeStates = pgTable('node_states', {
+export const nodeStateTable = pgTable('node_state', {
   id: char({ length: 32 }).primaryKey(),
   nodeId: char('node_id', { length: 32 })
     .notNull()
-    .references(() => nodes.id),
+    .references(() => nodeTable.id),
   platformId: char('platform_id', { length: 32 })
     .notNull()
-    .references(() => platforms.id),
+    .references(() => platformTable.id),
   capacity: integer().notNull(),
   assigned: integer().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
 });
 
-export const lives = pgTable('lives', {
+export const liveTable = pgTable('live', {
   id: char({ length: 32 }).primaryKey(),
   channelId: char('channel_id', { length: 32 })
     .notNull()
-    .references(() => channels.id),
+    .references(() => channelTable.id),
   platformId: char('platform_id', { length: 32 })
     .notNull()
-    .references(() => platforms.id),
+    .references(() => platformTable.id),
   nodeId: char('node_id', { length: 32 })
     .notNull()
-    .references(() => nodes.id),
+    .references(() => nodeTable.id),
   liveTitle: text('live_title').notNull(),
   viewCnt: integer('view_cnt').notNull(),
   adult: boolean().notNull(),
@@ -179,42 +176,42 @@ export const lives = pgTable('lives', {
   deletedAt: timestamp('deleted_at'),
 });
 
-export const liveCriteria = pgTable(
-  'live_criteria',
+export const liveCriterionTable = pgTable(
+  'live_criterion',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
     description: text(),
     platformId: char('platform_id', { length: 32 })
       .notNull()
-      .references(() => platforms.id),
+      .references(() => platformTable.id),
     minUserCnt: integer('min_user_cnt').notNull(),
     minFollowCnt: integer('min_follow_cnt').notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('live_criteria_name_idx').on(t.name)],
+  (t) => [uniqueIndex('live_criterion_name_idx').on(t.name)],
 );
 
-export const liveCriterionFilterTypes = pgTable(
-  'live_criterion_filter_types',
+export const liveCriterionRule = pgTable(
+  'live_criterion_rule',
   {
     id: char({ length: 32 }).primaryKey(),
     name: varchar({ length: 50 }).notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [index('live_criterion_filter_types_name_idx').on(t.name)],
+  (t) => [uniqueIndex('live_criterion_rule_name_idx').on(t.name)],
 );
 
-export const liveCriterionFilters = pgTable('live_criterion_filters', {
+export const liveCriterionUnit = pgTable('live_criterion_unit', {
   id: char({ length: 32 }).primaryKey(),
   criterionId: char('criterion_id', { length: 32 })
     .notNull()
-    .references(() => liveCriteria.id),
+    .references(() => liveCriterionTable.id),
   filterTypeId: char('filter_type_id', { length: 32 })
     .notNull()
-    .references(() => liveCriterionFilterTypes.id),
+    .references(() => liveCriterionRule.id),
   value: text().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),

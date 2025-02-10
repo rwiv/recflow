@@ -1,6 +1,6 @@
 import { oneNotNull } from '../../../utils/list.js';
 import { db } from '../../../infra/db/db.js';
-import { channels } from '../../../infra/db/schema.js';
+import { channelTable } from '../../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../../utils/uuid.js';
 import { Tx } from '../../../infra/db/types.js';
@@ -29,7 +29,8 @@ export class ChannelCommandRepository {
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(channels).values(channelEntAppendReq.parse(req)).returning());
+    const ent = await tx.insert(channelTable).values(channelEntAppendReq.parse(req)).returning();
+    return oneNotNull(ent);
   }
 
   async update(update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
@@ -42,14 +43,14 @@ export class ChannelCommandRepository {
     };
     return oneNotNull(
       await tx
-        .update(channels)
+        .update(channelTable)
         .set(channelEnt.parse(req))
-        .where(eq(channels.id, update.id))
+        .where(eq(channelTable.id, update.id))
         .returning(),
     );
   }
 
   async delete(channelId: string, tx: Tx = db) {
-    await tx.delete(channels).where(eq(channels.id, channelId));
+    await tx.delete(channelTable).where(eq(channelTable.id, channelId));
   }
 }

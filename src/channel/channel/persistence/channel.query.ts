@@ -1,5 +1,5 @@
 import { db } from '../../../infra/db/db.js';
-import { channelsToTags, channels, platforms } from '../../../infra/db/schema.js';
+import { channelTagMapTable, channelTable, platformTable } from '../../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
@@ -10,15 +10,15 @@ import { ChannelEnt } from './channel.persistence.schema.js';
 @Injectable()
 export class ChannelQueryRepository {
   findAll(tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channels);
+    return tx.select().from(channelTable);
   }
 
   async findById(channelId: string, tx: Tx = db): Promise<ChannelEnt | undefined> {
-    return oneNullable(await tx.select().from(channels).where(eq(channels.id, channelId)));
+    return oneNullable(await tx.select().from(channelTable).where(eq(channelTable.id, channelId)));
   }
 
   async findByPid(pid: string, tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channels).where(eq(channels.pid, pid));
+    return tx.select().from(channelTable).where(eq(channelTable.pid, pid));
   }
 
   async findByPidAndPlatform(
@@ -28,14 +28,14 @@ export class ChannelQueryRepository {
   ): Promise<ChannelEnt[]> {
     const entities = await tx
       .select()
-      .from(channels)
-      .innerJoin(platforms, eq(channels.platformId, platforms.id))
-      .where(and(eq(channels.pid, pid), eq(platforms.name, platformName)));
-    return entities.map((entity) => entity.channels);
+      .from(channelTable)
+      .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
+      .where(and(eq(channelTable.pid, pid), eq(platformTable.name, platformName)));
+    return entities.map((entity) => entity.channel);
   }
 
   async findByUsername(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channels).where(eq(channels.username, username));
+    return tx.select().from(channelTable).where(eq(channelTable.username, username));
   }
 
   async findByFollowedFlag(
@@ -45,19 +45,19 @@ export class ChannelQueryRepository {
   ): Promise<ChannelEnt[]> {
     const entities = await tx
       .select()
-      .from(channels)
-      .innerJoin(platforms, eq(channels.platformId, platforms.id))
-      .where(and(eq(channels.followed, followed), eq(platforms.name, platformName)));
-    return entities.map((entity) => entity.channels);
+      .from(channelTable)
+      .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
+      .where(and(eq(channelTable.followed, followed), eq(platformTable.name, platformName)));
+    return entities.map((entity) => entity.channel);
   }
 
   async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
     const rows = await tx
       .select()
-      .from(channelsToTags)
-      .innerJoin(channels, eq(channelsToTags.channelId, channels.id))
-      .where(eq(channelsToTags.tagId, tagId))
+      .from(channelTagMapTable)
+      .innerJoin(channelTable, eq(channelTagMapTable.channelId, channelTable.id))
+      .where(eq(channelTagMapTable.tagId, tagId))
       .limit(limit);
-    return rows.map((row) => row.channels).filter((tag) => tag !== null);
+    return rows.map((row) => row.channel).filter((tag) => tag !== null);
   }
 }

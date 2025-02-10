@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../../utils/list.js';
-import { channelPriorities } from '../../../infra/db/schema.js';
+import { channelPriorityTable } from '../../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../../utils/uuid.js';
 import { ChannelPriorityEnt, priorityEnt, PriorityEntAppend } from './priority.schema.js';
@@ -21,25 +21,28 @@ export class ChannelPriorityRepository {
       updatedAt: append.updatedAt ?? null,
     };
     const ent = await tx
-      .insert(channelPriorities)
+      .insert(channelPriorityTable)
       .values(priorityEntAppendReq.parse(reqEnt))
       .returning();
     return oneNotNull(ent);
   }
 
   async findAll(tx: Tx = db): Promise<ChannelPriorityEnt[]> {
-    return tx.select().from(channelPriorities);
+    return tx.select().from(channelPriorityTable);
   }
 
   async findById(priorityId: string, tx: Tx = db): Promise<ChannelPriorityEnt | undefined> {
     return oneNullable(
-      await tx.select().from(channelPriorities).where(eq(channelPriorities.id, priorityId)),
+      await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.id, priorityId)),
     );
   }
 
   async findByName(priorityName: string, tx: Tx = db): Promise<ChannelPriorityEnt | undefined> {
     return oneNullable(
-      await tx.select().from(channelPriorities).where(eq(channelPriorities.name, priorityName)),
+      await tx
+        .select()
+        .from(channelPriorityTable)
+        .where(eq(channelPriorityTable.name, priorityName)),
     );
   }
 }

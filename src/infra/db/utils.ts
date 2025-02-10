@@ -1,29 +1,29 @@
 import { db } from './db.js';
 import {
-  channelsToTags,
-  channels,
-  channelTags,
-  channelPriorities,
-  platforms,
-  nodeTypes,
-  nodeGroups,
-  nodes,
-  nodeStates,
-  lives,
+  channelTagMapTable,
+  channelTable,
+  channelTagTable,
+  channelPriorityTable,
+  platformTable,
+  nodeTypeTable,
+  nodeGroupTable,
+  nodeTable,
+  nodeStateTable,
+  liveTable,
 } from './schema.js';
 
 export async function dropAll() {
-  await db.delete(lives);
+  await db.delete(liveTable);
 
-  await db.delete(channelsToTags);
-  await db.delete(channelTags);
-  await db.delete(channels);
-  await db.delete(channelPriorities);
+  await db.delete(channelTagMapTable);
+  await db.delete(channelTagTable);
+  await db.delete(channelTable);
+  await db.delete(channelPriorityTable);
 
-  await db.delete(nodeStates);
-  await db.delete(nodes);
-  await db.delete(nodeTypes);
-  await db.delete(nodeGroups);
+  await db.delete(nodeStateTable);
+  await db.delete(nodeTable);
+  await db.delete(nodeTypeTable);
+  await db.delete(nodeGroupTable);
 
-  await db.delete(platforms);
+  await db.delete(platformTable);
 }

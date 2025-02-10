@@ -1,6 +1,6 @@
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
-import { channelsToTags, channels } from '../../../infra/db/schema.js';
+import { channelTagMapTable, channelTable } from '../../../infra/db/schema.js';
 import { and, desc, eq, exists, inArray, notExists } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
@@ -32,7 +32,7 @@ export class ChannelSearchRepository {
     tagName: string | undefined = undefined,
     tx: Tx = db,
   ): Promise<PageEntResult> {
-    let qb = tx.select().from(channels).$dynamic();
+    let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
 
     if (tagName) {
@@ -40,12 +40,12 @@ export class ChannelSearchRepository {
       if (!tag) return { total: 0, channels: [] };
 
       let nqb = qb
-        .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
-        .where(and(...conds, eq(channelsToTags.tagId, tag.id)));
+        .innerJoin(channelTagMapTable, eq(channelTagMapTable.channelId, channelTable.id))
+        .where(and(...conds, eq(channelTagMapTable.tagId, tag.id)));
 
       const total = await tx.$count(qb);
       if (page) nqb = this.withPage(nqb, page);
-      return { total, channels: (await nqb).map((r) => r.channels) };
+      return { total, channels: (await nqb).map((r) => r.channel) };
     }
 
     if (sorted) qb = this.withSorted(qb, sorted);
@@ -75,23 +75,24 @@ export class ChannelSearchRepository {
     }
 
     let qb = tx
-      .selectDistinct({ channels: channels })
-      .from(channels)
-      .innerJoin(channelsToTags, eq(channelsToTags.channelId, channels.id))
+      .selectDistinct({ channels: channelTable })
+      .from(channelTable)
+      .innerJoin(channelTagMapTable, eq(channelTagMapTable.channelId, channelTable.id))
       .$dynamic();
 
     const conds: SQLWrapper[] = [];
     for (const tagId of excludeIds) {
-      const subQuery = db
-        .select()
-        .from(channelsToTags)
-        .where(and(eq(channelsToTags.channelId, channels.id), eq(channelsToTags.tagId, tagId)));
+      const cond = and(
+        eq(channelTagMapTable.channelId, channelTable.id),
+        eq(channelTagMapTable.tagId, tagId),
+      );
+      const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(notExists(subQuery));
     }
 
     if (sorted) qb = this.withSorted(qb, sorted);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
-    qb = qb.where(and(...conds, inArray(channelsToTags.tagId, tagIds)));
+    qb = qb.where(and(...conds, inArray(channelTagMapTable.tagId, tagIds)));
 
     const total = await tx.$count(qb);
     if (page) qb = this.withPage(qb, page);
@@ -114,20 +115,22 @@ export class ChannelSearchRepository {
       excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
     }
 
-    let qb = tx.select().from(channels).$dynamic();
+    let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
     for (const tagId of includeIds) {
-      const subQuery = db
-        .select()
-        .from(channelsToTags)
-        .where(and(eq(channelsToTags.channelId, channels.id), eq(channelsToTags.tagId, tagId)));
+      const cond = and(
+        eq(channelTagMapTable.channelId, channelTable.id),
+        eq(channelTagMapTable.tagId, tagId),
+      );
+      const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(exists(subQuery));
     }
     for (const tagId of excludeIds) {
-      const subQuery = db
-        .select()
-        .from(channelsToTags)
-        .where(and(eq(channelsToTags.channelId, channels.id), eq(channelsToTags.tagId, tagId)));
+      const cond = and(
+        eq(channelTagMapTable.channelId, channelTable.id),
+        eq(channelTagMapTable.tagId, tagId),
+      );
+      const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(notExists(subQuery));
     }
 
@@ -150,7 +153,7 @@ export class ChannelSearchRepository {
   private async withPriority(conditions: SQLWrapper[], priorityName: string, tx: Tx = db) {
     const priority = await this.priRepo.findByName(priorityName, tx);
     if (!priority) throw new NotFoundError('Priority not found');
-    conditions.push(eq(channels.priorityId, priority.id));
+    conditions.push(eq(channelTable.priorityId, priority.id));
   }
 
   private withPage<T extends PgSelect>(qb: T, page: PageQuery) {
@@ -162,9 +165,9 @@ export class ChannelSearchRepository {
   private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortArg) {
     const sortType = chSortArg.parse(sorted);
     if (sortType === 'latest') {
-      qb = qb.orderBy(desc(channels.updatedAt));
+      qb = qb.orderBy(desc(channelTable.updatedAt));
     } else if (sortType === 'followerCnt') {
-      qb = qb.orderBy(desc(channels.followerCnt));
+      qb = qb.orderBy(desc(channelTable.followerCnt));
     } else {
       throw new EnumCheckError(`Invalid sort type: ${sortType}`);
     }

@@ -3,7 +3,7 @@ import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from './live.persisten
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channels, lives } from '../../infra/db/schema.js';
+import { channelTable, liveTable } from '../../infra/db/schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -19,31 +19,31 @@ export class LiveRepository {
       updatedAt: null,
       deletedAt: null,
     };
-    return oneNotNull(await tx.insert(lives).values(liveEnt.parse(ent)).returning());
+    return oneNotNull(await tx.insert(liveTable).values(liveEnt.parse(ent)).returning());
   }
 
   async delete(id: string, tx: Tx = db) {
-    await tx.delete(lives).where(eq(lives.id, id));
+    await tx.delete(liveTable).where(eq(liveTable.id, id));
   }
 
   findAll(tx: Tx = db) {
-    return tx.select().from(lives);
+    return tx.select().from(liveTable);
   }
 
   async findById(id: string, tx: Tx = db) {
-    return oneNullable(await tx.select().from(lives).where(eq(lives.id, id)));
+    return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)));
   }
 
   async findByIsDeleted(isDeleted: boolean, tx: Tx = db) {
-    return tx.select().from(lives).where(eq(lives.isDeleted, isDeleted));
+    return tx.select().from(liveTable).where(eq(liveTable.isDeleted, isDeleted));
   }
 
   async findByPid(pid: string, tx: Tx = db) {
     const rows = await tx
-      .select({ lives })
-      .from(lives)
-      .innerJoin(channels, eq(lives.channelId, channels.id))
-      .where(eq(channels.pid, pid));
+      .select({ lives: liveTable })
+      .from(liveTable)
+      .innerJoin(channelTable, eq(liveTable.channelId, channelTable.id))
+      .where(eq(channelTable.pid, pid));
     return rows.map((row) => row.lives);
   }
 
@@ -58,9 +58,9 @@ export class LiveRepository {
       updatedAt: new Date(),
     };
     const ent = await tx
-      .update(lives)
+      .update(liveTable)
       .set(liveEnt.parse(entReq))
-      .where(eq(lives.id, update.id))
+      .where(eq(liveTable.id, update.id))
       .returning();
     return oneNotNull(ent);
   }

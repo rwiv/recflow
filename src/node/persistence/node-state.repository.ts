@@ -7,7 +7,7 @@ import {
 } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { nodeStates } from '../../infra/db/schema.js';
+import { nodeStateTable } from '../../infra/db/schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { and, eq } from 'drizzle-orm';
@@ -22,28 +22,28 @@ export class NodeStateRepository {
       createdAt: new Date(),
       updatedAt: null,
     };
-    return oneNotNull(await tx.insert(nodeStates).values(nodeStateEnt.parse(req)).returning());
+    return oneNotNull(await tx.insert(nodeStateTable).values(nodeStateEnt.parse(req)).returning());
   }
 
   async findAll(tx: Tx = db) {
-    return tx.select().from(nodeStates);
+    return tx.select().from(nodeStateTable);
   }
 
   async findById(id: string, tx: Tx = db) {
-    return oneNullable(await tx.select().from(nodeStates).where(eq(nodeStates.id, id)));
+    return oneNullable(await tx.select().from(nodeStateTable).where(eq(nodeStateTable.id, id)));
   }
 
   async findByNodeId(nodeId: string, tx: Tx = db) {
-    return tx.select().from(nodeStates).where(eq(nodeStates.nodeId, nodeId));
+    return tx.select().from(nodeStateTable).where(eq(nodeStateTable.nodeId, nodeId));
   }
 
   async findByNodeIdAndPlatformIdForUpdate(nodeId: string, platformId: string, tx: Tx = db) {
-    const cond = and(eq(nodeStates.nodeId, nodeId), eq(nodeStates.platformId, platformId));
-    return tx.select().from(nodeStates).where(cond).for('update');
+    const cond = and(eq(nodeStateTable.nodeId, nodeId), eq(nodeStateTable.platformId, platformId));
+    return tx.select().from(nodeStateTable).where(cond).for('update');
   }
 
   async delete(id: string, tx: Tx = db) {
-    await tx.delete(nodeStates).where(eq(nodeStates.id, id));
+    await tx.delete(nodeStateTable).where(eq(nodeStateTable.id, id));
   }
 
   async update(update: NodeStateEntUpdate, tx: Tx = db) {
@@ -56,9 +56,9 @@ export class NodeStateRepository {
     };
     return oneNotNull(
       await tx
-        .update(nodeStates)
+        .update(nodeStateTable)
         .set(nodeStateEnt.parse(req))
-        .where(eq(nodeStates.id, update.id))
+        .where(eq(nodeStateTable.id, update.id))
         .returning(),
     );
   }

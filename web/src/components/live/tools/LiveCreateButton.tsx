@@ -30,12 +30,12 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
+import { platformTypeEnum } from '@/client/common.schema.ts';
 
 const FormSchema = z.object({
-  type: z.enum(PLATFORM_TYPES),
+  type: platformTypeEnum,
   uid: z.string().nonempty(),
 });
 

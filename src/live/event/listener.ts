@@ -9,7 +9,7 @@ import { Env } from '../../common/config/env.js';
 import { Cookie } from '../../infra/authed/types.js';
 import { Dispatcher } from './dispatcher.js';
 import { QueryConfig } from '../../common/config/query.js';
-import { ExitCmd } from './types.js';
+import { ExitCmd } from './event.schema.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
 import { LiveRecord } from '../business/live.business.schema.js';
 

@@ -1,22 +1,26 @@
 import { LiveRecord } from '@/client/live.types.ts';
 import { configs } from '@/common/configs.ts';
 import { ExitCmd, PlatformType } from '@/common/enum.types.ts';
-import { request } from '@/client/utils.ts';
+import { getIngredients, request } from '@/client/utils.ts';
 
 export async function fetchLives() {
   const res = await request(`${configs.endpoint}/api/lives`);
   return (await res.json()) as LiveRecord[];
 }
 
-export async function createLive(uid: string, platform: PlatformType) {
-  const url = `${configs.endpoint}/api/lives/${platform}/${uid}`;
-  const res = await request(url, { method: 'POST' });
+export async function createLive(pid: string, platform: PlatformType) {
+  const url = `${configs.endpoint}/api/lives`;
+  const req = { pid, platformName: platform };
+  const { method, headers, body } = getIngredients('POST', req);
+  const res = await request(url, { method, headers, body });
   return (await res.json()) as LiveRecord;
 }
 
-export async function deleteLive(recordId: string, platform: PlatformType, cmd: ExitCmd) {
-  const url = `${configs.endpoint}/api/lives/${platform}/${recordId}?cmd=${cmd}`;
-  const res = await request(url, { method: 'DELETE' });
+export async function deleteLive(recordId: string, cmd: ExitCmd) {
+  const url = `${configs.endpoint}/api/lives`;
+  const req = { recordId, cmd };
+  const { method, headers, body } = getIngredients('DELETE', req);
+  const res = await request(url, { method, headers, body });
   return (await res.json()) as LiveRecord;
 }
 

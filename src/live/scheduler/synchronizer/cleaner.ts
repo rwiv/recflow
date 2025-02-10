@@ -1,10 +1,10 @@
 import { Synchronizer } from './synchronizer.js';
-import { PlatformType } from '../../../platform/platform.types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { LiveService } from '../../business/live.service.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { LiveRecord } from '../../business/live.business.schema.js';
 import { LiveFinder } from '../../business/live.finder.js';
+import { PlatformType } from '../../../platform/platform.schema.js';
 
 export class LiveCleaner extends Synchronizer {
   constructor(

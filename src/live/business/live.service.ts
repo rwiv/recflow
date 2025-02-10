@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
-import { ExitCmd } from '../event/types.js';
+import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { NodeSelector } from '../../node/business/node.selector.js';
 import { ChannelInfo } from '../../platform/wapper/channel.js';

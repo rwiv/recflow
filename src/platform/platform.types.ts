@@ -3,7 +3,6 @@ import { SoopChannelInfo, SoopLiveInfo } from './raw/soop.js';
 import { LiveInfo } from './wapper/live.js';
 import { ChannelInfo } from './wapper/channel.js';
 
-export type PlatformType = 'chzzk' | 'soop' | 'twitch';
 export type PlatformLiveInfo = ChzzkLiveInfo | SoopLiveInfo;
 export type PlatformChannelInfo = ChzzkChannelInfo | SoopChannelInfo;
 

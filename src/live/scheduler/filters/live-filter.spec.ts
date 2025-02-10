@@ -1,8 +1,8 @@
 import { ChzzkLiveFilter } from './live-filter.chzzk.js';
 import { it } from 'vitest';
-import { PlatformType } from '../../../platform/platform.types.js';
 import { createTestApp } from '../../../common/helpers/helper.app.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
+import { PlatformType } from '../../../platform/platform.schema.js';
 
 const app = await createTestApp();
 const fetcher = app.get(PlatformFetcher);

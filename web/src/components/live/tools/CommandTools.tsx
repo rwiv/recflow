@@ -14,7 +14,7 @@ export function CommandTools({ table }: { table: Table<LiveRecord> }) {
 
   const remove = async (cmd: ExitCmd) => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
-    await Promise.all(checked.map((live) => deleteLive(live.id, live.platform.name, cmd)));
+    await Promise.all(checked.map((live) => deleteLive(live.id, cmd)));
     table.toggleAllPageRowsSelected(false);
     await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
   };

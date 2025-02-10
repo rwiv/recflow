@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PlatformType } from '../../platform/platform.types.js';
+import { PlatformType } from '../../platform/platform.schema.js';
 
 export const exitCmd = z.enum(['delete', 'cancel', 'finish']);
 export type ExitCmd = z.infer<typeof exitCmd>;

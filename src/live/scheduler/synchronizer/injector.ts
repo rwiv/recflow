@@ -1,6 +1,5 @@
 import { Synchronizer } from './synchronizer.js';
 import { LiveInfo } from '../../../platform/wapper/live.js';
-import { PlatformType } from '../../../platform/platform.types.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { LiveService } from '../../business/live.service.js';
 import { LiveFilter } from '../filters/interface.js';
@@ -9,6 +8,7 @@ import { ChannelRecord } from '../../../channel/channel/business/channel.busines
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { LiveFinder } from '../../business/live.finder.js';
+import { PlatformType } from '../../../platform/platform.schema.js';
 
 export class LiveAppender extends Synchronizer {
   constructor(
@@ -29,11 +29,9 @@ export class LiveAppender extends Synchronizer {
 
     const queriedLives = await this.fetcher.fetchLives(this.platform);
     const filtered = await this.filter.getFiltered(queriedLives);
-    // TODO: After changing the node domain to db-based, use Promise.all
     for (const live of filtered) {
       await this.processQueriedLive(live);
     }
-    // await Promise.all(filtered.map((live) => this.processQueriedLive(live)));
   }
 
   private async processFollowedChannel(ch: ChannelRecord) {

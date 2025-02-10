@@ -1,23 +1,20 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
 import { LiveRecord } from '@/client/live.types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { NodeTable } from '@/components/node/NodeTable.tsx';
 import { mockLive, mockNode } from '@/client/mocks.ts';
-import { NodeRecord } from '@/client/node.schema.ts';
 
 const lives = Array.from({ length: 10 }).map(mockLive);
 const nodes = Array.from({ length: 10 }).map(mockNode);
 
 export function TestPage() {
-  return <div>{lives && nodes && <TableContent lives={lives} nodes={nodes} />}</div>;
+  return <div>{lives && nodes && <TableContent lives={lives} />}</div>;
 }
 
 interface TableContentProps {
   lives: LiveRecord[];
-  nodes: NodeRecord[];
 }
 
-function TableContent({ lives, nodes }: TableContentProps) {
+function TableContent({ lives }: TableContentProps) {
   return (
     <Tabs defaultValue="lives" className="mx-10 my-3">
       <TabsList className="my-3">
@@ -28,11 +25,6 @@ function TableContent({ lives, nodes }: TableContentProps) {
       <TabsContent value="lives">
         <div>
           <LiveTable data={lives} />
-        </div>
-      </TabsContent>
-      <TabsContent value="nodes">
-        <div>
-          <NodeTable data={nodes} />
         </div>
       </TabsContent>
     </Tabs>

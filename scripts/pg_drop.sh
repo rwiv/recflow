@@ -18,7 +18,9 @@ psql -c "
 DO \$\$
 DECLARE r RECORD;
 BEGIN
-    DROP SCHEMA drizzle CASCADE;
+    IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'drizzle') THEN
+        DROP SCHEMA drizzle CASCADE;
+    END IF;
 
     FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public')
     LOOP

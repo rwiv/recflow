@@ -46,7 +46,7 @@ export class ChannelBatchMigrator extends BatchMigrator {
     };
     // const tagIds = channel.tags?.map((t) => t.id) ?? [];
     // await this.chWriter.createWithTagIds(req, tagIds);
-    const tagNames = channel.tags?.map((t) => t.id) ?? [];
+    const tagNames = channel.tags?.map((t) => t.name) ?? [];
     await this.chWriter.createWithTagNames(req, tagNames);
   }
 

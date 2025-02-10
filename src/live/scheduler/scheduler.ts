@@ -4,7 +4,7 @@ import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveCleaner } from './synchronizer/cleaner.js';
-import { LiveAppender } from './synchronizer/injector.js';
+import { LiveAppender } from './synchronizer/appender.js';
 import { LiveRefresher } from './synchronizer/refresher.js';
 import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';

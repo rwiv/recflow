@@ -69,7 +69,8 @@ export class DevInitInjector {
       const append: ChannelAppend = {
         ...info,
         platformName: info.platform,
-        priorityName: randomElem(CHANNEL_PRIORITIES),
+        // priorityName: randomElem(CHANNEL_PRIORITIES),
+        priorityName: 'skip',
         // followed: randomElem([true, false] as const),
         followed: false,
         description: null,

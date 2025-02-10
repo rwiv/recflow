@@ -1,8 +1,9 @@
-import { ChannelWriter } from '../channel/channel/business/channel.writer.js';
+import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import fs from 'fs';
-import { ChannelAppendWithFetch } from '../channel/channel/business/channel.business.schema.js';
+import { ChannelAppendWithFetch } from '../../channel/channel/business/channel.business.schema.js';
 import { log } from 'jslog';
-import { platformTypeEnum } from '../platform/platform.schema.js';
+import { platformTypeEnum } from '../../platform/platform.schema.js';
+import { Injectable } from '@nestjs/common';
 
 interface BatchInsertRequest {
   pids: string[];
@@ -11,6 +12,7 @@ interface BatchInsertRequest {
   tagNames: string[];
 }
 
+@Injectable()
 export class BatchInserter {
   constructor(private readonly channelWriter: ChannelWriter) {}
 

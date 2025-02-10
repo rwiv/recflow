@@ -63,7 +63,7 @@ export class ChannelWriter {
     }
     const entities = await this.chQuery.findByPidAndPlatform(append.pid, append.platformName);
     if (entities.length > 0) {
-      throw new ConflictError('Channel already exists');
+      throw new ConflictError(`Channel already exist ${append.username}`);
     }
 
     const platform = await this.pfRepo.findByName(append.platformName);

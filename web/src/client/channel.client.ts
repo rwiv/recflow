@@ -40,7 +40,7 @@ export async function updateChannelFollowed(id: string, followed: boolean) {
   return (await res.json()) as ChannelRecord;
 }
 
-export async function updateChannelDescription(id: string, description: string) {
+export async function updateChannelDescription(id: string, description: string | null) {
   const url = `${configs.endpoint}/api/channels/description`;
   const req: ChannelDefUpdate = { id, form: { description } };
   const { method, headers, body } = getIngredients('PATCH', req);

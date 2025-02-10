@@ -11,6 +11,8 @@ import {
 import { Dispatch, KeyboardEventHandler, SetStateAction, useState } from 'react';
 import { checkType } from '@/lib/union.ts';
 import { useNavigate } from 'react-router';
+import { Button } from '@/components/ui/button.tsx';
+import { Search } from 'lucide-react';
 
 type Criteria = 'pid' | 'username';
 
@@ -21,6 +23,10 @@ export function KeywordSearchBar() {
 
   const onKeydown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
     if (ev.key !== 'Enter' || input === '') return;
+    submit();
+  };
+
+  const submit = () => {
     setInput('');
     if (criteria === 'username') {
       navigate(`/channels?uname=${input}`);
@@ -32,14 +38,17 @@ export function KeywordSearchBar() {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1.5">
       <SearchCriteriaSelect criteria={criteria} setCriteria={setCriteria} />
       <Input
-        css={css({ width: '20rem' })}
+        css={css({ width: '19rem' })}
         value={input}
         onInput={(ev) => setInput(ev.currentTarget.value)}
         onKeyDown={onKeydown}
       />
+      <Button variant="ghost" size="icon" onClick={submit}>
+        <Search />
+      </Button>
     </div>
   );
 }
@@ -59,7 +68,7 @@ export function SearchCriteriaSelect({ criteria, setCriteria }: SearchCriteriaSe
 
   return (
     <Select defaultValue={criteria} onValueChange={onValueChange}>
-      <SelectTrigger css={css({ width: '8.5rem' })}>
+      <SelectTrigger css={css({ width: '8rem' })}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

@@ -1,6 +1,6 @@
 import { db } from '../../../infra/db/db.js';
 import { channelTagMapTable, channelTable, platformTable } from '../../../infra/db/schema.js';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, like } from 'drizzle-orm';
 import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../../utils/list.js';
@@ -34,8 +34,11 @@ export class ChannelQueryRepository {
     return entities.map((entity) => entity.channel);
   }
 
-  async findByUsername(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channelTable).where(eq(channelTable.username, username));
+  async findByUsernameLike(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
+    return tx
+      .select()
+      .from(channelTable)
+      .where(like(channelTable.username, `%${username}%`));
   }
 
   async findByFollowedFlag(

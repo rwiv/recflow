@@ -20,6 +20,7 @@ import {
   chAppendWithFetch,
   PageQuery,
   pageQuery,
+  pageResult,
 } from '../business/channel.business.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
@@ -39,7 +40,7 @@ export class ChannelController {
   ) {}
 
   @Get('/')
-  channels(
+  async channels(
     @Query('st') sorted?: string,
     @Query('pri') priority?: string,
     @Query('tn') tagName?: string,
@@ -50,10 +51,12 @@ export class ChannelController {
     @Query('wt', new ParseBoolPipe({ optional: true })) withTags?: boolean,
   ) {
     if (pid) {
-      return this.chFinder.findByPid(pid, withTags);
+      const channels = await this.chFinder.findByPid(pid, withTags);
+      return pageResult.parse({ channels, total: 1 });
     }
     if (username) {
-      return this.chFinder.findByUsername(username, withTags);
+      const channels = await this.chFinder.findByUsernameLike(username, withTags);
+      return pageResult.parse({ channels, total: 1 });
     }
 
     if (!page || !size) {
@@ -89,7 +92,7 @@ export class ChannelController {
   @Patch('/description')
   patchDescription(@Body() req: ChannelUpdate) {
     const update = chUpdate.parse(req);
-    return this.chUpdater.updateDescription(update.id, notNull(update.form?.description));
+    return this.chUpdater.updateDescription(update.id, update.form.description ?? null);
   }
 
   @Delete('/:channelId')

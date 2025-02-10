@@ -3,15 +3,15 @@ import { BaseError } from './base/BaseError.js';
 import { ErrorTypeToHttpStatus } from './types/records.js';
 import { HttpStatusCode } from './types/types.js';
 import { ZodError } from 'zod';
+import { zodErrMsg } from '../zod.js';
 
 const DEFAULT_HTTP_ERROR_STATUS = 500;
 
 export class HttpErrorResolver {
   resolve(err: unknown): HttpError {
     if (err instanceof ZodError) {
-      return new HttpError('Validation Failure', ErrorTypeToHttpStatus['Unprocessable Entity'], {
-        cause: err,
-      });
+      const status = ErrorTypeToHttpStatus['Unprocessable Entity'];
+      return new HttpError(zodErrMsg(err), status, { cause: err });
     }
 
     if (err instanceof HttpError) {

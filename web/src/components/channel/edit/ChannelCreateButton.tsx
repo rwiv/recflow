@@ -53,7 +53,7 @@ export function ChannelCreateButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="ml-1" css={css({ width: '5.2rem' })}>
+        <Button variant="secondary" className="ml-1" css={css({ width: '5rem' })}>
           Add
         </Button>
       </DialogTrigger>

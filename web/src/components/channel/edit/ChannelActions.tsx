@@ -15,11 +15,13 @@ import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { deleteChannel, updateChannelFollowed } from '@/client/channel.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { ChannelUpdateDialog } from '@/components/channel/edit/ChannelUpdateDialog.tsx';
 
 export function ChannelActions({ channel }: { channel: ChannelRecord }) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
   const attachRef = useRef<HTMLButtonElement>(null);
+  const updateRef = useRef<HTMLButtonElement>(null);
   const deleteRef = useRef<HTMLButtonElement>(null);
 
   const updateFollowed = async () => {
@@ -50,14 +52,15 @@ export function ChannelActions({ channel }: { channel: ChannelRecord }) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => attachRef.current?.click()}>Attach</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => updateRef.current?.click()}>Update</DropdownMenuItem>
           <DropdownMenuItem onClick={() => updateFollowed()}>
             {channel.followed ? 'Unfollow' : 'Follow'}
           </DropdownMenuItem>
-          <DropdownMenuItem>Update</DropdownMenuItem>
           <DropdownMenuItem onClick={() => deleteRef.current?.click()}>Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <TagAttachDialog channel={channel} triggerRef={attachRef} />
+      <ChannelUpdateDialog channel={channel} triggerRef={updateRef} />
       <DefaultAlertDialog onAction={onDelete} triggerRef={deleteRef} />
     </div>
   );

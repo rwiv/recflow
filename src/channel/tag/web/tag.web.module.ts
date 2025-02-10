@@ -4,6 +4,6 @@ import { ChannelTagBusinessModule } from '../business/tag.business.module.js';
 
 @Module({
   imports: [ChannelTagBusinessModule],
-  providers: [TagController],
+  controllers: [TagController],
 })
 export class ChannelTagWebModule {}

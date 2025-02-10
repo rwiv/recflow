@@ -44,8 +44,8 @@ export class ChannelFinder {
     return this.chMapper.loadRelation(channels[0], withTags);
   }
 
-  async findByUsername(username: string, withTags: boolean = false) {
-    const entities = await this.chQuery.findByUsername(username);
+  async findByUsernameLike(username: string, withTags: boolean = false) {
+    const entities = await this.chQuery.findByUsernameLike(username);
     const channels = await this.chMapper.mapAll(entities);
     return this.chMapper.loadRelations(channels, withTags);
   }

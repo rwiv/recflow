@@ -32,11 +32,8 @@ export class NodeMapper {
     withStates: boolean = false,
     tx: Tx = db,
   ): Promise<NodeRecord> {
-    const typeName = notNull(await this.typeRepo.findById(ent.typeId, tx)).name;
-    let result: NodeRecord = {
-      ...ent,
-      typeName: nodeTypeEnum.parse(typeName),
-    };
+    const nodeType = notNull(await this.typeRepo.findById(ent.typeId, tx));
+    let result: NodeRecord = { ...ent, type: nodeType };
     if (withGroup) {
       const group = await this.groupRepo.findById(ent.groupId, tx);
       if (!group) throw new NotFoundError('Not found node group');

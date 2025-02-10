@@ -2,10 +2,10 @@ import { LiveTable } from '@/components/live/LiveTable.tsx';
 import { LiveRecord } from '@/client/live.types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
-import { mockLiveRecord, mockNode } from '@/client/mocks.ts';
+import { mockLive, mockNode } from '@/client/mocks.ts';
 import { NodeRecord } from '@/client/node.schema.ts';
 
-const lives = Array.from({ length: 10 }).map(mockLiveRecord);
+const lives = Array.from({ length: 10 }).map(mockLive);
 const nodes = Array.from({ length: 10 }).map(mockNode);
 
 export function TestPage() {

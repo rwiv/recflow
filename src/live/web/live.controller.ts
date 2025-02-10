@@ -8,6 +8,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveRecord } from '../business/live.business.schema.js';
 import { LiveFinder } from '../business/live.finder.js';
 import { PlatformType } from '../../platform/platform.schema.js';
+import { LiveMapOpt } from '../business/live.mapper.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -21,12 +22,24 @@ export class LiveController {
 
   @Get('/')
   allActives(): Promise<LiveRecord[]> {
-    return this.liveFinder.findAllActives();
+    const opt: LiveMapOpt = {
+      withChannelTags: false,
+      withNode: true,
+      withNodeGroup: true,
+      withNodeStates: false,
+    };
+    return this.liveFinder.findAllActives(opt);
   }
 
   @Get('/all')
   all(): Promise<LiveRecord[]> {
-    return this.liveFinder.findAll();
+    const opt: LiveMapOpt = {
+      withChannelTags: false,
+      withNode: true,
+      withNodeGroup: true,
+      withNodeStates: false,
+    };
+    return this.liveFinder.findAll(opt);
   }
 
   @Get('/schedule/stat')

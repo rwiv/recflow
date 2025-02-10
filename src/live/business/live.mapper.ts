@@ -7,6 +7,13 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { platformRecord } from '../../platform/platform.schema.js';
 import { Injectable } from '@nestjs/common';
 
+export interface LiveMapOpt {
+  withChannelTags?: boolean;
+  withNode?: boolean;
+  withNodeGroup?: boolean;
+  withNodeStates?: boolean;
+}
+
 @Injectable()
 export class LiveMapper {
   constructor(
@@ -15,20 +22,26 @@ export class LiveMapper {
     private readonly nodeFinder: NodeFinder,
   ) {}
 
-  async mapAll(lives: LiveEnt[], withNode: boolean = false): Promise<LiveRecord[]> {
-    return Promise.all(lives.map((live) => this.map(live, withNode)));
+  async mapAll(lives: LiveEnt[], opt: LiveMapOpt): Promise<LiveRecord[]> {
+    const promises = lives.map((live) => this.map(live, opt));
+    return Promise.all(promises);
   }
 
-  async map(liveEnt: LiveEnt, withNode: boolean = false): Promise<LiveRecord> {
+  async map(liveEnt: LiveEnt, opt: LiveMapOpt = {}): Promise<LiveRecord> {
+    const withChannelTags = opt.withChannelTags ?? false;
+    const withNode = opt.withNode ?? false;
+    const withNodeGroup = opt.withNodeGroup ?? false;
+    const withNodeStates = opt.withNodeStates ?? false;
+
     const platform = await this.pfRepo.findById(liveEnt.platformId);
     if (!platform) throw new NotFoundError('Not Found Platform');
-    const channel = await this.channelFinder.findById(liveEnt.channelId);
+    const channel = await this.channelFinder.findById(liveEnt.channelId, withChannelTags);
     if (!channel) throw new NotFoundError('Not Found Channel');
 
     let result: LiveRecord = { ...liveEnt, channel, platform: platformRecord.parse(platform) };
 
     if (withNode) {
-      const node = await this.nodeFinder.findById(liveEnt.nodeId);
+      const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates);
       if (!node) throw new NotFoundError('Not Found Node');
       result = { ...result, node };
     }

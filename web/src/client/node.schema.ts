@@ -2,6 +2,12 @@ import { z } from 'zod';
 import { platformRecord, platformTypeEnum } from '@/client/common.schema.ts';
 
 export const nodeTypeEnum = z.enum(['worker', 'argo']);
+const nodeTypeRecord = z.object({
+  id: z.string(),
+  name: nodeTypeEnum,
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime().nullable(),
+});
 
 const nodeGroup = z.object({
   id: z.string(),
@@ -31,7 +37,7 @@ export const nodeRecord = z.object({
   totalCapacity: z.coerce.number().nonnegative(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
-  typeName: nodeTypeEnum,
+  type: nodeTypeRecord,
   groupId: z.string().length(32),
   group: nodeGroup.optional(),
   states: z.array(nodeState).optional(),

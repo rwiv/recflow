@@ -31,7 +31,7 @@ export class LiveEventListener {
     // ntfy
     await this.notifier.sendLiveInfo(
       this.env.ntfyTopic,
-      created.channel.pid,
+      created.channel.username,
       created.viewCnt,
       created.liveTitle,
     );

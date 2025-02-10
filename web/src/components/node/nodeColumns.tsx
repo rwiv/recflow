@@ -4,7 +4,6 @@ import { NodeRecord } from '@/client/node.schema.ts';
 
 export const selectCid = 'select';
 export const nameCid = 'name';
-export const typeCid = 'typeName';
 export const weightCid = 'weight';
 
 const chzzkColumn: ColumnDef<NodeRecord> = {
@@ -44,11 +43,20 @@ const group: ColumnDef<NodeRecord> = {
   },
 };
 
+const nodeType: ColumnDef<NodeRecord> = {
+  accessorKey: 'type',
+  header: 'Type',
+  cell: ({ row }) => {
+    const name = row.original.type.name;
+    return <div className="m-1">{name}</div>;
+  },
+};
+
 export const nodeColumns: ColumnDef<NodeRecord>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
   group,
-  baseColumnDef(typeCid, 'Type'),
+  nodeType,
   baseColumnDef(weightCid, 'Weight'),
   chzzkColumn,
   soopColumn,

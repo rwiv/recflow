@@ -1,20 +1,18 @@
-import { PlatformType } from '@/common/enum.types.ts';
+import { ChannelRecord } from '@/client/channel.types.ts';
+import { PlatformRecord } from '@/client/common.schema.ts';
+import { NodeRecord } from '@/client/node.schema.ts';
 
-export interface LiveInfo {
-  type: PlatformType;
-  channelId: string;
-  channelName: string;
-  liveId: number;
+export interface LiveRecord {
+  id: string;
+  platform: PlatformRecord;
+  channel: ChannelRecord;
+  nodeId: string;
   liveTitle: string;
   viewCnt: number;
   adult: boolean;
-  openDate: string;
-}
-
-export interface LiveRecord extends LiveInfo {
-  savedAt: string;
+  isDeleted: boolean;
+  createdAt: string;
   updatedAt: string | undefined;
   deletedAt: string | undefined;
-  isDeleted: boolean;
-  assignedWebhookName: string;
+  node?: NodeRecord;
 }

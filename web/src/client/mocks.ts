@@ -4,35 +4,35 @@ import { randomElem } from '@/lib/list.ts';
 import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { TagRecord } from '@/client/tag.types.ts';
-import { NodeRecord } from '@/client/node.schema.ts';
+import { PlatformRecord } from '@/client/common.schema.ts';
 
-export function mockLiveRecord(): LiveRecord {
+export function mockLive(): LiveRecord {
   return {
-    type: randomElem(PLATFORM_TYPES),
-    channelId: faker.string.uuid().replace(/-/g, ''),
-    channelName: faker.internet.username(),
-    liveId: faker.number.int({ min: 100000, max: 999999 }),
+    id: faker.string.uuid().replace(/-/g, ''),
+    platform: mockPlatform(),
+    channel: mockChannel(),
+    nodeId: faker.string.uuid().replace(/-/g, ''),
     liveTitle: faker.lorem.sentence(),
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
     adult: randomElem([true, false]),
-    openDate: faker.date.anytime().toISOString(),
-    savedAt: faker.date.anytime().toISOString(),
+    createdAt: faker.date.anytime().toISOString(),
     updatedAt: faker.date.anytime().toISOString(),
     deletedAt: faker.date.anytime().toISOString(),
     isDeleted: randomElem([true, false]),
-    assignedWebhookName: faker.lorem.word(),
+    node: undefined,
   };
 }
 
-export function mockNode(): NodeRecord {
+export function mockNode() {
+  return {};
+}
+
+export function mockPlatform(): PlatformRecord {
   return {
-    name: faker.lorem.word(),
-    type: randomElem(['main', 'sub']),
-    url: faker.internet.url(),
-    chzzkCapacity: faker.number.int({ min: 10, max: 100 }),
-    soopCapacity: faker.number.int({ min: 10, max: 100 }),
-    chzzkAssignedCnt: faker.number.int({ min: 0, max: 100 }),
-    soopAssignedCnt: faker.number.int({ min: 0, max: 100 }),
+    id: faker.string.uuid().replace(/-/g, ''),
+    name: randomElem(PLATFORM_TYPES),
+    createdAt: faker.date.anytime().toISOString(),
+    updatedAt: faker.date.anytime().toISOString(),
   };
 }
 
@@ -43,12 +43,7 @@ export function mockChannel(): ChannelRecord {
     username: faker.internet.username(),
     profileImgUrl: faker.image.avatar(),
     followerCnt: faker.number.int({ min: 10, max: 10000 }),
-    platform: {
-      id: faker.string.uuid().replace(/-/g, ''),
-      name: randomElem(PLATFORM_TYPES),
-      createdAt: faker.date.anytime(),
-      updatedAt: faker.date.anytime(),
-    },
+    platform: mockPlatform(),
     priority: {
       id: faker.string.uuid().replace(/-/g, ''),
       name: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),

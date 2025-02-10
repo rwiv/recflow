@@ -5,14 +5,14 @@ import {
   nodeGroupEnt,
   nodeStateEnt,
 } from '../persistence/node.persistence.schema.js';
-import { nodeTypeEnum } from '../node.schema.js';
+import { nodeTypeEnum, nodeTypeRecord } from '../node.schema.js';
 import { platformRecord } from '../../platform/platform.schema.js';
 
 const nodeState = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformRecord });
 export type NodeState = z.infer<typeof nodeState>;
 
 export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({
-  typeName: nodeTypeEnum,
+  type: nodeTypeRecord,
   group: nodeGroupEnt.optional(),
   states: z.array(nodeState).optional(),
 });

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LiveRepository } from '../persistence/live.repository.js';
-import { LiveMapper } from './live.mapper.js';
+import { LiveMapOpt, LiveMapper } from './live.mapper.js';
 import { oneNullable } from '../../utils/list.js';
 
 export interface FindOptions {
@@ -36,15 +36,15 @@ export class LiveFinder {
     return this.mapper.map(ent);
   }
 
-  async findAll() {
-    return this.mapper.mapAll(await this.liveRepo.findAll());
+  async findAll(opt: LiveMapOpt = {}) {
+    return this.mapper.mapAll(await this.liveRepo.findAll(), opt);
   }
 
-  async findAllActives() {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(false));
+  async findAllActives(opt: LiveMapOpt = {}) {
+    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(false), opt);
   }
 
-  async findAllDeleted() {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true));
+  async findAllDeleted(opt: LiveMapOpt = {}) {
+    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), opt);
   }
 }

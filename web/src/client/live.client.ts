@@ -14,8 +14,8 @@ export async function createLive(uid: string, platform: PlatformType) {
   return (await res.json()) as LiveRecord;
 }
 
-export async function deleteLive(uid: string, platform: PlatformType, cmd: ExitCmd) {
-  const url = `${configs.endpoint}/api/lives/${platform}/${uid}?cmd=${cmd}`;
+export async function deleteLive(recordId: string, platform: PlatformType, cmd: ExitCmd) {
+  const url = `${configs.endpoint}/api/lives/${platform}/${recordId}?cmd=${cmd}`;
   const res = await request(url, { method: 'DELETE' });
   return (await res.json()) as LiveRecord;
 }

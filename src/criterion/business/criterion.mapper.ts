@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CriterionUnitEnt } from '../persistence/criterion.persistence.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import {
-  ChzzkCriterionRecord,
-  CriterionRecord,
-  SoopCriterionRecord,
-} from './criterion.business.schema.js';
+import { ChzzkCriterionRecord, CriterionRecord, SoopCriterionRecord } from './criterion.business.schema.js';
 import { CriterionUnitRepository } from '../persistence/criterion-unit.repository.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { CriterionRuleService } from './criterion.rule.js';

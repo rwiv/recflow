@@ -20,10 +20,7 @@ export class NodeGroupRepository {
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.createdAt ?? null,
     };
-    const ent = await tx
-      .insert(nodeGroupTable)
-      .values(nodeGroupEntAppendReq.parse(req))
-      .returning();
+    const ent = await tx.insert(nodeGroupTable).values(nodeGroupEntAppendReq.parse(req)).returning();
     return oneNotNull(ent);
   }
 

@@ -7,10 +7,7 @@ import {
 } from '../persistence/channel.persistence.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
 import { ChannelPriorityEnt, priorityEnt } from '../persistence/priority.schema.js';
-import {
-  platformRecord,
-  platformType,
-} from '../../../platform/storage/platform.business.schema.js';
+import { platformRecord, platformType } from '../../../platform/storage/platform.business.schema.js';
 
 export const priorityRecord = priorityEnt;
 export type ChannelPriorityRecord = ChannelPriorityEnt;

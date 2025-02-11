@@ -2,14 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z, ZodError } from 'zod';
 import { Button } from '@/components/ui/button.tsx';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form.tsx';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChangeEvent, useRef } from 'react';
 import {
@@ -21,13 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog.tsx';
 import { DialogClose } from '@radix-ui/react-dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
@@ -57,9 +44,7 @@ export function NodeCreateButton() {
           <DialogTitle>Add New Node</DialogTitle>
           <DialogDescription>Click save when you're done.</DialogDescription>
         </DialogHeader>
-        {nodeGroups && (
-          <CreateForm nodeGroups={nodeGroups} cb={() => closeBtnRef.current?.click()} />
-        )}
+        {nodeGroups && <CreateForm nodeGroups={nodeGroups} cb={() => closeBtnRef.current?.click()} />}
         <DialogClose ref={closeBtnRef} />
       </DialogContent>
     </Dialog>
@@ -222,10 +207,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: ()
             <FormItem css={formItemStyle}>
               <FormLabel>Chzzk Capacity</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter Chzzk Capacity"
-                  onChange={(e) => onChangeCapacity(e, 'chzzk')}
-                />
+                <Input placeholder="Enter Chzzk Capacity" onChange={(e) => onChangeCapacity(e, 'chzzk')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -238,10 +220,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: ()
             <FormItem css={formItemStyle}>
               <FormLabel>Soop Capacity</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter Soop Capacity"
-                  onChange={(e) => onChangeCapacity(e, 'soop')}
-                />
+                <Input placeholder="Enter Soop Capacity" onChange={(e) => onChangeCapacity(e, 'soop')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -254,10 +233,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: ()
             <FormItem css={formItemStyle}>
               <FormLabel>Soop Capacity</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter Twitch Capacity"
-                  onChange={(e) => onChangeCapacity(e, 'twitch')}
-                />
+                <Input placeholder="Enter Twitch Capacity" onChange={(e) => onChangeCapacity(e, 'twitch')} />
               </FormControl>
               <FormMessage />
             </FormItem>

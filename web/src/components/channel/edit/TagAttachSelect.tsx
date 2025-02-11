@@ -93,9 +93,7 @@ export function TagAttachSelect({
                 nonDuplicatedSortedTags(existsTags, tags).map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
-                    <Check
-                      className={cn('ml-auto', value === tag.name ? 'opacity-100' : 'opacity-0')}
-                    />
+                    <Check className={cn('ml-auto', value === tag.name ? 'opacity-100' : 'opacity-0')} />
                   </CommandItem>
                 ))}
             </CommandGroup>

@@ -1,9 +1,4 @@
-import {
-  ChannelCreation,
-  ChannelDefUpdate,
-  ChannelRecord,
-  PageResult,
-} from '@/client/channel.types.ts';
+import { ChannelCreation, ChannelDefUpdate, ChannelRecord, PageResult } from '@/client/channel.types.ts';
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/utils.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';

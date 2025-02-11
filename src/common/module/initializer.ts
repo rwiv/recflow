@@ -71,9 +71,7 @@ export class AppInitializer {
     }
 
     const ruleNames = (await this.ruleRepo.findAll()).map((rule) => rule.name);
-    const notExistsChzzk = chzzkCriterionRuleType.options.filter(
-      (name) => !ruleNames.includes(name),
-    );
+    const notExistsChzzk = chzzkCriterionRuleType.options.filter((name) => !ruleNames.includes(name));
     for (const ruleName of notExistsChzzk) {
       await this.ruleRepo.create({ name: ruleName });
     }

@@ -12,14 +12,7 @@ import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form.tsx';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { TagAttachSelect } from '@/components/channel/edit/TagAttachSelect.tsx';

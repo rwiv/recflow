@@ -19,10 +19,7 @@ export class CriterionUnitRepository {
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
-    const ent = await tx
-      .insert(liveCriterionUnitTable)
-      .values(criterionUnitEntReq.parse(entReq))
-      .returning();
+    const ent = await tx.insert(liveCriterionUnitTable).values(criterionUnitEntReq.parse(entReq)).returning();
     return oneNotNull(ent);
   }
 

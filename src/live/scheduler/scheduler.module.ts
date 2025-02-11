@@ -10,13 +10,7 @@ import { ScheduleErrorHandler } from './error.handler.js';
 import { NodePersistenceModule } from '../../node/persistence/node.persistence.module.js';
 
 @Module({
-  imports: [
-    ConfigModule,
-    LiveBusinessModule,
-    PlatformModule,
-    ChannelBusinessModule,
-    NodePersistenceModule,
-  ],
+  imports: [ConfigModule, LiveBusinessModule, PlatformModule, ChannelBusinessModule, NodePersistenceModule],
   providers: [LiveScheduler, ChzzkLiveFilter, SoopLiveFilter, ScheduleErrorHandler],
   exports: [LiveScheduler],
 })

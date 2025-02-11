@@ -10,12 +10,7 @@ import { ChannelTagBusinessModule } from '../../tag/business/tag.business.module
 import { ChannelTagPersistenceModule } from '../../tag/persistence/tag.persistence.module.js';
 
 @Module({
-  imports: [
-    ChannelTagPersistenceModule,
-    ChannelTagBusinessModule,
-    ChannelPersistenceModule,
-    PlatformModule,
-  ],
+  imports: [ChannelTagPersistenceModule, ChannelTagBusinessModule, ChannelPersistenceModule, PlatformModule],
   providers: [ChannelWriter, ChannelFinder, ChannelSearcher, ChannelUpdater, ChannelMapper],
   exports: [ChannelWriter, ChannelFinder, ChannelSearcher, ChannelUpdater],
 })

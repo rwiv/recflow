@@ -1,7 +1,4 @@
-import {
-  ChannelAppend,
-  channelAppend,
-} from '../../channel/channel/business/channel.business.schema.js';
+import { ChannelAppend, channelAppend } from '../../channel/channel/business/channel.business.schema.js';
 
 export function mockChannel(
   n: number,

@@ -20,10 +20,7 @@ export class ChannelPriorityRepository {
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? null,
     };
-    const ent = await tx
-      .insert(channelPriorityTable)
-      .values(priorityEntAppendReq.parse(reqEnt))
-      .returning();
+    const ent = await tx.insert(channelPriorityTable).values(priorityEntAppendReq.parse(reqEnt)).returning();
     return oneNotNull(ent);
   }
 
@@ -39,10 +36,7 @@ export class ChannelPriorityRepository {
 
   async findByName(priorityName: string, tx: Tx = db): Promise<ChannelPriorityEnt | undefined> {
     return oneNullable(
-      await tx
-        .select()
-        .from(channelPriorityTable)
-        .where(eq(channelPriorityTable.name, priorityName)),
+      await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.name, priorityName)),
     );
   }
 }

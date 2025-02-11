@@ -19,10 +19,7 @@ export function baseColumnDef<T>(
   };
 }
 
-export function sortableColumnDef<T>(
-  cid: string,
-  header: string | undefined = undefined,
-): ColumnDef<T> {
+export function sortableColumnDef<T>(cid: string, header: string | undefined = undefined): ColumnDef<T> {
   if (!header) {
     header = firstLetterUppercase(cid);
   }
@@ -30,10 +27,7 @@ export function sortableColumnDef<T>(
     accessorKey: cid,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           {header}
           <ArrowUpDown />
         </Button>
@@ -53,9 +47,7 @@ export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): 
     header: ({ table }) => (
       <Checkbox
         className={className}
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
@@ -73,19 +65,12 @@ export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): 
   };
 }
 
-export function dateColumnDef<T>(
-  cid: string,
-  header: string,
-  getDate: (elem: T) => Date,
-): ColumnDef<T> {
+export function dateColumnDef<T>(cid: string, header: string, getDate: (elem: T) => Date): ColumnDef<T> {
   return {
     accessorKey: cid,
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           {header}
           <ArrowUpDown />
         </Button>

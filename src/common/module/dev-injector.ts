@@ -4,10 +4,7 @@ import { ChannelInfo } from '../../platform/data/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-import {
-  ChannelAppend,
-  channelAppend,
-} from '../../channel/channel/business/channel.business.schema.js';
+import { ChannelAppend, channelAppend } from '../../channel/channel/business/channel.business.schema.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
 import { readBatchConfig } from '../../batch/batch.config.js';

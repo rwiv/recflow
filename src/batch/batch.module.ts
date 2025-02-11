@@ -10,11 +10,6 @@ import { CriterionBatchInserter } from './insert/insert.criterion.js';
 
 @Module({
   imports: [CommonModule, ChannelBusinessModule, ChannelTagPersistenceModule, NodeBusinessModule],
-  providers: [
-    ChannelBatchInserter,
-    NodeBatchInserter,
-    CriterionBatchInserter,
-    ChannelBatchMigrator,
-  ],
+  providers: [ChannelBatchInserter, NodeBatchInserter, CriterionBatchInserter, ChannelBatchMigrator],
 })
 export class BatchModule {}

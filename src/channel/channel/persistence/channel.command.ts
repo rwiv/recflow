@@ -6,12 +6,7 @@ import { uuid } from '../../../utils/uuid.js';
 import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from './channel.query.js';
-import {
-  ChannelEnt,
-  channelEnt,
-  ChannelEntAppend,
-  ChannelEntUpdate,
-} from './channel.persistence.schema.js';
+import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from './channel.persistence.schema.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
@@ -41,13 +36,12 @@ export class ChannelCommandRepository {
       ...update.form,
       updatedAt: new Date(),
     };
-    return oneNotNull(
-      await tx
-        .update(channelTable)
-        .set(channelEnt.parse(req))
-        .where(eq(channelTable.id, update.id))
-        .returning(),
-    );
+    const ent = await tx
+      .update(channelTable)
+      .set(channelEnt.parse(req))
+      .where(eq(channelTable.id, update.id))
+      .returning();
+    return oneNotNull(ent);
   }
 
   async delete(channelId: string, tx: Tx = db) {

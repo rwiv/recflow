@@ -46,10 +46,7 @@ export class SoopLiveFilter implements LiveFilter {
     return null;
   }
 
-  private async checkFollowerCnt(
-    liveInfo: LiveInfo,
-    minFollowerCnt: number,
-  ): Promise<LiveInfo | null> {
+  private async checkFollowerCnt(liveInfo: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
     const channel = await this.fetcher.fetchChannel('soop', liveInfo.pid, false);
     if (channel === null) {
       return null;

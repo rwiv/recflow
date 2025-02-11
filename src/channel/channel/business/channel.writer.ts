@@ -90,11 +90,7 @@ export class ChannelWriter {
   }
 
   async createWithFetch(appendFetch: ChannelAppendWithFetch) {
-    const info = await this.fetcher.fetchChannelNotNull(
-      appendFetch.platformName,
-      appendFetch.pid,
-      false,
-    );
+    const info = await this.fetcher.fetchChannelNotNull(appendFetch.platformName, appendFetch.pid, false);
     const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
     return this.createWithInfo(appendInfo, info);
   }

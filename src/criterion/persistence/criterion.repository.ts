@@ -19,10 +19,7 @@ export class CriterionRepository {
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
-    const ent = await tx
-      .insert(liveCriterionTable)
-      .values(criterionEntAppendReq.parse(entReq))
-      .returning();
+    const ent = await tx.insert(liveCriterionTable).values(criterionEntAppendReq.parse(entReq)).returning();
     return oneNotNull(ent);
   }
 
@@ -35,10 +32,7 @@ export class CriterionRepository {
   }
 
   findByPlatformId(platformId: string, tx: Tx = db) {
-    return tx
-      .select()
-      .from(liveCriterionTable)
-      .where(eq(liveCriterionTable.platformId, platformId));
+    return tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.platformId, platformId));
   }
 
   async findById(id: string, tx: Tx = db) {

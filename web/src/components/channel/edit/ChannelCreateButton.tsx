@@ -14,23 +14,10 @@ import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form.tsx';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { TagCreateSelect } from '@/components/channel/edit/TagCreateSelect.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';

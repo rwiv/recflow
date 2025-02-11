@@ -14,9 +14,7 @@ export const platformEntAppend = platformEnt
   .extend({ name: platformType });
 export type PlatformEntAppend = z.infer<typeof platformEntAppend>;
 
-const platformEntAppendReq = platformEnt
-  .partial({ updatedAt: true })
-  .extend({ name: platformType });
+const platformEntAppendReq = platformEnt.partial({ updatedAt: true }).extend({ name: platformType });
 type PlatformEntAppendReq = z.infer<typeof platformEntAppendReq>;
 
 @Injectable()
@@ -27,9 +25,7 @@ export class PlatformRepository {
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(
-      await tx.insert(platformTable).values(platformEntAppendReq.parse(entReq)).returning(),
-    );
+    return oneNotNull(await tx.insert(platformTable).values(platformEntAppendReq.parse(entReq)).returning());
   }
 
   async findAll(tx: Tx = db) {

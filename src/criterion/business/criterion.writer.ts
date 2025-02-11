@@ -103,11 +103,7 @@ function unitAppend(
   };
 }
 
-function find(
-  unitEntities: CriterionUnitEnt[],
-  rule: CriterionRuleEnt,
-  positive: boolean,
-): string[] {
+function find(unitEntities: CriterionUnitEnt[], rule: CriterionRuleEnt, positive: boolean): string[] {
   if (positive) {
     return unitEntities.filter((it) => it.ruleId === rule.id && it.positive).map((it) => it.value);
   } else {

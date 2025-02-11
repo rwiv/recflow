@@ -12,12 +12,7 @@ export function PageNavigation<T>({ table }: { table: Table<T> }) {
       >
         Previous
       </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-      >
+      <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
         Next
       </Button>
     </div>

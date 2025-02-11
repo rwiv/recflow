@@ -1,9 +1,6 @@
 import { ParsingError } from './errors/errors/ParsingError.js';
 
-export function parseInteger(
-  value: string | undefined,
-  name: string | undefined = undefined,
-): number {
+export function parseInteger(value: string | undefined, name: string | undefined = undefined): number {
   let nameField = '';
   if (name) {
     nameField = `${name}=`;

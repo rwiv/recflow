@@ -62,10 +62,7 @@ export class TagCommandRepository {
   }
 
   async unbind(channelId: string, tagId: string, tx: Tx = db) {
-    const cond = and(
-      eq(channelTagMapTable.channelId, channelId),
-      eq(channelTagMapTable.tagId, tagId),
-    );
+    const cond = and(eq(channelTagMapTable.channelId, channelId), eq(channelTagMapTable.tagId, tagId));
     await tx.delete(channelTagMapTable).where(cond);
   }
 }

@@ -2,14 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button.tsx';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form.tsx';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { createLive } from '@/client/live.client.ts';
 import { useRef } from 'react';
@@ -22,13 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog.tsx';
 import { DialogClose } from '@radix-ui/react-dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';

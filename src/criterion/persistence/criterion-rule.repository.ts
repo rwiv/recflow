@@ -10,9 +10,7 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { criterionRuleType } from '../business/criterion.rule.schema.js';
 
-const criterionRuleEntReq = criterionRuleEnt
-  .partial({ updatedAt: true })
-  .extend({ name: criterionRuleType });
+const criterionRuleEntReq = criterionRuleEnt.partial({ updatedAt: true }).extend({ name: criterionRuleType });
 type CriterionRuleEntReq = z.infer<typeof criterionRuleEntReq>;
 
 @Injectable()
@@ -23,10 +21,7 @@ export class CriterionRuleRepository {
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
-    const ent = await tx
-      .insert(liveCriterionRuleTable)
-      .values(criterionRuleEntReq.parse(entReq))
-      .returning();
+    const ent = await tx.insert(liveCriterionRuleTable).values(criterionRuleEntReq.parse(entReq)).returning();
     return oneNotNull(ent);
   }
 
@@ -39,10 +34,7 @@ export class CriterionRuleRepository {
   }
 
   async findById(id: string, tx: Tx = db) {
-    const ent = await tx
-      .select()
-      .from(liveCriterionRuleTable)
-      .where(eq(liveCriterionRuleTable.id, id));
+    const ent = await tx.select().from(liveCriterionRuleTable).where(eq(liveCriterionRuleTable.id, id));
     return oneNullable(ent);
   }
 
@@ -55,10 +47,7 @@ export class CriterionRuleRepository {
   }
 
   async findByName(name: string, tx: Tx = db) {
-    const ent = await tx
-      .select()
-      .from(liveCriterionRuleTable)
-      .where(eq(liveCriterionRuleTable.name, name));
+    const ent = await tx.select().from(liveCriterionRuleTable).where(eq(liveCriterionRuleTable.name, name));
     return oneNullable(ent);
   }
 }

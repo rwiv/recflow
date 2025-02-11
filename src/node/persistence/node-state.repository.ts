@@ -25,10 +25,7 @@ export class NodeStateRepository {
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
-    const ent = await tx
-      .insert(nodeStateTable)
-      .values(nodeStateEntAppendReq.parse(req))
-      .returning();
+    const ent = await tx.insert(nodeStateTable).values(nodeStateEntAppendReq.parse(req)).returning();
     return oneNotNull(ent);
   }
 

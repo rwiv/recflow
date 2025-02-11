@@ -47,8 +47,7 @@ export function readEnv(): Env {
   // authed
   const authedUrl = process.env.AUTHED_URL;
   const authedEncKey = process.env.AUTHED_ENCKEY;
-  if (authedUrl === undefined || authedEncKey === undefined)
-    throw Error('authed data is undefined');
+  if (authedUrl === undefined || authedEncKey === undefined) throw Error('authed data is undefined');
   if (authedEncKey.length !== 32) throw new Error('Key must be 32 bytes');
 
   // ntfy

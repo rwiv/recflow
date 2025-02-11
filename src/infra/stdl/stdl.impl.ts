@@ -4,11 +4,7 @@ import { ChzzkLiveRequest, SoopCred, SoopLiveRequest, Stdl } from './types.js';
 
 @Injectable()
 export class StdlImpl implements Stdl {
-  async requestChzzkLive(
-    url: string,
-    uid: string,
-    cookies: Cookie[] | undefined = undefined,
-  ): Promise<void> {
+  async requestChzzkLive(url: string, uid: string, cookies: Cookie[] | undefined = undefined): Promise<void> {
     let chzzkLive: ChzzkLiveRequest = { uid };
     if (cookies) {
       chzzkLive = { ...chzzkLive, cookies: JSON.stringify(cookies) };
@@ -22,11 +18,7 @@ export class StdlImpl implements Stdl {
     });
   }
 
-  async requestSoopLive(
-    url: string,
-    userId: string,
-    cred: SoopCred | undefined = undefined,
-  ): Promise<void> {
+  async requestSoopLive(url: string, userId: string, cred: SoopCred | undefined = undefined): Promise<void> {
     let soopLive: SoopLiveRequest = { userId };
     if (cred) {
       soopLive = { ...soopLive, cred };

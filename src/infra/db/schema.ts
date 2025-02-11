@@ -39,10 +39,7 @@ export const channelPriorityTable = pgTable(
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [
-    uniqueIndex('channel_priority_name_idx').on(t.name),
-    index('channel_priority_tier_idx').on(t.tier),
-  ],
+  (t) => [uniqueIndex('channel_priority_name_idx').on(t.name), index('channel_priority_tier_idx').on(t.tier)],
 );
 
 export const channelTable = pgTable(

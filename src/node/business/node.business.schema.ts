@@ -8,9 +8,7 @@ import {
 import { nodeType, nodeTypeRecord } from '../node.schema.js';
 import { platformRecord, platformType } from '../../platform/storage/platform.business.schema.js';
 
-export const nodeState = nodeStateEnt
-  .omit({ platformId: true })
-  .extend({ platform: platformRecord });
+export const nodeState = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformRecord });
 export type NodeState = z.infer<typeof nodeState>;
 
 export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({

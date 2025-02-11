@@ -35,9 +35,7 @@ export class NodeUpdater {
       }
       const state = states[0];
       if (num === -1 && state.assigned < 1) {
-        throw new ValidationError(
-          `Node has no assigned count: nodeId=${nodeId}, platformId=${pfId}`,
-        );
+        throw new ValidationError(`Node has no assigned count: nodeId=${nodeId}, platformId=${pfId}`);
       }
       const update: NodeStateEntUpdate = { id: state.id, form: { assigned: state.assigned + num } };
       await this.stateRepo.update(update, txx);

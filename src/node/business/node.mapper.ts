@@ -36,7 +36,7 @@ export class NodeMapper {
     let result: NodeRecord = { ...ent, type: nodeType };
     if (withGroup) {
       const group = await this.groupRepo.findById(ent.groupId, tx);
-      if (!group) throw new NotFoundError('Not found node group');
+      if (!group) throw NotFoundError.from('NodeGroup', 'id', ent.groupId);
       result = { ...result, group };
     }
     if (withStates) {

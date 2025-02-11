@@ -23,11 +23,11 @@ export class LiveWriter {
 
   async createByLive(live: LiveInfo, nodeId: string) {
     const platform = await this.pfRepo.findByName(live.type);
-    if (!platform) throw new NotFoundError('Not Found Platform');
+    if (!platform) throw NotFoundError.from('Platform', 'name', live.type);
     const channel = oneNullable(await this.channelFinder.findByPid(live.pid));
-    if (channel === undefined) throw new NotFoundError('Not Found Channel');
+    if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
     const node = await this.nodeFinder.findById(nodeId);
-    if (!node) throw new NotFoundError('Not Found Node');
+    if (!node) throw NotFoundError.from('Node', 'id', nodeId);
     const req: LiveEntAppend = {
       ...live,
       platformId: platform.id,

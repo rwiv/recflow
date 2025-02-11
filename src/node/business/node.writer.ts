@@ -22,7 +22,7 @@ export class NodeWriter {
 
   async create(append: NodeAppend, withGroup: boolean = false): Promise<NodeRecord> {
     const nodeType = await this.typeRepo.findByName(append.typeName);
-    if (!nodeType) throw new NotFoundError(`"Not found node type: ${append.typeName}"`);
+    if (!nodeType) throw NotFoundError.from('NodeType', 'name', append.typeName);
 
     return db.transaction(async (tx) => {
       const entAppend: NodeEntAppend = { ...append, typeId: nodeType.id };
@@ -31,7 +31,7 @@ export class NodeWriter {
       for (const platform of await this.pfRepo.findAll(tx)) {
         const capacity = append.capacities.find((c) => c.platformName === platform.name)?.capacity;
         if (capacity === undefined) {
-          throw new ValidationError(`"${platform.name}" platform is not included in the form`);
+          throw new ValidationError(`"${platform.name}" platform capacity is not included in form`);
         }
         const stateEntAppend: NodeStateEntAppend = {
           nodeId: nodeEnt.id,

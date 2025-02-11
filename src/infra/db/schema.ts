@@ -209,10 +209,11 @@ export const liveCriterionUnitTable = pgTable('live_criterion_unit', {
   criterionId: char('criterion_id', { length: 32 })
     .notNull()
     .references(() => liveCriterionTable.id),
-  filterTypeId: char('filter_type_id', { length: 32 })
+  ruleId: char('rule_id', { length: 32 })
     .notNull()
     .references(() => liveCriterionRuleTable.id),
   value: text().notNull(),
+  positive: boolean().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
 });

@@ -50,7 +50,7 @@ describe('ChannelService', () => {
       if (i <= 20) {
         await add(i, 'should', 100 - i, ['tag4', 'tag5', 'tag10', 'tag11']);
       } else if (i <= 25) {
-        await add(i, 'should', 100 - i, ['tag5', 'tag6']);
+        await add(i, 'should', 100 - i, ['tag4', 'tag5']);
       } else {
         await add(i, 'may', 100 - i, ['tag4', 'tag5', 'tag12', 'tag13']);
       }
@@ -65,7 +65,7 @@ describe('ChannelService', () => {
 
     const includes = ['tag4', 'tag5'];
     // const excludes: string[] = [];
-    const excludes = ['tag10', 'tag11'];
+    const excludes = ['tag10', 'tag12'];
     // const excludes = ['tag10', 'tag12'];
     // const excludes = ['tag3', 'tag6'];
 

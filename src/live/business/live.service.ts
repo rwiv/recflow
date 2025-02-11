@@ -70,7 +70,7 @@ export class LiveService {
     }
 
     const record = await this.liveFinder.findById(recordId, { withDeleted: true });
-    if (!record) throw new NotFoundError(`Not found liveRecord: ${recordId}`);
+    if (!record) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!purge) {
       if (record.isDeleted) throw new ConflictError(`Already deleted: ${recordId}`);

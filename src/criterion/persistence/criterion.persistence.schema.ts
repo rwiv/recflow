@@ -39,8 +39,9 @@ export type LiveCriterionRuleEntAppend = z.infer<typeof liveCriterionRuleEntAppe
 export const liveCriterionUnitEnt = z.object({
   id: uuid,
   criterionId: uuid,
-  filterTypeId: uuid,
+  ruleId: uuid,
   value: z.string().nonempty(),
+  positive: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });

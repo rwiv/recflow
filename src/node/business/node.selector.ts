@@ -23,7 +23,7 @@ export class NodeSelector {
       }
       const raw = await this.nodeFinder.findByNodeTier(curTier);
       if (raw.length === 0) {
-        throw new NotFoundError(`No available nodes (channel="${channel.username}")`);
+        throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
       }
       nodes = raw.filter((node) => {
         const state = this.findState(node, pfId);
@@ -60,7 +60,7 @@ export class NodeSelector {
   private findState(node: NodeRecord, platformId: string) {
     const target = node.states?.find((state) => state.platform.id === platformId);
     if (!target) {
-      throw new NotFoundError(`No state found for ${platformId}`);
+      throw NotFoundError.from('NodeState', 'platformId', platformId);
     }
     return target;
   }

@@ -40,7 +40,7 @@ export class LiveAppender extends Synchronizer {
     if (!chanInfo || !chanInfo.openLive) return null;
 
     const chanWithLive = await this.fetcher.fetchChannel(this.platform, ch.pid, true);
-    if (!chanWithLive?.liveInfo) throw new NotFoundError('Not found Channel.liveInfo');
+    if (!chanWithLive?.liveInfo) throw NotFoundError.from('channel.liveInfo', 'pid', ch.pid);
     await this.liveService.add(chanWithLive.liveInfo, chanWithLive);
   }
 

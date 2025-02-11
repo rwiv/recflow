@@ -42,7 +42,7 @@ export class TagCommandRepository {
 
   async update(update: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findById(update.tagId, tx);
-    if (!tag) throw new NotFoundError('Tag not found');
+    if (!tag) throw NotFoundError.from('ChannelTag', 'id', update.tagId);
     const req: TagEnt = { ...tag, ...update.form, updatedAt: new Date() };
     const ent = await tx
       .update(channelTagTable)

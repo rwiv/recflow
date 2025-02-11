@@ -43,7 +43,7 @@ export class TagWriter {
   async bind(bind: ChannelsToTagsEntAppend, tx: Tx = db) {
     const tag = await this.tagQuery.findById(bind.tagId, tx);
     if (!tag) {
-      throw new NotFoundError('Tag not found');
+      throw NotFoundError.from('ChannelTag', 'id', bind.tagId);
     }
     await this.tagCmd.bind(bind, tx);
     return tag;

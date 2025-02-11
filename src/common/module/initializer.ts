@@ -12,6 +12,7 @@ import { NodeGroupRepository } from '../../node/persistence/node-group.repositor
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
 import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
 import { NodeGroupAppend } from '../../node/persistence/node.persistence.schema.js';
+import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 
 @Injectable()
 export class AppInitializer {
@@ -44,7 +45,7 @@ export class AppInitializer {
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
       const tier = CHANNEL_PRIORIES_TIER_MAP[name];
       if (tier === undefined) {
-        throw new NotFoundError(`tier is undefined for ${name}`);
+        throw new MissingValueError(`tier is undefined for ${name}`);
       }
       const append: PriorityEntAppend = { name: name as string, tier };
       await this.priRepo.create(append);
@@ -58,7 +59,7 @@ export class AppInitializer {
     for (const name of NODE_TYPES.filter((name) => !ngNames.includes(name))) {
       const tier = NODE_TYPES_TIER_MAP[name];
       if (tier === undefined) {
-        throw new NotFoundError(`tier is undefined for ${name}`);
+        throw new MissingValueError(`tier is undefined for ${name}`);
       }
       const append: NodeGroupAppend = { name, tier };
       await this.ngRepo.create(append);

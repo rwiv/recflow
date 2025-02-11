@@ -66,9 +66,9 @@ export class ChannelWriter {
     }
 
     const platform = await this.pfRepo.findByName(append.platformName);
-    if (!platform) throw new NotFoundError('Platform not found');
+    if (!platform) throw NotFoundError.from('Platform', 'name', append.platformName);
     const priority = await this.priRepo.findByName(append.priorityName);
-    if (!priority) throw new NotFoundError('ChannelPriority not found');
+    if (!priority) throw NotFoundError.from('Priority', 'name', append.priorityName);
 
     const entAppend: ChannelEntAppend = {
       ...append,
@@ -107,7 +107,7 @@ export class ChannelWriter {
   async delete(channelId: string, tx: Tx = db): Promise<ChannelRecord> {
     const ent = await this.chQuery.findById(channelId, tx);
     const channel = await this.chMapper.mapNullable(ent);
-    if (!channel) throw new NotFoundError('Channel not found');
+    if (!channel) throw NotFoundError.from('Channel', 'id', channelId);
     const tags = await this.tagQuery.findTagsByChannelId(channel.id, tx);
     return tx.transaction(async (txx) => {
       for (const tag of tags) {

@@ -74,7 +74,7 @@ export class LiveController {
     const append = liveAppendRequest.parse(req);
     const channel = await this.fetcher.fetchChannel(append.platformName, append.pid, true);
     if (!channel?.liveInfo) {
-      throw new NotFoundError(`Not found chzzkChannel.liveInfo: ${req.pid}`);
+      throw NotFoundError.from('channel.liveInfo', 'pid', append.pid);
     }
     return this.liveService.add(channel.liveInfo, channel);
   }

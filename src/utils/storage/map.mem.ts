@@ -15,7 +15,7 @@ export class MemoryMap<K, V> implements AsyncMap<K, V> {
 
   async delete(key: K): Promise<void> {
     if (!this.map.has(key)) {
-      throw new NotFoundError('Not found');
+      throw new NotFoundError('Value not found by key');
     }
     this.map.delete(key);
     return Promise.resolve();

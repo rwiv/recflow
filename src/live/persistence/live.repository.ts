@@ -52,7 +52,7 @@ export class LiveRepository {
   async update(update: LiveEntUpdate, tx: Tx = db) {
     const live = await this.findById(update.id, tx);
     if (!live) {
-      throw new NotFoundError(`Not Found Live: ${update.id}`);
+      throw NotFoundError.from('Live', 'id', update.id);
     }
     const entReq: LiveEnt = {
       ...live,

@@ -28,14 +28,16 @@ export class NodeUpdater {
     return tx.transaction(async (txx) => {
       const states = await this.stateRepo.findByNodeIdAndPlatformIdForUpdate(nodeId, pfId, txx);
       if (!states) {
-        throw new NotFoundError(`Node state not found for node ${nodeId} and platform ${pfId}`);
+        throw new NotFoundError(`NodeStates Not found: nodeId=${nodeId}, platformId=${pfId}`);
       }
       if (states.length > 1) {
-        throw new ValidationError(`Multiple states found for node ${nodeId} and platform ${pfId}`);
+        throw new ValidationError(`Multiple states found: nodeId=${nodeId}, platformId=${pfId}`);
       }
       const state = states[0];
       if (num === -1 && state.assigned < 1) {
-        throw new ValidationError(`Node ${nodeId} has no assigned count for platform ${pfId}`);
+        throw new ValidationError(
+          `Node has no assigned count: nodeId=${nodeId}, platformId=${pfId}`,
+        );
       }
       const update: NodeStateEntUpdate = { id: state.id, form: { assigned: state.assigned + num } };
       await this.stateRepo.update(update, txx);
@@ -51,7 +53,7 @@ export class NodeUpdater {
 
       for (const live of liveStates) {
         const node = await this.finder.findById(live.nodeId);
-        if (!node) throw new NotFoundError(`Node ${live.nodeId} not found`);
+        if (!node) throw NotFoundError.from('Node', 'id', live.nodeId);
         await this.updateCnt(node.id, live.pfId, 1, tx);
       }
     });

@@ -35,7 +35,7 @@ export class ChannelCommandRepository {
 
   async update(update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.chQuery.findById(update.id, tx);
-    if (!channel) throw new NotFoundError('Channel not found');
+    if (!channel) throw NotFoundError.from('Channel', 'id', update.id);
     const req: ChannelEnt = {
       ...channel,
       ...update.form,

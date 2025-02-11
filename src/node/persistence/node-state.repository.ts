@@ -55,7 +55,7 @@ export class NodeStateRepository {
 
   async update(update: NodeStateEntUpdate, tx: Tx = db) {
     const nodeState = await this.findById(update.id, tx);
-    if (!nodeState) throw new NotFoundError('Node state not found');
+    if (!nodeState) throw NotFoundError.from('NodeState', 'id', update.id);
     const req: NodeStateEnt = {
       ...nodeState,
       ...update.form,

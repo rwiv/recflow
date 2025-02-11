@@ -148,7 +148,7 @@ export class ChannelSearchRepository {
 
   private async withPriority(conditions: SQLWrapper[], priorityName: string, tx: Tx = db) {
     const priority = await this.priRepo.findByName(priorityName, tx);
-    if (!priority) throw new NotFoundError('Priority not found');
+    if (!priority) throw NotFoundError.from('Priority', 'name', priorityName);
     conditions.push(eq(channelTable.priorityId, priority.id));
   }
 

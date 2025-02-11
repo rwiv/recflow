@@ -4,4 +4,8 @@ export class NotFoundError extends BaseError {
   constructor(message: string, options?: ErrorOptions) {
     super(message, options, 'Not Found');
   }
+
+  static from(name: string, queryKeyName: string, queryKey: string) {
+    return new NotFoundError(`${name} not found: ${queryKeyName}=${queryKey}`);
+  }
 }

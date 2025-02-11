@@ -34,15 +34,15 @@ export class LiveMapper {
     const withNodeStates = opt.withNodeStates ?? false;
 
     const platform = await this.pfRepo.findById(liveEnt.platformId);
-    if (!platform) throw new NotFoundError('Not Found Platform');
+    if (!platform) throw NotFoundError.from('Platform', 'id', liveEnt.platformId);
     const channel = await this.channelFinder.findById(liveEnt.channelId, withChannelTags);
-    if (!channel) throw new NotFoundError('Not Found Channel');
+    if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
     let result: LiveRecord = { ...liveEnt, channel, platform: platformRecord.parse(platform) };
 
     if (withNode) {
       const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates);
-      if (!node) throw new NotFoundError('Not Found Node');
+      if (!node) throw NotFoundError.from('Node', 'id', liveEnt.nodeId);
       result = { ...result, node };
     }
     return result;

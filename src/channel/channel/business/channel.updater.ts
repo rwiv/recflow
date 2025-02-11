@@ -15,7 +15,7 @@ export class ChannelUpdater {
 
   async updatePriority(id: string, priorityName: string) {
     const priority = await this.priRepo.findByName(priorityName);
-    if (!priority) throw new NotFoundError('Priority not found');
+    if (!priority) throw NotFoundError.from('Priority', 'name', priorityName);
     const update: ChannelEntUpdate = { id, form: { priorityId: priority.id } };
     return this.updateRecord(update);
   }

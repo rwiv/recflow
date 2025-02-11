@@ -3,27 +3,25 @@ import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
 import { NodeFinder } from '../../node/business/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 import { LiveEntAppend, LiveEntUpdate } from '../persistence/live.persistence.schema.js';
 import { LiveInfo } from '../../platform/wapper/live.js';
 import { oneNullable } from '../../utils/list.js';
 import { LiveMapper } from './live.mapper.js';
 import { LiveUpdate } from './live.business.schema.js';
-import { platformRecord } from '../../platform/platform.schema.js';
+import { PlatformFinder } from '../../platform/providers/platform.finder.js';
 
 @Injectable()
 export class LiveWriter {
   constructor(
     private readonly liveRepo: LiveRepository,
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfFinder: PlatformFinder,
     private readonly channelFinder: ChannelFinder,
     private readonly nodeFinder: NodeFinder,
     private readonly mapper: LiveMapper,
   ) {}
 
   async createByLive(live: LiveInfo, nodeId: string) {
-    const platform = await this.pfRepo.findByName(live.type);
-    if (!platform) throw NotFoundError.from('Platform', 'name', live.type);
+    const platform = await this.pfFinder.findByNameNotNull(live.type);
     const channel = oneNullable(await this.channelFinder.findByPid(live.pid));
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
     const node = await this.nodeFinder.findById(nodeId);
@@ -35,7 +33,7 @@ export class LiveWriter {
       nodeId: node.id,
     };
     const ent = await this.liveRepo.create(req);
-    return { ...ent, channel, platform: platformRecord.parse(platform), node };
+    return { ...ent, channel, platform, node };
   }
 
   async delete(id: string) {

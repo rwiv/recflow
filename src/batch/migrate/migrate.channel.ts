@@ -5,7 +5,7 @@ import { ChannelWriter } from '../../channel/channel/business/channel.writer.js'
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
-import { platformTypeEnum } from '../../platform/platform.schema.js';
+import { platformTypeEnum } from '../../platform/providers/platform.business.schema.js';
 
 const tagRecordFetched = z.object({
   id: uuid,

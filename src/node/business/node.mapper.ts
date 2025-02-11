@@ -1,17 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { NodeEnt, NodeStateEnt } from '../persistence/node.persistence.schema.js';
 import { NodeRecord, NodeState } from './node.business.schema.js';
-import { notNull } from '../../utils/null.js';
-import { nodeTypeEnum } from '../node.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeGroupRepository } from '../persistence/node-group.repository.js';
 import { NodeTypeRepository } from '../persistence/node-type.repository.js';
 import { NodeStateRepository } from '../persistence/node-state.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
-import { PlatformEnt } from '../../platform/persistence/platform.schema.js';
-import { platformRecord } from '../../platform/platform.schema.js';
+import { PlatformFinder } from '../../platform/providers/platform.finder.js';
 
 @Injectable()
 export class NodeMapper {
@@ -19,7 +15,7 @@ export class NodeMapper {
     private readonly groupRepo: NodeGroupRepository,
     private readonly typeRepo: NodeTypeRepository,
     private readonly stateRepo: NodeStateRepository,
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfFinder: PlatformFinder,
   ) {}
 
   async mapAll(entities: NodeEnt[], withGroup: boolean = false, withStates: boolean = false) {
@@ -32,7 +28,8 @@ export class NodeMapper {
     withStates: boolean = false,
     tx: Tx = db,
   ): Promise<NodeRecord> {
-    const nodeType = notNull(await this.typeRepo.findById(ent.typeId, tx));
+    const nodeType = await this.typeRepo.findById(ent.typeId, tx);
+    if (!nodeType) throw NotFoundError.from('NodeType', 'id', ent.typeId);
     let result: NodeRecord = { ...ent, type: nodeType };
     if (withGroup) {
       const group = await this.groupRepo.findById(ent.groupId, tx);
@@ -48,11 +45,7 @@ export class NodeMapper {
   }
 
   async mapState(ent: NodeStateEnt, tx: Tx = db): Promise<NodeState> {
-    const platform = notNull(await this.pfRepo.findById(ent.platformId, tx));
-    return this.mapStateWithPlatform(ent, platform);
-  }
-
-  mapStateWithPlatform(ent: NodeStateEnt, platform: PlatformEnt): NodeState {
-    return { ...ent, platform: platformRecord.parse(platform) };
+    const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
+    return { ...ent, platform };
   }
 }

@@ -7,5 +7,4 @@ export const platformEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-
 export type PlatformEnt = z.infer<typeof platformEnt>;

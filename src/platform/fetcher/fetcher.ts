@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../wapper/live.js';
 import { ChzzkFetcher } from './chzzk.fetcher.js';
 import { SoopFetcher } from './soop.fetcher.js';
-import { PlatformType } from '../platform.schema.js';
+import { PlatformType } from '../providers/platform.business.schema.js';
 import { BaseError } from '../../utils/errors/base/BaseError.js';
 
 @Injectable()
@@ -28,6 +28,11 @@ export class PlatformFetcher {
     } catch (e) {
       return null;
     }
+  }
+
+  // TODO: implement using zod
+  fetchChannelWithLiveInfo(platform: PlatformType, pid: string) {
+    throw new BaseError('Not implemented');
   }
 
   fetchChannelNotNull(platform: PlatformType, pid: string, hasLiveInfo: boolean) {

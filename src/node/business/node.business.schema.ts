@@ -6,7 +6,10 @@ import {
   nodeStateEnt,
 } from '../persistence/node.persistence.schema.js';
 import { nodeTypeEnum, nodeTypeRecord } from '../node.schema.js';
-import { platformRecord, platformTypeEnum } from '../../platform/platform.schema.js';
+import {
+  platformRecord,
+  platformTypeEnum,
+} from '../../platform/providers/platform.business.schema.js';
 
 export const nodeState = nodeStateEnt
   .omit({ platformId: true })

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 
-export const liveCriterionEnt = z.object({
+export const criterionEnt = z.object({
   id: uuid,
   name: z.string().max(50),
   description: z.string().nullable(),
@@ -11,32 +11,32 @@ export const liveCriterionEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-export type LiveCriterionEnt = z.infer<typeof liveCriterionEnt>;
+export type CriterionEnt = z.infer<typeof criterionEnt>;
 
-export const liveCriterionEntAppend = liveCriterionEnt.partial({
+export const criterionEntAppend = criterionEnt.partial({
   id: true,
   description: true,
   createdAt: true,
   updatedAt: true,
 });
-export type LiveCriterionEntAppend = z.infer<typeof liveCriterionEntAppend>;
+export type CriterionEntAppend = z.infer<typeof criterionEntAppend>;
 
-export const liveCriterionRuleEnt = z.object({
+export const criterionRuleEnt = z.object({
   id: uuid,
   name: z.string().max(50),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-export type LiveCriterionRuleEnt = z.infer<typeof liveCriterionRuleEnt>;
+export type CriterionRuleEnt = z.infer<typeof criterionRuleEnt>;
 
-export const liveCriterionRuleEntAppend = liveCriterionRuleEnt.partial({
+export const criterionRuleEntAppend = criterionRuleEnt.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
-export type LiveCriterionRuleEntAppend = z.infer<typeof liveCriterionRuleEntAppend>;
+export type CriterionRuleEntAppend = z.infer<typeof criterionRuleEntAppend>;
 
-export const liveCriterionUnitEnt = z.object({
+export const criterionUnitEnt = z.object({
   id: uuid,
   criterionId: uuid,
   ruleId: uuid,
@@ -45,11 +45,11 @@ export const liveCriterionUnitEnt = z.object({
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
-export type LiveCriterionUnitEnt = z.infer<typeof liveCriterionUnitEnt>;
+export type CriterionUnitEnt = z.infer<typeof criterionUnitEnt>;
 
-export const liveCriterionUnitEntAppend = liveCriterionUnitEnt.partial({
+export const criterionUnitEntAppend = criterionUnitEnt.partial({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
-export type LiveCriterionUnitEntAppend = z.infer<typeof liveCriterionUnitEntAppend>;
+export type CriterionUnitEntAppend = z.infer<typeof criterionUnitEntAppend>;

@@ -9,7 +9,6 @@ import {
 import { TagDetachment, TagRecord } from '../../tag/business/tag.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { notNull } from '../../../utils/null.js';
 import { TagWriter } from '../../tag/business/tag.writer.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
@@ -17,20 +16,20 @@ import { Tx } from '../../../infra/db/types.js';
 import { ChannelInfo } from '../../../platform/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
 import { ChannelEntAppend } from '../persistence/channel.persistence.schema.js';
 import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 import { ChannelsToTagsEntAppend } from '../../tag/persistence/tag.persistence.schema.js';
 import { TagCommandRepository } from '../../tag/persistence/tag.command.js';
+import { PlatformFinder } from '../../../platform/providers/platform.finder.js';
 
 @Injectable()
 export class ChannelWriter {
   constructor(
     private readonly chCmd: ChannelCommandRepository,
     private readonly chQuery: ChannelQueryRepository,
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfFinder: PlatformFinder,
     private readonly priRepo: ChannelPriorityRepository,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
@@ -65,8 +64,7 @@ export class ChannelWriter {
       throw new ConflictError(`Channel already exist ${append.username}`);
     }
 
-    const platform = await this.pfRepo.findByName(append.platformName);
-    if (!platform) throw NotFoundError.from('Platform', 'name', append.platformName);
+    const platform = await this.pfFinder.findByNameNotNull(append.platformName);
     const priority = await this.priRepo.findByName(append.priorityName);
     if (!priority) throw NotFoundError.from('Priority', 'name', append.priorityName);
 

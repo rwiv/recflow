@@ -1,7 +1,7 @@
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { ChannelAppendWithFetch } from '../../channel/channel/business/channel.business.schema.js';
 import { log } from 'jslog';
-import { platformTypeEnum } from '../../platform/platform.schema.js';
+import { platformTypeEnum } from '../../platform/providers/platform.business.schema.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelBatchInsert } from '../batch.config.js';
 

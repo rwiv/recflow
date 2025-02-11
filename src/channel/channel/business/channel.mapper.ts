@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from './channel.business.schema.js';
-import { notNull } from '../../../utils/null.js';
-import { PlatformRepository } from '../../../platform/persistence/platform.repository.js';
 import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformRecord } from '../../../platform/platform.schema.js';
+import { platformRecord } from '../../../platform/providers/platform.business.schema.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
+import { PlatformFinder } from '../../../platform/providers/platform.finder.js';
 
 @Injectable()
 export class ChannelMapper {
   constructor(
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfFinder: PlatformFinder,
     private readonly priRepo: ChannelPriorityRepository,
     private readonly tagQuery: TagQueryRepository,
   ) {}
@@ -27,9 +27,10 @@ export class ChannelMapper {
   }
 
   async map(ent: ChannelEnt, tx: Tx = db): Promise<ChannelRecord> {
-    const platform = platformRecord.parse(notNull(await this.pfRepo.findById(ent.platformId, tx)));
-    const priority = notNull(await this.priRepo.findById(ent.priorityId, tx));
-    return { ...ent, platform, priority };
+    const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
+    const priority = await this.priRepo.findById(ent.priorityId, tx);
+    if (!priority) throw NotFoundError.from('Priority', 'id', ent.priorityId);
+    return { ...ent, platform: platformRecord.parse(platform), priority };
   }
 
   async loadRelations(

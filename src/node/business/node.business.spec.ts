@@ -8,7 +8,7 @@ import { AppInitializer } from '../../common/module/initializer.js';
 import { NodeWriter } from './node.writer.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeGroupRepository } from '../persistence/node-group.repository.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
+import { PlatformFinder } from '../../platform/providers/platform.finder.js';
 
 const app = await createTestApp();
 const init = app.get(AppInitializer);
@@ -16,7 +16,7 @@ const nodeWriter = app.get(NodeWriter);
 const nodeFinder = app.get(NodeFinder);
 const nodeUpdater = app.get(NodeUpdater);
 const ngRepo = app.get(NodeGroupRepository);
-const pfRepo = app.get(PlatformRepository);
+const pfFinder = app.get(PlatformFinder);
 
 describe('ChannelService', async () => {
   beforeEach(async () => {
@@ -40,9 +40,9 @@ describe('ChannelService', async () => {
   });
 
   it('update', async () => {
-    const chzzk = notNull(await pfRepo.findByName('chzzk'));
-    const soop = notNull(await pfRepo.findByName('soop'));
-    const twitch = notNull(await pfRepo.findByName('twitch'));
+    const chzzk = await pfFinder.findByNameNotNull('chzzk');
+    const soop = await pfFinder.findByNameNotNull('soop');
+    const twitch = await pfFinder.findByNameNotNull('twitch');
     const ng = notNull(await ngRepo.findByName('main'));
     const node1 = await nodeWriter.create(mockNode(1, ng.id));
     const node2 = await nodeWriter.create(mockNode(2, ng.id));
@@ -72,7 +72,7 @@ async function print() {
   for (const node of await nodeFinder.findAll(false, true)) {
     const states = notNull(node.states);
     for (const state of states) {
-      const pf = notNull(await pfRepo.findById(state.platform.id));
+      const pf = await pfFinder.findByIdNotNull(state.platform.id);
       console.log(`${node.name} ${pf.name} ${state.assigned}`);
     }
   }

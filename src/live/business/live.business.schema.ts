@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { liveEnt, liveEntUpdate } from '../persistence/live.persistence.schema.js';
-import { platformRecord } from '../../platform/platform.schema.js';
+import { platformRecord } from '../../platform/providers/platform.business.schema.js';
 import { nodeRecord } from '../../node/business/node.business.schema.js';
 import { channelRecord } from '../../channel/channel/business/channel.business.schema.js';
 

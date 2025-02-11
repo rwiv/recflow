@@ -3,7 +3,7 @@ import { AMQP } from '../../infra/infra.module.js';
 import { Amqp } from '../../infra/amqp/interface.js';
 import { ExitCmd, ExitMessage } from './event.schema.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
-import { PlatformType } from '../../platform/platform.schema.js';
+import { PlatformType } from '../../platform/providers/platform.business.schema.js';
 
 @Injectable()
 export class Dispatcher {

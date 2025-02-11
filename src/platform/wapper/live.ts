@@ -2,7 +2,7 @@ import { PlatformLiveInfo } from '../platform.types.js';
 import { ChzzkLiveInfo } from '../raw/chzzk.js';
 import { SoopLiveInfo } from '../raw/soop.js';
 import { parseInteger } from '../../utils/number.js';
-import { PlatformType } from '../platform.schema.js';
+import { PlatformType } from '../providers/platform.business.schema.js';
 
 export interface LiveInfo {
   type: PlatformType;

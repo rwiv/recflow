@@ -3,12 +3,12 @@ import { NodeRepository } from '../persistence/node.repository.js';
 import { NodeTypeRepository } from '../persistence/node-type.repository.js';
 import { NodeStateRepository } from '../persistence/node-state.repository.js';
 import { NodeAppend, NodeRecord, NodeState } from './node.business.schema.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeEntAppend, NodeStateEntAppend } from '../persistence/node.persistence.schema.js';
 import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { PlatformFinder } from '../../platform/providers/platform.finder.js';
 
 @Injectable()
 export class NodeWriter {
@@ -16,7 +16,7 @@ export class NodeWriter {
     private readonly nodeRepo: NodeRepository,
     private readonly typeRepo: NodeTypeRepository,
     private readonly stateRepo: NodeStateRepository,
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfFinder: PlatformFinder,
     private readonly mapper: NodeMapper,
   ) {}
 
@@ -28,7 +28,7 @@ export class NodeWriter {
       const entAppend: NodeEntAppend = { ...append, typeId: nodeType.id };
       const nodeEnt = await this.nodeRepo.create(entAppend, tx);
       const states: NodeState[] = [];
-      for (const platform of await this.pfRepo.findAll(tx)) {
+      for (const platform of await this.pfFinder.findAll(tx)) {
         const capacity = append.capacities.find((c) => c.platformName === platform.name)?.capacity;
         if (capacity === undefined) {
           throw new ValidationError(`"${platform.name}" platform capacity is not included in form`);
@@ -40,7 +40,7 @@ export class NodeWriter {
           assigned: 0,
         };
         const stateEnt = await this.stateRepo.create(stateEntAppend, tx);
-        states.push(this.mapper.mapStateWithPlatform(stateEnt, platform));
+        states.push({ ...stateEnt, platform });
       }
       const record = await this.mapper.map(nodeEnt, withGroup, false, tx);
       return { ...record, states };

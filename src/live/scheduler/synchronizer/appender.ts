@@ -8,7 +8,7 @@ import { ChannelRecord } from '../../../channel/channel/business/channel.busines
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { LiveFinder } from '../../business/live.finder.js';
-import { PlatformType } from '../../../platform/platform.schema.js';
+import { PlatformType } from '../../../platform/providers/platform.business.schema.js';
 
 export class LiveAppender extends Synchronizer {
   constructor(

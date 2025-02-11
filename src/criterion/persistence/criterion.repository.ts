@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  LiveCriterionEnt,
-  liveCriterionEnt,
-  LiveCriterionEntAppend,
-} from './criterion.persistence.schema.js';
+import { CriterionEnt, criterionEnt, CriterionEntAppend } from './criterion.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
@@ -12,20 +8,20 @@ import { liveCriterionTable } from '../../infra/db/schema.js';
 import { oneNotNull } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
 
-const liveCriterionEntAppendReq = liveCriterionEnt.partial({ description: true, updatedAt: true });
-type LiveCriterionEntAppendReq = z.infer<typeof liveCriterionEntAppendReq>;
+const criterionEntAppendReq = criterionEnt.partial({ description: true, updatedAt: true });
+type CriterionEntAppendReq = z.infer<typeof criterionEntAppendReq>;
 
 @Injectable()
 export class CriterionRepository {
-  async create(append: LiveCriterionEntAppend, tx: Tx = db): Promise<LiveCriterionEnt> {
-    const entReq: LiveCriterionEntAppendReq = {
+  async create(append: CriterionEntAppend, tx: Tx = db): Promise<CriterionEnt> {
+    const entReq: CriterionEntAppendReq = {
       ...append,
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx
       .insert(liveCriterionTable)
-      .values(liveCriterionEntAppendReq.parse(entReq))
+      .values(criterionEntAppendReq.parse(entReq))
       .returning();
     return oneNotNull(ent);
   }

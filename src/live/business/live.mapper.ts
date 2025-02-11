@@ -1,11 +1,10 @@
 import { LiveRecord } from './live.business.schema.js';
 import { LiveEnt } from '../persistence/live.persistence.schema.js';
-import { PlatformRepository } from '../../platform/persistence/platform.repository.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
 import { NodeFinder } from '../../node/business/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { platformRecord } from '../../platform/platform.schema.js';
 import { Injectable } from '@nestjs/common';
+import { PlatformFinder } from '../../platform/providers/platform.finder.js';
 
 export interface LiveMapOpt {
   withChannelTags?: boolean;
@@ -17,7 +16,7 @@ export interface LiveMapOpt {
 @Injectable()
 export class LiveMapper {
   constructor(
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfFinder: PlatformFinder,
     private readonly channelFinder: ChannelFinder,
     private readonly nodeFinder: NodeFinder,
   ) {}
@@ -33,12 +32,11 @@ export class LiveMapper {
     const withNodeGroup = opt.withNodeGroup ?? false;
     const withNodeStates = opt.withNodeStates ?? false;
 
-    const platform = await this.pfRepo.findById(liveEnt.platformId);
-    if (!platform) throw NotFoundError.from('Platform', 'id', liveEnt.platformId);
+    const platform = await this.pfFinder.findByIdNotNull(liveEnt.platformId);
     const channel = await this.channelFinder.findById(liveEnt.channelId, withChannelTags);
     if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
-    let result: LiveRecord = { ...liveEnt, channel, platform: platformRecord.parse(platform) };
+    let result: LiveRecord = { ...liveEnt, channel, platform };
 
     if (withNode) {
       const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates);

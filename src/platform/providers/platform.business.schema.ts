@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { platformEnt } from './persistence/platform.schema.js';
+import { platformEnt } from './platform.persistence.schema.js';
 
 export const platformTypeEnum = z.enum(['chzzk', 'soop', 'twitch']);
 export type PlatformType = z.infer<typeof platformTypeEnum>;

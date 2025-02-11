@@ -4,16 +4,19 @@ import { ChannelPriorityRepository } from '../../channel/channel/persistence/pri
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
-import { platformTypeEnum } from '../../platform/storage/platform.business.schema.js';
+import { platformType } from '../../platform/storage/platform.business.schema.js';
 import { NodeTypeRepository } from '../../node/persistence/node-type.repository.js';
-import { nodeTypeEnum } from '../../node/node.schema.js';
+import { nodeType } from '../../node/node.schema.js';
 import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
 import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
 import { NodeGroupAppend } from '../../node/persistence/node.persistence.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { CriterionRuleRepository } from '../../criterion/persistence/criterion-rule.repository.js';
-import { chzzkCriterionRuleType } from '../../criterion/business/criterion.rule.schema.js';
+import {
+  chzzkCriterionRuleType,
+  soopCriterionRuleType,
+} from '../../criterion/business/criterion.rule.schema.js';
 
 @Injectable()
 export class AppInitializer {
@@ -39,7 +42,7 @@ export class AppInitializer {
 
   async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
-    for (const name of platformTypeEnum.options.filter((name) => !pfNames.includes(name))) {
+    for (const name of platformType.options.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create({ name });
     }
 
@@ -54,7 +57,7 @@ export class AppInitializer {
     }
 
     const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);
-    for (const name of nodeTypeEnum.options.filter((name) => !nodeTypes.includes(name))) {
+    for (const name of nodeType.options.filter((name) => !nodeTypes.includes(name))) {
       await this.ntRepo.create({ name });
     }
     const ngNames = (await this.ngRepo.findAll()).map((pri) => pri.name);
@@ -68,8 +71,14 @@ export class AppInitializer {
     }
 
     const ruleNames = (await this.ruleRepo.findAll()).map((rule) => rule.name);
-    const notExists = chzzkCriterionRuleType.options.filter((name) => !ruleNames.includes(name));
-    for (const ruleName of notExists) {
+    const notExistsChzzk = chzzkCriterionRuleType.options.filter(
+      (name) => !ruleNames.includes(name),
+    );
+    for (const ruleName of notExistsChzzk) {
+      await this.ruleRepo.create({ name: ruleName });
+    }
+    const notExistsSoop = soopCriterionRuleType.options.filter((name) => !ruleNames.includes(name));
+    for (const ruleName of notExistsSoop) {
       await this.ruleRepo.create({ name: ruleName });
     }
   }

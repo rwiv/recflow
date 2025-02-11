@@ -2,36 +2,65 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import { CHANNEL_PRIORITIES } from '../channel/priority.constants.js';
-import { nodeTypeEnum } from '../node/node.schema.js';
+import { nodeType } from '../node/node.schema.js';
 import { NODE_TYPES } from '../node/node.constraints.js';
+import { nonempty } from '../common/data/common.schema.js';
+import { platformType } from '../platform/storage/platform.business.schema.js';
 
-const batchNodeInsert = z.object({
-  name: z.string().nonempty(),
+const criterionBatchInsert = z.object({
+  name: nonempty,
+  enforceCreds: z.boolean(),
+  minUserCnt: z.number().int().nonnegative(),
+  minFollowCnt: z.number().int().nonnegative(),
+});
+const chzzkCriterionBatchInsert = criterionBatchInsert.extend({
+  positiveTags: z.array(nonempty),
+  negativeTags: z.array(nonempty),
+  positiveKeywords: z.array(nonempty),
+  negativeKeywords: z.array(nonempty),
+  positiveWps: z.array(nonempty),
+  negativeWps: z.array(nonempty),
+});
+export type ChzzkCriterionBatchInsert = z.infer<typeof chzzkCriterionBatchInsert>;
+const soopCriterionBatchInsert = criterionBatchInsert.extend({
+  positiveCates: z.array(nonempty),
+  negativeCates: z.array(nonempty),
+});
+export type SoopCriterionBatchInsert = z.infer<typeof soopCriterionBatchInsert>;
+const criteriaBatchInsert = z.object({
+  chzzk: z.array(chzzkCriterionBatchInsert),
+  soop: z.array(soopCriterionBatchInsert),
+});
+export type CriteriaBatchInsert = z.infer<typeof criteriaBatchInsert>;
+
+const nodeBatchInsert = z.object({
+  name: nonempty,
   endpoint: z.string().url(),
   groupName: z.enum(NODE_TYPES),
-  typeName: nodeTypeEnum,
-  weight: z.number().nonnegative(),
+  typeName: nodeType,
+  weight: z.number().int().nonnegative(),
   totalCapacity: z.number().nonnegative(),
   capacities: z.object({
-    chzzk: z.number().nonnegative(),
-    soop: z.number().nonnegative(),
-    twitch: z.number().nonnegative(),
+    chzzk: z.number().int().nonnegative(),
+    soop: z.number().int().nonnegative(),
+    twitch: z.number().int().nonnegative(),
   }),
 });
-export type NodeBatchInsert = z.infer<typeof batchNodeInsert>;
+export type NodeBatchInsert = z.infer<typeof nodeBatchInsert>;
 
-const batchChannelInsert = z.object({
-  pids: z.array(z.string().nonempty()),
-  platform: z.string().nonempty(),
+const channelBatchInsert = z.object({
+  pids: z.array(nonempty),
+  platform: platformType,
   priority: z.enum(CHANNEL_PRIORITIES),
-  tagNames: z.array(z.string().nonempty()),
+  tagNames: z.array(nonempty),
 });
-export type ChannelBatchInsert = z.infer<typeof batchChannelInsert>;
+export type ChannelBatchInsert = z.infer<typeof channelBatchInsert>;
 
 export const batchConfig = z.object({
   endpoint: z.string().url(),
-  channels: batchChannelInsert,
-  nodes: z.array(batchNodeInsert),
+  channels: channelBatchInsert,
+  nodes: z.array(nodeBatchInsert),
+  criteria: criteriaBatchInsert,
 });
 export type BatchConfig = z.infer<typeof batchConfig>;
 

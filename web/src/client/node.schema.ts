@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { platformRecord, platformEnum } from '@/client/common.schema.ts';
 
-export const nodeTypeEnum = z.enum(['worker', 'argo']);
+export const nodeType = z.enum(['worker', 'argo']);
 const nodeTypeRecord = z.object({
   id: z.string(),
-  name: nodeTypeEnum,
+  name: nodeType,
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
 });

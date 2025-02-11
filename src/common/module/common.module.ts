@@ -8,6 +8,8 @@ import { NodeBusinessModule } from '../../node/business/node.business.module.js'
 import { DevInitInjector } from './dev-injector.js';
 import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
 import { CriterionPersistenceModule } from '../../criterion/persistence/criterion.persistence.module.js';
+import { CriterionBusinessModule } from '../../criterion/business/criterion.business.module.js';
+import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
 
 @Module({
   imports: [
@@ -17,8 +19,9 @@ import { CriterionPersistenceModule } from '../../criterion/persistence/criterio
     NodePersistenceModule,
     NodeBusinessModule,
     CriterionPersistenceModule,
+    CriterionBusinessModule,
   ],
-  providers: [AppInitializer, DevInitInjector, NodeBatchInserter],
+  providers: [AppInitializer, DevInitInjector, NodeBatchInserter, CriterionBatchInserter],
   exports: [AppInitializer],
 })
 export class CommonModule {}

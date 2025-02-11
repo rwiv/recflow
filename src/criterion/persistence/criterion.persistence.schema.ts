@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { uuid } from '../../common/data/common.schema.js';
+import { nonempty, uuid } from '../../common/data/common.schema.js';
 import { criterionRuleType } from '../business/criterion.rule.schema.js';
 
 export const criterionEnt = z.object({
   id: uuid,
-  name: z.string().max(50),
+  name: nonempty,
   description: z.string().nullable(),
   platformId: uuid,
   enforceCreds: z.boolean(),
@@ -25,7 +25,7 @@ export type CriterionEntAppend = z.infer<typeof criterionEntAppend>;
 
 export const criterionRuleEnt = z.object({
   id: uuid,
-  name: z.string().max(50),
+  name: nonempty,
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
 });
@@ -40,7 +40,7 @@ export const criterionUnitEnt = z.object({
   id: uuid,
   criterionId: uuid,
   ruleId: uuid,
-  value: z.string().nonempty(),
+  value: nonempty,
   positive: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),

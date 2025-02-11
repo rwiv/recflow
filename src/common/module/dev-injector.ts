@@ -12,6 +12,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
 import { readBatchConfig } from '../../batch/batch.config.js';
 import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
+import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
 
 @Injectable()
 export class DevInitInjector {
@@ -20,6 +21,7 @@ export class DevInitInjector {
     private readonly channelWriter: ChannelWriter,
     private readonly fetcher: PlatformFetcher,
     private readonly nodeInserter: NodeBatchInserter,
+    private readonly criterionInserter: CriterionBatchInserter,
   ) {
     this.testChannelFilePath = path.join('dev', 'test_channel_infos.json');
   }
@@ -27,6 +29,7 @@ export class DevInitInjector {
   async insertTestNodes() {
     const conf = readBatchConfig(path.join('dev', 'batch_conf.yaml'));
     await this.nodeInserter.insert(conf.nodes);
+    await this.criterionInserter.insert(conf.criteria);
   }
 
   // async insertTestNodes() {
@@ -38,7 +41,7 @@ export class DevInitInjector {
   //     const append: NodeAppend = {
   //       name: `test${i}`,
   //       groupId: groups[randomInt(0, groups.length - 1)].id,
-  //       typeName: randomElem(nodeTypeEnum.options),
+  //       typeName: randomElem(nodeType.options),
   //       endpoint: 'http://localhost:3000',
   //       weight: randomInt(1, 2),
   //       totalCapacity: 10,

@@ -34,6 +34,13 @@ export class CriterionRepository {
     return tx.select().from(liveCriterionTable);
   }
 
+  findByPlatformId(platformId: string, tx: Tx = db) {
+    return tx
+      .select()
+      .from(liveCriterionTable)
+      .where(eq(liveCriterionTable.platformId, platformId));
+  }
+
   async findById(id: string, tx: Tx = db) {
     const ent = await tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.id, id));
     return oneNotNull(ent);

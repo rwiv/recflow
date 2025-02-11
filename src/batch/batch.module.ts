@@ -6,10 +6,15 @@ import { ChannelTagPersistenceModule } from '../channel/tag/persistence/tag.pers
 import { ChannelBatchMigrator } from './migrate/migrate.channel.js';
 import { NodeBatchInserter } from './insert/insert.node.js';
 import { NodeBusinessModule } from '../node/business/node.business.module.js';
+import { CriterionBatchInserter } from './insert/insert.criterion.js';
 
 @Module({
   imports: [CommonModule, ChannelBusinessModule, ChannelTagPersistenceModule, NodeBusinessModule],
-  providers: [ChannelBatchInserter, NodeBatchInserter, ChannelBatchMigrator],
-  exports: [ChannelBatchInserter, NodeBatchInserter, ChannelBatchMigrator],
+  providers: [
+    ChannelBatchInserter,
+    NodeBatchInserter,
+    CriterionBatchInserter,
+    ChannelBatchMigrator,
+  ],
 })
 export class BatchModule {}

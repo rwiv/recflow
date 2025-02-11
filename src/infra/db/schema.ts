@@ -49,12 +49,16 @@ export const channelTable = pgTable(
   'channel',
   {
     id: uuid().primaryKey(),
-    platformId: uuid('platform_id').notNull().references(() => platformTable.id),
+    platformId: uuid('platform_id')
+      .notNull()
+      .references(() => platformTable.id),
     pid: text().notNull(),
     username: text().notNull(),
-    profileImgUrl: text(),
-    followerCnt: integer().notNull(),
-    priorityId: uuid('priority_id').notNull().references(() => channelPriorityTable.id),
+    profileImgUrl: text('profile_img_url'),
+    followerCnt: integer('follower_cnt').notNull(),
+    priorityId: uuid('priority_id')
+      .notNull()
+      .references(() => channelPriorityTable.id),
     followed: boolean().notNull(),
     description: text(),
     createdAt: timestamp('created_at').notNull(),
@@ -72,8 +76,12 @@ export const channelTable = pgTable(
 export const channelTagMapTable = pgTable(
   'channel_tag_map',
   {
-    channelId: uuid('channel_id').notNull().references(() => channelTable.id),
-    tagId: uuid('tag_id').notNull().references(() => channelTagTable.id),
+    channelId: uuid('channel_id')
+      .notNull()
+      .references(() => channelTable.id),
+    tagId: uuid('tag_id')
+      .notNull()
+      .references(() => channelTagTable.id),
     createdAt: timestamp('created_at').notNull(),
   },
   (t) => [
@@ -129,8 +137,12 @@ export const nodeTable = pgTable(
     endpoint: text().notNull(),
     weight: integer().notNull(),
     totalCapacity: integer('total_capacity').notNull(),
-    typeId: uuid('type_id').notNull().references(() => nodeTypeTable.id),
-    groupId: uuid('group_id').notNull().references(() => nodeGroupTable.id),
+    typeId: uuid('type_id')
+      .notNull()
+      .references(() => nodeTypeTable.id),
+    groupId: uuid('group_id')
+      .notNull()
+      .references(() => nodeGroupTable.id),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
@@ -139,8 +151,12 @@ export const nodeTable = pgTable(
 
 export const nodeStateTable = pgTable('node_state', {
   id: uuid().primaryKey(),
-  nodeId: uuid('node_id').notNull().references(() => nodeTable.id),
-  platformId: uuid('platform_id').notNull().references(() => platformTable.id),
+  nodeId: uuid('node_id')
+    .notNull()
+    .references(() => nodeTable.id),
+  platformId: uuid('platform_id')
+    .notNull()
+    .references(() => platformTable.id),
   capacity: integer().notNull(),
   assigned: integer().notNull(),
   createdAt: timestamp('created_at').notNull(),
@@ -149,13 +165,19 @@ export const nodeStateTable = pgTable('node_state', {
 
 export const liveTable = pgTable('live', {
   id: uuid().primaryKey(),
-  channelId: uuid('channel_id').notNull().references(() => channelTable.id),
-  platformId: uuid('platform_id').notNull().references(() => platformTable.id),
-  nodeId: uuid('node_id').notNull().references(() => nodeTable.id),
+  channelId: uuid('channel_id')
+    .notNull()
+    .references(() => channelTable.id),
+  platformId: uuid('platform_id')
+    .notNull()
+    .references(() => platformTable.id),
+  nodeId: uuid('node_id')
+    .notNull()
+    .references(() => nodeTable.id),
   liveTitle: text('live_title').notNull(),
   viewCnt: integer('view_cnt').notNull(),
   adult: boolean().notNull(),
-  isDeleted: boolean().notNull(),
+  isDeleted: boolean('is_deleted').notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),
@@ -167,7 +189,9 @@ export const liveCriterionTable = pgTable(
     id: uuid().primaryKey(),
     name: text().notNull().unique(),
     description: text(),
-    platformId: uuid('platform_id').notNull().references(() => platformTable.id),
+    platformId: uuid('platform_id')
+      .notNull()
+      .references(() => platformTable.id),
     enforceCreds: boolean('enforce_creds').notNull(),
     minUserCnt: integer('min_user_cnt').notNull(),
     minFollowCnt: integer('min_follow_cnt').notNull(),
@@ -190,8 +214,12 @@ export const liveCriterionRuleTable = pgTable(
 
 export const liveCriterionUnitTable = pgTable('live_criterion_unit', {
   id: uuid().primaryKey(),
-  criterionId: uuid('criterion_id').notNull().references(() => liveCriterionTable.id),
-  ruleId: uuid('rule_id').notNull().references(() => liveCriterionRuleTable.id),
+  criterionId: uuid('criterion_id')
+    .notNull()
+    .references(() => liveCriterionTable.id),
+  ruleId: uuid('rule_id')
+    .notNull()
+    .references(() => liveCriterionRuleTable.id),
   value: text().notNull(),
   positive: boolean().notNull(),
   createdAt: timestamp('created_at').notNull(),

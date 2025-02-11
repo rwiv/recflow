@@ -9,7 +9,7 @@ import { uuid } from '../../../common/data/common.schema.js';
 import { ChannelPriorityEnt, priorityEnt } from '../persistence/priority.schema.js';
 import {
   platformRecord,
-  platformTypeEnum,
+  platformType,
 } from '../../../platform/storage/platform.business.schema.js';
 
 export const priorityRecord = priorityEnt;
@@ -37,7 +37,7 @@ export type ChannelRecord = z.infer<typeof channelRecord>;
 // }
 
 export const channelAppend = channelEntAppend.omit({ platformId: true, priorityId: true }).extend({
-  platformName: platformTypeEnum,
+  platformName: platformType,
   priorityName: z.string().nonempty(),
 });
 export type ChannelAppend = z.infer<typeof channelAppend>;

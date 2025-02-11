@@ -19,7 +19,7 @@ export class CriterionMapper {
   ) {}
 
   async mapToChzzk(criterion: CriterionRecord, tx: Tx = db): Promise<ChzzkCriterionRecord> {
-    if (criterion.platform.name === 'chzzk') {
+    if (criterion.platform.name !== 'chzzk') {
       throw new ValidationError('Criterion is not a CHZZK platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
@@ -39,7 +39,7 @@ export class CriterionMapper {
   }
 
   async mapToSoop(criterion: CriterionRecord, tx: Tx = db): Promise<SoopCriterionRecord> {
-    if (criterion.platform.name === 'soop') {
+    if (criterion.platform.name !== 'soop') {
       throw new ValidationError('Criterion is not a SOOP platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);

@@ -5,11 +5,8 @@ import {
   nodeGroupEnt,
   nodeStateEnt,
 } from '../persistence/node.persistence.schema.js';
-import { nodeTypeEnum, nodeTypeRecord } from '../node.schema.js';
-import {
-  platformRecord,
-  platformTypeEnum,
-} from '../../platform/storage/platform.business.schema.js';
+import { nodeType, nodeTypeRecord } from '../node.schema.js';
+import { platformRecord, platformType } from '../../platform/storage/platform.business.schema.js';
 
 export const nodeState = nodeStateEnt
   .omit({ platformId: true })
@@ -24,10 +21,10 @@ export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({
 export type NodeRecord = z.infer<typeof nodeRecord>;
 
 export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
-  typeName: nodeTypeEnum,
+  typeName: nodeType,
   capacities: z.array(
     z.object({
-      platformName: platformTypeEnum,
+      platformName: platformType,
       capacity: z.number().nonnegative(),
     }),
   ),

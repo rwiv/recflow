@@ -3,6 +3,7 @@ import { CriterionRepository } from '../persistence/criterion.repository.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { ChzzkCriterionRecord, SoopCriterionRecord } from './criterion.business.schema.js';
 
 @Injectable()
 export class CriterionFinder {
@@ -12,7 +13,7 @@ export class CriterionFinder {
     private readonly mapper: CriterionMapper,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<(ChzzkCriterionRecord | SoopCriterionRecord)[]> {
     const entities = await this.crRepo.findAll();
     const promises = entities.map(async (ent) => {
       const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
@@ -27,17 +28,17 @@ export class CriterionFinder {
     return Promise.all(promises);
   }
 
-  async findChzzkByName(name: string) {
-    const ent = await this.crRepo.findByName(name);
-    if (!ent) return undefined;
-    const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
-    return this.mapper.mapToChzzk({ ...ent, platform });
+  async findChzzkCriteria(): Promise<ChzzkCriterionRecord[]> {
+    const platform = await this.pfFinder.findByNameNotNull('chzzk');
+    const entities = await this.crRepo.findByPlatformId(platform.id);
+    const promises = entities.map((ent) => this.mapper.mapToChzzk({ ...ent, platform }));
+    return Promise.all(promises);
   }
 
-  async findSoopByName(name: string) {
-    const ent = await this.crRepo.findByName(name);
-    if (!ent) return undefined;
-    const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
-    return this.mapper.mapToSoop({ ...ent, platform });
+  async findSoopCriteria(): Promise<SoopCriterionRecord[]> {
+    const platform = await this.pfFinder.findByNameNotNull('soop');
+    const entities = await this.crRepo.findByPlatformId(platform.id);
+    const promises = entities.map((ent) => this.mapper.mapToSoop({ ...ent, platform }));
+    return Promise.all(promises);
   }
 }

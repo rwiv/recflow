@@ -28,41 +28,37 @@ export class CriterionWriter {
 
   async createChzzkCriterion(append: ChzzkCriterionAppend): Promise<ChzzkCriterionRecord> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
-    const { tagRule, keywordRule, wpRule } = await this.ruleService.findChzzkRules();
+    const { tagRule, keywordRule: kwRule, wpRule } = await this.ruleService.findChzzkRules();
 
     return db.transaction(async (tx) => {
-      const criterion = await this.criterionRepo.create(append, tx);
+      const ent = await this.criterionRepo.create(append, tx);
       const promises: Promise<CriterionUnitEnt>[] = [];
       for (const tagName of append.positiveTags) {
-        promises.push(this.unitRepo.create(unitAppend(criterion, tagRule, tagName, true), tx));
+        promises.push(this.unitRepo.create(unitAppend(ent, tagRule, tagName, true), tx));
       }
-      for (const tagName of append.negativeKeywords) {
-        promises.push(this.unitRepo.create(unitAppend(criterion, tagRule, tagName, false), tx));
+      for (const tagName of append.negativeTags) {
+        promises.push(this.unitRepo.create(unitAppend(ent, tagRule, tagName, false), tx));
       }
-      for (const keywordName of append.positiveKeywords) {
-        promises.push(
-          this.unitRepo.create(unitAppend(criterion, keywordRule, keywordName, true), tx),
-        );
+      for (const kwName of append.positiveKeywords) {
+        promises.push(this.unitRepo.create(unitAppend(ent, kwRule, kwName, true), tx));
       }
-      for (const keywordName of append.negativeKeywords) {
-        promises.push(
-          this.unitRepo.create(unitAppend(criterion, keywordRule, keywordName, false), tx),
-        );
+      for (const kwName of append.negativeKeywords) {
+        promises.push(this.unitRepo.create(unitAppend(ent, kwRule, kwName, false), tx));
       }
       for (const wpNo of append.positiveWps) {
-        promises.push(this.unitRepo.create(unitAppend(criterion, wpRule, wpNo, true), tx));
+        promises.push(this.unitRepo.create(unitAppend(ent, wpRule, wpNo, true), tx));
       }
-      for (const wpNo of append.positiveWps) {
-        promises.push(this.unitRepo.create(unitAppend(criterion, wpRule, wpNo, false), tx));
+      for (const wpNo of append.negativeWps) {
+        promises.push(this.unitRepo.create(unitAppend(ent, wpRule, wpNo, false), tx));
       }
       const unitEntities = await Promise.all(promises);
       return {
-        ...criterion,
+        ...ent,
         platform,
         positiveTags: find(unitEntities, tagRule, true),
         negativeTags: find(unitEntities, tagRule, false),
-        positiveKeywords: find(unitEntities, keywordRule, true),
-        negativeKeywords: find(unitEntities, keywordRule, false),
+        positiveKeywords: find(unitEntities, kwRule, true),
+        negativeKeywords: find(unitEntities, kwRule, false),
         positiveWps: find(unitEntities, wpRule, true),
         negativeWps: find(unitEntities, wpRule, false),
       };

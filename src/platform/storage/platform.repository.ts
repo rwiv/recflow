@@ -4,19 +4,19 @@ import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { platformTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { PlatformType, platformTypeEnum } from './platform.business.schema.js';
+import { PlatformType, platformType } from './platform.business.schema.js';
 import { z } from 'zod';
 import { uuid } from '../../utils/uuid.js';
 import { platformEnt } from './platform.persistence.schema.js';
 
 export const platformEntAppend = platformEnt
   .partial({ id: true, createdAt: true, updatedAt: true })
-  .extend({ name: platformTypeEnum });
+  .extend({ name: platformType });
 export type PlatformEntAppend = z.infer<typeof platformEntAppend>;
 
 const platformEntAppendReq = platformEnt
   .partial({ updatedAt: true })
-  .extend({ name: platformTypeEnum });
+  .extend({ name: platformType });
 type PlatformEntAppendReq = z.infer<typeof platformEntAppendReq>;
 
 @Injectable()

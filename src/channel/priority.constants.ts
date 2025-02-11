@@ -17,5 +17,3 @@ export const CHANNEL_PRIORIES_VALUE_MAP = {
   skip: 'skip',
   none: 'none',
 };
-
-export const CHANNEL_PRIORITY_RANKS = [1, 2, 3] as const;

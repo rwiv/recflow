@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelSortArg, channelPageResult, ChannelPageResult } from './channel.business.schema.js';
+import {
+  channelPageResult,
+  ChannelPageResult,
+  ChannelSortType,
+} from './channel.business.schema.js';
 import { ChannelPageEntResult } from '../persistence/channel.persistence.schema.js';
 import { ChannelSearchRepository } from '../persistence/channel.search.js';
 import { ChannelMapper } from './channel.mapper.js';
@@ -14,28 +18,28 @@ export class ChannelSearcher {
 
   async findByQuery(
     page: PageQuery,
-    sorted: ChannelSortArg = undefined,
-    priority: string | undefined = undefined,
-    tagName: string | undefined = undefined,
+    sortBy?: ChannelSortType,
+    priority?: string,
+    tagName?: string,
     withTags: boolean = false,
   ) {
-    const entRet = await this.chSearch.findByQuery(page, sorted, priority, tagName);
+    const entRet = await this.chSearch.findByQuery(page, sortBy, priority, tagName);
     return this.toPageResult(entRet, withTags);
   }
 
   async findByAnyTag(
     includeTagNames: string[],
-    excludeTagNames: string[],
-    page: PageQuery | undefined = undefined,
-    sorted: ChannelSortArg = undefined,
-    priority: string | undefined = undefined,
+    excludeTagNames?: string[],
+    page?: PageQuery,
+    sortBy?: ChannelSortType,
+    priority?: string,
     withTags: boolean = false,
   ) {
     const entRet = await this.chSearch.findByAnyTag(
       includeTagNames,
       excludeTagNames,
       page,
-      sorted,
+      sortBy,
       priority,
     );
     return this.toPageResult(entRet, withTags);
@@ -43,17 +47,17 @@ export class ChannelSearcher {
 
   async findByAllTags(
     includeTagNames: string[],
-    excludeTagNames: string[] | undefined = undefined,
-    page: PageQuery | undefined = undefined,
-    sorted: ChannelSortArg = undefined,
-    priority: string | undefined = undefined,
+    excludeTagNames?: string[],
+    page?: PageQuery,
+    sortBy?: ChannelSortType,
+    priority?: string,
     withTags: boolean = false,
   ) {
     const entRet = await this.chSearch.findByAllTags(
       includeTagNames,
       excludeTagNames,
       page,
-      sorted,
+      sortBy,
       priority,
     );
     return this.toPageResult(entRet, withTags);

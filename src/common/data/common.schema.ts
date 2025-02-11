@@ -8,5 +8,3 @@ export const pageQuery = z.object({
   size: z.number().int().nonnegative(),
 });
 export type PageQuery = z.infer<typeof pageQuery>;
-export const pageQueryOptional = pageQuery.optional();
-export type PageQueryOptional = z.infer<typeof pageQueryOptional>;

@@ -32,15 +32,15 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { ChannelCreation } from '@/client/channel.types.ts';
+import { platformEnum } from '@/client/common.schema.ts';
 
 const FormSchema = z.object({
-  platformName: z.enum(PLATFORM_TYPES),
+  platformName: platformEnum,
   pid: z.string().nonempty(),
   priorityName: z.string().nonempty(),
   followed: z.boolean(),

@@ -1,4 +1,4 @@
-import { PlatformType } from '@/common/enum.types.ts';
+import { PlatformType } from '@/client/common.schema.ts';
 
 export function getChannelUrl(type: PlatformType, channelId: string) {
   switch (type) {

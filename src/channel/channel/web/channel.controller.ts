@@ -15,10 +15,11 @@ import { ChannelWriter } from '../business/channel.writer.js';
 import {
   ChannelAppendWithFetch,
   ChannelUpdate,
-  channelSortArg,
   channelUpdate,
   channelAppendWithFetch,
   channelPageResult,
+  channelSortEnum,
+  ChannelSortType,
 } from '../business/channel.business.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
@@ -40,7 +41,7 @@ export class ChannelController {
 
   @Get('/')
   async channels(
-    @Query('st') sorted?: string,
+    @Query('st') st?: string,
     @Query('pri') priority?: string,
     @Query('tn') tagName?: string,
     @Query('pid') pid?: string,
@@ -61,14 +62,12 @@ export class ChannelController {
     if (!page || !size) {
       throw new ValidationError('page and size must be provided');
     }
+    let sortBy: ChannelSortType = 'updatedAt';
+    if (st) {
+      sortBy = channelSortEnum.parse(st);
+    }
     const pq: PageQuery = { page, size };
-    return this.chSearcher.findByQuery(
-      pageQuery.parse(pq),
-      channelSortArg.parse(sorted),
-      priority,
-      tagName,
-      withTags,
-    );
+    return this.chSearcher.findByQuery(pageQuery.parse(pq), sortBy, priority, tagName, withTags);
   }
 
   @Post('/')

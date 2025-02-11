@@ -77,9 +77,8 @@ export const channelUpdate = z.object({
 });
 export type ChannelUpdate = z.infer<typeof channelUpdate>;
 
-export const channelSortEnum = z.enum(['latest', 'followerCnt']);
-export const channelSortArg = channelSortEnum.optional();
-export type ChannelSortArg = z.infer<typeof channelSortArg>;
+export const channelSortEnum = z.enum(['createdAt', 'updatedAt', 'followerCnt']);
+export type ChannelSortType = z.infer<typeof channelSortEnum>;
 
 export const channelPageResult = z.object({
   total: z.number().nonnegative(),

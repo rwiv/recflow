@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
-import { ExitCmd } from '@/common/enum.types.ts';
+import { ExitCmd } from '@/client/common.schema.ts';
 
 export function CommandTools({ table }: { table: Table<LiveRecord> }) {
   const queryClient = useQueryClient();

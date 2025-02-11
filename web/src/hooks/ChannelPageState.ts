@@ -1,13 +1,13 @@
-import { ChannelSortType } from '@/common/enum.types.ts';
 import { CHANNELS_QUERY_KEY } from '@/common/constants.ts';
 import { ChannelPageStateBuilder } from '@/hooks/ChannelPageStateBuilder.ts';
+import { ChannelSortType } from '@/client/common.schema.ts';
 
 export class ChannelPageState {
   curPageNum: number;
   pageSize: number;
   priority: string | undefined;
   tagName: string | undefined;
-  sorted: ChannelSortType | undefined;
+  sortBy: ChannelSortType = 'updatedAt';
   pid: string | undefined;
   username: string | undefined;
   isSingle: boolean = false;
@@ -17,14 +17,14 @@ export class ChannelPageState {
     this.pageSize = builder.pageSize;
     this.priority = builder.priority;
     this.tagName = builder.tagName;
-    this.sorted = builder.sorted;
+    this.sortBy = builder.sortBy;
     this.pid = builder.pid;
     this.username = builder.username;
     this.isSingle = builder.isSingle;
   }
 
   static default() {
-    return new ChannelPageStateBuilder().setCurPageNum(1).setSorted('latest').build();
+    return new ChannelPageStateBuilder().setCurPageNum(1).build();
   }
 
   new() {
@@ -33,7 +33,7 @@ export class ChannelPageState {
       .setPageSize(this.pageSize)
       .setPriority(this.priority)
       .setTagName(this.tagName)
-      .setSorted(this.sorted);
+      .setSorted(this.sortBy);
   }
 
   calculated(calcNum: number) {
@@ -66,8 +66,8 @@ export class ChannelPageState {
     if (this.tagName) {
       params.set('tn', this.tagName);
     }
-    if (this.sorted) {
-      params.set('st', this.sorted);
+    if (this.sortBy) {
+      params.set('st', this.sortBy);
     }
     return params.toString();
   }
@@ -78,7 +78,7 @@ export class ChannelPageState {
       this.curPageNum,
       this.priority,
       this.tagName,
-      this.sorted,
+      this.sortBy,
       this.pid,
       this.username,
       this.isSingle,

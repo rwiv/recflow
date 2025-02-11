@@ -21,13 +21,14 @@ export function SortSelect() {
   };
 
   return (
-    <Select defaultValue={pageState?.sorted ?? 'latest'} onValueChange={onChange}>
+    <Select defaultValue={pageState?.sortBy ?? 'updatedAt'} onValueChange={onChange}>
       <SelectTrigger css={css({ width: '10rem' })}>
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="latest">Update Date</SelectItem>
+          <SelectItem value="createdAt">Create Date</SelectItem>
+          <SelectItem value="updatedAt">Update Date</SelectItem>
           <SelectItem value="followerCnt">Follower Count</SelectItem>
         </SelectGroup>
       </SelectContent>

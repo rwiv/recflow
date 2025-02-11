@@ -1,7 +1,6 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import { dropAll } from '../../../infra/db/utils.js';
 import { mockChannel } from '../../../common/helpers/channel.mocks.js';
-import { ChannelSortArg } from './channel.business.schema.js';
 import { createTestApp } from '../../../common/helpers/helper.app.js';
 import { ChannelFinder } from './channel.finder.js';
 import { AppInitializer } from '../../../common/module/initializer.js';
@@ -56,9 +55,8 @@ describe('ChannelService', () => {
       }
     }
 
-    // const sorted: ChannelSortArg = 'latest';
-    const sorted: ChannelSortArg = 'followerCnt';
-    // const sorted: ChannelSortArg = undefined;
+    // const sorted = 'createdAt';
+    const sorted = 'followerCnt';
 
     // const prioirty = 'should';
     const prioirty = undefined;
@@ -71,7 +69,7 @@ describe('ChannelService', () => {
 
     const page = { page: 1, size: 20 };
 
-    // const result = await chFinder.findByQuery(page, sorted, prioirty, undefined, true);
+    // const result = await chSearcher.findByQuery(page, sorted, prioirty, undefined, true);
     const result = await chSearcher.findByAllTags(includes, excludes, page, sorted, prioirty, true);
     // const result = await chSearcher.findByAnyTag(includes, excludes, page, sorted, prioirty, true);
     console.log(result.total);

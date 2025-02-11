@@ -6,7 +6,7 @@ import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelTable, liveTable } from '../../infra/db/schema.js';
 import { uuid } from '../../utils/uuid.js';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const liveEntAppendReq = liveEnt.partial({ updatedAt: true, deletedAt: true });
@@ -29,7 +29,7 @@ export class LiveRepository {
   }
 
   findAll(tx: Tx = db) {
-    return tx.select().from(liveTable);
+    return tx.select().from(liveTable).orderBy(asc(liveTable.createdAt));
   }
 
   async findById(id: string, tx: Tx = db) {
@@ -37,7 +37,11 @@ export class LiveRepository {
   }
 
   async findByIsDeleted(isDeleted: boolean, tx: Tx = db) {
-    return tx.select().from(liveTable).where(eq(liveTable.isDeleted, isDeleted));
+    return tx
+      .select()
+      .from(liveTable)
+      .where(eq(liveTable.isDeleted, isDeleted))
+      .orderBy(asc(liveTable.createdAt));
   }
 
   async findByPid(pid: string, tx: Tx = db) {

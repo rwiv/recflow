@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { LiveRecord } from '@/client/live.types.ts';
 import { randomElem } from '@/lib/list.ts';
-import { PLATFORM_TYPES } from '@/common/enum.consts.ts';
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { TagRecord } from '@/client/tag.types.ts';
-import { PlatformRecord } from '@/client/common.schema.ts';
+import { PlatformRecord, platformEnum } from '@/client/common.schema.ts';
 
 export function mockLive(): LiveRecord {
   return {
@@ -30,7 +29,7 @@ export function mockNode() {
 export function mockPlatform(): PlatformRecord {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
-    name: randomElem(PLATFORM_TYPES),
+    name: randomElem(platformEnum.options),
     createdAt: faker.date.anytime().toISOString(),
     updatedAt: faker.date.anytime().toISOString(),
   };

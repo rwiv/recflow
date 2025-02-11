@@ -8,11 +8,10 @@ import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelPriorityRepository } from './priority.repository.js';
 import { ChannelPageEntResult } from './channel.persistence.schema.js';
-import { channelSortArg, ChannelSortArg } from '../business/channel.business.schema.js';
+import { channelSortEnum, ChannelSortType } from '../business/channel.business.schema.js';
 import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
-import { PageQuery, PageQueryOptional } from '../../../common/data/common.schema.js';
+import { PageQuery } from '../../../common/data/common.schema.js';
 
 @Injectable()
 export class ChannelSearchRepository {
@@ -22,10 +21,10 @@ export class ChannelSearchRepository {
   ) {}
 
   async findByQuery(
-    page: PageQueryOptional = undefined,
-    sorted: ChannelSortArg = undefined,
-    priorityName: string | undefined = undefined,
-    tagName: string | undefined = undefined,
+    page?: PageQuery,
+    sortBy?: ChannelSortType,
+    priorityName?: string,
+    tagName?: string,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     let qb = tx.select().from(channelTable).$dynamic();
@@ -44,7 +43,7 @@ export class ChannelSearchRepository {
       return { total, channels: (await nqb).map((r) => r.channel) };
     }
 
-    if (sorted) qb = this.withSorted(qb, sorted);
+    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));
 
@@ -56,10 +55,10 @@ export class ChannelSearchRepository {
   // using OR condition
   async findByAnyTag(
     includeTagNames: string[],
-    excludeTagNames: string[] | undefined,
-    page: PageQueryOptional = undefined,
-    sorted: ChannelSortArg = undefined,
-    priorityName: string | undefined = undefined,
+    excludeTagNames?: string[],
+    page?: PageQuery,
+    sortBy?: ChannelSortType,
+    priorityName?: string,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
@@ -86,7 +85,7 @@ export class ChannelSearchRepository {
       conds.push(notExists(subQuery));
     }
 
-    if (sorted) qb = this.withSorted(qb, sorted);
+    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds, inArray(channelTagMapTable.tagId, tagIds)));
 
@@ -97,10 +96,10 @@ export class ChannelSearchRepository {
 
   async findByAllTags(
     includeTagNames: string[],
-    excludeTagNames: string[] | undefined,
-    page: PageQueryOptional = undefined,
-    sorted: ChannelSortArg = undefined,
-    priorityName: string | undefined = undefined,
+    excludeTagNames?: string[],
+    page?: PageQuery,
+    sortBy?: ChannelSortType,
+    priorityName?: string,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
@@ -130,7 +129,7 @@ export class ChannelSearchRepository {
       conds.push(notExists(subQuery));
     }
 
-    if (sorted) qb = this.withSorted(qb, sorted);
+    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));
 
@@ -158,14 +157,14 @@ export class ChannelSearchRepository {
     return qb.offset(offset).limit(page.size);
   }
 
-  private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortArg) {
-    const sortType = channelSortArg.parse(sorted);
-    if (sortType === 'latest') {
+  private withSorted<T extends PgSelect>(qb: T, sortBy: ChannelSortType) {
+    const sortType = channelSortEnum.parse(sortBy);
+    if (sortType === 'createdAt') {
+      qb = qb.orderBy(desc(channelTable.createdAt));
+    } else if (sortType == 'updatedAt') {
       qb = qb.orderBy(desc(channelTable.updatedAt));
     } else if (sortType === 'followerCnt') {
       qb = qb.orderBy(desc(channelTable.followerCnt));
-    } else {
-      throw new EnumCheckError(`Invalid sort type: ${sortType}`);
     }
     return qb;
   }

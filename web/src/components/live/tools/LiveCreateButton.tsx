@@ -32,10 +32,10 @@ import {
 import { Input } from '@/components/ui/input.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { platformTypeEnum } from '@/client/common.schema.ts';
+import { platformEnum } from '@/client/common.schema.ts';
 
 const FormSchema = z.object({
-  type: platformTypeEnum,
+  type: platformEnum,
   uid: z.string().nonempty(),
 });
 

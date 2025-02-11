@@ -1,15 +1,13 @@
 import { DEFAULT_PAGE_SIZE } from '@/common/constants.ts';
-import { ChannelSortType } from '@/common/enum.types.ts';
-import { checkType } from '@/lib/union.ts';
-import { CHANNEL_SORT_TYPES } from '@/common/enum.consts.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
+import { ChannelSortType, channelSortEnum } from '@/client/common.schema.ts';
 
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;
   pageSize: number = DEFAULT_PAGE_SIZE;
   priority: string | undefined;
   tagName: string | undefined;
-  sorted: ChannelSortType | undefined;
+  sortBy: ChannelSortType = 'updatedAt';
   pid: string | undefined;
   username: string | undefined;
   isSingle: boolean = false;
@@ -41,9 +39,9 @@ export class ChannelPageStateBuilder {
 
   setSorted(sorted: string | null | undefined): this {
     if (!sorted) {
-      this.sorted = 'latest';
+      this.sortBy = 'updatedAt';
     }
-    this.sorted = checkType(sorted, CHANNEL_SORT_TYPES);
+    this.sortBy = channelSortEnum.parse(sorted);
     return this;
   }
 

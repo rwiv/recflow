@@ -1,6 +1,6 @@
 import { QueryConfig } from '../../../common/config/query.js';
 import { LiveFilter } from './interface.js';
-import { LiveInfo } from '../../../platform/wapper/live.js';
+import { LiveInfo } from '../../../platform/data/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';

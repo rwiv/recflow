@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from './channel.business.schema.js';
 import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformRecord } from '../../../platform/providers/platform.business.schema.js';
+import { platformRecord } from '../../../platform/storage/platform.business.schema.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { PlatformFinder } from '../../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class ChannelMapper {

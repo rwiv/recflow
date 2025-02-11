@@ -4,7 +4,7 @@ import { LiveService } from '../../business/live.service.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { LiveRecord } from '../../business/live.business.schema.js';
 import { LiveFinder } from '../../business/live.finder.js';
-import { PlatformType } from '../../../platform/providers/platform.business.schema.js';
+import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
 
 export class LiveCleaner extends Synchronizer {
   constructor(

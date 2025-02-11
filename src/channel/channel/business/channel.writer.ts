@@ -13,7 +13,7 @@ import { TagWriter } from '../../tag/business/tag.writer.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
-import { ChannelInfo } from '../../../platform/wapper/channel.js';
+import { ChannelInfo } from '../../../platform/data/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
@@ -22,7 +22,7 @@ import { hasDuplicates } from '../../../utils/list.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 import { ChannelsToTagsEntAppend } from '../../tag/persistence/tag.persistence.schema.js';
 import { TagCommandRepository } from '../../tag/persistence/tag.command.js';
-import { PlatformFinder } from '../../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class ChannelWriter {

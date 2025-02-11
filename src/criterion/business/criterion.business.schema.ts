@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { criterionEnt } from '../persistence/criterion.persistence.schema.js';
-import { platformRecord } from '../../platform/providers/platform.business.schema.js';
+import { platformRecord } from '../../platform/storage/platform.business.schema.js';
 
 export const CHZZK_CRITERION_RULES = {
   chzzk_tag_name: 'chzzk_tag_name',

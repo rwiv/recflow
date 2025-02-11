@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { platformTypeEnum } from '../../platform/providers/platform.business.schema.js';
+import { platformTypeEnum } from '../../platform/storage/platform.business.schema.js';
 import { exitCmd } from '../event/event.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
 

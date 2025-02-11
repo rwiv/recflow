@@ -4,7 +4,7 @@ import { ChannelFinder } from '../../channel/channel/business/channel.finder.js'
 import { NodeFinder } from '../../node/business/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Injectable } from '@nestjs/common';
-import { PlatformFinder } from '../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 export interface LiveMapOpt {
   withChannelTags?: boolean;

@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { SoopFetcher } from './soop.fetcher.js';
+import { SoopFetcher } from './fetcher.soop.js';
 import { readEnv } from '../../common/config/env.js';
 import { readQueryConfig } from '../../common/config/query.js';
 

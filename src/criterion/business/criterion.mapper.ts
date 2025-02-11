@@ -11,7 +11,7 @@ import {
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { CriterionRuleRepository } from '../persistence/criterion-rule.repository.js';
 import { CriterionUnitRepository } from '../persistence/criterion-unit.repository.js';
-import { PlatformFinder } from '../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class CriterionMapper {

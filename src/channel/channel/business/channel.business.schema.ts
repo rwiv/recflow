@@ -10,7 +10,7 @@ import { ChannelPriorityEnt, priorityEnt } from '../persistence/priority.schema.
 import {
   platformRecord,
   platformTypeEnum,
-} from '../../../platform/providers/platform.business.schema.js';
+} from '../../../platform/storage/platform.business.schema.js';
 
 export const priorityRecord = priorityEnt;
 export type ChannelPriorityRecord = ChannelPriorityEnt;

@@ -1,9 +1,9 @@
-import { channelFromChzzk, ChannelInfo } from '../wapper/channel.js';
-import { liveFromChzzk, LiveInfo } from '../wapper/live.js';
-import { ChzzkChannelInfo, ChzzkLiveInfo } from '../raw/chzzk.js';
+import { channelFromChzzk, ChannelInfo } from '../data/wapper/channel.js';
+import { liveFromChzzk, LiveInfo } from '../data/wapper/live.js';
+import { ChzzkChannelInfo, ChzzkLiveInfo } from '../data/raw/chzzk.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
-import { checkChannelResponse, checkResponse } from '../utils/utils.js';
+import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { IFetcher } from '../platform.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../../common/config/config.module.js';

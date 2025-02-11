@@ -1,8 +1,8 @@
-import { PlatformChannelInfo } from '../platform.types.js';
+import { PlatformChannelInfo } from '../../platform.types.js';
 import { ChzzkChannelInfo } from '../raw/chzzk.js';
 import { SoopChannelInfo } from '../raw/soop.js';
 import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
-import { PlatformType } from '../providers/platform.business.schema.js';
+import { PlatformType } from '../../storage/platform.business.schema.js';
 
 export interface ChannelBase {
   pid: string;

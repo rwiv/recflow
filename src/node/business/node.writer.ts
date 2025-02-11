@@ -8,7 +8,7 @@ import { NodeEntAppend, NodeStateEntAppend } from '../persistence/node.persisten
 import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { PlatformFinder } from '../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class NodeWriter {

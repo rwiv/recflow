@@ -8,7 +8,7 @@ import { AppInitializer } from '../../common/module/initializer.js';
 import { NodeWriter } from './node.writer.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeGroupRepository } from '../persistence/node-group.repository.js';
-import { PlatformFinder } from '../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 const app = await createTestApp();
 const init = app.get(AppInitializer);

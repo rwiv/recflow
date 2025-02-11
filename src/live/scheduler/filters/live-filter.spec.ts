@@ -2,7 +2,7 @@ import { ChzzkLiveFilter } from './live-filter.chzzk.js';
 import { it } from 'vitest';
 import { createTestApp } from '../../../common/helpers/helper.app.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { PlatformType } from '../../../platform/providers/platform.business.schema.js';
+import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
 
 const app = await createTestApp();
 const fetcher = app.get(PlatformFetcher);

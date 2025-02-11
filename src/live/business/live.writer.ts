@@ -4,11 +4,11 @@ import { ChannelFinder } from '../../channel/channel/business/channel.finder.js'
 import { NodeFinder } from '../../node/business/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend, LiveEntUpdate } from '../persistence/live.persistence.schema.js';
-import { LiveInfo } from '../../platform/wapper/live.js';
+import { LiveInfo } from '../../platform/data/wapper/live.js';
 import { oneNullable } from '../../utils/list.js';
 import { LiveMapper } from './live.mapper.js';
 import { LiveUpdate } from './live.business.schema.js';
-import { PlatformFinder } from '../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class LiveWriter {

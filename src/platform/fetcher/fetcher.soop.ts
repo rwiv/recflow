@@ -1,9 +1,9 @@
-import { channelFromSoop, ChannelInfo } from '../wapper/channel.js';
-import { liveFromSoop, LiveInfo } from '../wapper/live.js';
+import { channelFromSoop, ChannelInfo } from '../data/wapper/channel.js';
+import { liveFromSoop, LiveInfo } from '../data/wapper/live.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
-import { SoopChannelInfo, SoopLiveInfo } from '../raw/soop.js';
-import { checkChannelResponse, checkResponse } from '../utils/utils.js';
+import { SoopChannelInfo, SoopLiveInfo } from '../data/raw/soop.js';
+import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { IFetcher } from '../platform.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../../common/config/config.module.js';

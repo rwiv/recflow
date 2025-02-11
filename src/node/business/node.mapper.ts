@@ -7,7 +7,7 @@ import { NodeTypeRepository } from '../persistence/node-type.repository.js';
 import { NodeStateRepository } from '../persistence/node-state.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { PlatformFinder } from '../../platform/providers/platform.finder.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class NodeMapper {

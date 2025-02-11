@@ -3,7 +3,7 @@ import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
-import { PlatformType } from '../../../platform/providers/platform.business.schema.js';
+import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
 
 @Injectable()
 export class ChannelFinder {

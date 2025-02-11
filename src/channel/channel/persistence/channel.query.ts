@@ -5,7 +5,7 @@ import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../../utils/list.js';
 import { ChannelEnt } from './channel.persistence.schema.js';
-import { PlatformType } from '../../../platform/providers/platform.business.schema.js';
+import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
 
 @Injectable()
 export class ChannelQueryRepository {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { LiveInfo } from '../wapper/live.js';
-import { ChzzkFetcher } from './chzzk.fetcher.js';
-import { SoopFetcher } from './soop.fetcher.js';
-import { PlatformType } from '../providers/platform.business.schema.js';
+import { LiveInfo } from '../data/wapper/live.js';
+import { ChzzkFetcher } from './fetcher.chzzk.js';
+import { SoopFetcher } from './fetcher.soop.js';
+import { PlatformType } from '../storage/platform.business.schema.js';
 import { BaseError } from '../../utils/errors/base/BaseError.js';
 
 @Injectable()

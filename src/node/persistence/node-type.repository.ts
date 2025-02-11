@@ -1,22 +1,26 @@
+import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { nodeTypeEnt, NodeTypeEnt } from './node.persistence.schema.js';
+import { NodeTypeAppend, nodeTypeEnt, NodeTypeEnt } from './node.persistence.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeTypeTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 
+const nodeTypeEntAppendReq = nodeTypeEnt.partial({ updatedAt: true });
+type NodeTypeEntAppendRequest = z.infer<typeof nodeTypeEntAppendReq>;
+
 @Injectable()
 export class NodeTypeRepository {
-  async create(name: string, tx: Tx = db): Promise<NodeTypeEnt> {
-    const req: NodeTypeEnt = {
-      id: uuid(),
-      name,
-      createdAt: new Date(),
-      updatedAt: null,
+  async create(append: NodeTypeAppend, tx: Tx = db): Promise<NodeTypeEnt> {
+    const req: NodeTypeEntAppendRequest = {
+      ...append,
+      id: append.id ?? uuid(),
+      createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(nodeTypeTable).values(nodeTypeEnt.parse(req)).returning());
+    const ent = await tx.insert(nodeTypeTable).values(nodeTypeEntAppendReq.parse(req)).returning();
+    return oneNotNull(ent);
   }
 
   async findById(id: string, tx: Tx = db) {

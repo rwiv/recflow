@@ -15,12 +15,10 @@ import { ChannelWriter } from '../business/channel.writer.js';
 import {
   ChannelAppendWithFetch,
   ChannelUpdate,
-  chSortArg,
-  chUpdate,
-  chAppendWithFetch,
-  PageQuery,
-  pageQuery,
-  pageResult,
+  channelSortArg,
+  channelUpdate,
+  channelAppendWithFetch,
+  channelPageResult,
 } from '../business/channel.business.schema.js';
 import { ChannelFinder } from '../business/channel.finder.js';
 import { ChannelUpdater } from '../business/channel.updater.js';
@@ -28,6 +26,7 @@ import { notNull } from '../../../utils/null.js';
 import { HttpErrorFilter } from '../../../common/module/error.filter.js';
 import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../business/channel.searcher.js';
+import { PageQuery, pageQuery } from '../../../common/data/common.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -52,11 +51,11 @@ export class ChannelController {
   ) {
     if (pid) {
       const channels = await this.chFinder.findByPid(pid, withTags);
-      return pageResult.parse({ channels, total: 1 });
+      return channelPageResult.parse({ channels, total: 1 });
     }
     if (username) {
       const channels = await this.chFinder.findByUsernameLike(username, withTags);
-      return pageResult.parse({ channels, total: 1 });
+      return channelPageResult.parse({ channels, total: 1 });
     }
 
     if (!page || !size) {
@@ -65,7 +64,7 @@ export class ChannelController {
     const pq: PageQuery = { page, size };
     return this.chSearcher.findByQuery(
       pageQuery.parse(pq),
-      chSortArg.parse(sorted),
+      channelSortArg.parse(sorted),
       priority,
       tagName,
       withTags,
@@ -74,24 +73,24 @@ export class ChannelController {
 
   @Post('/')
   createChannel(@Body() req: ChannelAppendWithFetch) {
-    return this.chWriter.createWithFetch(chAppendWithFetch.parse(req));
+    return this.chWriter.createWithFetch(channelAppendWithFetch.parse(req));
   }
 
   @Patch('/priority')
   patchPriority(@Body() req: ChannelUpdate) {
-    const update = chUpdate.parse(req);
+    const update = channelUpdate.parse(req);
     return this.chUpdater.updatePriority(update.id, notNull(update.form.priorityName));
   }
 
   @Patch('/followed')
   patchFollowed(@Body() req: ChannelUpdate) {
-    const update = chUpdate.parse(req);
+    const update = channelUpdate.parse(req);
     return this.chUpdater.updateFollowed(update.id, notNull(update.form?.followed));
   }
 
   @Patch('/description')
   patchDescription(@Body() req: ChannelUpdate) {
-    const update = chUpdate.parse(req);
+    const update = channelUpdate.parse(req);
     return this.chUpdater.updateDescription(update.id, update.form.description ?? null);
   }
 

@@ -31,6 +31,13 @@ export const nodeTypeEnt = z.object({
 });
 export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
 
+export const nodeTypeAppend = nodeTypeEnt.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type NodeTypeAppend = z.infer<typeof nodeTypeAppend>;
+
 export const nodeGroupEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
@@ -41,7 +48,7 @@ export const nodeGroupEnt = z.object({
 });
 export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
 
-const nodeGroupAppend = nodeGroupEnt.partial({
+export const nodeGroupAppend = nodeGroupEnt.partial({
   id: true,
   description: true,
   createdAt: true,
@@ -60,7 +67,11 @@ export const nodeStateEnt = z.object({
 });
 export type NodeStateEnt = z.infer<typeof nodeStateEnt>;
 
-export const nodeStateEntAppend = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true });
+export const nodeStateEntAppend = nodeStateEnt.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export type NodeStateEntAppend = z.infer<typeof nodeStateEntAppend>;
 
 export const nodeStateEntUpdateForm = nodeStateEnt

@@ -2,14 +2,14 @@ import { z } from 'zod';
 import { tagRecord } from '../../tag/business/tag.business.schema.js';
 import {
   channelEnt,
-  chEntAppend,
-  chEntUpdateForm,
+  channelEntAppend,
+  channelEntUpdateForm,
 } from '../persistence/channel.persistence.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
 import { ChannelPriorityEnt, priorityEnt } from '../persistence/priority.schema.js';
 import { platformRecord, platformTypeEnum } from '../../../platform/platform.schema.js';
 
-const priorityRecord = priorityEnt;
+export const priorityRecord = priorityEnt;
 export type ChannelPriorityRecord = ChannelPriorityEnt;
 
 export const channelRecord = channelEnt.omit({ platformId: true, priorityId: true }).extend({
@@ -33,13 +33,13 @@ export type ChannelRecord = z.infer<typeof channelRecord>;
 //   tags?: TagRecord[];
 // }
 
-export const chAppend = chEntAppend.omit({ platformId: true, priorityId: true }).extend({
+export const channelAppend = channelEntAppend.omit({ platformId: true, priorityId: true }).extend({
   platformName: platformTypeEnum,
   priorityName: z.string().nonempty(),
 });
-export type ChannelAppend = z.infer<typeof chAppend>;
+export type ChannelAppend = z.infer<typeof channelAppend>;
 
-export const chAppendWithFetch = chAppend
+export const channelAppendWithFetch = channelAppend
   .pick({
     pid: true,
     platformName: true,
@@ -50,17 +50,17 @@ export const chAppendWithFetch = chAppend
   .extend({
     tagNames: z.array(z.string().nonempty()).optional(),
   });
-export type ChannelAppendWithFetch = z.infer<typeof chAppendWithFetch>;
+export type ChannelAppendWithFetch = z.infer<typeof channelAppendWithFetch>;
 
-const chAppendWithInfo = chAppendWithFetch.pick({
+export const channelAppendWithInfo = channelAppendWithFetch.pick({
   priorityName: true,
   followed: true,
   description: true,
   tagNames: true,
 });
-export type ChannelAppendWithInfo = z.infer<typeof chAppendWithInfo>;
+export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
 
-const chUpdateForm = chEntUpdateForm
+export const channelUpdateForm = channelEntUpdateForm
   .pick({
     followed: true,
     description: true,
@@ -68,26 +68,18 @@ const chUpdateForm = chEntUpdateForm
   .extend({
     priorityName: z.string().nonempty().optional(),
   });
-export const chUpdate = z.object({
+export const channelUpdate = z.object({
   id: uuid,
-  form: chUpdateForm,
+  form: channelUpdateForm,
 });
-export type ChannelUpdate = z.infer<typeof chUpdate>;
+export type ChannelUpdate = z.infer<typeof channelUpdate>;
 
-export const chSortEnum = z.enum(['latest', 'followerCnt']);
-export const chSortArg = chSortEnum.optional();
-export type ChannelSortArg = z.infer<typeof chSortArg>;
+export const channelSortEnum = z.enum(['latest', 'followerCnt']);
+export const channelSortArg = channelSortEnum.optional();
+export type ChannelSortArg = z.infer<typeof channelSortArg>;
 
-export const pageQuery = z.object({
-  page: z.number().int().positive(),
-  size: z.number().int().nonnegative(),
-});
-export type PageQuery = z.infer<typeof pageQuery>;
-export const pageQueryOptional = pageQuery.optional();
-export type PageQueryOptional = z.infer<typeof pageQueryOptional>;
-
-export const pageResult = z.object({
+export const channelPageResult = z.object({
   total: z.number().nonnegative(),
   channels: z.array(channelRecord),
 });
-export type PageResult = z.infer<typeof pageResult>;
+export type ChannelPageResult = z.infer<typeof channelPageResult>;

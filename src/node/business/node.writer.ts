@@ -29,8 +29,7 @@ export class NodeWriter {
       const nodeEnt = await this.nodeRepo.create(entAppend, tx);
       const states: NodeState[] = [];
       for (const platform of await this.pfRepo.findAll(tx)) {
-        const map = new Map(append.capacities.map((c) => [c.platformName, c.capacity]));
-        const capacity = map.get(platform.name);
+        const capacity = append.capacities.find((c) => c.platformName === platform.name)?.capacity;
         if (capacity === undefined) {
           throw new ValidationError(`"${platform.name}" platform is not included in the form`);
         }

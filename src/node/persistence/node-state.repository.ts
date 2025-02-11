@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import {
   nodeStateEnt,
@@ -13,16 +14,22 @@ import { db } from '../../infra/db/db.js';
 import { and, eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
+const nodeStateEntAppendReq = nodeStateEnt.partial({ updatedAt: true });
+type NodeStateEntAppendRequest = z.infer<typeof nodeStateEntAppendReq>;
+
 @Injectable()
 export class NodeStateRepository {
   async create(append: NodeStateEntAppend, tx: Tx = db) {
-    const req: NodeStateEnt = {
+    const req: NodeStateEntAppendRequest = {
       ...append,
-      id: uuid(),
-      createdAt: new Date(),
-      updatedAt: null,
+      id: append.id ?? uuid(),
+      createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(nodeStateTable).values(nodeStateEnt.parse(req)).returning());
+    const ent = await tx
+      .insert(nodeStateTable)
+      .values(nodeStateEntAppendReq.parse(req))
+      .returning();
+    return oneNotNull(ent);
   }
 
   async findAll(tx: Tx = db) {

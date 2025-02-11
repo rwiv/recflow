@@ -193,7 +193,7 @@ export const liveCriterionTable = pgTable(
   (t) => [uniqueIndex('live_criterion_name_idx').on(t.name)],
 );
 
-export const liveCriterionRule = pgTable(
+export const liveCriterionRuleTable = pgTable(
   'live_criterion_rule',
   {
     id: char({ length: 32 }).primaryKey(),
@@ -204,14 +204,14 @@ export const liveCriterionRule = pgTable(
   (t) => [uniqueIndex('live_criterion_rule_name_idx').on(t.name)],
 );
 
-export const liveCriterionUnit = pgTable('live_criterion_unit', {
+export const liveCriterionUnitTable = pgTable('live_criterion_unit', {
   id: char({ length: 32 }).primaryKey(),
   criterionId: char('criterion_id', { length: 32 })
     .notNull()
     .references(() => liveCriterionTable.id),
   filterTypeId: char('filter_type_id', { length: 32 })
     .notNull()
-    .references(() => liveCriterionRule.id),
+    .references(() => liveCriterionRuleTable.id),
   value: text().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),

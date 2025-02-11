@@ -4,8 +4,10 @@ import { ChannelInfo } from '../../platform/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-import { CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
-import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
+import {
+  ChannelAppend,
+  channelAppend,
+} from '../../channel/channel/business/channel.business.schema.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
 import { readBatchConfig } from '../../batch/batch.config.js';
@@ -76,7 +78,7 @@ export class DevInitInjector {
         description: null,
       };
       await this.channelWriter.createWithTagNames(
-        chAppend.parse(append),
+        channelAppend.parse(append),
         Array.from(new Set(tagNames)).sort(),
       );
     }

@@ -7,16 +7,12 @@ import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelPriorityRepository } from './priority.repository.js';
-import { PageEntResult } from './channel.persistence.schema.js';
-import {
-  chSortArg,
-  ChannelSortArg,
-  PageQueryOptional,
-  PageQuery,
-} from '../business/channel.business.schema.js';
+import { ChannelPageEntResult } from './channel.persistence.schema.js';
+import { channelSortArg, ChannelSortArg } from '../business/channel.business.schema.js';
 import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
+import { PageQuery, PageQueryOptional } from '../../../common/data/common.schema.js';
 
 @Injectable()
 export class ChannelSearchRepository {
@@ -31,7 +27,7 @@ export class ChannelSearchRepository {
     priorityName: string | undefined = undefined,
     tagName: string | undefined = undefined,
     tx: Tx = db,
-  ): Promise<PageEntResult> {
+  ): Promise<ChannelPageEntResult> {
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
 
@@ -65,7 +61,7 @@ export class ChannelSearchRepository {
     sorted: ChannelSortArg = undefined,
     priorityName: string | undefined = undefined,
     tx: Tx = db,
-  ): Promise<PageEntResult> {
+  ): Promise<ChannelPageEntResult> {
     const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
     if (tagIds.length === 0) return { total: 0, channels: [] };
     let excludeIds: string[] = [];
@@ -106,7 +102,7 @@ export class ChannelSearchRepository {
     sorted: ChannelSortArg = undefined,
     priorityName: string | undefined = undefined,
     tx: Tx = db,
-  ): Promise<PageEntResult> {
+  ): Promise<ChannelPageEntResult> {
     const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
     if (includeIds.length === 0) return { total: 0, channels: [] };
     let excludeIds: string[] = [];
@@ -163,7 +159,7 @@ export class ChannelSearchRepository {
   }
 
   private withSorted<T extends PgSelect>(qb: T, sorted: ChannelSortArg) {
-    const sortType = chSortArg.parse(sorted);
+    const sortType = channelSortArg.parse(sorted);
     if (sortType === 'latest') {
       qb = qb.orderBy(desc(channelTable.updatedAt));
     } else if (sortType === 'followerCnt') {

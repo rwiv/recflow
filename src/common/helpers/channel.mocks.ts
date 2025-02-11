@@ -1,4 +1,7 @@
-import { ChannelAppend, chAppend } from '../../channel/channel/business/channel.business.schema.js';
+import {
+  ChannelAppend,
+  channelAppend,
+} from '../../channel/channel/business/channel.business.schema.js';
 
 export function mockChannel(
   n: number,
@@ -15,5 +18,5 @@ export function mockChannel(
     followed: false,
     description: null,
   };
-  return chAppend.parse(append);
+  return channelAppend.parse(append);
 }

@@ -6,9 +6,11 @@ import {
   nodeStateEnt,
 } from '../persistence/node.persistence.schema.js';
 import { nodeTypeEnum, nodeTypeRecord } from '../node.schema.js';
-import { platformRecord } from '../../platform/platform.schema.js';
+import { platformRecord, platformTypeEnum } from '../../platform/platform.schema.js';
 
-const nodeState = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformRecord });
+export const nodeState = nodeStateEnt
+  .omit({ platformId: true })
+  .extend({ platform: platformRecord });
 export type NodeState = z.infer<typeof nodeState>;
 
 export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({
@@ -18,19 +20,16 @@ export const nodeRecord = nodeEnt.omit({ typeId: true }).extend({
 });
 export type NodeRecord = z.infer<typeof nodeRecord>;
 
-export const nodeAppend = nodeEntAppend
-  .omit({ typeId: true })
-  .partial({ id: true, description: true })
-  .extend({
-    typeName: nodeTypeEnum,
-    capacities: z.array(
-      z.object({
-        platformName: z.string().nonempty(),
-        capacity: z.number().nonnegative(),
-      }),
-    ),
-  });
+export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
+  typeName: nodeTypeEnum,
+  capacities: z.array(
+    z.object({
+      platformName: platformTypeEnum,
+      capacity: z.number().nonnegative(),
+    }),
+  ),
+});
 export type NodeAppend = z.infer<typeof nodeAppend>;
 
-const nodeGroup = nodeGroupEnt;
+export const nodeGroup = nodeGroupEnt;
 export type NodeGroup = z.infer<typeof nodeGroup>;

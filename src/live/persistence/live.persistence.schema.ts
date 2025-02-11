@@ -16,7 +16,7 @@ export const liveEnt = z.object({
 });
 export type LiveEnt = z.infer<typeof liveEnt>;
 
-export const liveEntAppend = liveEnt.omit({
+export const liveEntAppend = liveEnt.partial({
   id: true,
   isDeleted: true,
   createdAt: true,

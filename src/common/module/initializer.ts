@@ -52,7 +52,7 @@ export class AppInitializer {
 
     const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);
     for (const name of nodeTypeEnum.options.filter((name) => !nodeTypes.includes(name))) {
-      await this.ntRepo.create(name);
+      await this.ntRepo.create({ name });
     }
     const ngNames = (await this.ngRepo.findAll()).map((pri) => pri.name);
     for (const name of NODE_TYPES.filter((name) => !ngNames.includes(name))) {

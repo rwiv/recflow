@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from './live.persistence.schema.js';
 import { Tx } from '../../infra/db/types.js';
@@ -8,18 +9,19 @@ import { uuid } from '../../utils/uuid.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
+const liveEntAppendReq = liveEnt.partial({ updatedAt: true, deletedAt: true });
+type LiveEntAppendRequest = z.infer<typeof liveEntAppendReq>;
+
 @Injectable()
 export class LiveRepository {
   async create(append: LiveEntAppend, tx: Tx = db) {
-    const ent: LiveEnt = {
+    const ent: LiveEntAppendRequest = {
       ...append,
-      id: uuid(),
-      isDeleted: false,
-      createdAt: new Date(),
-      updatedAt: null,
-      deletedAt: null,
+      id: append.id ?? uuid(),
+      isDeleted: append.isDeleted ?? false,
+      createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(liveTable).values(liveEnt.parse(ent)).returning());
+    return oneNotNull(await tx.insert(liveTable).values(liveEntAppendReq.parse(ent)).returning());
   }
 
   async delete(id: string, tx: Tx = db) {

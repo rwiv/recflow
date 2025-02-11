@@ -13,9 +13,12 @@ type NodeEntAppendRequest = z.infer<typeof nodeEntAppendReq>;
 
 @Injectable()
 export class NodeRepository {
-  async create(append: NodeEntAppend, tx: Tx = db): Promise<NodeEnt> {
-    const id = append.id ?? uuid();
-    const req: NodeEntAppendRequest = { ...append, id, createdAt: new Date() };
+  async create(append: NodeEntAppend, tx: Tx = db) {
+    const req: NodeEntAppendRequest = {
+      ...append,
+      id: append.id ?? uuid(),
+      createdAt: append.createdAt ?? new Date(),
+    };
     return oneNotNull(await tx.insert(nodeTable).values(nodeEntAppendReq.parse(req)).returning());
   }
 

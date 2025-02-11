@@ -6,6 +6,7 @@ export const criterionEnt = z.object({
   name: z.string().max(50),
   description: z.string().nullable(),
   platformId: uuid,
+  enforceCreds: z.boolean(),
   minUserCnt: z.number().int().nonnegative(),
   minFollowCnt: z.number().int().nonnegative(),
   createdAt: z.date(),

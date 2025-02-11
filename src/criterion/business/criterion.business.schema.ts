@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { criterionEnt } from '../persistence/criterion.persistence.schema.js';
 import { platformRecord } from '../../platform/storage/platform.business.schema.js';
+import { nonempty, uuid } from '../../common/data/common.schema.js';
+
+export const liveCriterionRecord = criterionEnt.omit({ platformId: true }).extend({
+  platform: platformRecord,
+});
+export type LiveCriterionRecord = z.infer<typeof liveCriterionRecord>;
 
 export const CHZZK_CRITERION_RULES = {
   chzzk_tag_name: 'chzzk_tag_name',
@@ -20,22 +26,28 @@ export const soopCriterionRuleType = z.enum([SOOP_CRITERION_RULES.soop_cate_no])
 export type ChzzkCriterionRuleType = z.infer<typeof chzzkCriterionRuleType>;
 export type SoopCriterionRuleType = z.infer<typeof soopCriterionRuleType>;
 
-export const liveCriterionRecord = criterionEnt.omit({ platformId: true }).extend({
-  platform: platformRecord,
-});
-export type LiveCriterionRecord = z.infer<typeof liveCriterionRecord>;
-
 export const chzzkCriterionRecord = liveCriterionRecord.extend({
-  positiveTags: z.array(z.string().nonempty()),
-  negativeTags: z.array(z.string().nonempty()),
-  positiveKeywords: z.array(z.string().nonempty()),
-  negativeKeywords: z.array(z.string().nonempty()),
-  watchPartyNoList: z.array(z.number().int()),
+  positiveTags: z.array(nonempty),
+  negativeTags: z.array(nonempty),
+  positiveKeywords: z.array(nonempty),
+  negativeKeywords: z.array(nonempty),
+  positiveWps: z.array(nonempty),
+  negativeWps: z.array(nonempty),
 });
 export type ChzzkCriterionRecord = z.infer<typeof chzzkCriterionRecord>;
 
+export const chzzkCriterionAppend = chzzkCriterionRecord
+  .partial({ id: true, description: true, createdAt: true, updatedAt: true })
+  .omit({ platform: true })
+  .extend({ platformId: uuid });
+
 export const soopCriterionRecord = liveCriterionRecord.extend({
-  positiveCateNoList: z.array(z.number().int()),
-  negativeCateNoList: z.array(z.number().int()),
+  positiveCates: z.array(nonempty),
+  negativeCates: z.array(nonempty),
 });
 export type SoopCriterionRecord = z.infer<typeof soopCriterionRecord>;
+
+export const soopCriterionAppend = soopCriterionRecord
+  .partial({ id: true, description: true, createdAt: true, updatedAt: true })
+  .omit({ platform: true })
+  .extend({ platformId: uuid });

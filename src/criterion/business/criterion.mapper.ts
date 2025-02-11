@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionEnt, CriterionUnitEnt } from '../persistence/criterion.persistence.schema.js';
+import { CriterionUnitEnt } from '../persistence/criterion.persistence.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import {
   CHZZK_CRITERION_RULES,
-  liveCriterionRecord,
+  ChzzkCriterionRecord,
   LiveCriterionRecord,
   SOOP_CRITERION_RULES,
+  SoopCriterionRecord,
 } from './criterion.business.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { CriterionRuleRepository } from '../persistence/criterion-rule.repository.js';
 import { CriterionUnitRepository } from '../persistence/criterion-unit.repository.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class CriterionMapper {
@@ -21,53 +22,47 @@ export class CriterionMapper {
     private readonly unitRepo: CriterionUnitRepository,
   ) {}
 
-  async mapToChzzk(ent: CriterionEnt, tx: Tx = db) {
-    const record = await this.mapToRecord(ent, tx);
-    const tagRule = await this.ruleRepo.findByNameNotNull(CHZZK_CRITERION_RULES.chzzk_tag_name, tx);
-    const keywordRule = await this.ruleRepo.findByNameNotNull(
-      CHZZK_CRITERION_RULES.chzzk_keyword_name,
-      tx,
-    );
-    const wpRule = await this.ruleRepo.findByNameNotNull(
-      CHZZK_CRITERION_RULES.chzzk_watch_party_no,
-      tx,
-    );
+  async mapToChzzk(criterion: LiveCriterionRecord, tx: Tx = db): Promise<ChzzkCriterionRecord> {
+    if (criterion.platform.name === 'chzzk') {
+      throw new ValidationError('Criterion is not a CHZZK platform');
+    }
+    const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
 
-    const units = await this.unitRepo.findByCriterionId(record.id, tx);
-    const { positive: positiveTags, negative: negativeTags } = this.findUnitsValues(
-      units,
-      tagRule.id,
-    );
-    const { positive: positiveKeywords, negative: negativeKeywords } = this.findUnitsValues(
-      units,
-      keywordRule.id,
-    );
-    const { positive: positiveWps, negative: negativeWps } = this.findUnitsValues(units, wpRule.id);
+    const tagRuleName = CHZZK_CRITERION_RULES.chzzk_tag_name;
+    const keywordRuleName = CHZZK_CRITERION_RULES.chzzk_keyword_name;
+    const wpRuleName = CHZZK_CRITERION_RULES.chzzk_watch_party_no;
+    const tagRule = await this.ruleRepo.findByNameNotNull(tagRuleName, tx);
+    const keywordRule = await this.ruleRepo.findByNameNotNull(keywordRuleName, tx);
+    const wpRule = await this.ruleRepo.findByNameNotNull(wpRuleName, tx);
+
+    const tags = this.findUnitsValues(units, tagRule.id);
+    const keywords = this.findUnitsValues(units, keywordRule.id);
+    const wps = this.findUnitsValues(units, wpRule.id);
     return {
-      ...record,
-      positiveTags,
-      negativeTags,
-      positiveKeywords,
-      negativeKeywords,
-      positiveWps,
-      negativeWps,
+      ...criterion,
+      positiveTags: tags.positive,
+      negativeTags: tags.negative,
+      positiveKeywords: keywords.positive,
+      negativeKeywords: keywords.negative,
+      positiveWps: wps.positive,
+      negativeWps: wps.negative,
     };
   }
 
-  async mapToSoop(ent: CriterionEnt, tx: Tx = db) {
-    const record = await this.mapToRecord(ent, tx);
-    const cateRule = await this.ruleRepo.findByNameNotNull(SOOP_CRITERION_RULES.soop_cate_no, tx);
+  async mapToSoop(criterion: LiveCriterionRecord, tx: Tx = db): Promise<SoopCriterionRecord> {
+    if (criterion.platform.name === 'soop') {
+      throw new ValidationError('Criterion is not a SOOP platform');
+    }
+    const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
 
-    const units = await this.unitRepo.findByCriterionId(record.id, tx);
-    const { positive: positiveCates, negative: negativeCates } = this.findUnitsValues(
-      units,
-      cateRule.id,
-    );
+    const cateRuleName = SOOP_CRITERION_RULES.soop_cate_no;
+    const cateRule = await this.ruleRepo.findByNameNotNull(cateRuleName, tx);
 
+    const cates = this.findUnitsValues(units, cateRule.id);
     return {
-      ...record,
-      positiveCates,
-      negativeCates,
+      ...criterion,
+      positiveCates: cates.positive,
+      negativeCates: cates.negative,
     };
   }
 
@@ -75,12 +70,5 @@ export class CriterionMapper {
     const positive = units.filter((u) => u.positive && u.ruleId === ruleId).map((u) => u.value);
     const negative = units.filter((u) => !u.positive && u.ruleId === ruleId).map((u) => u.value);
     return { positive, negative };
-  }
-
-  private async mapToRecord(ent: CriterionEnt, tx: Tx = db) {
-    const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
-    if (!platform) throw NotFoundError.from('Platform', 'id', ent.platformId);
-    const record: LiveCriterionRecord = { ...ent, platform };
-    return liveCriterionRecord.parse(record);
   }
 }

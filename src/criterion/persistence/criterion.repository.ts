@@ -29,4 +29,18 @@ export class CriterionRepository {
   async delete(id: string, tx: Tx = db): Promise<void> {
     await tx.delete(liveCriterionTable).where(eq(liveCriterionTable.id, id));
   }
+
+  findAll(tx: Tx = db) {
+    return tx.select().from(liveCriterionTable);
+  }
+
+  async findById(id: string, tx: Tx = db) {
+    const ent = await tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.id, id));
+    return oneNotNull(ent);
+  }
+
+  async findByName(name: string, tx: Tx = db) {
+    const ent = await tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.name, name));
+    return oneNotNull(ent);
+  }
 }

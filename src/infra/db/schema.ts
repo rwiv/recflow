@@ -185,6 +185,7 @@ export const liveCriterionTable = pgTable(
     platformId: char('platform_id', { length: 32 })
       .notNull()
       .references(() => platformTable.id),
+    enforceCreds: boolean('enforce_creds').notNull(),
     minUserCnt: integer('min_user_cnt').notNull(),
     minFollowCnt: integer('min_follow_cnt').notNull(),
     createdAt: timestamp('created_at').notNull(),

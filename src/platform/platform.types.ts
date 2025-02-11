@@ -8,5 +8,5 @@ export type PlatformChannelInfo = ChzzkChannelInfo | SoopChannelInfo;
 
 export interface IFetcher {
   fetchLives(): Promise<LiveInfo[]>;
-  fetchChannel(uid: string, hasLiveInfo: boolean): Promise<ChannelInfo | null>;
+  fetchChannel(uid: string, hasLiveInfo: boolean): Promise<ChannelInfo>;
 }

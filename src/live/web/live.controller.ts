@@ -72,7 +72,7 @@ export class LiveController {
   @Post('/')
   async add(@Body() req: LiveAppendRequest) {
     const append = liveAppendRequest.parse(req);
-    const channel = await this.fetcher.fetchChannel(append.platformName, append.pid, true);
+    const channel = await this.fetcher.fetchChannelNotNull(append.platformName, append.pid, true);
     if (!channel?.liveInfo) {
       throw NotFoundError.from('channel.liveInfo', 'pid', append.pid);
     }

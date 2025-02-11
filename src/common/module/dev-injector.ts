@@ -56,7 +56,7 @@ export class DevInitInjector {
     const conf = readBatchConfig(confPath);
     const infos = [];
     for (const id of conf.channels.pids) {
-      infos.push(await this.fetcher.fetchChannel('chzzk', id, false));
+      infos.push(await this.fetcher.fetchChannelNotNull('chzzk', id, false));
     }
     await fs.promises.writeFile(this.testChannelFilePath, JSON.stringify(infos, null, 2));
   }

@@ -3,7 +3,7 @@ import { liveFromChzzk, LiveInfo } from '../wapper/live.js';
 import { ChzzkChannelInfo, ChzzkLiveInfo } from '../raw/chzzk.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
-import { checkResponse } from '../utils/utils.js';
+import { checkChannelResponse, checkResponse } from '../utils/utils.js';
 import { IFetcher } from '../platform.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../../common/config/config.module.js';
@@ -38,18 +38,14 @@ export class ChzzkFetcher implements IFetcher {
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));
   }
 
-  async fetchChannel(uid: string, hasLiveInfo: boolean): Promise<ChannelInfo | null> {
-    let url = `${this.url}/chzzk/channel/v1/${uid}`;
+  async fetchChannel(pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
+    let url = `${this.url}/chzzk/channel/v1/${pid}`;
     if (hasLiveInfo) {
       url += '?hasLiveInfo=true';
     }
-    try {
-      const res = await fetch(url, { method: 'GET' });
-      await checkResponse(res);
-      return channelFromChzzk((await res.json()) as ChzzkChannelInfo);
-    } catch (e) {
-      return null;
-    }
+    const res = await fetch(url, { method: 'GET' });
+    await checkChannelResponse(res, pid);
+    return channelFromChzzk((await res.json()) as ChzzkChannelInfo);
   }
 
   private async getChzzkLiveByTag(tag: string) {

@@ -6,6 +6,7 @@ export class BaseError extends Error {
 
   constructor(message: string, options?: ErrorOptions, type?: ErrorType, code?: string) {
     super(message, options);
+    this.name = this.constructor.name;
     if (type) {
       this.type = type;
     }

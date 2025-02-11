@@ -24,7 +24,8 @@ export class LiveCleaner extends Synchronizer {
   }
 
   private async processLive(liveRec: LiveRecord) {
-    const channel = await this.fetcher.fetchChannel(this.platform, liveRec.channel.pid, false);
+    const pid = liveRec.channel.pid;
+    const channel = await this.fetcher.fetchChannel(this.platform, pid, false);
     if (channel?.openLive) return null;
     await this.liveService.delete(liveRec.id, { purge: true });
   }

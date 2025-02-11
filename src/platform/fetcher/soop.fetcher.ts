@@ -3,7 +3,7 @@ import { liveFromSoop, LiveInfo } from '../wapper/live.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
 import { SoopChannelInfo, SoopLiveInfo } from '../raw/soop.js';
-import { checkResponse } from '../utils/utils.js';
+import { checkChannelResponse, checkResponse } from '../utils/utils.js';
 import { IFetcher } from '../platform.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../../common/config/config.module.js';
@@ -30,18 +30,14 @@ export class SoopFetcher implements IFetcher {
     return Array.from(infoMap.values()).map((info) => liveFromSoop(info));
   }
 
-  async fetchChannel(uid: string, hasLiveInfo: boolean): Promise<ChannelInfo | null> {
-    let url = `${this.url}/soop/channel/v1/${uid}`;
+  async fetchChannel(pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
+    let url = `${this.url}/soop/channel/v1/${pid}`;
     if (hasLiveInfo) {
       url += '?hasLiveInfo=true';
     }
-    try {
-      const res = await fetch(url, { method: 'GET' });
-      await checkResponse(res);
-      return channelFromSoop((await res.json()) as SoopChannelInfo);
-    } catch (e) {
-      return null;
-    }
+    const res = await fetch(url, { method: 'GET' });
+    await checkChannelResponse(res, pid);
+    return channelFromSoop((await res.json()) as SoopChannelInfo);
   }
 
   private async getSoopLiveByCategory(cateNo: string) {

@@ -1,5 +1,5 @@
 import { AsyncMap } from './interface.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NotFoundError } from '../errors/errors/NotFoundError.js';
 
 export class MemoryMap<K, V> implements AsyncMap<K, V> {
   private map = new Map<K, V>();

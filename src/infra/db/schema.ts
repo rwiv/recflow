@@ -8,14 +8,21 @@ import {
   text,
   timestamp,
   uniqueIndex,
-  varchar,
 } from 'drizzle-orm/pg-core';
+
+function uuid(name?: string) {
+  if (name) {
+    return char(name, { length: 36 });
+  } else {
+    return char({ length: 36 });
+  }
+}
 
 export const platformTable = pgTable(
   'platform',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
@@ -25,8 +32,8 @@ export const platformTable = pgTable(
 export const channelPriorityTable = pgTable(
   'channel_priority',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     description: text(),
     tier: integer().notNull(),
     createdAt: timestamp('created_at').notNull(),
@@ -41,17 +48,13 @@ export const channelPriorityTable = pgTable(
 export const channelTable = pgTable(
   'channel',
   {
-    id: char({ length: 32 }).primaryKey(),
-    platformId: varchar({ length: 50 })
-      .notNull()
-      .references(() => platformTable.id),
-    pid: varchar({ length: 255 }).notNull(),
-    username: varchar({ length: 255 }).notNull(),
+    id: uuid().primaryKey(),
+    platformId: uuid('platform_id').notNull().references(() => platformTable.id),
+    pid: text().notNull(),
+    username: text().notNull(),
     profileImgUrl: text(),
     followerCnt: integer().notNull(),
-    priorityId: varchar({ length: 50 })
-      .notNull()
-      .references(() => channelPriorityTable.id),
+    priorityId: uuid('priority_id').notNull().references(() => channelPriorityTable.id),
     followed: boolean().notNull(),
     description: text(),
     createdAt: timestamp('created_at').notNull(),
@@ -69,12 +72,8 @@ export const channelTable = pgTable(
 export const channelTagMapTable = pgTable(
   'channel_tag_map',
   {
-    channelId: char('channel_id', { length: 32 })
-      .notNull()
-      .references(() => channelTable.id),
-    tagId: char('tag_id', { length: 32 })
-      .notNull()
-      .references(() => channelTagTable.id),
+    channelId: uuid('channel_id').notNull().references(() => channelTable.id),
+    tagId: uuid('tag_id').notNull().references(() => channelTagTable.id),
     createdAt: timestamp('created_at').notNull(),
   },
   (t) => [
@@ -88,8 +87,8 @@ export const channelTagMapTable = pgTable(
 export const channelTagTable = pgTable(
   'channel_tag',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 255 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     description: text(),
     createdAt: timestamp('create_at').notNull(),
     updatedAt: timestamp('updated_at'),
@@ -100,8 +99,8 @@ export const channelTagTable = pgTable(
 export const nodeTypeTable = pgTable(
   'node_type',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
@@ -111,8 +110,8 @@ export const nodeTypeTable = pgTable(
 export const nodeGroupTable = pgTable(
   'node_group',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     description: text(),
     tier: integer().notNull(),
     createdAt: timestamp('created_at').notNull(),
@@ -124,18 +123,14 @@ export const nodeGroupTable = pgTable(
 export const nodeTable = pgTable(
   'node',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 255 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     description: text(),
     endpoint: text().notNull(),
     weight: integer().notNull(),
     totalCapacity: integer('total_capacity').notNull(),
-    typeId: char('type_id', { length: 32 })
-      .notNull()
-      .references(() => nodeTypeTable.id),
-    groupId: char('group_id', { length: 32 })
-      .notNull()
-      .references(() => nodeGroupTable.id),
+    typeId: uuid('type_id').notNull().references(() => nodeTypeTable.id),
+    groupId: uuid('group_id').notNull().references(() => nodeGroupTable.id),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
@@ -143,13 +138,9 @@ export const nodeTable = pgTable(
 );
 
 export const nodeStateTable = pgTable('node_state', {
-  id: char({ length: 32 }).primaryKey(),
-  nodeId: char('node_id', { length: 32 })
-    .notNull()
-    .references(() => nodeTable.id),
-  platformId: char('platform_id', { length: 32 })
-    .notNull()
-    .references(() => platformTable.id),
+  id: uuid().primaryKey(),
+  nodeId: uuid('node_id').notNull().references(() => nodeTable.id),
+  platformId: uuid('platform_id').notNull().references(() => platformTable.id),
   capacity: integer().notNull(),
   assigned: integer().notNull(),
   createdAt: timestamp('created_at').notNull(),
@@ -157,16 +148,10 @@ export const nodeStateTable = pgTable('node_state', {
 });
 
 export const liveTable = pgTable('live', {
-  id: char({ length: 32 }).primaryKey(),
-  channelId: char('channel_id', { length: 32 })
-    .notNull()
-    .references(() => channelTable.id),
-  platformId: char('platform_id', { length: 32 })
-    .notNull()
-    .references(() => platformTable.id),
-  nodeId: char('node_id', { length: 32 })
-    .notNull()
-    .references(() => nodeTable.id),
+  id: uuid().primaryKey(),
+  channelId: uuid('channel_id').notNull().references(() => channelTable.id),
+  platformId: uuid('platform_id').notNull().references(() => platformTable.id),
+  nodeId: uuid('node_id').notNull().references(() => nodeTable.id),
   liveTitle: text('live_title').notNull(),
   viewCnt: integer('view_cnt').notNull(),
   adult: boolean().notNull(),
@@ -179,12 +164,10 @@ export const liveTable = pgTable('live', {
 export const liveCriterionTable = pgTable(
   'live_criterion',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     description: text(),
-    platformId: char('platform_id', { length: 32 })
-      .notNull()
-      .references(() => platformTable.id),
+    platformId: uuid('platform_id').notNull().references(() => platformTable.id),
     enforceCreds: boolean('enforce_creds').notNull(),
     minUserCnt: integer('min_user_cnt').notNull(),
     minFollowCnt: integer('min_follow_cnt').notNull(),
@@ -197,8 +180,8 @@ export const liveCriterionTable = pgTable(
 export const liveCriterionRuleTable = pgTable(
   'live_criterion_rule',
   {
-    id: char({ length: 32 }).primaryKey(),
-    name: varchar({ length: 50 }).notNull().unique(),
+    id: uuid().primaryKey(),
+    name: text().notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
@@ -206,13 +189,9 @@ export const liveCriterionRuleTable = pgTable(
 );
 
 export const liveCriterionUnitTable = pgTable('live_criterion_unit', {
-  id: char({ length: 32 }).primaryKey(),
-  criterionId: char('criterion_id', { length: 32 })
-    .notNull()
-    .references(() => liveCriterionTable.id),
-  ruleId: char('rule_id', { length: 32 })
-    .notNull()
-    .references(() => liveCriterionRuleTable.id),
+  id: uuid().primaryKey(),
+  criterionId: uuid('criterion_id').notNull().references(() => liveCriterionTable.id),
+  ruleId: uuid('rule_id').notNull().references(() => liveCriterionRuleTable.id),
   value: text().notNull(),
   positive: boolean().notNull(),
   createdAt: timestamp('created_at').notNull(),

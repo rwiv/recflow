@@ -40,7 +40,7 @@ export class ChzzkLiveFilter implements LiveFilter {
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidOne(liveInfo.pid, 'chzzk');
+    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
     if (channel) {
       const ng = await this.ngRepo.findByTier(channel.priority.tier);
       if (ng.length > 0) {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const uuid = z.string().length(32);
+export const uuid = z.string().uuid();
 export const nonempty = z.string().nonempty();
 
 export const pageQuery = z.object({

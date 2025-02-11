@@ -22,7 +22,7 @@ export class LiveWriter {
 
   async createByLive(live: LiveInfo, nodeId: string) {
     const platform = await this.pfFinder.findByNameNotNull(live.type);
-    const channel = oneNullable(await this.channelFinder.findByPid(live.pid));
+    const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name);
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
     const node = await this.nodeFinder.findById(nodeId);
     if (!node) throw NotFoundError.from('Node', 'id', nodeId);

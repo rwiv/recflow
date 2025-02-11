@@ -3,38 +3,27 @@ import { CriterionUnitEnt } from '../persistence/criterion.persistence.schema.js
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import {
-  CHZZK_CRITERION_RULES,
   ChzzkCriterionRecord,
-  LiveCriterionRecord,
-  SOOP_CRITERION_RULES,
+  CriterionRecord,
   SoopCriterionRecord,
 } from './criterion.business.schema.js';
-import { CriterionRuleRepository } from '../persistence/criterion-rule.repository.js';
 import { CriterionUnitRepository } from '../persistence/criterion-unit.repository.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { CriterionRuleService } from './criterion.rule.js';
 
 @Injectable()
 export class CriterionMapper {
   constructor(
-    private readonly pfFinder: PlatformFinder,
-    private readonly ruleRepo: CriterionRuleRepository,
     private readonly unitRepo: CriterionUnitRepository,
+    private readonly ruleService: CriterionRuleService,
   ) {}
 
-  async mapToChzzk(criterion: LiveCriterionRecord, tx: Tx = db): Promise<ChzzkCriterionRecord> {
+  async mapToChzzk(criterion: CriterionRecord, tx: Tx = db): Promise<ChzzkCriterionRecord> {
     if (criterion.platform.name === 'chzzk') {
       throw new ValidationError('Criterion is not a CHZZK platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
-
-    const tagRuleName = CHZZK_CRITERION_RULES.chzzk_tag_name;
-    const keywordRuleName = CHZZK_CRITERION_RULES.chzzk_keyword_name;
-    const wpRuleName = CHZZK_CRITERION_RULES.chzzk_watch_party_no;
-    const tagRule = await this.ruleRepo.findByNameNotNull(tagRuleName, tx);
-    const keywordRule = await this.ruleRepo.findByNameNotNull(keywordRuleName, tx);
-    const wpRule = await this.ruleRepo.findByNameNotNull(wpRuleName, tx);
-
+    const { tagRule, keywordRule, wpRule } = await this.ruleService.findChzzkRules(tx);
     const tags = this.findUnitsValues(units, tagRule.id);
     const keywords = this.findUnitsValues(units, keywordRule.id);
     const wps = this.findUnitsValues(units, wpRule.id);
@@ -49,15 +38,12 @@ export class CriterionMapper {
     };
   }
 
-  async mapToSoop(criterion: LiveCriterionRecord, tx: Tx = db): Promise<SoopCriterionRecord> {
+  async mapToSoop(criterion: CriterionRecord, tx: Tx = db): Promise<SoopCriterionRecord> {
     if (criterion.platform.name === 'soop') {
       throw new ValidationError('Criterion is not a SOOP platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
-
-    const cateRuleName = SOOP_CRITERION_RULES.soop_cate_no;
-    const cateRule = await this.ruleRepo.findByNameNotNull(cateRuleName, tx);
-
+    const { cateRule } = await this.ruleService.findSoopRules(tx);
     const cates = this.findUnitsValues(units, cateRule.id);
     return {
       ...criterion,

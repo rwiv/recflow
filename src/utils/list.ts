@@ -3,10 +3,10 @@ import { MissingValueError } from './errors/errors/MissingValueError.js';
 
 export function oneNotNull<T>(list: T[]): T {
   if (list.length === 0) {
-    throw new MissingValueError('Expected exactly one element');
+    throw new MissingValueError('Element is missing');
   }
   if (list.length > 1) {
-    throw new ValidationError('Expected exactly one element');
+    throw new ValidationError('Element is not unique');
   }
   return list[0];
 }
@@ -16,7 +16,7 @@ export function oneNullable<T>(list: T[]): T | undefined {
     return undefined;
   }
   if (list.length > 1) {
-    throw new ValidationError('Expected exactly one element');
+    throw new ValidationError('Element is not unique');
   }
   return list[0];
 }

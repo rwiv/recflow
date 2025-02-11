@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
+import { criterionRuleType } from '../business/criterion.rule.schema.js';
 
 export const criterionEnt = z.object({
   id: uuid,
@@ -30,11 +31,9 @@ export const criterionRuleEnt = z.object({
 });
 export type CriterionRuleEnt = z.infer<typeof criterionRuleEnt>;
 
-export const criterionRuleEntAppend = criterionRuleEnt.partial({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const criterionRuleEntAppend = criterionRuleEnt
+  .partial({ id: true, createdAt: true, updatedAt: true })
+  .extend({ name: criterionRuleType });
 export type CriterionRuleEntAppend = z.infer<typeof criterionRuleEntAppend>;
 
 export const criterionUnitEnt = z.object({

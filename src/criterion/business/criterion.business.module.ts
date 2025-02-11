@@ -4,10 +4,11 @@ import { CriterionWriter } from './criterion.writer.js';
 import { CriterionFinder } from './criterion.finder.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformModule } from '../../platform/platform.module.js';
+import { CriterionRuleService } from './criterion.rule.js';
 
 @Module({
   imports: [CriterionRepository, PlatformModule],
-  providers: [CriterionMapper, CriterionWriter, CriterionFinder],
+  providers: [CriterionRuleService, CriterionMapper, CriterionWriter, CriterionFinder],
   exports: [CriterionMapper, CriterionWriter, CriterionFinder],
 })
 export class CriterionBusinessModule {}

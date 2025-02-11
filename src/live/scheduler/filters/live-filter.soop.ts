@@ -28,7 +28,7 @@ export class SoopLiveFilter implements LiveFilter {
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidOne(liveInfo.pid, 'soop');
+    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop');
     if (channel) {
       const ng = await this.ngRepo.findByTier(channel.priority.tier);
       if (ng) {

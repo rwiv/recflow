@@ -41,6 +41,7 @@ export class ChannelBatchMigrator extends BatchMigrator {
     const channel = channelRecordFetched.parse(chan);
     const req: ChannelAppend = {
       ...channel,
+      id: undefined, // TODO: remove
       createdAt: new Date(channel.createdAt),
       updatedAt: new Date(channel.updatedAt),
     };

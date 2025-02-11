@@ -8,8 +8,11 @@ import { liveCriterionRuleTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { criterionRuleType } from '../business/criterion.rule.schema.js';
 
-const criterionRuleEntReq = criterionRuleEnt.partial({ updatedAt: true });
+const criterionRuleEntReq = criterionRuleEnt
+  .partial({ updatedAt: true })
+  .extend({ name: criterionRuleType });
 type CriterionRuleEntReq = z.infer<typeof criterionRuleEntReq>;
 
 @Injectable()
@@ -29,6 +32,10 @@ export class CriterionRuleRepository {
 
   async delete(id: string, tx: Tx = db) {
     await tx.delete(liveCriterionRuleTable).where(eq(liveCriterionRuleTable.id, id));
+  }
+
+  async findAll(tx: Tx = db) {
+    return tx.select().from(liveCriterionRuleTable);
   }
 
   async findById(id: string, tx: Tx = db) {

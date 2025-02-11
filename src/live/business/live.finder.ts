@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { LiveRepository } from '../persistence/live.repository.js';
 import { LiveMapOpt, LiveMapper } from './live.mapper.js';
-import { oneNullable } from '../../utils/list.js';
 import { LiveEnt } from '../persistence/live.persistence.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface FindOptions {
   withDeleted?: boolean;
@@ -21,8 +21,10 @@ export class LiveFinder {
   }
 
   async findByPid(pid: string, opts: FindOptions = {}) {
-    const ent = oneNullable(await this.liveRepo.findByPid(pid));
-    return this.filterByOpts(ent, opts);
+    const entities = await this.liveRepo.findByPid(pid);
+    if (entities.length === 0) return undefined;
+    if (entities.length > 1) throw new ValidationError(`Duplicated live entities: pid=${pid}`);
+    return this.filterByOpts(entities[0], opts);
   }
 
   private async filterByOpts(ent: LiveEnt | undefined, opts: FindOptions = {}) {

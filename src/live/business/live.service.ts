@@ -40,7 +40,7 @@ export class LiveService {
     if (exists && !exists.isDeleted) {
       throw new ConflictError(`Already exists: ${liveInfo.pid}`);
     }
-    let channel = await this.chFinder.findByPidOne(liveInfo.pid, liveInfo.type);
+    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
     if (!channel) {
       const append: ChannelAppendWithInfo = {
         // TODO: update

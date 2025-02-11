@@ -12,7 +12,8 @@ import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js'
 import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
 import { NodeGroupAppend } from '../../node/persistence/node.persistence.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { CriterionRuleRepository } from '../../criterion/persistence/criterion-rule.repository.js';
+import { chzzkCriterionRuleType } from '../../criterion/business/criterion.rule.schema.js';
 
 @Injectable()
 export class AppInitializer {
@@ -21,6 +22,7 @@ export class AppInitializer {
     private readonly priRepo: ChannelPriorityRepository,
     private readonly ntRepo: NodeTypeRepository,
     private readonly ngRepo: NodeGroupRepository,
+    private readonly ruleRepo: CriterionRuleRepository,
     private readonly devInjector: DevInitInjector,
   ) {}
 
@@ -63,6 +65,12 @@ export class AppInitializer {
       }
       const append: NodeGroupAppend = { name, tier };
       await this.ngRepo.create(append);
+    }
+
+    const ruleNames = (await this.ruleRepo.findAll()).map((rule) => rule.name);
+    const notExists = chzzkCriterionRuleType.options.filter((name) => !ruleNames.includes(name));
+    for (const ruleName of notExists) {
+      await this.ruleRepo.create({ name: ruleName });
     }
   }
 }

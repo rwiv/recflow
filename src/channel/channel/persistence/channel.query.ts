@@ -21,17 +21,11 @@ export class ChannelQueryRepository {
     return tx.select().from(channelTable).where(eq(channelTable.pid, pid));
   }
 
-  async findByPidAndPlatform(
-    pid: string,
-    platformName: PlatformType,
-    tx: Tx = db,
-  ): Promise<ChannelEnt[]> {
-    const entities = await tx
+  async findByPidAndPlatform(pid: string, platformId: string, tx: Tx = db): Promise<ChannelEnt[]> {
+    return tx
       .select()
       .from(channelTable)
-      .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
-      .where(and(eq(channelTable.pid, pid), eq(platformTable.name, platformName)));
-    return entities.map((entity) => entity.channel);
+      .where(and(eq(channelTable.pid, pid), eq(channelTable.platformId, platformId)));
   }
 
   async findByUsernameLike(username: string, tx: Tx = db): Promise<ChannelEnt[]> {

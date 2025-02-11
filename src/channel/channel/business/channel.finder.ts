@@ -4,6 +4,7 @@ import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
 import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
+import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -11,6 +12,7 @@ export class ChannelFinder {
     private readonly chQuery: ChannelQueryRepository,
     private readonly chMapper: ChannelMapper,
     private readonly tagQuery: TagQueryRepository,
+    private readonly pfFinder: PlatformFinder,
   ) {}
 
   async findAll(withTags: boolean = false) {
@@ -36,8 +38,9 @@ export class ChannelFinder {
     return this.chMapper.loadRelations(channels, withTags);
   }
 
-  async findByPidOne(pid: string, platform: PlatformType, withTags: boolean = false) {
-    const entities = await this.chQuery.findByPidAndPlatform(pid, platform);
+  async findByPidAndPlatform(pid: string, platformName: PlatformType, withTags: boolean = false) {
+    const platform = await this.pfFinder.findByNameNotNull(platformName);
+    const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id);
     const channels = await this.chMapper.mapAll(entities);
     if (channels.length === 0) return undefined;
     if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);

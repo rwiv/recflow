@@ -59,12 +59,12 @@ export class ChannelWriter {
     if (tagIds && hasDuplicates(tagIds)) {
       throw new ConflictError('Duplicate tag names');
     }
-    const entities = await this.chQuery.findByPidAndPlatform(append.pid, append.platformName);
+    const platform = await this.pfFinder.findByNameNotNull(append.platformName);
+    const entities = await this.chQuery.findByPidAndPlatform(append.pid, platform.id);
     if (entities.length > 0) {
       throw new ConflictError(`Channel already exist ${append.username}`);
     }
 
-    const platform = await this.pfFinder.findByNameNotNull(append.platformName);
     const priority = await this.priRepo.findByName(append.priorityName);
     if (!priority) throw NotFoundError.from('Priority', 'name', append.priorityName);
 

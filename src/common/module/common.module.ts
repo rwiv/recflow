@@ -7,6 +7,7 @@ import { NodePersistenceModule } from '../../node/persistence/node.persistence.m
 import { NodeBusinessModule } from '../../node/business/node.business.module.js';
 import { DevInitInjector } from './dev-injector.js';
 import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
+import { CriterionPersistenceModule } from '../../criterion/persistence/criterion.persistence.module.js';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
     PlatformModule,
     NodePersistenceModule,
     NodeBusinessModule,
+    CriterionPersistenceModule,
   ],
   providers: [AppInitializer, DevInitInjector, NodeBatchInserter],
   exports: [AppInitializer],

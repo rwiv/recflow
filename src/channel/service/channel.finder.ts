@@ -17,8 +17,8 @@ export class ChannelFinder {
 
   async findAll(withTags: boolean = false) {
     const entities = await this.chQuery.findAll();
-    const records = await this.chMapper.mapAll(entities);
-    return this.chMapper.loadRelations(records, withTags);
+    const channels = await this.chMapper.mapAll(entities);
+    return this.chMapper.loadRelations(channels, withTags);
   }
 
   async findById(channelId: string, withTags: boolean = false) {

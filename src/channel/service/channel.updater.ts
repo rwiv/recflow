@@ -17,20 +17,20 @@ export class ChannelUpdater {
     const priority = await this.priRepo.findByName(priorityName);
     if (!priority) throw NotFoundError.from('Priority', 'name', priorityName);
     const update: ChannelEntUpdate = { id, form: { priorityId: priority.id } };
-    return this.updateRecord(update);
+    return this.update(update);
   }
 
   async updateFollowed(id: string, followed: boolean) {
     const update: ChannelEntUpdate = { id, form: { followed } };
-    return this.updateRecord(update);
+    return this.update(update);
   }
 
   async updateDescription(id: string, description: string | null) {
     const update: ChannelEntUpdate = { id, form: { description } };
-    return this.updateRecord(update);
+    return this.update(update);
   }
 
-  private async updateRecord(req: ChannelEntUpdate) {
+  private async update(req: ChannelEntUpdate) {
     const ent = await this.chCmd.update(req);
     return this.chMapper.map(ent);
   }

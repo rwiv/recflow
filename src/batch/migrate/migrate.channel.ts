@@ -7,14 +7,14 @@ import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 
-const tagRecordFetched = z.object({
+const fetchedTag = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().optional(),
 });
-const channelRecordFetched = z.object({
+const fetchedChannel = z.object({
   id: uuid,
   pid: z.string().nonempty(),
   username: z.string().nonempty(),
@@ -26,9 +26,9 @@ const channelRecordFetched = z.object({
   updatedAt: z.coerce.date(),
   platformName: platformNameEnum,
   priorityName: z.string().nonempty(),
-  tags: z.array(tagRecordFetched).optional(),
+  tags: z.array(fetchedTag).optional(),
 });
-type ChannelRecordFetched = z.infer<typeof channelRecordFetched>;
+type FetchedChannel = z.infer<typeof fetchedChannel>;
 
 @Injectable()
 export class ChannelBatchMigrator extends BatchMigrator {
@@ -37,8 +37,8 @@ export class ChannelBatchMigrator extends BatchMigrator {
   }
 
   override async migrateOne(line: string): Promise<void> {
-    const chan = channelRecordFetched.parse(JSON.parse(line));
-    const channel = channelRecordFetched.parse(chan);
+    const chan = fetchedChannel.parse(JSON.parse(line));
+    const channel = fetchedChannel.parse(chan);
     const req: ChannelAppend = {
       ...channel,
       id: undefined, // TODO: remove
@@ -71,6 +71,6 @@ export class ChannelBatchMigrator extends BatchMigrator {
   private async fetchChannels(endpoint: string, page: number, pageSize: number) {
     const url = `${endpoint}/api/channels?p=${page}&s=${pageSize}&wt=true`;
     const res = await fetch(url);
-    return (await res.json()) as ChannelRecordFetched[];
+    return (await res.json()) as FetchedChannel[];
   }
 }

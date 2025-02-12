@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
@@ -14,7 +13,7 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { LiveWriter } from '../access/live.writer.js';
-import { LiveDto, LiveUpdate } from '../spec/live.dto.schema.js';
+import { LiveUpdate } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../access/live.finder.js';
 
 export interface DeleteOptions {
@@ -25,7 +24,6 @@ export interface DeleteOptions {
 @Injectable()
 export class LiveRegistrar {
   constructor(
-    private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,
     private readonly nodeUpdater: NodeUpdater,
     private readonly nodeSelector: NodeSelector,
@@ -69,55 +67,32 @@ export class LiveRegistrar {
       purge = false;
     }
 
-    const record = await this.liveFinder.findById(recordId, { withDeleted: true });
-    if (!record) throw NotFoundError.from('LiveRecord', 'id', recordId);
+    const live = await this.liveFinder.findById(recordId, { withDeleted: true });
+    if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!purge) {
-      if (record.isDeleted) throw new ConflictError(`Already deleted: ${recordId}`);
+      if (live.isDeleted) throw new ConflictError(`Already deleted: ${recordId}`);
       const update: LiveUpdate = {
-        id: record.id,
+        id: live.id,
         form: { isDeleted: true, deletedAt: new Date() },
       };
       await this.liveWriter.update(update);
-      await this.nodeUpdater.updateCnt(record.nodeId, record.platform.id, -1);
+      await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
     } else {
-      if (!record.isDeleted) {
-        await this.nodeUpdater.updateCnt(record.nodeId, record.platform.id, -1);
+      if (!live.isDeleted) {
+        await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
       }
       await this.liveWriter.delete(recordId);
     }
 
-    await this.listener.onDelete(record, exitCmd);
+    await this.listener.onDelete(live, exitCmd);
 
-    return record;
+    return live;
   }
 
   async purgeAll() {
-    const records = await this.liveFinder.findAllDeleted();
-    const promises = records.map((record) => this.delete(record.id, { purge: true }));
-    return Promise.all(promises);
-  }
-
-  async refreshAllLives() {
-    const records = await this.liveFinder.findAllActives();
-    const entries = records.map((it) => [it.channel.pid, it] as const);
-    const liveMap = new Map<string, LiveDto>(entries);
-
-    const fetchPromises = records.map(async (live) => {
-      return this.fetcher.fetchChannel(live.platform.name, live.channel.pid, true);
-    });
-    const newChannels = (await Promise.all(fetchPromises)).filter((it) => it !== null);
-
-    const promises = newChannels.map(async (channel) => {
-      const record = liveMap.get(channel.pid);
-      if (!record) throw Error(`Record not found for ${channel.pid}`);
-      // 방송이 종료되었으나 cleanup cycle 이전에 refresh가 진행되면
-      // record는 active이나 fetchedChannel.liveInfo는 null이 될 수 있다.
-      if (!channel.liveInfo) {
-        return;
-      }
-      await this.liveWriter.updateByLive(record.id, channel.liveInfo);
-    });
+    const lives = await this.liveFinder.findAllDeleted();
+    const promises = lives.map((record) => this.delete(record.id, { purge: true }));
     return Promise.all(promises);
   }
 }

@@ -5,7 +5,7 @@ import { platformNameEnum } from './platform.enum.schema.js';
 export const platformDto = platformEnt.extend({
   name: platformNameEnum,
 });
-// export interface PlatformRecord {
+// export interface PlatformDto {
 //   id: string;
 //   name: PlatformType;
 //   createdAt: Date;

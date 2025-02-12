@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TaskWebModule } from './web/task.web.module.js';
+import { TaskScheduleModule } from './schedule/task.schedule.module.js';
 
 @Module({
-  imports: [TaskWebModule],
+  imports: [TaskScheduleModule],
 })
 export class TaskModule {}

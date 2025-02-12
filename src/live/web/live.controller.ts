@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Post, UseFilters } from '@nestjs/common'
 import { LiveRegistrar } from '../registry/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../event/event.schema.js';
-import { LiveScheduler } from '../scheduler/scheduler.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
@@ -21,7 +20,6 @@ export class LiveController {
   constructor(
     private readonly liveService: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
-    private readonly scheduler: LiveScheduler,
     private readonly liveFinder: LiveFinder,
   ) {}
 
@@ -47,22 +45,23 @@ export class LiveController {
     return this.liveFinder.findAll(opt);
   }
 
-  @Get('/schedule/stat')
-  scheduled() {
-    return {
-      status: this.scheduler.isObserving,
-    };
-  }
-
-  @Post('/schedule/start')
-  startSchedule() {
-    this.scheduler.run();
-  }
-
-  @Post('/schedule/stop')
-  stopSchedule() {
-    this.scheduler.stop();
-  }
+  // TODO: implement
+  // @Get('/schedule/stat')
+  // scheduled() {
+  //   return {
+  //     status: this.scheduler.isObserving,
+  //   };
+  // }
+  //
+  // @Post('/schedule/start')
+  // startSchedule() {
+  //   this.scheduler.run();
+  // }
+  //
+  // @Post('/schedule/stop')
+  // stopSchedule() {
+  //   this.scheduler.stop();
+  // }
 
   @Delete('/purge')
   async purge(): Promise<LiveDto[]> {

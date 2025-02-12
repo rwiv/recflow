@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BaseErrorResolver } from '../../utils/errors/resolver.base.js';
 
 @Injectable()
-export class ScheduleErrorHandler {
+export class TaskErrorHandler {
   readonly resolver = new BaseErrorResolver();
 
   handle(raw: unknown) {

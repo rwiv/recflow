@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { LiveScheduler } from './live/scheduler/scheduler.js';
 import { ENV } from './common/config/config.module.js';
 import { Env } from './common/config/env.js';
 import { AppInitializer } from './common/module/initializer.js';
+import { TaskScheduler } from './task/schedule/task.scheduler.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,8 +18,8 @@ async function bootstrap() {
     await init.initProd();
   }
 
-  const scheduler = app.get(LiveScheduler);
-  scheduler.run();
+  const scheduler = app.get(TaskScheduler);
+  scheduler.runPeriodTasks();
 
   await app.listen(env.appPort);
 }

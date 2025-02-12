@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { nodeAppend, NodeGroup } from '@/client/node.schema.ts';
+import { nodeAppend, NodeGroupDto } from '@/client/node.schema.ts';
 import { createNode, fetchNodeGroups } from '@/client/node.client.ts';
 
 const FormSchema = nodeAppend.extend({
@@ -51,7 +51,7 @@ export function NodeCreateButton() {
   );
 }
 
-export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroup[]; cb: () => void }) {
+export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb: () => void }) {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

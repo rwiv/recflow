@@ -3,9 +3,9 @@ import { CriterionRepository } from '../storage/criterion.repository.js';
 import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js';
 import {
   ChzzkCriterionAppend,
-  ChzzkCriterionRecord,
+  ChzzkCriterionDto,
   SoopCriterionAppend,
-  SoopCriterionRecord,
+  SoopCriterionDto,
 } from '../spec/criterion.dto.schema.js';
 import {
   CriterionEnt,
@@ -26,7 +26,7 @@ export class CriterionWriter {
     private readonly ruleFinder: CriterionRuleFinder,
   ) {}
 
-  async createChzzkCriterion(append: ChzzkCriterionAppend): Promise<ChzzkCriterionRecord> {
+  async createChzzkCriterion(append: ChzzkCriterionAppend): Promise<ChzzkCriterionDto> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
     const { tagRule, keywordRule: kwRule, wpRule } = await this.ruleFinder.findChzzkRules();
 
@@ -65,7 +65,7 @@ export class CriterionWriter {
     });
   }
 
-  async createSoopCriterion(append: SoopCriterionAppend): Promise<SoopCriterionRecord> {
+  async createSoopCriterion(append: SoopCriterionAppend): Promise<SoopCriterionDto> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
     const { cateRule } = await this.ruleFinder.findSoopRules();
 

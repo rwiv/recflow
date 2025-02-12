@@ -3,7 +3,7 @@ import { CriterionRepository } from '../storage/criterion.repository.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { ChzzkCriterionRecord, SoopCriterionRecord } from '../spec/criterion.dto.schema.js';
+import { ChzzkCriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
 
 @Injectable()
 export class CriterionFinder {
@@ -13,7 +13,7 @@ export class CriterionFinder {
     private readonly mapper: CriterionMapper,
   ) {}
 
-  async findAll(): Promise<(ChzzkCriterionRecord | SoopCriterionRecord)[]> {
+  async findAll(): Promise<(ChzzkCriterionDto | SoopCriterionDto)[]> {
     const entities = await this.crRepo.findAll();
     const promises = entities.map(async (ent) => {
       const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
@@ -28,14 +28,14 @@ export class CriterionFinder {
     return Promise.all(promises);
   }
 
-  async findChzzkCriteria(): Promise<ChzzkCriterionRecord[]> {
+  async findChzzkCriteria(): Promise<ChzzkCriterionDto[]> {
     const platform = await this.pfFinder.findByNameNotNull('chzzk');
     const entities = await this.crRepo.findByPlatformId(platform.id);
     const promises = entities.map((ent) => this.mapper.mapToChzzk({ ...ent, platform }));
     return Promise.all(promises);
   }
 
-  async findSoopCriteria(): Promise<SoopCriterionRecord[]> {
+  async findSoopCriteria(): Promise<SoopCriterionDto[]> {
     const platform = await this.pfFinder.findByNameNotNull('soop');
     const entities = await this.crRepo.findByPlatformId(platform.id);
     const promises = entities.map((ent) => this.mapper.mapToSoop({ ...ent, platform }));

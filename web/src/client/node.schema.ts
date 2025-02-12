@@ -1,24 +1,25 @@
 import { z } from 'zod';
 import { platformRecord, platformEnum } from '@/client/common.schema.ts';
 
-export const nodeType = z.enum(['worker', 'argo']);
-const nodeTypeRecord = z.object({
+export const nodeTypeNameEnum = z.enum(['worker', 'argo']);
+export type NodeTypeName = z.infer<typeof nodeTypeNameEnum>;
+const nodeTypeDto = z.object({
   id: z.string(),
-  name: nodeType,
+  name: nodeTypeNameEnum,
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
 });
 
-const nodeGroup = z.object({
+const nodeGroupDto = z.object({
   id: z.string(),
   name: z.string(),
   tier: z.number().positive(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
 });
-export type NodeGroup = z.infer<typeof nodeGroup>;
+export type NodeGroupDto = z.infer<typeof nodeGroupDto>;
 
-const nodeState = z.object({
+const nodeStateDto = z.object({
   id: z.string(),
   nodeId: z.string(),
   platform: platformRecord,
@@ -27,9 +28,9 @@ const nodeState = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
 });
-export type NodeState = z.infer<typeof nodeState>;
+export type NodeStateDto = z.infer<typeof nodeStateDto>;
 
-export const nodeRecord = z.object({
+export const nodeDto = z.object({
   id: z.string().length(32),
   name: z.string().nonempty(),
   endpoint: z.string().nonempty(),
@@ -37,12 +38,12 @@ export const nodeRecord = z.object({
   totalCapacity: z.coerce.number().nonnegative(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
-  type: nodeTypeRecord,
+  type: nodeTypeDto,
   groupId: z.string().length(32),
-  group: nodeGroup.optional(),
-  states: z.array(nodeState).optional(),
+  group: nodeGroupDto.optional(),
+  states: z.array(nodeStateDto).optional(),
 });
-export type NodeRecord = z.infer<typeof nodeRecord>;
+export type NodeDto = z.infer<typeof nodeDto>;
 
 const capacities = z.array(
   z.object({
@@ -50,7 +51,7 @@ const capacities = z.array(
     capacity: z.number().nonnegative(),
   }),
 );
-export const nodeAppend = nodeRecord
+export const nodeAppend = nodeDto
   .omit({
     id: true,
     createdAt: true,

@@ -1,6 +1,6 @@
 import { ChannelRecord } from '@/client/channel.types.ts';
 import { PlatformRecord } from '@/client/common.schema.ts';
-import { NodeRecord } from '@/client/node.schema.ts';
+import { NodeDto } from '@/client/node.schema.ts';
 
 export interface LiveRecord {
   id: string;
@@ -14,5 +14,5 @@ export interface LiveRecord {
   createdAt: string;
   updatedAt: string | undefined;
   deletedAt: string | undefined;
-  node?: NodeRecord;
+  node?: NodeDto;
 }

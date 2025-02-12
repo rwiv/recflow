@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { nonempty, uuid } from '../../common/data/common.schema.js';
-import { criterionRuleType } from '../spec/criterion.rule.schema.js';
+import { criterionRuleNameUnion } from '../spec/criterion.rule.schema.js';
 
 export const criterionEnt = z.object({
   id: uuid,
@@ -33,7 +33,7 @@ export type CriterionRuleEnt = z.infer<typeof criterionRuleEnt>;
 
 export const criterionRuleEntAppend = criterionRuleEnt
   .partial({ id: true, createdAt: true, updatedAt: true })
-  .extend({ name: criterionRuleType });
+  .extend({ name: criterionRuleNameUnion });
 export type CriterionRuleEntAppend = z.infer<typeof criterionRuleEntAppend>;
 
 export const criterionUnitEnt = z.object({

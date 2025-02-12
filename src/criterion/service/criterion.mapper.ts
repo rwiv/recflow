@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CriterionUnitEnt } from '../storage/criterion.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { ChzzkCriterionRecord, CriterionRecord, SoopCriterionRecord } from '../spec/criterion.dto.schema.js';
+import { ChzzkCriterionDto, CriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
 import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { CriterionRuleFinder } from './criterion.rule.finder.js';
@@ -14,7 +14,7 @@ export class CriterionMapper {
     private readonly ruleFinder: CriterionRuleFinder,
   ) {}
 
-  async mapToChzzk(criterion: CriterionRecord, tx: Tx = db): Promise<ChzzkCriterionRecord> {
+  async mapToChzzk(criterion: CriterionDto, tx: Tx = db): Promise<ChzzkCriterionDto> {
     if (criterion.platform.name !== 'chzzk') {
       throw new ValidationError('Criterion is not a CHZZK platform');
     }
@@ -34,7 +34,7 @@ export class CriterionMapper {
     };
   }
 
-  async mapToSoop(criterion: CriterionRecord, tx: Tx = db): Promise<SoopCriterionRecord> {
+  async mapToSoop(criterion: CriterionDto, tx: Tx = db): Promise<SoopCriterionDto> {
     if (criterion.platform.name !== 'soop') {
       throw new ValidationError('Criterion is not a SOOP platform');
     }

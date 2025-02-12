@@ -8,9 +8,11 @@ import { liveCriterionRuleTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { criterionRuleType } from '../spec/criterion.rule.schema.js';
+import { criterionRuleNameUnion } from '../spec/criterion.rule.schema.js';
 
-const criterionRuleEntReq = criterionRuleEnt.partial({ updatedAt: true }).extend({ name: criterionRuleType });
+const criterionRuleEntReq = criterionRuleEnt
+  .partial({ updatedAt: true })
+  .extend({ name: criterionRuleNameUnion });
 type CriterionRuleEntReq = z.infer<typeof criterionRuleEntReq>;
 
 @Injectable()

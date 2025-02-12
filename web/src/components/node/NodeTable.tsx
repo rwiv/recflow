@@ -5,10 +5,10 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
-import { NodeRecord } from '@/client/node.schema.ts';
+import { NodeDto } from '@/client/node.schema.ts';
 import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
 
-export function NodeTable({ data }: { data: NodeRecord[] }) {
+export function NodeTable({ data }: { data: NodeDto[] }) {
   const table = useTable(data, nodeColumns);
 
   return (

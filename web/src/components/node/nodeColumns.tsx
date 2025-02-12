@@ -1,12 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { baseColumnDef, createSelectColumn } from '@/components/common/table/column_utils.tsx';
-import { NodeRecord } from '@/client/node.schema.ts';
+import { NodeDto } from '@/client/node.schema.ts';
 
 export const selectCid = 'select';
 export const nameCid = 'name';
 export const weightCid = 'weight';
 
-const chzzkColumn: ColumnDef<NodeRecord> = {
+const chzzkColumn: ColumnDef<NodeDto> = {
   accessorKey: 'chzzk',
   header: 'Chzzk',
   cell: ({ row }) => {
@@ -20,7 +20,7 @@ const chzzkColumn: ColumnDef<NodeRecord> = {
   },
 };
 
-const soopColumn: ColumnDef<NodeRecord> = {
+const soopColumn: ColumnDef<NodeDto> = {
   accessorKey: 'soop',
   header: 'Soop',
   cell: ({ row }) => {
@@ -34,7 +34,7 @@ const soopColumn: ColumnDef<NodeRecord> = {
   },
 };
 
-const group: ColumnDef<NodeRecord> = {
+const group: ColumnDef<NodeDto> = {
   accessorKey: 'group',
   header: 'Group',
   cell: ({ row }) => {
@@ -43,7 +43,7 @@ const group: ColumnDef<NodeRecord> = {
   },
 };
 
-const nodeType: ColumnDef<NodeRecord> = {
+const nodeType: ColumnDef<NodeDto> = {
   accessorKey: 'type',
   header: 'Type',
   cell: ({ row }) => {
@@ -52,7 +52,7 @@ const nodeType: ColumnDef<NodeRecord> = {
   },
 };
 
-export const nodeColumns: ColumnDef<NodeRecord>[] = [
+export const nodeColumns: ColumnDef<NodeDto>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
   group,

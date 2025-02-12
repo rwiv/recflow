@@ -6,6 +6,7 @@ import { ChannelModule } from './channel/channel.module.js';
 import { CommonModule } from './common/module/common.module.js';
 import { NodeModule } from './node/node.module.js';
 import { CriterionModule } from './criterion/criterion.module.js';
+import { TaskModule } from './task/task.module.js';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CriterionModule } from './criterion/criterion.module.js';
     ChannelModule,
     NodeModule,
     CriterionModule,
+    TaskModule,
   ],
 })
 export class AppModule {}

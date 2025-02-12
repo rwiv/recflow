@@ -16,7 +16,10 @@ import { PriorityEntAppend } from '../../channel/storage/priority.schema.js';
 import { NodeGroupAppend } from '../../node/storage/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
-import { chzzkCriterionRuleType, soopCriterionRuleType } from '../../criterion/spec/criterion.rule.schema.js';
+import {
+  chzzkCriterionRuleNameEnum,
+  soopCriterionRuleNameEnum,
+} from '../../criterion/spec/criterion.rule.schema.js';
 
 @Injectable()
 export class AppInitializer {
@@ -71,11 +74,11 @@ export class AppInitializer {
     }
 
     const ruleNames = (await this.ruleRepo.findAll()).map((rule) => rule.name);
-    const notExistsChzzk = chzzkCriterionRuleType.options.filter((name) => !ruleNames.includes(name));
+    const notExistsChzzk = chzzkCriterionRuleNameEnum.options.filter((name) => !ruleNames.includes(name));
     for (const ruleName of notExistsChzzk) {
       await this.ruleRepo.create({ name: ruleName });
     }
-    const notExistsSoop = soopCriterionRuleType.options.filter((name) => !ruleNames.includes(name));
+    const notExistsSoop = soopCriterionRuleNameEnum.options.filter((name) => !ruleNames.includes(name));
     for (const ruleName of notExistsSoop) {
       await this.ruleRepo.create({ name: ruleName });
     }

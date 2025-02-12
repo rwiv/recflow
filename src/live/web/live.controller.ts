@@ -13,6 +13,7 @@ import {
   liveDeleteRequest,
   LiveDeleteRequest,
 } from './live.web.schema.js';
+import { LivePeriodTaskManager } from '../task/live.task.manger.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -21,6 +22,7 @@ export class LiveController {
     private readonly liveService: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
     private readonly liveFinder: LiveFinder,
+    private readonly taskManager: LivePeriodTaskManager,
   ) {}
 
   @Get('/')
@@ -45,23 +47,20 @@ export class LiveController {
     return this.liveFinder.findAll(opt);
   }
 
-  // TODO: implement
-  // @Get('/schedule/stat')
-  // scheduled() {
-  //   return {
-  //     status: this.scheduler.isObserving,
-  //   };
-  // }
-  //
-  // @Post('/schedule/start')
-  // startSchedule() {
-  //   this.scheduler.run();
-  // }
-  //
-  // @Post('/schedule/stop')
-  // stopSchedule() {
-  //   this.scheduler.stop();
-  // }
+  @Get('/schedule/stat')
+  scheduled() {
+    return { status: this.taskManager.getRegisterTaskStatus() };
+  }
+
+  @Post('/schedule/start')
+  startSchedule() {
+    this.taskManager.insertRegisterTask(true);
+  }
+
+  @Post('/schedule/stop')
+  stopSchedule() {
+    this.taskManager.cancelRegisterTask();
+  }
 
   @Delete('/purge')
   async purge(): Promise<LiveDto[]> {

@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { SCHEDULE_QUERY_KEY } from '@/common/constants.ts';
 import { isScheduled, startSchedule, stopSchedule } from '@/client/live.client.ts';
-import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
 import { Button } from '@/components/ui/button.tsx';
 
 export function ScheduleButton() {
@@ -22,7 +21,7 @@ export function ScheduleButton() {
   };
 
   if (!scheduleStatus) {
-    return <LoadingComponent />;
+    return 'error';
   }
 
   if (scheduleStatus.status) {

@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TaskScheduleModule } from './schedule/task.schedule.module.js';
+import { TaskScheduler } from './schedule/task.scheduler.js';
+import { TaskErrorHandler } from './schedule/task.error-handler.js';
 
 @Module({
-  imports: [TaskScheduleModule],
+  providers: [TaskScheduler, TaskErrorHandler],
+  exports: [TaskScheduler],
 })
 export class TaskModule {}

@@ -3,6 +3,7 @@ import { delay } from '../../utils/time.js';
 import { Task } from '../spec/task.interface.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { TaskErrorHandler } from './task.error-handler.js';
+import { log } from 'jslog';
 
 export const periodTaskStatus = z.enum(['active', 'inactive', 'canceled']);
 export type PeriodTaskStatus = z.infer<typeof periodTaskStatus>;
@@ -41,7 +42,7 @@ export class PeriodTask {
       await delay(this.delayMs);
     }
     this.status = 'canceled';
-    console.log(this.status);
+    log.info(`PeriodTask canceled: name=${this.task.getName()}`);
   }
 
   cancel() {

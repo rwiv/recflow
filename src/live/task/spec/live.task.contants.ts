@@ -1,0 +1,3 @@
+export const DEFAULT_REGISTER_CYCLE = 5 * 1000;
+export const DEFAULT_CLEANUP_CYCLE = 10 * 1000;
+export const DEFAULT_REFRESH_CYCLE = 10 * 1000;

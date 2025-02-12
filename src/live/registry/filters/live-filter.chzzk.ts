@@ -10,7 +10,7 @@ import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
 
 @Injectable()
-export class ChzzkLiveFilter implements LiveFilter {
+export class ChzzkLiveFilter {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,

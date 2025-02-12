@@ -5,10 +5,24 @@ import { ChannelServiceModule } from '../../channel/service/channel.service.modu
 import { NodeServiceModule } from '../../node/service/node.service.module.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { LiveAccessModule } from '../access/live.access.module.js';
+import { PlatformLiveFilter } from './live.filter.js';
+import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
+import { SoopLiveFilter } from './filters/live-filter.soop.js';
+import { ConfigModule } from '../../common/config/config.module.js';
+import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
+import { LiveCoordinator } from './live.coordinator.js';
 
 @Module({
-  imports: [LiveAccessModule, ChannelServiceModule, NodeServiceModule, PlatformModule, LiveEventModule],
-  providers: [LiveRegistrar],
-  exports: [LiveRegistrar],
+  imports: [
+    ConfigModule,
+    NodeStorageModule,
+    LiveAccessModule,
+    ChannelServiceModule,
+    NodeServiceModule,
+    PlatformModule,
+    LiveEventModule,
+  ],
+  providers: [LiveRegistrar, LiveCoordinator, PlatformLiveFilter, ChzzkLiveFilter, SoopLiveFilter],
+  exports: [LiveRegistrar, LiveCoordinator],
 })
 export class LiveRegistryModule {}

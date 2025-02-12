@@ -4,6 +4,7 @@ import { ENV } from './common/config/config.module.js';
 import { Env } from './common/config/env.js';
 import { AppInitializer } from './common/module/initializer.js';
 import { TaskScheduler } from './task/schedule/task.scheduler.js';
+import { LivePeriodTaskManager } from './live/task/live.task.manger.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +18,9 @@ async function bootstrap() {
   } else {
     await init.initProd();
   }
+
+  const liveTasks = app.get(LivePeriodTaskManager);
+  liveTasks.initInject();
 
   const scheduler = app.get(TaskScheduler);
   scheduler.runPeriodTasks();

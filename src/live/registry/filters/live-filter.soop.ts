@@ -1,15 +1,14 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { QueryConfig } from '../../../common/config/query.js';
-import { LiveFilter } from './interface.js';
 import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { Inject } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
 
-// TODO: change to abstract class and ChzzkLiveFilter extends this
-export class SoopLiveFilter implements LiveFilter {
+@Injectable()
+export class SoopLiveFilter {
   constructor(
     @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,

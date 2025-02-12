@@ -7,10 +7,11 @@ import { NodeServiceModule } from '../../node/service/node.service.module.js';
 import { LiveWriter } from './live.writer.js';
 import { LiveMapper } from './live.mapper.js';
 import { LiveFinder } from './live.finder.js';
+import { LiveRefresher } from './live.refresher.js';
 
 @Module({
   imports: [LiveStorageModule, ChannelServiceModule, NodeServiceModule, PlatformModule, LiveEventModule],
-  providers: [LiveWriter, LiveFinder, LiveMapper],
-  exports: [LiveWriter, LiveFinder],
+  providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher],
+  exports: [LiveWriter, LiveFinder, LiveRefresher],
 })
 export class LiveAccessModule {}

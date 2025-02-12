@@ -7,35 +7,38 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class TaskScheduler {
-  private periodTasks: PeriodTask[] = [];
   private periodTaskMap: Map<string, PeriodTask> = new Map();
 
   constructor(private readonly eh: TaskErrorHandler) {}
 
+  getPeriodTask(taskName: string) {
+    return this.periodTaskMap.get(taskName);
+  }
+
   addPeriodTask(task: Task, delayMs: number) {
     if (this.periodTaskMap.has(task.getName())) {
-      throw new ConflictError('task already exists');
+      throw new ConflictError(`task already exists: taskName=${task.getName()}`);
     }
     const periodTask = new PeriodTask(task, delayMs, this.eh);
     this.periodTaskMap.set(task.getName(), periodTask);
   }
 
-  stopPeriodTask(taskName: string) {
+  cancelPeriodTask(taskName: string) {
     const periodTask = this.periodTaskMap.get(taskName);
     if (!periodTask) throw NotFoundError.from('PeriodTask', 'name', taskName);
     periodTask.cancel();
     this.periodTaskMap.delete(taskName);
   }
 
-  get() {
-    return this.periodTasks;
-  }
-
   runPeriodTasks() {
-    this.periodTasks.forEach((task) => task.start());
+    for (const periodTask of this.periodTaskMap.values()) {
+      periodTask.start();
+    }
   }
 
-  cancel() {
-    this.periodTasks.forEach((task) => task.cancel());
+  clear() {
+    for (const taskName of this.periodTaskMap.keys()) {
+      this.cancelPeriodTask(taskName);
+    }
   }
 }

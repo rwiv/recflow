@@ -1,5 +1,5 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { fetchLives } from '@/client/live.client.ts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
@@ -12,7 +12,7 @@ import { fetchChannels } from '@/client/channel.client.ts';
 
 export function LivesPage() {
   const queryClient = useQueryClient();
-  const { data: lives } = useQuery<LiveRecord[]>({
+  const { data: lives } = useQuery<LiveDto[]>({
     queryKey: [LIVES_QUERY_KEY],
     queryFn: fetchLives,
   });

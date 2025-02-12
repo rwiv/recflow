@@ -1,7 +1,7 @@
-import { TagRecord } from '@/client/tag.types.ts';
-import { PlatformRecord, PlatformType } from '@/client/common.schema.ts';
+import { TagDto } from '@/client/tag.types.ts';
+import { PlatformDto, PlatformName } from '@/client/common.schema.ts';
 
-export interface ChannelPriorityRecord {
+export interface PriorityDto {
   id: string;
   name: string;
   tier: number;
@@ -9,31 +9,31 @@ export interface ChannelPriorityRecord {
   updatedAt: Date | null;
 }
 
-export interface ChannelRecord {
+export interface ChannelDto {
   id: string;
   pid: string;
   username: string;
   profileImgUrl: string | null;
   followerCnt: number;
-  platform: PlatformRecord;
-  priority: ChannelPriorityRecord;
+  platform: PlatformDto;
+  priority: PriorityDto;
   followed: boolean;
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
-  tags?: TagRecord[];
+  tags?: TagDto[];
 }
 
-export interface ChannelCreation {
+export interface ChannelAppend {
   pid: string;
-  platformName: PlatformType;
+  platformName: PlatformName;
   priorityName: string;
   followed: boolean;
   description: string | null;
   tagNames: string[];
 }
 
-export interface ChannelDefUpdate {
+export interface ChannelUpdate {
   id: string;
   form: {
     priorityName?: string;
@@ -42,7 +42,7 @@ export interface ChannelDefUpdate {
   };
 }
 
-export interface PageResult {
+export interface ChannelPageResult {
   total: number;
-  channels: ChannelRecord[];
+  channels: ChannelDto[];
 }

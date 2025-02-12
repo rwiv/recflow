@@ -1,6 +1,6 @@
-import { PlatformType } from '@/client/common.schema.ts';
+import { PlatformName } from '@/client/common.schema.ts';
 
-export function getChannelUrl(type: PlatformType, channelId: string) {
+export function getChannelUrl(type: PlatformName, channelId: string) {
   switch (type) {
     case 'chzzk':
       return `https://chzzk.naver.com/${channelId}`;
@@ -13,7 +13,7 @@ export function getChannelUrl(type: PlatformType, channelId: string) {
   }
 }
 
-export function getLiveUrl(type: PlatformType, channelId: string) {
+export function getLiveUrl(type: PlatformName, channelId: string) {
   switch (type) {
     case 'chzzk':
       return `https://chzzk.naver.com/live/${channelId}`;

@@ -20,10 +20,10 @@ import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { css } from '@emotion/react';
 import { attachTag } from '@/client/tag.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { ChannelRecord } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
 
 interface TagAttachDialogProps {
-  channel: ChannelRecord;
+  channel: ChannelDto;
   triggerRef: RefObject<HTMLButtonElement>;
 }
 
@@ -50,7 +50,7 @@ export function TagAttachDialog({ channel, triggerRef }: TagAttachDialogProps) {
   );
 }
 
-export function AttachForm({ channel, cb }: { channel: ChannelRecord; cb: () => void }) {
+export function AttachForm({ channel, cb }: { channel: ChannelDto; cb: () => void }) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
 

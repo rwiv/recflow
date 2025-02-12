@@ -4,14 +4,14 @@ import {
   dateColumnDef,
   sortableColumnDef,
 } from '@/components/common/table/column_utils.tsx';
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { getChannelUrl, getLiveUrl } from '@/lib/platform.ts';
 
 export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
 export const createdAtCit = 'createdAt';
 
-const channelColumn: ColumnDef<LiveRecord> = {
+const channelColumn: ColumnDef<LiveDto> = {
   accessorKey: 'channel',
   header: 'Channel',
   cell: ({ row }) => {
@@ -27,7 +27,7 @@ const channelColumn: ColumnDef<LiveRecord> = {
   },
 };
 
-const titleColumn: ColumnDef<LiveRecord> = {
+const titleColumn: ColumnDef<LiveDto> = {
   accessorKey: 'title',
   header: 'Title',
   cell: ({ row }) => {
@@ -43,7 +43,7 @@ const titleColumn: ColumnDef<LiveRecord> = {
   },
 };
 
-const nodeColumn: ColumnDef<LiveRecord> = {
+const nodeColumn: ColumnDef<LiveDto> = {
   accessorKey: 'node',
   header: 'Node',
   cell: ({ row }) => {
@@ -55,7 +55,7 @@ const nodeColumn: ColumnDef<LiveRecord> = {
   },
 };
 
-const platformColumn: ColumnDef<LiveRecord> = {
+const platformColumn: ColumnDef<LiveDto> = {
   accessorKey: 'platform',
   header: 'Platform',
   cell: ({ row }) => {
@@ -67,12 +67,12 @@ const platformColumn: ColumnDef<LiveRecord> = {
   },
 };
 
-export const liveColumns: ColumnDef<LiveRecord>[] = [
+export const liveColumns: ColumnDef<LiveDto>[] = [
   createSelectColumn(selectCid),
   platformColumn,
   channelColumn,
   titleColumn,
   sortableColumnDef(viewCntCid, 'Viewers'),
-  dateColumnDef<LiveRecord>(createdAtCit, 'Save Time', (elem) => new Date(elem.createdAt)),
+  dateColumnDef<LiveDto>(createdAtCit, 'Save Time', (elem) => new Date(elem.createdAt)),
   nodeColumn,
 ];

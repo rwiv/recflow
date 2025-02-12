@@ -5,11 +5,11 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { prettyDate } from '@/lib/date.ts';
 import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
-import { ChannelRecord } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
 import { PriorityUpdateDialog } from '@/components/channel/edit/PriorityUpdateDialog.tsx';
 import { Skeleton } from '@/components/ui/skeleton.tsx';
 
-export function ChannelRow({ channel }: { channel: ChannelRecord }) {
+export function ChannelRow({ channel }: { channel: ChannelDto }) {
   return (
     <TableRow>
       <TableCell>

@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE_SIZE } from '@/common/constants.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
-import { ChannelSortType, channelSortEnum } from '@/client/common.schema.ts';
+import { ChannelSortType, channelSortTypeEnum } from '@/client/common.schema.ts';
 
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;
@@ -41,7 +41,7 @@ export class ChannelPageStateBuilder {
     if (!sorted) {
       this.sortBy = 'updatedAt';
     }
-    this.sortBy = channelSortEnum.parse(sorted);
+    this.sortBy = channelSortTypeEnum.parse(sorted);
     return this;
   }
 

@@ -1,4 +1,4 @@
-export interface TagRecord {
+export interface TagDto {
   id: string;
   name: string;
   description: string | null;
@@ -6,20 +6,12 @@ export interface TagRecord {
   updatedAt: Date | null;
 }
 
-export interface TagEntUpdate {
-  tagId: string;
-  form: {
-    name?: string;
-    description?: string | null;
-  };
-}
-
-export interface TagEntAttachment {
+export interface TagAttachment {
   channelId: string;
   tagName: string;
 }
 
-export interface TagEntDetachment {
+export interface TagDetachment {
   channelId: string;
   tagId: string;
 }

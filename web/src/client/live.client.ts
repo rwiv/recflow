@@ -1,19 +1,19 @@
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/utils.ts';
-import { ExitCmd, PlatformType } from '@/client/common.schema.ts';
+import { ExitCmd, PlatformName } from '@/client/common.schema.ts';
 
 export async function fetchLives() {
   const res = await request(`${configs.endpoint}/api/lives`);
-  return (await res.json()) as LiveRecord[];
+  return (await res.json()) as LiveDto[];
 }
 
-export async function createLive(pid: string, platform: PlatformType) {
+export async function createLive(pid: string, platform: PlatformName) {
   const url = `${configs.endpoint}/api/lives`;
   const req = { pid, platformName: platform };
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as LiveRecord;
+  return (await res.json()) as LiveDto;
 }
 
 export async function deleteLive(recordId: string, cmd: ExitCmd) {
@@ -21,7 +21,7 @@ export async function deleteLive(recordId: string, cmd: ExitCmd) {
   const req = { recordId, cmd };
   const { method, headers, body } = getIngredients('DELETE', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as LiveRecord;
+  return (await res.json()) as LiveDto;
 }
 
 export async function isScheduled() {

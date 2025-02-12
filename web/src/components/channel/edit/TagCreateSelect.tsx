@@ -15,7 +15,7 @@ import { css } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
-import { TagRecord } from '@/client/tag.types.ts';
+import { TagDto } from '@/client/tag.types.ts';
 import { sortedTags } from '@/common/utils.ts';
 
 interface EditTagSelectProps {
@@ -86,7 +86,7 @@ export function TagCreateSelect({ existsTagNames, addTagName }: EditTagSelectPro
   );
 }
 
-function nonDuplicatedSortedTags(exists: string[], reqTags: TagRecord[]): TagRecord[] {
+function nonDuplicatedSortedTags(exists: string[], reqTags: TagDto[]): TagDto[] {
   const tagSet = new Set(exists);
   return sortedTags(reqTags.filter((tag) => !tagSet.has(tag.name)));
 }

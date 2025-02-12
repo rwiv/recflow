@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { randomElem } from '@/lib/list.ts';
-import { ChannelRecord } from '@/client/channel.types.ts';
-import { TagRecord } from '@/client/tag.types.ts';
-import { PlatformRecord, platformEnum } from '@/client/common.schema.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
+import { TagDto } from '@/client/tag.types.ts';
+import { PlatformDto, platformNameEnum } from '@/client/common.schema.ts';
 
-export function mockLive(): LiveRecord {
+export function mockLive(): LiveDto {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
     platform: mockPlatform(),
@@ -26,16 +26,16 @@ export function mockNode() {
   return {};
 }
 
-export function mockPlatform(): PlatformRecord {
+export function mockPlatform(): PlatformDto {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
-    name: randomElem(platformEnum.options),
+    name: randomElem(platformNameEnum.options),
     createdAt: faker.date.anytime().toISOString(),
     updatedAt: faker.date.anytime().toISOString(),
   };
 }
 
-export function mockChannel(): ChannelRecord {
+export function mockChannel(): ChannelDto {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
     pid: faker.string.uuid().replace(/-/g, ''),
@@ -58,7 +58,7 @@ export function mockChannel(): ChannelRecord {
   };
 }
 
-export function mockTag(): TagRecord {
+export function mockTag(): TagDto {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
     name: faker.lorem.word(),
@@ -68,6 +68,6 @@ export function mockTag(): TagRecord {
   };
 }
 
-export function mockTags(n: number): TagRecord[] {
+export function mockTags(n: number): TagDto[] {
   return Array.from({ length: n }, () => mockTag());
 }

@@ -1,11 +1,11 @@
-import { ChannelRecord } from '@/client/channel.types.ts';
-import { PlatformRecord } from '@/client/common.schema.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
+import { PlatformDto } from '@/client/common.schema.ts';
 import { NodeDto } from '@/client/node.schema.ts';
 
-export interface LiveRecord {
+export interface LiveDto {
   id: string;
-  platform: PlatformRecord;
-  channel: ChannelRecord;
+  platform: PlatformDto;
+  channel: ChannelDto;
   nodeId: string;
   liveTitle: string;
   viewCnt: number;

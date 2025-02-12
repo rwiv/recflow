@@ -23,11 +23,11 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
-import { ChannelCreation } from '@/client/channel.types.ts';
-import { platformEnum } from '@/client/common.schema.ts';
+import { ChannelAppend } from '@/client/channel.types.ts';
+import { platformNameEnum } from '@/client/common.schema.ts';
 
 const FormSchema = z.object({
-  platformName: platformEnum,
+  platformName: platformNameEnum,
   pid: z.string().nonempty(),
   priorityName: z.string().nonempty(),
   followed: z.boolean(),
@@ -73,7 +73,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const req: ChannelCreation = { ...data };
+    const req: ChannelAppend = { ...data };
     if (req.description === '') {
       req.description = null;
     }

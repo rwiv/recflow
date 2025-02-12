@@ -16,7 +16,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command.tsx';
-import { TagRecord } from '@/client/tag.types.ts';
+import { TagDto } from '@/client/tag.types.ts';
 import { sortedTags } from '@/common/utils.ts';
 
 export function TagQuerySelect() {
@@ -62,7 +62,7 @@ export function TagQuerySelect() {
     }
   };
 
-  const getCheckedStyle = (tag: TagRecord) => {
+  const getCheckedStyle = (tag: TagDto) => {
     const base = 'ml-auto';
     if (pageState?.tagName === tag.name) {
       return cn(base, 'opacity-100');

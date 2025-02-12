@@ -1,5 +1,5 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockLive, mockNode } from '@/client/mocks.ts';
 
@@ -11,7 +11,7 @@ export function TestPage() {
 }
 
 interface TableContentProps {
-  lives: LiveRecord[];
+  lives: LiveDto[];
 }
 
 function TableContent({ lives }: TableContentProps) {

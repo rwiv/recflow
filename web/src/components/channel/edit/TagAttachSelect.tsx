@@ -14,16 +14,16 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
-import { TagRecord } from '@/client/tag.types.ts';
+import { TagDto } from '@/client/tag.types.ts';
 import { SerializedStyles } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
 import { sortedTags } from '@/common/utils.ts';
 
 interface TagSelectProps {
-  existsTags: TagRecord[];
+  existsTags: TagDto[];
   triggerClassName?: string;
   contentStyle?: SerializedStyles;
-  onSelectCallback: (tag: TagRecord) => void;
+  onSelectCallback: (tag: TagDto) => void;
 }
 
 export function TagAttachSelect({
@@ -104,7 +104,7 @@ export function TagAttachSelect({
   );
 }
 
-function nonDuplicatedSortedTags(exists: TagRecord[], reqTags: TagRecord[]): TagRecord[] {
+function nonDuplicatedSortedTags(exists: TagDto[], reqTags: TagDto[]): TagDto[] {
   const tagSet = new Set(exists.map((tag) => tag.id));
   return sortedTags(reqTags.filter((tag) => !tagSet.has(tag.id)));
 }

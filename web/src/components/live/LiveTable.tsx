@@ -3,13 +3,13 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { liveColumns } from '@/components/live/liveColumns.tsx';
 import { CommandTools } from '@/components/live/tools/CommandTools.tsx';
 import { ScheduleButton } from '@/components/live/tools/ScheduleButton.tsx';
 import { FilterInput } from '@/components/common/table/FilterInput.tsx';
 
-export function LiveTable({ data }: { data: LiveRecord[] }) {
+export function LiveTable({ data }: { data: LiveDto[] }) {
   const table = useTable(data, liveColumns, 15);
 
   return (

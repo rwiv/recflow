@@ -18,13 +18,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { updateChannelPriority } from '@/client/channel.client.ts';
-import { ChannelRecord } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
 
 const FormSchema = z.object({
   priority: z.string().nonempty(),
 });
 
-export function PriorityUpdateDialog({ channel, children }: { channel: ChannelRecord; children: ReactNode }) {
+export function PriorityUpdateDialog({ channel, children }: { channel: ChannelDto; children: ReactNode }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
     <Dialog>
@@ -41,7 +41,7 @@ export function PriorityUpdateDialog({ channel, children }: { channel: ChannelRe
   );
 }
 
-function CreateForm({ channel, cb }: { channel: ChannelRecord; cb: () => void }) {
+function CreateForm({ channel, cb }: { channel: ChannelDto; cb: () => void }) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
 

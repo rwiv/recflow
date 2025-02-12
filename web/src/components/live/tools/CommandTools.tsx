@@ -1,5 +1,5 @@
 import { Table } from '@tanstack/react-table';
-import { LiveRecord } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live.types.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/live.client.ts';
 import { LiveCreateButton } from '@/components/live/tools/LiveCreateButton.tsx';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { ExitCmd } from '@/client/common.schema.ts';
 
-export function CommandTools({ table }: { table: Table<LiveRecord> }) {
+export function CommandTools({ table }: { table: Table<LiveDto> }) {
   const queryClient = useQueryClient();
 
   const remove = async (cmd: ExitCmd) => {

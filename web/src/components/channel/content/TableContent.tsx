@@ -1,9 +1,9 @@
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table.tsx';
 import { css } from '@emotion/react';
 import { ChannelRow } from '@/components/channel/content/ChannelRow.tsx';
-import { ChannelRecord } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
 
-export function TableContent({ channels }: { channels: ChannelRecord[] }) {
+export function TableContent({ channels }: { channels: ChannelDto[] }) {
   return (
     <Table>
       <TableHeader>

@@ -19,10 +19,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { platformEnum } from '@/client/common.schema.ts';
+import { platformNameEnum } from '@/client/common.schema.ts';
 
 const FormSchema = z.object({
-  type: platformEnum,
+  type: platformNameEnum,
   uid: z.string().nonempty(),
 });
 

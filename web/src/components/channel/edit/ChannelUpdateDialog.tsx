@@ -18,10 +18,10 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { updateChannelDescription } from '@/client/channel.client.ts';
-import { ChannelRecord } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel.types.ts';
 
 interface ChannelUpdateDialogProps {
-  channel: ChannelRecord;
+  channel: ChannelDto;
   triggerRef: RefObject<HTMLButtonElement>;
 }
 
@@ -48,7 +48,7 @@ export function ChannelUpdateDialog({ channel, triggerRef }: ChannelUpdateDialog
   );
 }
 
-export function CreateForm({ channel, cb }: { channel: ChannelRecord; cb: () => void }) {
+export function CreateForm({ channel, cb }: { channel: ChannelDto; cb: () => void }) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
 

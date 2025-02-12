@@ -1,4 +1,4 @@
-import { ChannelCreation, ChannelDefUpdate, ChannelRecord, PageResult } from '@/client/channel.types.ts';
+import { ChannelAppend, ChannelUpdate, ChannelDto, ChannelPageResult } from '@/client/channel.types.ts';
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/utils.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
@@ -9,42 +9,42 @@ export async function fetchChannels(pageState: ChannelPageState, withTags: boole
     qs += '&wt=true';
   }
   const res = await request(`${configs.endpoint}/api/channels?${qs}`);
-  return (await res.json()) as PageResult;
+  return (await res.json()) as ChannelPageResult;
 }
 
-export async function createChannel(req: ChannelCreation) {
+export async function createChannel(req: ChannelAppend) {
   const url = `${configs.endpoint}/api/channels`;
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as ChannelRecord;
+  return (await res.json()) as ChannelDto;
 }
 
 export async function updateChannelPriority(id: string, priorityName: string) {
   const url = `${configs.endpoint}/api/channels/priority`;
-  const req: ChannelDefUpdate = { id, form: { priorityName } };
+  const req: ChannelUpdate = { id, form: { priorityName } };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as ChannelRecord;
+  return (await res.json()) as ChannelDto;
 }
 
 export async function updateChannelFollowed(id: string, followed: boolean) {
   const url = `${configs.endpoint}/api/channels/followed`;
-  const req: ChannelDefUpdate = { id, form: { followed } };
+  const req: ChannelUpdate = { id, form: { followed } };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as ChannelRecord;
+  return (await res.json()) as ChannelDto;
 }
 
 export async function updateChannelDescription(id: string, description: string | null) {
   const url = `${configs.endpoint}/api/channels/description`;
-  const req: ChannelDefUpdate = { id, form: { description } };
+  const req: ChannelUpdate = { id, form: { description } };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as ChannelRecord;
+  return (await res.json()) as ChannelDto;
 }
 
 export async function deleteChannel(channelId: string) {
   const url = `${configs.endpoint}/api/channels/${channelId}`;
   const res = await request(url, { method: 'DELETE' });
-  return (await res.json()) as ChannelRecord;
+  return (await res.json()) as ChannelDto;
 }

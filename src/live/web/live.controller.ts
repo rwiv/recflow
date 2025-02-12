@@ -48,18 +48,19 @@ export class LiveController {
   }
 
   @Get('/schedule/stat')
-  scheduled() {
-    return { status: this.taskManager.getRegisterTaskStatus() };
+  async scheduled() {
+    const status = await this.taskManager.getRegisterTaskStatus();
+    return { status };
   }
 
   @Post('/schedule/start')
-  startSchedule() {
-    this.taskManager.insertRegisterTask(true);
+  async startSchedule() {
+    await this.taskManager.insertRegisterTask(true);
   }
 
   @Post('/schedule/stop')
-  stopSchedule() {
-    this.taskManager.cancelRegisterTask();
+  async stopSchedule() {
+    await this.taskManager.cancelRegisterTask();
   }
 
   @Delete('/purge')

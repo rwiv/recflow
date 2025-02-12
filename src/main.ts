@@ -20,7 +20,7 @@ async function bootstrap() {
   }
 
   const liveTasks = app.get(LivePeriodTaskManager);
-  liveTasks.initInject();
+  await liveTasks.initInject();
 
   const scheduler = app.get(TaskScheduler);
   scheduler.runPeriodTasks();

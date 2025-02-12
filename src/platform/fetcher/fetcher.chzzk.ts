@@ -1,38 +1,35 @@
 import { channelFromChzzk, ChannelInfo } from '../spec/wapper/channel.js';
 import { liveFromChzzk, LiveInfo } from '../spec/wapper/live.js';
 import { ChzzkChannelInfo, ChzzkLiveInfo } from '../spec/raw/chzzk.js';
-import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
 import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV, QUERY } from '../../common/config/config.module.js';
-import { IFetcher } from './fetcher.interface.js';
+import { ENV } from '../../common/config/config.module.js';
+import { ChzzkCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { nnint } from '../../common/data/common.schema.js';
 
 @Injectable()
-export class ChzzkFetcher implements IFetcher {
+export class ChzzkFetcher {
   private readonly url: string;
   private readonly size: number;
 
-  constructor(
-    @Inject(ENV) private readonly env: Env,
-    @Inject(QUERY) private readonly query: QueryConfig,
-  ) {
+  constructor(@Inject(ENV) private readonly env: Env) {
     this.url = this.env.streamqUrl;
     this.size = this.env.streamqQsize;
   }
 
-  async fetchLives(): Promise<LiveInfo[]> {
+  async fetchLives(cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, ChzzkLiveInfo>();
-    for (const tag of this.query.chzzkTags) {
+    for (const tag of cr.positiveTags) {
       const res = await this.getChzzkLiveByTag(tag);
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
-    for (const keyword of this.query.chzzkKeywords) {
+    for (const keyword of cr.positiveKeywords) {
       const res = await this.getChzzkLiveByKeyword(keyword);
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
-    for (const watchPartyNo of this.query.chzzkWatchPartyNoList) {
-      const res = await this.getChzzkLiveByWatchParty(watchPartyNo);
+    for (const watchPartyNo of cr.positiveWps) {
+      const res = await this.getChzzkLiveByWatchParty(nnint.parse(watchPartyNo));
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));

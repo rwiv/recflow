@@ -11,26 +11,47 @@ import {
 import { LiveCleanupTask } from './tasks/live.cleanup-task.js';
 import { LiveRegisterTask } from './tasks/live.register-task.js';
 import { liveTaskNameEnum } from './spec/live.task.names.js';
+import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
+import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { PeriodTask } from '../../task/schedule/period-task.js';
 
 @Injectable()
 export class LivePeriodTaskManager {
   constructor(
+    private readonly criterionFinder: CriterionFinder,
     private readonly liveCoordinator: LiveCoordinator,
     private readonly liveRefresher: LiveRefresher,
     private readonly scheduler: TaskScheduler,
   ) {}
 
-  // TODO: update
-  getRegisterTaskStatus() {
-    const task = this.scheduler.getPeriodTask(liveTaskNameEnum.Values.LIVE_REGISTER + '_' + 'chzzk');
-    if (!task) {
-      return false;
+  async getRegisterTaskStatus() {
+    const criteria = await this.criterionFinder.findAll();
+    let isActive = true;
+    const tasks: PeriodTask[] = [];
+    for (const cr of criteria) {
+      const task = this.scheduler.getPeriodTask(this.getTaskName(cr));
+      if (!task) {
+        isActive = false;
+        break;
+      }
+      tasks.push(task);
     }
-    return task.getStatus() === 'active';
+    if (!isActive) return;
+    for (const task of tasks) {
+      if (task.getStatus() !== 'active') {
+        isActive = false;
+        break;
+      }
+    }
+    return isActive;
   }
 
-  initInject() {
-    this.insertRegisterTask();
+  getTaskName(cr: CriterionDto) {
+    return `${liveTaskNameEnum.Values.LIVE_REGISTER}_${cr.name}`;
+  }
+
+  async initInject() {
+    await this.insertRegisterTask();
 
     const cleanupTask = new LiveCleanupTask(this.liveCoordinator);
     this.scheduler.addPeriodTask(cleanupTask, DEFAULT_CLEANUP_CYCLE);
@@ -39,19 +60,23 @@ export class LivePeriodTaskManager {
     this.scheduler.addPeriodTask(refreshTask, DEFAULT_REFRESH_CYCLE);
   }
 
-  insertRegisterTask(start: boolean = false) {
-    const chzzkRegisterTask = new LiveRegisterTask('chzzk', this.liveCoordinator);
-    const soopRegisterTask = new LiveRegisterTask('soop', this.liveCoordinator);
-    this.scheduler.addPeriodTask(chzzkRegisterTask, DEFAULT_REGISTER_CYCLE);
-    this.scheduler.addPeriodTask(soopRegisterTask, DEFAULT_REGISTER_CYCLE);
+  async insertRegisterTask(start: boolean = false) {
+    const taskNames: string[] = [];
+    for (const cr of await this.criterionFinder.findAll()) {
+      const registerTask = new LiveRegisterTask(cr, this.liveCoordinator);
+      taskNames.push(registerTask.getName());
+      this.scheduler.addPeriodTask(registerTask, DEFAULT_REGISTER_CYCLE);
+    }
     if (start) {
-      this.scheduler.getPeriodTask(liveTaskNameEnum.Values.LIVE_REGISTER + '_' + 'chzzk')?.start();
-      this.scheduler.getPeriodTask(liveTaskNameEnum.Values.LIVE_REGISTER + '_' + 'soop')?.start();
+      for (const name of taskNames) {
+        this.scheduler.getPeriodTask(name)?.start();
+      }
     }
   }
 
-  cancelRegisterTask() {
-    this.scheduler.cancelPeriodTask(liveTaskNameEnum.Values.LIVE_REGISTER + '_' + 'chzzk');
-    this.scheduler.cancelPeriodTask(liveTaskNameEnum.Values.LIVE_REGISTER + '_' + 'soop');
+  async cancelRegisterTask() {
+    for (const cr of await this.criterionFinder.findAll()) {
+      this.scheduler.cancelPeriodTask(this.getTaskName(cr));
+    }
   }
 }

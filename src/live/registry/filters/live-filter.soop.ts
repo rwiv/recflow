@@ -1,27 +1,25 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { QueryConfig } from '../../../common/config/query.js';
+import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { QUERY } from '../../../common/config/config.module.js';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
+import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class SoopLiveFilter {
   constructor(
-    @Inject(QUERY) private readonly query: QueryConfig,
     private readonly fetcher: PlatformFetcher,
     private readonly chFinder: ChannelFinder,
     private readonly ngRepo: NodeGroupRepository,
   ) {}
 
-  async getFiltered(lives: LiveInfo[]): Promise<LiveInfo[]> {
-    const promises = lives.map((live) => this.filter(live));
+  async getFiltered(lives: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {
+    const promises = lives.map((live) => this.filter(live, cr));
     return (await Promise.all(promises)).filter((info) => info !== null);
   }
 
-  async filter(liveInfo: LiveInfo): Promise<LiveInfo | null> {
+  async filter(liveInfo: LiveInfo, cr: SoopCriterionDto): Promise<LiveInfo | null> {
     if (liveInfo.type !== 'soop') {
       throw new EnumCheckError('Invalid live type');
     }
@@ -38,8 +36,8 @@ export class SoopLiveFilter {
     }
 
     // by user count
-    if (liveInfo.viewCnt >= this.query.soopMinUserCnt) {
-      return this.checkFollowerCnt(liveInfo, this.query.soopMinFollowerCnt);
+    if (liveInfo.viewCnt >= cr.minUserCnt) {
+      return this.checkFollowerCnt(liveInfo, cr.minFollowCnt);
     }
 
     return null;

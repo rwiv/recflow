@@ -1,29 +1,25 @@
 import { channelFromSoop, ChannelInfo } from '../spec/wapper/channel.js';
 import { liveFromSoop, LiveInfo } from '../spec/wapper/live.js';
-import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
 import { SoopChannelInfo, SoopLiveInfo } from '../spec/raw/soop.js';
 import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV, QUERY } from '../../common/config/config.module.js';
-import { IFetcher } from './fetcher.interface.js';
+import { ENV } from '../../common/config/config.module.js';
+import { SoopCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
-export class SoopFetcher implements IFetcher {
+export class SoopFetcher {
   private readonly url: string;
   private readonly size: number;
 
-  constructor(
-    @Inject(ENV) private readonly env: Env,
-    @Inject(QUERY) private readonly query: QueryConfig,
-  ) {
+  constructor(@Inject(ENV) private readonly env: Env) {
     this.url = this.env.streamqUrl;
     this.size = this.env.streamqQsize;
   }
 
-  async fetchLives(): Promise<LiveInfo[]> {
+  async fetchLives(cr: SoopCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, SoopLiveInfo>();
-    for (const cateNo of this.query.soopCateNoList) {
+    for (const cateNo of cr.positiveCates) {
       const res = await this.getSoopLiveByCategory(cateNo);
       res.forEach((info) => infoMap.set(info.userId, info));
     }

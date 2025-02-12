@@ -35,3 +35,5 @@ export const soopCriterionAppend = soopCriterionDto
   .omit({ platform: true })
   .extend({ platformId: uuid });
 export type SoopCriterionAppend = z.infer<typeof soopCriterionAppend>;
+
+export type PlatformCriterionDto = ChzzkCriterionDto | SoopCriterionDto;

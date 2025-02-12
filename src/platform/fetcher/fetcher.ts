@@ -4,6 +4,11 @@ import { ChzzkFetcher } from './fetcher.chzzk.js';
 import { SoopFetcher } from './fetcher.soop.js';
 import { PlatformName } from '../spec/storage/platform.enum.schema.js';
 import { BaseError } from '../../utils/errors/base/BaseError.js';
+import {
+  PlatformCriterionDto,
+  chzzkCriterionDto,
+  soopCriterionDto,
+} from '../../criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class PlatformFetcher {
@@ -12,13 +17,13 @@ export class PlatformFetcher {
     private readonly soopFetcher: SoopFetcher,
   ) {}
 
-  fetchLives(platform: PlatformName): Promise<LiveInfo[]> {
-    if (platform === 'chzzk') {
-      return this.chzzkFetcher.fetchLives();
-    } else if (platform === 'soop') {
-      return this.soopFetcher.fetchLives();
+  fetchLives(cr: PlatformCriterionDto): Promise<LiveInfo[]> {
+    if (cr.platform.name === 'chzzk') {
+      return this.chzzkFetcher.fetchLives(chzzkCriterionDto.parse(cr));
+    } else if (cr.platform.name === 'soop') {
+      return this.soopFetcher.fetchLives(soopCriterionDto.parse(cr));
     } else {
-      throw new BaseError(`Invalid PlatformType: ${platform}`);
+      throw new BaseError(`Invalid PlatformType: ${cr.platform.name}`);
     }
   }
 

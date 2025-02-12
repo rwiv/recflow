@@ -29,6 +29,7 @@ export class PeriodTask {
   }
 
   async start() {
+    log.info(`PeriodTask started: name=${this.task.getName()}`);
     this.status = 'active';
     while (true) {
       if (this.cancelFlag) {

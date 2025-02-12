@@ -3,7 +3,7 @@ import { CriterionRepository } from '../storage/criterion.repository.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { ChzzkCriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
+import { ChzzkCriterionDto, PlatformCriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
 
 @Injectable()
 export class CriterionFinder {
@@ -13,7 +13,7 @@ export class CriterionFinder {
     private readonly mapper: CriterionMapper,
   ) {}
 
-  async findAll(): Promise<(ChzzkCriterionDto | SoopCriterionDto)[]> {
+  async findAll(): Promise<PlatformCriterionDto[]> {
     const entities = await this.crRepo.findAll();
     const promises = entities.map(async (ent) => {
       const platform = await this.pfFinder.findByIdNotNull(ent.platformId);

@@ -15,6 +15,7 @@ import { NodeUpdater } from '../../node/service/node.updater.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { LiveUpdate } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../access/live.finder.js';
+import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -33,7 +34,7 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
   ) {}
 
-  async add(liveInfo: LiveInfo, channelInfo: ChannelInfo) {
+  async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto) {
     const exists = await this.liveFinder.findByPid(liveInfo.pid);
     if (exists && !exists.isDeleted) {
       throw new ConflictError(`Already exists: ${liveInfo.pid}`);
@@ -53,7 +54,7 @@ export class LiveRegistrar {
     }
     const created = await this.liveWriter.createByLive(liveInfo, node.id);
     await this.nodeUpdater.updateCnt(node.id, channel.platform.id, 1);
-    await this.listener.onCreate(created, node.endpoint);
+    await this.listener.onCreate(node.endpoint, created, cr);
     return created;
   }
 

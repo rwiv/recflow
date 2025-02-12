@@ -3,7 +3,7 @@ import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../../utils/errors/errors/ConflictError.js';
-import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
+import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
 import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class ChannelFinder {
     return this.chMapper.loadRelations(channels, withTags);
   }
 
-  async findByPidAndPlatform(pid: string, platformName: PlatformType, withTags: boolean = false) {
+  async findByPidAndPlatform(pid: string, platformName: PlatformName, withTags: boolean = false) {
     const platform = await this.pfFinder.findByNameNotNull(platformName);
     const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id);
     const channels = await this.chMapper.mapAll(entities);
@@ -53,7 +53,7 @@ export class ChannelFinder {
     return this.chMapper.loadRelations(channels, withTags);
   }
 
-  async findFollowedChannels(platform: PlatformType) {
+  async findFollowedChannels(platform: PlatformName) {
     const entities = await this.chQuery.findByFollowedFlag(true, platform);
     return this.chMapper.mapAll(entities);
   }

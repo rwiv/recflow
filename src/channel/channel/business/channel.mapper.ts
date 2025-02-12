@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from './channel.business.schema.js';
 import { ChannelPriorityRepository } from '../persistence/priority.repository.js';
 import { ChannelEnt } from '../persistence/channel.persistence.schema.js';
-import { platformRecord } from '../../../platform/storage/platform.business.schema.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
 import { db } from '../../../infra/db/db.js';
@@ -30,7 +29,7 @@ export class ChannelMapper {
     const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
     const priority = await this.priRepo.findById(ent.priorityId, tx);
     if (!priority) throw NotFoundError.from('Priority', 'id', ent.priorityId);
-    return { ...ent, platform: platformRecord.parse(platform), priority };
+    return { ...ent, platform, priority };
   }
 
   async loadRelations(

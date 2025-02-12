@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Post, UseFilters } from '@nestjs/common';
-import { LiveService } from '../access/live.service.js';
+import { LiveRegistrar } from '../registry/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../event/event.schema.js';
 import { LiveScheduler } from '../scheduler/scheduler.js';
@@ -19,7 +19,7 @@ import {
 @Controller('/api/lives')
 export class LiveController {
   constructor(
-    private readonly liveService: LiveService,
+    private readonly liveService: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
     private readonly scheduler: LiveScheduler,
     private readonly liveFinder: LiveFinder,

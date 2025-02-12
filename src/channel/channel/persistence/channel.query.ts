@@ -5,7 +5,7 @@ import { Tx } from '../../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../../utils/list.js';
 import { ChannelEnt } from './channel.persistence.schema.js';
-import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
+import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()
 export class ChannelQueryRepository {
@@ -37,7 +37,7 @@ export class ChannelQueryRepository {
 
   async findByFollowedFlag(
     followed: boolean,
-    platformName: PlatformType,
+    platformName: PlatformName,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
     const entities = await tx

@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { criterionEnt } from '../persistence/criterion.persistence.schema.js';
-import { platformRecord } from '../../platform/storage/platform.business.schema.js';
 import { nonempty, uuid } from '../../common/data/common.schema.js';
+import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
 export const criterionRecord = criterionEnt.omit({ platformId: true }).extend({
-  platform: platformRecord,
+  platform: platformDto,
 });
 export type CriterionRecord = z.infer<typeof criterionRecord>;
 

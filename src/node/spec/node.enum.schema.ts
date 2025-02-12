@@ -1,4 +1,4 @@
 import { z } from 'zod';
 
-export const nodeTypeEnum = z.enum(['worker', 'argo']);
-export type NodeTypeEnum = z.infer<typeof nodeTypeEnum>;
+export const nodeTypeNameEnum = z.enum(['worker', 'argo']);
+export type NodeTypeName = z.infer<typeof nodeTypeNameEnum>;

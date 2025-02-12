@@ -1,20 +1,20 @@
 import { Synchronizer } from './synchronizer.js';
-import { LiveInfo } from '../../../platform/data/wapper/live.js';
+import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { LiveService } from '../../access/live.service.js';
+import { LiveRegistrar } from '../../registry/live.registrar.js';
 import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
 import { ChannelRecord } from '../../../channel/channel/business/channel.business.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { LiveFinder } from '../../access/live.finder.js';
-import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
+import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
 
 export class LiveAppender extends Synchronizer {
   constructor(
-    private readonly platform: PlatformType,
+    private readonly platform: PlatformName,
     private readonly fetcher: PlatformFetcher,
-    private readonly liveService: LiveService,
+    private readonly liveService: LiveRegistrar,
     private readonly chFinder: ChannelFinder,
     private readonly liveFinder: LiveFinder,
     private readonly filter: LiveFilter,

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { ChannelInfo } from '../../platform/data/wapper/channel.js';
+import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';

@@ -1,7 +1,7 @@
-import { ChzzkLiveInfo } from '../../../platform/data/raw/chzzk.js';
+import { ChzzkLiveInfo } from '../../../platform/spec/raw/chzzk.js';
 import { QueryConfig } from '../../../common/config/query.js';
 import { LiveFilter } from './interface.js';
-import { LiveInfo } from '../../../platform/data/wapper/live.js';
+import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';

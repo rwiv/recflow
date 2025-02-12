@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { LiveService } from './live.service.js';
 import { LiveStorageModule } from '../storage/live.storage.module.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { LiveEventModule } from '../event/event.module.js';
@@ -11,7 +10,7 @@ import { LiveFinder } from './live.finder.js';
 
 @Module({
   imports: [LiveStorageModule, ChannelBusinessModule, NodeServiceModule, PlatformModule, LiveEventModule],
-  providers: [LiveService, LiveWriter, LiveFinder, LiveMapper],
-  exports: [LiveService, LiveWriter, LiveFinder],
+  providers: [LiveWriter, LiveFinder, LiveMapper],
+  exports: [LiveWriter, LiveFinder],
 })
 export class LiveAccessModule {}

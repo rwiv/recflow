@@ -2,14 +2,14 @@ import { ChzzkLiveFilter } from './live-filter.chzzk.js';
 import { it } from 'vitest';
 import { createTestApp } from '../../../common/helpers/helper.app.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
+import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
 
 const app = await createTestApp();
 const fetcher = app.get(PlatformFetcher);
 const filter = app.get(ChzzkLiveFilter);
 // const filter = app.get(SoopLiveFilter);
 
-const platform: PlatformType = 'chzzk';
+const platform: PlatformName = 'chzzk';
 
 it('test filtered', async () => {
   const infos = await fetcher.fetchLives(platform);

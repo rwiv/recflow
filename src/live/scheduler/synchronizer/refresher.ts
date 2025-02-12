@@ -1,10 +1,10 @@
 import { Synchronizer } from './synchronizer.js';
-import { LiveService } from '../../access/live.service.js';
+import { LiveRegistrar } from '../../registry/live.registrar.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 
 export class LiveRefresher extends Synchronizer {
   constructor(
-    private readonly liveService: LiveService,
+    private readonly liveService: LiveRegistrar,
     eh: ScheduleErrorHandler,
   ) {
     super(eh);

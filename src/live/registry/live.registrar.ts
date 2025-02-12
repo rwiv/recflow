@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { LiveInfo } from '../../platform/data/wapper/live.js';
+import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
-import { ChannelInfo } from '../../platform/data/wapper/channel.js';
+import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/channel/business/channel.business.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
@@ -13,9 +13,9 @@ import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority.constants.js'
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
-import { LiveWriter } from './live.writer.js';
+import { LiveWriter } from '../access/live.writer.js';
 import { LiveDto, LiveUpdate } from '../spec/live.dto.schema.js';
-import { LiveFinder } from './live.finder.js';
+import { LiveFinder } from '../access/live.finder.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -23,7 +23,7 @@ export interface DeleteOptions {
 }
 
 @Injectable()
-export class LiveService {
+export class LiveRegistrar {
   constructor(
     private readonly fetcher: PlatformFetcher,
     private readonly listener: LiveEventListener,

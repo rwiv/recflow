@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { PlatformType } from '../../platform/storage/platform.business.schema.js';
+import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
 export const exitCmd = z.enum(['delete', 'cancel', 'finish']);
 export type ExitCmd = z.infer<typeof exitCmd>;
 
 export interface ExitMessage {
   cmd: ExitCmd;
-  platform: PlatformType;
+  platform: PlatformName;
   uid: string;
 }

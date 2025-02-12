@@ -1,5 +1,5 @@
-import { ChzzkLiveInfo } from '../../platform/data/raw/chzzk.js';
-import { LiveInfo } from '../../platform/data/wapper/live.js';
+import { ChzzkLiveInfo } from '../../platform/spec/raw/chzzk.js';
+import { LiveInfo } from '../../platform/spec/wapper/live.js';
 
 export function mockChzzkLiveInfo(n: number, pid: string): ChzzkLiveInfo {
   return {

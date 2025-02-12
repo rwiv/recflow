@@ -4,7 +4,7 @@ import { ChannelFinder } from '../../channel/channel/business/channel.finder.js'
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend, LiveEntUpdate } from '../storage/live.entity.schema.js';
-import { LiveInfo } from '../../platform/data/wapper/live.js';
+import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { oneNullable } from '../../utils/list.js';
 import { LiveMapper } from './live.mapper.js';
 import { LiveUpdate } from '../spec/live.dto.schema.js';

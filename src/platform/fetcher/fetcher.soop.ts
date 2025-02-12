@@ -1,12 +1,12 @@
-import { channelFromSoop, ChannelInfo } from '../data/wapper/channel.js';
-import { liveFromSoop, LiveInfo } from '../data/wapper/live.js';
+import { channelFromSoop, ChannelInfo } from '../spec/wapper/channel.js';
+import { liveFromSoop, LiveInfo } from '../spec/wapper/live.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { Env } from '../../common/config/env.js';
-import { SoopChannelInfo, SoopLiveInfo } from '../data/raw/soop.js';
+import { SoopChannelInfo, SoopLiveInfo } from '../spec/raw/soop.js';
 import { checkChannelResponse, checkResponse } from './fetch.utils.js';
-import { IFetcher } from '../platform.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV, QUERY } from '../../common/config/config.module.js';
+import { IFetcher } from './fetcher.interface.js';
 
 @Injectable()
 export class SoopFetcher implements IFetcher {

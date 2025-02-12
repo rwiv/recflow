@@ -1,11 +1,12 @@
-import { PlatformLiveInfo } from '../../platform.types.js';
 import { ChzzkLiveInfo } from '../raw/chzzk.js';
 import { SoopLiveInfo } from '../raw/soop.js';
 import { parseInteger } from '../../../utils/number.js';
-import { PlatformType } from '../../storage/platform.business.schema.js';
+import { PlatformName } from '../storage/platform.enum.schema.js';
+
+export type PlatformLiveInfo = ChzzkLiveInfo | SoopLiveInfo;
 
 export interface LiveInfo {
-  type: PlatformType;
+  type: PlatformName;
   pid: string;
   channelName: string;
   liveId: number;

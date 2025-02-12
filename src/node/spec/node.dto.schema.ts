@@ -6,10 +6,11 @@ import {
   nodeStateEnt,
   nodeTypeEnt,
 } from '../storage/node.entity.schema.js';
-import { nodeTypeEnum } from './node.enum.schema.js';
-import { platformRecord, platformType } from '../../platform/storage/platform.business.schema.js';
+import { nodeTypeNameEnum } from './node.enum.schema.js';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
-export const nodeStateDto = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformRecord });
+export const nodeStateDto = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformDto });
 export type NodeStateDto = z.infer<typeof nodeStateDto>;
 
 export const nodeTypeDto = nodeTypeEnt;
@@ -23,10 +24,10 @@ export const nodeDto = nodeEnt.omit({ typeId: true }).extend({
 export type NodeDto = z.infer<typeof nodeDto>;
 
 export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
-  typeName: nodeTypeEnum,
+  typeName: nodeTypeNameEnum,
   capacities: z.array(
     z.object({
-      platformName: platformType,
+      platformName: platformNameEnum,
       capacity: z.number().nonnegative(),
     }),
   ),

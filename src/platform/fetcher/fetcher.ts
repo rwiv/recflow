@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { LiveInfo } from '../data/wapper/live.js';
+import { LiveInfo } from '../spec/wapper/live.js';
 import { ChzzkFetcher } from './fetcher.chzzk.js';
 import { SoopFetcher } from './fetcher.soop.js';
-import { PlatformType } from '../storage/platform.business.schema.js';
+import { PlatformName } from '../spec/storage/platform.enum.schema.js';
 import { BaseError } from '../../utils/errors/base/BaseError.js';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class PlatformFetcher {
     private readonly soopFetcher: SoopFetcher,
   ) {}
 
-  fetchLives(platform: PlatformType): Promise<LiveInfo[]> {
+  fetchLives(platform: PlatformName): Promise<LiveInfo[]> {
     if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchLives();
     } else if (platform === 'soop') {
@@ -22,7 +22,7 @@ export class PlatformFetcher {
     }
   }
 
-  fetchChannel(platform: PlatformType, pid: string, hasLiveInfo: boolean) {
+  fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
     try {
       return this.fetchChannelNotNull(platform, pid, hasLiveInfo);
     } catch (e) {
@@ -31,11 +31,11 @@ export class PlatformFetcher {
   }
 
   // TODO: implement using zod
-  fetchChannelWithLiveInfo(platform: PlatformType, pid: string) {
+  fetchChannelWithLiveInfo(platform: PlatformName, pid: string) {
     throw new BaseError('Not implemented');
   }
 
-  fetchChannelNotNull(platform: PlatformType, pid: string, hasLiveInfo: boolean) {
+  fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
     if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);
     } else if (platform === 'soop') {

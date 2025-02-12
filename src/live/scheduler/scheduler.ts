@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LiveService } from '../access/live.service.js';
+import { LiveRegistrar } from '../registry/live.registrar.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -32,7 +32,7 @@ export class LiveScheduler {
   constructor(
     cf: ChannelFinder,
     ft: PlatformFetcher,
-    ls: LiveService,
+    ls: LiveRegistrar,
     clf: ChzzkLiveFilter,
     slf: SoopLiveFilter,
     lf: LiveFinder,

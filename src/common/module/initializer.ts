@@ -4,9 +4,9 @@ import { ChannelPriorityRepository } from '../../channel/channel/persistence/pri
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
-import { platformType } from '../../platform/storage/platform.business.schema.js';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NodeTypeRepository } from '../../node/storage/node-type.repository.js';
-import { nodeTypeEnum } from '../../node/spec/node.enum.schema.js';
+import { nodeTypeNameEnum } from '../../node/spec/node.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/node.constraints.js';
 import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
@@ -42,7 +42,7 @@ export class AppInitializer {
 
   async checkDb() {
     const pfNames = (await this.pfRepo.findAll()).map((pf) => pf.name);
-    for (const name of platformType.options.filter((name) => !pfNames.includes(name))) {
+    for (const name of platformNameEnum.options.filter((name) => !pfNames.includes(name))) {
       await this.pfRepo.create({ name });
     }
 
@@ -57,7 +57,7 @@ export class AppInitializer {
     }
 
     const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);
-    for (const name of nodeTypeEnum.options.filter((name) => !nodeTypes.includes(name))) {
+    for (const name of nodeTypeNameEnum.options.filter((name) => !nodeTypes.includes(name))) {
       await this.ntRepo.create({ name });
     }
     const ngNames = (await this.ngRepo.findAll()).map((pri) => pri.name);

@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { platformType } from '../../platform/storage/platform.business.schema.js';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { exitCmd } from '../event/event.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
 
 export const liveAppendRequest = z.object({
   pid: z.string().nonempty(),
-  platformName: platformType,
+  platformName: platformNameEnum,
 });
 export type LiveAppendRequest = z.infer<typeof liveAppendRequest>;
 

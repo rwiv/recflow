@@ -8,9 +8,17 @@ import { PlatformModule } from '../../platform/platform.module.js';
 import { ChannelBusinessModule } from '../../channel/channel/business/channel.business.module.js';
 import { ScheduleErrorHandler } from './error.handler.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
+import { LiveRegistryModule } from '../registry/live.registry.module.js';
 
 @Module({
-  imports: [ConfigModule, LiveAccessModule, PlatformModule, ChannelBusinessModule, NodeStorageModule],
+  imports: [
+    ConfigModule,
+    LiveAccessModule,
+    LiveRegistryModule,
+    PlatformModule,
+    ChannelBusinessModule,
+    NodeStorageModule,
+  ],
   providers: [LiveScheduler, ChzzkLiveFilter, SoopLiveFilter, ScheduleErrorHandler],
   exports: [LiveScheduler],
 })

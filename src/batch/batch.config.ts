@@ -2,10 +2,10 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import { CHANNEL_PRIORITIES } from '../channel/priority.constants.js';
-import { nodeTypeEnum } from '../node/spec/node.enum.schema.js';
+import { nodeTypeNameEnum } from '../node/spec/node.enum.schema.js';
 import { NODE_TYPES } from '../node/spec/node.constraints.js';
 import { nonempty } from '../common/data/common.schema.js';
-import { platformType } from '../platform/storage/platform.business.schema.js';
+import { platformNameEnum } from '../platform/spec/storage/platform.enum.schema.js';
 
 const criterionBatchInsert = z.object({
   name: nonempty,
@@ -37,7 +37,7 @@ const nodeBatchInsert = z.object({
   name: nonempty,
   endpoint: z.string().url(),
   groupName: z.enum(NODE_TYPES),
-  typeName: nodeTypeEnum,
+  typeName: nodeTypeNameEnum,
   weight: z.number().int().nonnegative(),
   totalCapacity: z.number().nonnegative(),
   capacities: z.object({
@@ -50,7 +50,7 @@ export type NodeBatchInsert = z.infer<typeof nodeBatchInsert>;
 
 const channelBatchInsert = z.object({
   pids: z.array(nonempty),
-  platform: platformType,
+  platform: platformNameEnum,
   priority: z.enum(CHANNEL_PRIORITIES),
   tagNames: z.array(nonempty),
 });

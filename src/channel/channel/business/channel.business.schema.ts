@@ -7,13 +7,14 @@ import {
 } from '../persistence/channel.persistence.schema.js';
 import { uuid } from '../../../common/data/common.schema.js';
 import { ChannelPriorityEnt, priorityEnt } from '../persistence/priority.schema.js';
-import { platformRecord, platformType } from '../../../platform/storage/platform.business.schema.js';
+import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
+import { platformDto } from '../../../platform/spec/storage/platform.dto.schema.js';
 
 export const priorityRecord = priorityEnt;
 export type ChannelPriorityRecord = ChannelPriorityEnt;
 
 export const channelRecord = channelEnt.omit({ platformId: true, priorityId: true }).extend({
-  platform: platformRecord,
+  platform: platformDto,
   priority: priorityRecord,
   tags: z.array(tagRecord).optional(),
 });
@@ -34,7 +35,7 @@ export type ChannelRecord = z.infer<typeof channelRecord>;
 // }
 
 export const channelAppend = channelEntAppend.omit({ platformId: true, priorityId: true }).extend({
-  platformName: platformType,
+  platformName: platformNameEnum,
   priorityName: z.string().nonempty(),
 });
 export type ChannelAppend = z.infer<typeof channelAppend>;

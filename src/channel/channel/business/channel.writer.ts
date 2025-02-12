@@ -13,7 +13,7 @@ import { TagWriter } from '../../tag/business/tag.writer.js';
 import { ChannelQueryRepository } from '../persistence/channel.query.js';
 import { TagQueryRepository } from '../../tag/persistence/tag.query.js';
 import { Tx } from '../../../infra/db/types.js';
-import { ChannelInfo } from '../../../platform/data/wapper/channel.js';
+import { ChannelInfo } from '../../../platform/spec/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { ChannelPriorityRepository } from '../persistence/priority.repository.js';

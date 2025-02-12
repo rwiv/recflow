@@ -5,7 +5,7 @@ import { ChannelWriter } from '../../channel/channel/business/channel.writer.js'
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
-import { platformType } from '../../platform/storage/platform.business.schema.js';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 
 const tagRecordFetched = z.object({
   id: uuid,
@@ -24,7 +24,7 @@ const channelRecordFetched = z.object({
   description: z.string().nonempty().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  platformName: platformType,
+  platformName: platformNameEnum,
   priorityName: z.string().nonempty(),
   tags: z.array(tagRecordFetched).optional(),
 });

@@ -1,7 +1,7 @@
 import { LiveRecord } from './live.business.schema.js';
 import { LiveEnt } from '../persistence/live.persistence.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
-import { NodeFinder } from '../../node/business/node.finder.js';
+import { NodeFinder } from '../../node/app/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';

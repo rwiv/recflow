@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NodeStateRepository } from '../persistence/node-state.repository.js';
+import { NodeStateRepository } from '../storage/node-state.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from './node.finder.js';
-import { NodeStateEntUpdate } from '../persistence/node.persistence.schema.js';
+import { NodeStateEntUpdate } from '../storage/node.entity.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';

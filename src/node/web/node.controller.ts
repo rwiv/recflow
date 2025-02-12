@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, UseFilters } from '@nestjs/common';
-import { NodeFinder } from '../business/node.finder.js';
-import { NodeWriter } from '../business/node.writer.js';
+import { NodeFinder } from '../app/node.finder.js';
+import { NodeWriter } from '../app/node.writer.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
-import { nodeAppend, NodeAppend } from '../business/node.business.schema.js';
+import { nodeAppend, NodeAppend } from '../spec/node.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/nodes')

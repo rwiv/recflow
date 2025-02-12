@@ -9,4 +9,4 @@ import { NodeStateRepository } from './node-state.repository.js';
   providers: [NodeRepository, NodeTypeRepository, NodeGroupRepository, NodeStateRepository],
   exports: [NodeRepository, NodeTypeRepository, NodeGroupRepository, NodeStateRepository],
 })
-export class NodePersistenceModule {}
+export class NodeStorageModule {}

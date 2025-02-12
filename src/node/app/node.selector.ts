@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelRecord } from '../../channel/channel/business/channel.business.schema.js';
 import { NodeFinder } from './node.finder.js';
-import { NodeRecord } from './node.business.schema.js';
+import { NodeDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
 
@@ -15,7 +15,7 @@ export class NodeSelector {
     const pfId = channel.platform.id;
 
     // search for available nodes
-    let nodes: NodeRecord[] = [];
+    let nodes: NodeDto[] = [];
     let curTier = channel.priority.tier;
     while (true) {
       if (curTier > LIMIT_COUNT) {
@@ -57,7 +57,7 @@ export class NodeSelector {
     return minNode;
   }
 
-  private findState(node: NodeRecord, platformId: string) {
+  private findState(node: NodeDto, platformId: string) {
     const target = node.states?.find((state) => state.platform.id === platformId);
     if (!target) {
       throw NotFoundError.from('NodeState', 'platformId', platformId);

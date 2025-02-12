@@ -1,11 +1,6 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import {
-  nodeStateEnt,
-  NodeStateEnt,
-  NodeStateEntAppend,
-  NodeStateEntUpdate,
-} from './node.persistence.schema.js';
+import { nodeStateEnt, NodeStateEnt, NodeStateEntAppend, NodeStateEntUpdate } from './node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeStateTable } from '../../infra/db/schema.js';

@@ -7,7 +7,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
-import { NodeGroupRepository } from '../../../node/persistence/node-group.repository.js';
+import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
 
 @Injectable()
 export class ChzzkLiveFilter implements LiveFilter {

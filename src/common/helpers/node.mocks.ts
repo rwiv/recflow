@@ -1,4 +1,4 @@
-import { NodeAppend } from '../../node/business/node.business.schema.js';
+import { NodeAppend } from '../../node/spec/node.dto.schema.js';
 
 export function mockNode(n: number, groupId: string): NodeAppend {
   return {

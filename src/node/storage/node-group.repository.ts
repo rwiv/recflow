@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NodeGroupAppend, nodeGroupEnt, NodeGroupEnt } from './node.persistence.schema.js';
+import { NodeGroupAppend, nodeGroupEnt, NodeGroupEnt } from './node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeGroupTable } from '../../infra/db/schema.js';

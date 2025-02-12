@@ -5,12 +5,12 @@ import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
 import { platformType } from '../../platform/storage/platform.business.schema.js';
-import { NodeTypeRepository } from '../../node/persistence/node-type.repository.js';
-import { nodeType } from '../../node/node.schema.js';
-import { NodeGroupRepository } from '../../node/persistence/node-group.repository.js';
-import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/node.constraints.js';
+import { NodeTypeRepository } from '../../node/storage/node-type.repository.js';
+import { nodeTypeEnum } from '../../node/spec/node.enum.schema.js';
+import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
+import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/node.constraints.js';
 import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
-import { NodeGroupAppend } from '../../node/persistence/node.persistence.schema.js';
+import { NodeGroupAppend } from '../../node/storage/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { CriterionRuleRepository } from '../../criterion/persistence/criterion-rule.repository.js';
 import {
@@ -57,7 +57,7 @@ export class AppInitializer {
     }
 
     const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);
-    for (const name of nodeType.options.filter((name) => !nodeTypes.includes(name))) {
+    for (const name of nodeTypeEnum.options.filter((name) => !nodeTypes.includes(name))) {
       await this.ntRepo.create({ name });
     }
     const ngNames = (await this.ngRepo.findAll()).map((pri) => pri.name);

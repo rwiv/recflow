@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { NodeEnt, NodeStateEnt } from '../persistence/node.persistence.schema.js';
-import { NodeRecord, NodeState } from './node.business.schema.js';
+import { NodeEnt, NodeStateEnt } from '../storage/node.entity.schema.js';
+import { NodeDto, NodeStateDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeGroupRepository } from '../persistence/node-group.repository.js';
-import { NodeTypeRepository } from '../persistence/node-type.repository.js';
-import { NodeStateRepository } from '../persistence/node-state.repository.js';
+import { NodeGroupRepository } from '../storage/node-group.repository.js';
+import { NodeTypeRepository } from '../storage/node-type.repository.js';
+import { NodeStateRepository } from '../storage/node-state.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
@@ -27,10 +27,10 @@ export class NodeMapper {
     withGroup: boolean = false,
     withStates: boolean = false,
     tx: Tx = db,
-  ): Promise<NodeRecord> {
+  ): Promise<NodeDto> {
     const nodeType = await this.typeRepo.findById(ent.typeId, tx);
     if (!nodeType) throw NotFoundError.from('NodeType', 'id', ent.typeId);
-    let result: NodeRecord = { ...ent, type: nodeType };
+    let result: NodeDto = { ...ent, type: nodeType };
     if (withGroup) {
       const group = await this.groupRepo.findById(ent.groupId, tx);
       if (!group) throw NotFoundError.from('NodeGroup', 'id', ent.groupId);
@@ -44,7 +44,7 @@ export class NodeMapper {
     return result;
   }
 
-  async mapState(ent: NodeStateEnt, tx: Tx = db): Promise<NodeState> {
+  async mapState(ent: NodeStateEnt, tx: Tx = db): Promise<NodeStateDto> {
     const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
     return { ...ent, platform };
   }

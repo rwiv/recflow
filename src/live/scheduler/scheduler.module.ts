@@ -7,10 +7,10 @@ import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { ChannelBusinessModule } from '../../channel/channel/business/channel.business.module.js';
 import { ScheduleErrorHandler } from './error.handler.js';
-import { NodePersistenceModule } from '../../node/persistence/node.persistence.module.js';
+import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 
 @Module({
-  imports: [ConfigModule, LiveBusinessModule, PlatformModule, ChannelBusinessModule, NodePersistenceModule],
+  imports: [ConfigModule, LiveBusinessModule, PlatformModule, ChannelBusinessModule, NodeStorageModule],
   providers: [LiveScheduler, ChzzkLiveFilter, SoopLiveFilter, ScheduleErrorHandler],
   exports: [LiveScheduler],
 })

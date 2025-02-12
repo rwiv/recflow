@@ -2,8 +2,8 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import { CHANNEL_PRIORITIES } from '../channel/priority.constants.js';
-import { nodeType } from '../node/node.schema.js';
-import { NODE_TYPES } from '../node/node.constraints.js';
+import { nodeTypeEnum } from '../node/spec/node.enum.schema.js';
+import { NODE_TYPES } from '../node/spec/node.constraints.js';
 import { nonempty } from '../common/data/common.schema.js';
 import { platformType } from '../platform/storage/platform.business.schema.js';
 
@@ -37,7 +37,7 @@ const nodeBatchInsert = z.object({
   name: nonempty,
   endpoint: z.string().url(),
   groupName: z.enum(NODE_TYPES),
-  typeName: nodeType,
+  typeName: nodeTypeEnum,
   weight: z.number().int().nonnegative(),
   totalCapacity: z.number().nonnegative(),
   capacities: z.object({

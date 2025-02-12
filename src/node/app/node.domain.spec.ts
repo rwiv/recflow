@@ -7,7 +7,7 @@ import { createTestApp } from '../../common/helpers/helper.app.js';
 import { AppInitializer } from '../../common/module/initializer.js';
 import { NodeWriter } from './node.writer.js';
 import { NodeFinder } from './node.finder.js';
-import { NodeGroupRepository } from '../persistence/node-group.repository.js';
+import { NodeGroupRepository } from '../storage/node-group.repository.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 const app = await createTestApp();

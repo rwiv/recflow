@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { nodeGroupTable, nodeTable } from '../../infra/db/schema.js';
-import { nodeEnt, NodeEnt, NodeEntAppend, NodeGroupEnt } from './node.persistence.schema.js';
+import { nodeEnt, NodeEnt, NodeEntAppend, NodeGroupEnt } from './node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';

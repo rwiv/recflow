@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { NodeRepository } from '../persistence/node.repository.js';
+import { NodeRepository } from '../storage/node.repository.js';
 import { NodeMapper } from './node.mapper.js';
-import { NodeGroupRepository } from '../persistence/node-group.repository.js';
-import { NodeRecord } from './node.business.schema.js';
+import { NodeGroupRepository } from '../storage/node-group.repository.js';
+import { NodeDto } from '../spec/node.dto.schema.js';
 
 @Injectable()
 export class NodeFinder {
@@ -24,7 +24,7 @@ export class NodeFinder {
     return this.mapper.map(ent, withGroup, withStates);
   }
 
-  async findByNodeTier(tier: number): Promise<NodeRecord[]> {
+  async findByNodeTier(tier: number): Promise<NodeDto[]> {
     const queryResult = await this.nodeRepo.findByNodeTier(tier);
     const promises = queryResult.map(async ([node, group]) => {
       const nodeRecord = await this.mapper.map(node, false, true);

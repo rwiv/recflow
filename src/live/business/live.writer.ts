@@ -1,7 +1,7 @@
 import { LiveRepository } from '../persistence/live.repository.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
-import { NodeFinder } from '../../node/business/node.finder.js';
+import { NodeFinder } from '../../node/app/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend, LiveEntUpdate } from '../persistence/live.persistence.schema.js';
 import { LiveInfo } from '../../platform/data/wapper/live.js';

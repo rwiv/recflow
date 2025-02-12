@@ -17,6 +17,7 @@ export class NodeRepository {
     const req: NodeEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
+      isCordoned: append.isCordoned ?? false,
       createdAt: append.createdAt ?? new Date(),
     };
     return oneNotNull(await tx.insert(nodeTable).values(nodeEntAppendReq.parse(req)).returning());

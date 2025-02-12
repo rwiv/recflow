@@ -21,10 +21,12 @@ export class NodeSelector {
       if (curTier > LIMIT_COUNT) {
         throw new FatalError('Node search limit exceeded');
       }
-      const raw = await this.nodeFinder.findByNodeTier(curTier);
+      // find nodes in the current tier without cordon
+      const raw = (await this.nodeFinder.findByNodeTier(curTier)).filter((node) => !node.isCordoned);
       if (raw.length === 0) {
         throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
       }
+      // filter nodes that have available capacity
       nodes = raw.filter((node) => {
         const state = this.findState(node, pfId);
         if (state) return state.assigned < state.capacity;

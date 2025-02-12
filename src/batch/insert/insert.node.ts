@@ -19,6 +19,7 @@ export class NodeBatchInserter {
       const group = notNull(groups.find((group) => group.name === batchNode.groupName));
       const append: NodeAppend = {
         ...batchNode,
+        // isCordoned: randomElem([true, false]),
         groupId: group.id,
         capacities: [
           { platformName: 'chzzk', capacity: batchNode.capacities.chzzk },

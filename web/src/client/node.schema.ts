@@ -36,6 +36,7 @@ export const nodeDto = z.object({
   endpoint: z.string().nonempty(),
   weight: z.coerce.number().nonnegative(),
   totalCapacity: z.coerce.number().nonnegative(),
+  isCordoned: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
   type: nodeTypeDto,

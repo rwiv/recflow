@@ -8,6 +8,7 @@ export const nodeEnt = z.object({
   endpoint: z.string().nonempty(),
   weight: z.number().int().nonnegative(),
   totalCapacity: z.number().int().nonnegative(),
+  isCordoned: z.boolean(),
   typeId: uuid,
   groupId: uuid,
   createdAt: z.coerce.date(),
@@ -17,6 +18,7 @@ export type NodeEnt = z.infer<typeof nodeEnt>;
 
 export const nodeEntAppend = nodeEnt.partial({
   id: true,
+  isCordoned: true,
   description: true,
   createdAt: true,
   updatedAt: true,

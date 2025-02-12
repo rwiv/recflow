@@ -134,6 +134,7 @@ export const nodeTable = pgTable(
     endpoint: text().notNull(),
     weight: integer().notNull(),
     totalCapacity: integer('total_capacity').notNull(),
+    isCordoned: boolean('is_cordoned').notNull(),
     typeId: uuid('type_id')
       .notNull()
       .references(() => nodeTypeTable.id),

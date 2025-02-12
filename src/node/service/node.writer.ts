@@ -9,6 +9,7 @@ import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 @Injectable()
 export class NodeWriter {
@@ -23,6 +24,8 @@ export class NodeWriter {
   async create(append: NodeAppend, withGroup: boolean = false): Promise<NodeDto> {
     const nodeType = await this.typeRepo.findByName(append.typeName);
     if (!nodeType) throw NotFoundError.from('NodeType', 'name', append.typeName);
+    const existing = await this.nodeRepo.findByName(append.name);
+    if (existing) throw new ConflictError(`Node already exists: name=${append.name}`);
 
     return db.transaction(async (tx) => {
       const entAppend: NodeEntAppend = { ...append, typeId: nodeType.id };
@@ -48,6 +51,10 @@ export class NodeWriter {
   }
 
   async delete(id: string) {
+    const exStates = await this.stateRepo.findByNodeId(id);
+    if (exStates.length > 0) {
+      throw new ConflictError(`Node has assigned resources: id=${id}`);
+    }
     const states = await this.stateRepo.findByNodeId(id);
     return db.transaction(async (tx) => {
       for (const state of states) {

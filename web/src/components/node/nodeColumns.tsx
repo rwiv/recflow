@@ -52,9 +52,19 @@ const nodeType: ColumnDef<NodeDto> = {
   },
 };
 
+const cordoned: ColumnDef<NodeDto> = {
+  accessorKey: 'isCordoned',
+  header: 'Cordoned',
+  cell: ({ row }) => {
+    const value = row.original.isCordoned ? 'Yes' : 'No';
+    return <div className="m-1">{value}</div>;
+  },
+};
+
 export const nodeColumns: ColumnDef<NodeDto>[] = [
   createSelectColumn(selectCid),
   baseColumnDef(nameCid, 'Name'),
+  cordoned,
   group,
   nodeType,
   baseColumnDef(weightCid, 'Weight'),

@@ -11,7 +11,7 @@ import { Dispatcher } from './dispatcher.js';
 import { QueryConfig } from '../../common/config/query.js';
 import { ExitCmd } from './event.schema.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
-import { LiveRecord } from '../business/live.business.schema.js';
+import { LiveDto } from '../spec/live.dto.schema.js';
 
 @Injectable()
 export class LiveEventListener {
@@ -24,7 +24,7 @@ export class LiveEventListener {
     private readonly dispatcher: Dispatcher,
   ) {}
 
-  async onCreate(created: LiveRecord, webhookUrl: string) {
+  async onCreate(created: LiveDto, webhookUrl: string) {
     // stdl
     await this.requestStdl(webhookUrl, created);
 
@@ -38,7 +38,7 @@ export class LiveEventListener {
     return created;
   }
 
-  async onDelete(deleted: LiveRecord, cmd: ExitCmd) {
+  async onDelete(deleted: LiveDto, cmd: ExitCmd) {
     if (cmd !== 'delete') {
       await this.dispatcher.exit(cmd, deleted.platform.name, deleted.channel.pid);
     }
@@ -46,7 +46,7 @@ export class LiveEventListener {
     return deleted;
   }
 
-  private async requestStdl(whUrl: string, live: LiveRecord) {
+  private async requestStdl(whUrl: string, live: LiveDto) {
     if (live.platform.name === 'chzzk') {
       const force = this.query.options.chzzk.forceCredentials;
       let cookies: Cookie[] | undefined = undefined;

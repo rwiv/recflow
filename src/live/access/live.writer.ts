@@ -1,13 +1,13 @@
-import { LiveRepository } from '../persistence/live.repository.js';
+import { LiveRepository } from '../storage/live.repository.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
-import { NodeFinder } from '../../node/app/node.finder.js';
+import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveEntAppend, LiveEntUpdate } from '../persistence/live.persistence.schema.js';
+import { LiveEntAppend, LiveEntUpdate } from '../storage/live.entity.schema.js';
 import { LiveInfo } from '../../platform/data/wapper/live.js';
 import { oneNullable } from '../../utils/list.js';
 import { LiveMapper } from './live.mapper.js';
-import { LiveUpdate } from './live.business.schema.js';
+import { LiveUpdate } from '../spec/live.dto.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 @Injectable()

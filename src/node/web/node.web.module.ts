@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { NodeAppModule } from '../app/node.app.module.js';
+import { NodeServiceModule } from '../service/node.service.module.js';
 import { NodeController } from './node.controller.js';
 
 @Module({
-  imports: [NodeAppModule],
+  imports: [NodeServiceModule],
   controllers: [NodeController],
 })
 export class NodeWebModule {}

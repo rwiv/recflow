@@ -5,11 +5,11 @@ import { CommonModule } from '../common/module/common.module.js';
 import { ChannelTagPersistenceModule } from '../channel/tag/persistence/tag.persistence.module.js';
 import { ChannelBatchMigrator } from './migrate/migrate.channel.js';
 import { NodeBatchInserter } from './insert/insert.node.js';
-import { NodeAppModule } from '../node/app/node.app.module.js';
+import { NodeServiceModule } from '../node/service/node.service.module.js';
 import { CriterionBatchInserter } from './insert/insert.criterion.js';
 
 @Module({
-  imports: [CommonModule, ChannelBusinessModule, ChannelTagPersistenceModule, NodeAppModule],
+  imports: [CommonModule, ChannelBusinessModule, ChannelTagPersistenceModule, NodeServiceModule],
   providers: [ChannelBatchInserter, NodeBatchInserter, CriterionBatchInserter, ChannelBatchMigrator],
 })
 export class BatchModule {}

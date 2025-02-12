@@ -4,7 +4,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
-import { NodeSelector } from '../../node/app/node.selector.js';
+import { NodeSelector } from '../../node/service/node.selector.js';
 import { ChannelInfo } from '../../platform/data/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/channel/business/channel.business.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
@@ -12,9 +12,9 @@ import { FatalError } from '../../utils/errors/errors/FatalError.js';
 import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/priority.constants.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeUpdater } from '../../node/app/node.updater.js';
+import { NodeUpdater } from '../../node/service/node.updater.js';
 import { LiveWriter } from './live.writer.js';
-import { LiveRecord, LiveUpdate } from './live.business.schema.js';
+import { LiveDto, LiveUpdate } from '../spec/live.dto.schema.js';
 import { LiveFinder } from './live.finder.js';
 
 export interface DeleteOptions {
@@ -101,7 +101,7 @@ export class LiveService {
   async refreshAllLives() {
     const records = await this.liveFinder.findAllActives();
     const entries = records.map((it) => [it.channel.pid, it] as const);
-    const liveMap = new Map<string, LiveRecord>(entries);
+    const liveMap = new Map<string, LiveDto>(entries);
 
     const fetchPromises = records.map(async (live) => {
       return this.fetcher.fetchChannel(live.platform.name, live.channel.pid, true);

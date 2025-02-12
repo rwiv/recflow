@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LiveService } from '../business/live.service.js';
+import { LiveService } from '../access/live.service.js';
 import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -15,7 +15,7 @@ import {
   DEFAULT_INJECT_CYCLE,
   DEFAULT_REFRESH_CYCLE,
 } from '../../common/data/constants.js';
-import { LiveFinder } from '../business/live.finder.js';
+import { LiveFinder } from '../access/live.finder.js';
 
 @Injectable()
 export class LiveScheduler {

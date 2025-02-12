@@ -6,4 +6,4 @@ import { Module } from '@nestjs/common';
   controllers: [],
   exports: [],
 })
-export class TaskAppModule {}
+export class TaskServiceModule {}

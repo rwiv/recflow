@@ -1,13 +1,13 @@
 import { Synchronizer } from './synchronizer.js';
 import { LiveInfo } from '../../../platform/data/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
-import { LiveService } from '../../business/live.service.js';
+import { LiveService } from '../../access/live.service.js';
 import { LiveFilter } from '../filters/interface.js';
 import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
 import { ChannelRecord } from '../../../channel/channel/business/channel.business.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { LiveFinder } from '../../business/live.finder.js';
+import { LiveFinder } from '../../access/live.finder.js';
 import { PlatformType } from '../../../platform/storage/platform.business.schema.js';
 
 export class LiveAppender extends Synchronizer {

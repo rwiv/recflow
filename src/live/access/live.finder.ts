@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LiveRepository } from '../persistence/live.repository.js';
+import { LiveRepository } from '../storage/live.repository.js';
 import { LiveMapOpt, LiveMapper } from './live.mapper.js';
-import { LiveEnt } from '../persistence/live.persistence.schema.js';
+import { LiveEnt } from '../storage/live.entity.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface FindOptions {

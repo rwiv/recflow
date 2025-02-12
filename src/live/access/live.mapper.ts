@@ -1,7 +1,7 @@
-import { LiveRecord } from './live.business.schema.js';
-import { LiveEnt } from '../persistence/live.persistence.schema.js';
+import { LiveDto } from '../spec/live.dto.schema.js';
+import { LiveEnt } from '../storage/live.entity.schema.js';
 import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
-import { NodeFinder } from '../../node/app/node.finder.js';
+import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
@@ -21,12 +21,12 @@ export class LiveMapper {
     private readonly nodeFinder: NodeFinder,
   ) {}
 
-  async mapAll(lives: LiveEnt[], opt: LiveMapOpt): Promise<LiveRecord[]> {
+  async mapAll(lives: LiveEnt[], opt: LiveMapOpt): Promise<LiveDto[]> {
     const promises = lives.map((live) => this.map(live, opt));
     return Promise.all(promises);
   }
 
-  async map(liveEnt: LiveEnt, opt: LiveMapOpt = {}): Promise<LiveRecord> {
+  async map(liveEnt: LiveEnt, opt: LiveMapOpt = {}): Promise<LiveDto> {
     const withChannelTags = opt.withChannelTags ?? false;
     const withNode = opt.withNode ?? false;
     const withNodeGroup = opt.withNodeGroup ?? false;
@@ -36,7 +36,7 @@ export class LiveMapper {
     const channel = await this.channelFinder.findById(liveEnt.channelId, withChannelTags);
     if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
-    let result: LiveRecord = { ...liveEnt, channel, platform };
+    let result: LiveDto = { ...liveEnt, channel, platform };
 
     if (withNode) {
       const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates);

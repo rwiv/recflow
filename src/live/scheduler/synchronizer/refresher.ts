@@ -1,5 +1,5 @@
 import { Synchronizer } from './synchronizer.js';
-import { LiveService } from '../../business/live.service.js';
+import { LiveService } from '../../access/live.service.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 
 export class LiveRefresher extends Synchronizer {

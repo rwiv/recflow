@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Post, UseFilters } from '@nestjs/common';
-import { LiveService } from '../business/live.service.js';
+import { LiveService } from '../access/live.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../event/event.schema.js';
 import { LiveScheduler } from '../scheduler/scheduler.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveRecord } from '../business/live.business.schema.js';
-import { LiveFinder } from '../business/live.finder.js';
-import { LiveMapOpt } from '../business/live.mapper.js';
+import { LiveDto } from '../spec/live.dto.schema.js';
+import { LiveFinder } from '../access/live.finder.js';
+import { LiveMapOpt } from '../access/live.mapper.js';
 import {
   liveAppendRequest,
   LiveAppendRequest,
@@ -26,7 +26,7 @@ export class LiveController {
   ) {}
 
   @Get('/')
-  allActives(): Promise<LiveRecord[]> {
+  allActives(): Promise<LiveDto[]> {
     const opt: LiveMapOpt = {
       withChannelTags: false,
       withNode: true,
@@ -37,7 +37,7 @@ export class LiveController {
   }
 
   @Get('/all')
-  all(): Promise<LiveRecord[]> {
+  all(): Promise<LiveDto[]> {
     const opt: LiveMapOpt = {
       withChannelTags: false,
       withNode: true,
@@ -65,7 +65,7 @@ export class LiveController {
   }
 
   @Delete('/purge')
-  async purge(): Promise<LiveRecord[]> {
+  async purge(): Promise<LiveDto[]> {
     return this.liveService.purgeAll();
   }
 

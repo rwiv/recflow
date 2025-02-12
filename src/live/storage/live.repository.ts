@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from './live.persistence.schema.js';
+import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from './live.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';

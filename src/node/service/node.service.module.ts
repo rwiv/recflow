@@ -12,4 +12,4 @@ import { NodeSelector } from './node.selector.js';
   providers: [NodeMapper, NodeWriter, NodeUpdater, NodeFinder, NodeSelector],
   exports: [NodeWriter, NodeUpdater, NodeFinder, NodeSelector],
 })
-export class NodeAppModule {}
+export class NodeServiceModule {}

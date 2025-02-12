@@ -4,7 +4,7 @@ import { AppInitializer } from '../../common/module/initializer.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { LiveWriter } from './live.writer.js';
 import { mockLiveInfo } from '../../common/helpers/live.mocks.js';
-import { NodeWriter } from '../../node/app/node.writer.js';
+import { NodeWriter } from '../../node/service/node.writer.js';
 import { notNull } from '../../utils/null.js';
 import { mockNode } from '../../common/helpers/node.mocks.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';

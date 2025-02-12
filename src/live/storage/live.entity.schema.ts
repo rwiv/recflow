@@ -10,9 +10,9 @@ export const liveEnt = z.object({
   viewCnt: z.number().int().nonnegative(),
   adult: z.boolean(),
   isDeleted: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
-  deletedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
+  deletedAt: z.coerce.date().nullable(),
 });
 export type LiveEnt = z.infer<typeof liveEnt>;
 

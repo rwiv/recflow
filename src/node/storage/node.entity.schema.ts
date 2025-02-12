@@ -10,8 +10,8 @@ export const nodeEnt = z.object({
   totalCapacity: z.number().int().nonnegative(),
   typeId: uuid,
   groupId: uuid,
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 export type NodeEnt = z.infer<typeof nodeEnt>;
 
@@ -26,8 +26,8 @@ export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
 export const nodeTypeEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
 
@@ -43,8 +43,8 @@ export const nodeGroupEnt = z.object({
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
   tier: z.number().int().positive(),
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
 
@@ -62,8 +62,8 @@ export const nodeStateEnt = z.object({
   platformId: uuid,
   capacity: z.number().int().nonnegative(),
   assigned: z.number().int().nonnegative(),
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 export type NodeStateEnt = z.infer<typeof nodeStateEnt>;
 

@@ -5,8 +5,8 @@ export const tagEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 export type TagEnt = z.infer<typeof tagEnt>;
 
@@ -24,7 +24,7 @@ export type TagEntUpdate = z.infer<typeof tagEntUpdate>;
 export const channelsToTagsEnt = z.object({
   channelId: uuid,
   tagId: uuid,
-  createdAt: z.date(),
+  createdAt: z.coerce.date(),
 });
 export type ChannelsToTagsEnt = z.infer<typeof channelsToTagsEnt>;
 export const channelsToTagsEntAppend = channelsToTagsEnt.omit({ createdAt: true });

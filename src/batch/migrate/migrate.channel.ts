@@ -1,34 +1,24 @@
 import { BatchMigrator } from './migrate.abstract.js';
 import { log } from 'jslog';
-import { ChannelAppend } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelAppend, channelDto, priorityDto } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { uuid } from '../../common/data/common.schema.js';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+import { tagDto } from '../../channel/spec/tag.dto.schema.js';
+import { nonempty } from '../../common/data/common.schema.js';
 
-const fetchedTag = z.object({
-  id: uuid,
-  name: z.string().nonempty(),
-  description: z.string().nonempty().nullable(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date().optional(),
+const fetchedChannel = channelDto.extend({
+  id: nonempty,
+  platform: platformDto.extend({ id: nonempty }),
+  priority: priorityDto.extend({ id: nonempty }),
+  tags: z.array(tagDto.extend({ id: nonempty })).optional(),
 });
-const fetchedChannel = z.object({
-  id: uuid,
-  pid: z.string().nonempty(),
-  username: z.string().nonempty(),
-  profileImgUrl: z.string().nullable(),
-  followerCnt: z.number().nonnegative(),
-  followed: z.boolean(),
-  description: z.string().nonempty().nullable(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-  platformName: platformNameEnum,
-  priorityName: z.string().nonempty(),
-  tags: z.array(fetchedTag).optional(),
+const fetchedChannelsResult = z.object({
+  total: z.number().int().nonnegative(),
+  channels: z.array(fetchedChannel),
 });
-type FetchedChannel = z.infer<typeof fetchedChannel>;
+export type FetchedChannelsResult = z.infer<typeof fetchedChannelsResult>;
 
 @Injectable()
 export class ChannelBatchMigrator extends BatchMigrator {
@@ -42,6 +32,8 @@ export class ChannelBatchMigrator extends BatchMigrator {
     const req: ChannelAppend = {
       ...channel,
       id: undefined, // TODO: remove
+      platformName: channel.platform.name,
+      priorityName: channel.priority.name,
       createdAt: new Date(channel.createdAt),
       updatedAt: new Date(channel.updatedAt),
     };
@@ -56,7 +48,7 @@ export class ChannelBatchMigrator extends BatchMigrator {
     let page = 1;
     const pageSize = 100;
     while (true) {
-      const channels = await this.fetchChannels(endpoint, page, pageSize);
+      const channels = (await this.fetchChannels(endpoint, page, pageSize)).channels;
       for (const channel of channels) {
         const json = JSON.stringify(channel);
         await writeLine(json);
@@ -68,9 +60,9 @@ export class ChannelBatchMigrator extends BatchMigrator {
     log.info(`Backing up ${cnt} channels...`);
   }
 
-  private async fetchChannels(endpoint: string, page: number, pageSize: number) {
+  async fetchChannels(endpoint: string, page: number, pageSize: number) {
     const url = `${endpoint}/api/channels?p=${page}&s=${pageSize}&wt=true`;
     const res = await fetch(url);
-    return (await res.json()) as FetchedChannel[];
+    return fetchedChannelsResult.parse(await res.json());
   }
 }

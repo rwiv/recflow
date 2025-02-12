@@ -6,8 +6,8 @@ export const priorityEnt = z.object({
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
   tier: z.number().int().positive(),
-  createdAt: z.date(),
-  updatedAt: z.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 // export interface ChannelPriorityEnt {
 //   id: string;

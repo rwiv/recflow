@@ -11,8 +11,8 @@ export const channelEnt = z.object({
   priorityId: uuid,
   followed: z.boolean(),
   description: z.string().nonempty().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 export type ChannelEnt = z.infer<typeof channelEnt>;
 

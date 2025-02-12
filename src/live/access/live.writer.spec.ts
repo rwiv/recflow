@@ -9,7 +9,7 @@ import { notNull } from '../../utils/null.js';
 import { mockNode } from '../../common/helpers/node.mocks.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { mockChannel } from '../../common/helpers/channel.mocks.js';
-import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
+import { ChannelWriter } from '../../channel/service/channel.writer.js';
 
 const app = await createTestApp();
 const init = app.get(AppInitializer);

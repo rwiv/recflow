@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelRecord } from '../../channel/channel/business/channel.business.schema.js';
+import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -11,7 +11,7 @@ const LIMIT_COUNT = 100;
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(channel: ChannelRecord) {
+  async match(channel: ChannelDto) {
     const pfId = channel.platform.id;
 
     // search for available nodes

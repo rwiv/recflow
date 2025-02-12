@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ChannelTagModule } from './tag/tag.module.js';
-import { ChannelRecordModule } from './channel/channel.module.js';
+import { ChannelWebModule } from './web/channel.web.module.js';
 
 @Module({
-  imports: [ChannelRecordModule, ChannelTagModule],
+  imports: [ChannelWebModule],
 })
 export class ChannelModule {}

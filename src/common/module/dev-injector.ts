@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
+import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { randomElem } from '../../utils/list.js';
 import { randomInt } from '../../utils/random.js';
-import { ChannelAppend, channelAppend } from '../../channel/channel/business/channel.business.schema.js';
+import { ChannelAppend, channelAppend } from '../../channel/spec/channel.dto.schema.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
 import { readBatchConfig } from '../../batch/batch.config.js';

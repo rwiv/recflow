@@ -1,6 +1,6 @@
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveEnt } from '../storage/live.entity.schema.js';
-import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
+import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Injectable } from '@nestjs/common';

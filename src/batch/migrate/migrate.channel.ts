@@ -1,7 +1,7 @@
 import { BatchMigrator } from './migrate.abstract.js';
 import { log } from 'jslog';
-import { ChannelAppend } from '../../channel/channel/business/channel.business.schema.js';
-import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
+import { ChannelAppend } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';

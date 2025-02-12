@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/storage/platform.repository.js';
-import { ChannelPriorityRepository } from '../../channel/channel/persistence/priority.repository.js';
+import { ChannelPriorityRepository } from '../../channel/storage/priority.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
-import { CHANNEL_PRIORIES_TIER_MAP, CHANNEL_PRIORITIES } from '../../channel/priority.constants.js';
+import {
+  CHANNEL_PRIORIES_TIER_MAP,
+  CHANNEL_PRIORITIES,
+} from '../../channel/spec/default.priority.constants.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NodeTypeRepository } from '../../node/storage/node-type.repository.js';
 import { nodeTypeNameEnum } from '../../node/spec/node.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
-import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/node.constraints.js';
-import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
+import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/default.node.constraints.js';
+import { PriorityEntAppend } from '../../channel/storage/priority.schema.js';
 import { NodeGroupAppend } from '../../node/storage/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';

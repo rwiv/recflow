@@ -4,7 +4,7 @@ import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Inject } from '@nestjs/common';
 import { QUERY } from '../../../common/config/config.module.js';
-import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
+import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
 

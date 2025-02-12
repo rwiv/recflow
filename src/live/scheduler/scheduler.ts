@@ -7,7 +7,7 @@ import { LiveCleaner } from './synchronizer/cleaner.js';
 import { LiveAppender } from './synchronizer/appender.js';
 import { LiveRefresher } from './synchronizer/refresher.js';
 import { log } from 'jslog';
-import { ChannelFinder } from '../../channel/channel/business/channel.finder.js';
+import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ScheduleErrorHandler } from './error.handler.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppInitializer } from './initializer.js';
-import { ChannelPersistenceModule } from '../../channel/channel/persistence/channel.persistence.module.js';
-import { ChannelBusinessModule } from '../../channel/channel/business/channel.business.module.js';
+import { ChannelStorageModule } from '../../channel/storage/channel.storage.module.js';
+import { ChannelServiceModule } from '../../channel/service/channel.service.module.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { NodeServiceModule } from '../../node/service/node.service.module.js';
@@ -13,8 +13,8 @@ import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
 
 @Module({
   imports: [
-    ChannelPersistenceModule,
-    ChannelBusinessModule,
+    ChannelStorageModule,
+    ChannelServiceModule,
     PlatformModule,
     NodeStorageModule,
     NodeServiceModule,

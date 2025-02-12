@@ -3,8 +3,8 @@ import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { LiveRegistrar } from '../../registry/live.registrar.js';
 import { LiveFilter } from '../filters/interface.js';
-import { ChannelFinder } from '../../../channel/channel/business/channel.finder.js';
-import { ChannelRecord } from '../../../channel/channel/business/channel.business.schema.js';
+import { ChannelFinder } from '../../../channel/service/channel.finder.js';
+import { ChannelDto } from '../../../channel/spec/channel.dto.schema.js';
 import { ScheduleErrorHandler } from '../error.handler.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { LiveFinder } from '../../access/live.finder.js';
@@ -34,7 +34,7 @@ export class LiveAppender extends Synchronizer {
     }
   }
 
-  private async processFollowedChannel(ch: ChannelRecord) {
+  private async processFollowedChannel(ch: ChannelDto) {
     if (await this.liveFinder.findByPid(ch.pid, { withDeleted: true })) return null;
     const chanInfo = await this.fetcher.fetchChannel(this.platform, ch.pid, false);
     if (!chanInfo || !chanInfo.openLive) return null;

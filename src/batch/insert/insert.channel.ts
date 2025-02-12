@@ -1,5 +1,5 @@
-import { ChannelWriter } from '../../channel/channel/business/channel.writer.js';
-import { ChannelAppendWithFetch } from '../../channel/channel/business/channel.business.schema.js';
+import { ChannelWriter } from '../../channel/service/channel.writer.js';
+import { ChannelAppendWithFetch } from '../../channel/spec/channel.dto.schema.js';
 import { log } from 'jslog';
 import { Injectable } from '@nestjs/common';
 import { ChannelBatchInsert } from '../batch.config.js';

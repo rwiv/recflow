@@ -10,6 +10,7 @@ import { NodeMapper } from './node.mapper.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { LiveRepository } from '../../live/storage/live.repository.js';
 
 @Injectable()
 export class NodeWriter {
@@ -18,6 +19,7 @@ export class NodeWriter {
     private readonly typeRepo: NodeTypeRepository,
     private readonly stateRepo: NodeStateRepository,
     private readonly pfFinder: PlatformFinder,
+    private readonly liveRepo: LiveRepository,
     private readonly mapper: NodeMapper,
   ) {}
 
@@ -51,8 +53,8 @@ export class NodeWriter {
   }
 
   async delete(id: string) {
-    const exStates = await this.stateRepo.findByNodeId(id);
-    if (exStates.length > 0) {
+    const exLives = await this.liveRepo.findByNodeId(id);
+    if (exLives.length > 0) {
       throw new ConflictError(`Node has assigned resources: id=${id}`);
     }
     const states = await this.stateRepo.findByNodeId(id);

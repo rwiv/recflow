@@ -53,6 +53,10 @@ export class LiveRepository {
     return rows.map((row) => row.lives);
   }
 
+  async findByNodeId(nodeId: string, tx: Tx = db) {
+    return tx.select().from(liveTable).where(eq(liveTable.nodeId, nodeId));
+  }
+
   async update(update: LiveEntUpdate, tx: Tx = db) {
     const live = await this.findById(update.id, tx);
     if (!live) {

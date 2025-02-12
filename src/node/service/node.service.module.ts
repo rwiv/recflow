@@ -6,9 +6,10 @@ import { NodeFinder } from './node.finder.js';
 import { NodeMapper } from './node.mapper.js';
 import { NodeUpdater } from './node.updater.js';
 import { NodeSelector } from './node.selector.js';
+import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
 
 @Module({
-  imports: [NodeStorageModule, PlatformModule],
+  imports: [NodeStorageModule, LiveStorageModule, PlatformModule],
   providers: [NodeMapper, NodeWriter, NodeUpdater, NodeFinder, NodeSelector],
   exports: [NodeWriter, NodeUpdater, NodeFinder, NodeSelector],
 })

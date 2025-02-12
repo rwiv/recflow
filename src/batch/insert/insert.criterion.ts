@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CriteriaBatchInsert } from '../batch.config.js';
 import { log } from 'jslog';
-import { CriterionWriter } from '../../criterion/business/criterion.writer.js';
+import { CriterionWriter } from '../../criterion/service/criterion.writer.js';
 import {
   chzzkCriterionAppend,
   ChzzkCriterionAppend,
   SoopCriterionAppend,
-} from '../../criterion/business/criterion.business.schema.js';
+} from '../../criterion/spec/criterion.dto.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 @Injectable()

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionUnitEnt } from '../persistence/criterion.persistence.schema.js';
+import { CriterionUnitEnt } from '../storage/criterion.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { ChzzkCriterionRecord, CriterionRecord, SoopCriterionRecord } from './criterion.business.schema.js';
-import { CriterionUnitRepository } from '../persistence/criterion-unit.repository.js';
+import { ChzzkCriterionRecord, CriterionRecord, SoopCriterionRecord } from '../spec/criterion.dto.schema.js';
+import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { CriterionRuleService } from './criterion.rule.js';
+import { CriterionRuleFinder } from './criterion.rule.finder.js';
 
 @Injectable()
 export class CriterionMapper {
   constructor(
     private readonly unitRepo: CriterionUnitRepository,
-    private readonly ruleService: CriterionRuleService,
+    private readonly ruleFinder: CriterionRuleFinder,
   ) {}
 
   async mapToChzzk(criterion: CriterionRecord, tx: Tx = db): Promise<ChzzkCriterionRecord> {
@@ -19,7 +19,7 @@ export class CriterionMapper {
       throw new ValidationError('Criterion is not a CHZZK platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
-    const { tagRule, keywordRule, wpRule } = await this.ruleService.findChzzkRules(tx);
+    const { tagRule, keywordRule, wpRule } = await this.ruleFinder.findChzzkRules(tx);
     const tags = this.findUnitsValues(units, tagRule.id);
     const keywords = this.findUnitsValues(units, keywordRule.id);
     const wps = this.findUnitsValues(units, wpRule.id);
@@ -39,7 +39,7 @@ export class CriterionMapper {
       throw new ValidationError('Criterion is not a SOOP platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
-    const { cateRule } = await this.ruleService.findSoopRules(tx);
+    const { cateRule } = await this.ruleFinder.findSoopRules(tx);
     const cates = this.findUnitsValues(units, cateRule.id);
     return {
       ...criterion,

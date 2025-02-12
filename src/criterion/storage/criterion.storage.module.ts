@@ -7,4 +7,4 @@ import { CriterionUnitRepository } from './criterion-unit.repository.js';
   providers: [CriterionRepository, CriterionRuleRepository, CriterionUnitRepository],
   exports: [CriterionRepository, CriterionRuleRepository, CriterionUnitRepository],
 })
-export class CriterionPersistenceModule {}
+export class CriterionStorageModule {}

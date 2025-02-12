@@ -1,5 +1,5 @@
 import { Controller, Get, UseFilters } from '@nestjs/common';
-import { CriterionFinder } from '../business/criterion.finder.js';
+import { CriterionFinder } from '../service/criterion.finder.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 
 @UseFilters(HttpErrorFilter)

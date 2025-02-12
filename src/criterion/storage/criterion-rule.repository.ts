@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { criterionRuleEnt, CriterionRuleEntAppend } from './criterion.persistence.schema.js';
+import { criterionRuleEnt, CriterionRuleEntAppend } from './criterion.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { uuid } from '../../utils/uuid.js';
@@ -8,7 +8,7 @@ import { liveCriterionRuleTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { criterionRuleType } from '../business/criterion.rule.schema.js';
+import { criterionRuleType } from '../spec/criterion.rule.schema.js';
 
 const criterionRuleEntReq = criterionRuleEnt.partial({ updatedAt: true }).extend({ name: criterionRuleType });
 type CriterionRuleEntReq = z.infer<typeof criterionRuleEntReq>;

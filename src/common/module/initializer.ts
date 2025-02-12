@@ -12,11 +12,8 @@ import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/node.constraint
 import { PriorityEntAppend } from '../../channel/channel/persistence/priority.schema.js';
 import { NodeGroupAppend } from '../../node/storage/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
-import { CriterionRuleRepository } from '../../criterion/persistence/criterion-rule.repository.js';
-import {
-  chzzkCriterionRuleType,
-  soopCriterionRuleType,
-} from '../../criterion/business/criterion.rule.schema.js';
+import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
+import { chzzkCriterionRuleType, soopCriterionRuleType } from '../../criterion/spec/criterion.rule.schema.js';
 
 @Injectable()
 export class AppInitializer {

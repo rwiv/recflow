@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionRepository } from '../persistence/criterion.repository.js';
+import { CriterionRepository } from '../storage/criterion.repository.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { ChzzkCriterionRecord, SoopCriterionRecord } from './criterion.business.schema.js';
+import { ChzzkCriterionRecord, SoopCriterionRecord } from '../spec/criterion.dto.schema.js';
 
 @Injectable()
 export class CriterionFinder {

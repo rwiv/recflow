@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionEnt, criterionEnt, CriterionEntAppend } from './criterion.persistence.schema.js';
+import { CriterionEnt, criterionEnt, CriterionEntAppend } from './criterion.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';

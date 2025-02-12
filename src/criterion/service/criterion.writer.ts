@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionRepository } from '../persistence/criterion.repository.js';
-import { CriterionUnitRepository } from '../persistence/criterion-unit.repository.js';
+import { CriterionRepository } from '../storage/criterion.repository.js';
+import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js';
 import {
   ChzzkCriterionAppend,
   ChzzkCriterionRecord,
   SoopCriterionAppend,
   SoopCriterionRecord,
-} from './criterion.business.schema.js';
+} from '../spec/criterion.dto.schema.js';
 import {
   CriterionEnt,
   CriterionRuleEnt,
   CriterionUnitEnt,
   CriterionUnitEntAppend,
-} from '../persistence/criterion.persistence.schema.js';
+} from '../storage/criterion.entity.schema.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { CriterionRuleService } from './criterion.rule.js';
+import { CriterionRuleFinder } from './criterion.rule.finder.js';
 
 @Injectable()
 export class CriterionWriter {
@@ -23,12 +23,12 @@ export class CriterionWriter {
     private readonly criterionRepo: CriterionRepository,
     private readonly unitRepo: CriterionUnitRepository,
     private readonly pfFinder: PlatformFinder,
-    private readonly ruleService: CriterionRuleService,
+    private readonly ruleFinder: CriterionRuleFinder,
   ) {}
 
   async createChzzkCriterion(append: ChzzkCriterionAppend): Promise<ChzzkCriterionRecord> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
-    const { tagRule, keywordRule: kwRule, wpRule } = await this.ruleService.findChzzkRules();
+    const { tagRule, keywordRule: kwRule, wpRule } = await this.ruleFinder.findChzzkRules();
 
     return db.transaction(async (tx) => {
       const ent = await this.criterionRepo.create(append, tx);
@@ -67,7 +67,7 @@ export class CriterionWriter {
 
   async createSoopCriterion(append: SoopCriterionAppend): Promise<SoopCriterionRecord> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
-    const { cateRule } = await this.ruleService.findSoopRules();
+    const { cateRule } = await this.ruleFinder.findSoopRules();
 
     return db.transaction(async (tx) => {
       const criterion = await this.criterionRepo.create(append, tx);

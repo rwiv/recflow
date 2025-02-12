@@ -7,8 +7,8 @@ import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { NodeServiceModule } from '../../node/service/node.service.module.js';
 import { DevInitInjector } from './dev-injector.js';
 import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
-import { CriterionPersistenceModule } from '../../criterion/persistence/criterion.persistence.module.js';
-import { CriterionBusinessModule } from '../../criterion/business/criterion.business.module.js';
+import { CriterionStorageModule } from '../../criterion/storage/criterion.storage.module.js';
+import { CriterionServiceModule } from '../../criterion/service/criterion.service.module.js';
 import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
 
 @Module({
@@ -18,8 +18,8 @@ import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
     PlatformModule,
     NodeStorageModule,
     NodeServiceModule,
-    CriterionPersistenceModule,
-    CriterionBusinessModule,
+    CriterionStorageModule,
+    CriterionServiceModule,
   ],
   providers: [AppInitializer, DevInitInjector, NodeBatchInserter, CriterionBatchInserter],
   exports: [AppInitializer],

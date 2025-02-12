@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { CriterionRuleRepository } from '../persistence/criterion-rule.repository.js';
-import { CHZZK_CRITERION_RULES, SOOP_CRITERION_RULES } from './criterion.rule.schema.js';
+import { CriterionRuleRepository } from '../storage/criterion-rule.repository.js';
+import { CHZZK_CRITERION_RULES, SOOP_CRITERION_RULES } from '../spec/criterion.rule.schema.js';
 
 @Injectable()
-export class CriterionRuleService {
+export class CriterionRuleFinder {
   constructor(private readonly ruleRepo: CriterionRuleRepository) {}
 
   async findChzzkRules(tx: Tx = db) {

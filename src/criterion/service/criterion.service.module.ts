@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CriterionPersistenceModule } from '../persistence/criterion.persistence.module.js';
+import { CriterionStorageModule } from '../storage/criterion.storage.module.js';
 import { CriterionWriter } from './criterion.writer.js';
 import { CriterionFinder } from './criterion.finder.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformModule } from '../../platform/platform.module.js';
-import { CriterionRuleService } from './criterion.rule.js';
+import { CriterionRuleFinder } from './criterion.rule.finder.js';
 
 @Module({
-  imports: [CriterionPersistenceModule, PlatformModule],
-  providers: [CriterionRuleService, CriterionMapper, CriterionWriter, CriterionFinder],
+  imports: [CriterionStorageModule, PlatformModule],
+  providers: [CriterionRuleFinder, CriterionMapper, CriterionWriter, CriterionFinder],
   exports: [CriterionWriter, CriterionFinder],
 })
-export class CriterionBusinessModule {}
+export class CriterionServiceModule {}

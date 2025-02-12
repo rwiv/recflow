@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { nonempty, uuid } from '../../common/data/common.schema.js';
-import { criterionRuleType } from '../business/criterion.rule.schema.js';
+import { criterionRuleType } from '../spec/criterion.rule.schema.js';
 
 export const criterionEnt = z.object({
   id: uuid,

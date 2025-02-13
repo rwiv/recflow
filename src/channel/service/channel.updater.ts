@@ -2,14 +2,14 @@ import { ChannelCommandRepository } from '../storage/channel.command.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelMapper } from './channel.mapper.js';
 import { ChannelEntUpdate } from '../storage/channel.entity.schema.js';
-import { ChannelPriorityRepository } from '../storage/priority.repository.js';
+import { PriorityRepository } from '../storage/priority.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class ChannelUpdater {
   constructor(
     private readonly chCmd: ChannelCommandRepository,
-    private readonly priRepo: ChannelPriorityRepository,
+    private readonly priRepo: PriorityRepository,
     private readonly chMapper: ChannelMapper,
   ) {}
 

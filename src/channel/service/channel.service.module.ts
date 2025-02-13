@@ -8,6 +8,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { ChannelSearcher } from './channel.searcher.js';
 import { TagWriter } from './tag.writer.js';
 import { TagFinder } from './tag.finder.js';
+import { PriorityWriter } from './priority.writer.js';
 
 @Module({
   imports: [ChannelStorageModule, PlatformModule],
@@ -19,7 +20,16 @@ import { TagFinder } from './tag.finder.js';
     ChannelSearcher,
     ChannelUpdater,
     ChannelMapper,
+    PriorityWriter,
   ],
-  exports: [TagWriter, TagFinder, ChannelWriter, ChannelFinder, ChannelSearcher, ChannelUpdater],
+  exports: [
+    TagWriter,
+    TagFinder,
+    ChannelWriter,
+    ChannelFinder,
+    ChannelSearcher,
+    ChannelUpdater,
+    PriorityWriter,
+  ],
 })
 export class ChannelServiceModule {}

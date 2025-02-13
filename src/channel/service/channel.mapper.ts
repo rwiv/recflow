@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelDto } from '../spec/channel.dto.schema.js';
-import { ChannelPriorityRepository } from '../storage/priority.repository.js';
+import { PriorityRepository } from '../storage/priority.repository.js';
 import { ChannelEnt } from '../storage/channel.entity.schema.js';
 import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
@@ -12,7 +12,7 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 export class ChannelMapper {
   constructor(
     private readonly pfFinder: PlatformFinder,
-    private readonly priRepo: ChannelPriorityRepository,
+    private readonly priRepo: PriorityRepository,
     private readonly tagQuery: TagQueryRepository,
   ) {}
 

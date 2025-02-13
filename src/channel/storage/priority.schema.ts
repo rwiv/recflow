@@ -9,14 +9,14 @@ export const priorityEnt = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
-// export interface ChannelPriorityEnt {
+// export interface PriorityEnt {
 //   id: string;
 //   name: string;
 //   tier: number;
 //   createdAt: Date;
 //   updatedAt: Date | null;
 // }
-export type ChannelPriorityEnt = z.infer<typeof priorityEnt>;
+export type PriorityEnt = z.infer<typeof priorityEnt>;
 
 export const priorityEntAppend = priorityEnt.partial({
   id: true,

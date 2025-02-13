@@ -16,7 +16,7 @@ import { Tx } from '../../infra/db/types.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { ChannelPriorityRepository } from '../storage/priority.repository.js';
+import { PriorityRepository } from '../storage/priority.repository.js';
 import { ChannelEntAppend } from '../storage/channel.entity.schema.js';
 import { hasDuplicates } from '../../utils/list.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
@@ -30,7 +30,7 @@ export class ChannelWriter {
     private readonly chCmd: ChannelCommandRepository,
     private readonly chQuery: ChannelQueryRepository,
     private readonly pfFinder: PlatformFinder,
-    private readonly priRepo: ChannelPriorityRepository,
+    private readonly priRepo: PriorityRepository,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
     private readonly chMapper: ChannelMapper,

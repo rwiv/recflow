@@ -2,12 +2,15 @@ import { z } from 'zod';
 import { tagDto } from './tag.dto.schema.js';
 import { channelEnt, channelEntAppend, channelEntUpdateForm } from '../storage/channel.entity.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
-import { ChannelPriorityEnt, priorityEnt } from '../storage/priority.schema.js';
+import { PriorityEnt, priorityEnt, priorityEntAppend } from '../storage/priority.schema.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
 export const priorityDto = priorityEnt;
-export type PriorityDto = ChannelPriorityEnt;
+export type PriorityDto = PriorityEnt;
+
+export const priorityAppend = priorityEntAppend;
+export type PriorityAppend = z.infer<typeof priorityAppend>;
 
 export const channelDto = channelEnt.omit({ platformId: true, priorityId: true }).extend({
   platform: platformDto,

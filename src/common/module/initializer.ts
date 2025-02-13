@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/storage/platform.repository.js';
-import { ChannelPriorityRepository } from '../../channel/storage/priority.repository.js';
+import { PriorityRepository } from '../../channel/storage/priority.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import {
@@ -25,7 +25,7 @@ import {
 export class AppInitializer {
   constructor(
     private readonly pfRepo: PlatformRepository,
-    private readonly priRepo: ChannelPriorityRepository,
+    private readonly priRepo: PriorityRepository,
     private readonly ntRepo: NodeTypeRepository,
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,

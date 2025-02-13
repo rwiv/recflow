@@ -9,30 +9,34 @@ import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.j
 
 @Injectable()
 export class ChannelQueryRepository {
-  findAll(tx: Tx = db): Promise<ChannelEnt[]> {
+  findAll(tx: Tx = db) {
     return tx.select().from(channelTable);
   }
 
-  async findById(channelId: string, tx: Tx = db): Promise<ChannelEnt | undefined> {
+  async findById(channelId: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(channelTable).where(eq(channelTable.id, channelId)));
   }
 
-  async findByPid(pid: string, tx: Tx = db): Promise<ChannelEnt[]> {
+  async findByPid(pid: string, tx: Tx = db) {
     return tx.select().from(channelTable).where(eq(channelTable.pid, pid));
   }
 
-  async findByPidAndPlatform(pid: string, platformId: string, tx: Tx = db): Promise<ChannelEnt[]> {
+  async findByPidAndPlatform(pid: string, platformId: string, tx: Tx = db) {
     return tx
       .select()
       .from(channelTable)
       .where(and(eq(channelTable.pid, pid), eq(channelTable.platformId, platformId)));
   }
 
-  async findByUsernameLike(username: string, tx: Tx = db): Promise<ChannelEnt[]> {
+  async findByUsernameLike(username: string, tx: Tx = db) {
     return tx
       .select()
       .from(channelTable)
       .where(like(channelTable.username, `%${username}%`));
+  }
+
+  async findByPriorityId(priorityId: string, tx: Tx = db) {
+    return tx.select().from(channelTable).where(eq(channelTable.priorityId, priorityId));
   }
 
   async findByFollowedFlag(
@@ -40,12 +44,12 @@ export class ChannelQueryRepository {
     platformName: PlatformName,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
-    const entities = await tx
+    const rows = await tx
       .select()
       .from(channelTable)
       .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
       .where(and(eq(channelTable.followed, followed), eq(platformTable.name, platformName)));
-    return entities.map((entity) => entity.channel);
+    return rows.map((row) => row.channel);
   }
 
   async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {

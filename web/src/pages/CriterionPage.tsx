@@ -2,21 +2,27 @@ import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
-import { NodeTable } from '@/components/node/NodeTable.tsx';
-import { NODES_QUERY_KEY } from '@/common/constants.ts';
-import { NodeDto } from '@/client/node.schema.ts';
-import { fetchNodes } from '@/client/node.client.ts';
+import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
+import { fetchChzzkCriteria, fetchSoopCriteria } from '@/client/criterion.client.ts';
+import { ChzzkCriterionDto, SoopCriterionDto } from '@/client/criterion.schema.ts';
+import { ChzzkCriterionTable } from '@/components/criterion/ChzzkCriterionTable.tsx';
 
-export function NodesPage() {
+export function CriterionPage() {
   const queryClient = useQueryClient();
-  const { data: nodes } = useQuery<NodeDto[]>({
-    queryKey: [NODES_QUERY_KEY],
-    queryFn: fetchNodes,
+  const { data: chzzkCriteria } = useQuery<ChzzkCriterionDto[]>({
+    queryKey: [CHZZK_CRITERIA_QUERY_KEY],
+    queryFn: fetchChzzkCriteria,
+  });
+  const { data: soopCriteria } = useQuery<SoopCriterionDto[]>({
+    queryKey: [SOOP_CRITERIA_QUERY_KEY],
+    queryFn: fetchSoopCriteria,
   });
   const { pageState, setPageState } = useChannelPageStore();
+  console.log(chzzkCriteria);
+  console.log(soopCriteria);
 
   useEffect(() => {
     setPageState(ChannelPageState.default());
@@ -40,13 +46,13 @@ export function NodesPage() {
           <TabButton>
             {pageState && <Link to={`/channels?${pageState.toQueryString()}`}>Channels</Link>}
           </TabButton>
-          <TabButton active>Nodes</TabButton>
           <TabButton>
-            <Link to="/criteria">Criteria</Link>
+            <Link to="/nodes">Nodes</Link>
           </TabButton>
+          <TabButton active>Criteria</TabButton>
         </TabList>
       </div>
-      <div className="mx-10 my-3">{nodes && <NodeTable data={nodes} />}</div>
+      <div className="mx-10 my-3">{chzzkCriteria && <ChzzkCriterionTable data={chzzkCriteria} />}</div>
     </div>
   );
 }

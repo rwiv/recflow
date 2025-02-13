@@ -13,6 +13,7 @@ export const criterionDto = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
+export type CriterionDto = z.infer<typeof criterionDto>;
 
 export const chzzkCriterionDto = criterionDto.extend({
   positiveTags: z.array(nonempty),
@@ -22,8 +23,22 @@ export const chzzkCriterionDto = criterionDto.extend({
   positiveWps: z.array(nonempty),
   negativeWps: z.array(nonempty),
 });
+export type ChzzkCriterionDto = z.infer<typeof chzzkCriterionDto>;
+
+export const chzzkCriterionAppend = chzzkCriterionDto
+  .partial({ id: true, description: true, createdAt: true, updatedAt: true })
+  .omit({ platform: true })
+  .extend({ platformId: uuid });
+export type ChzzkCriterionAppend = z.infer<typeof chzzkCriterionAppend>;
 
 export const soopCriterionDto = criterionDto.extend({
   positiveCates: z.array(nonempty),
   negativeCates: z.array(nonempty),
 });
+export type SoopCriterionDto = z.infer<typeof soopCriterionDto>;
+
+export const soopCriterionAppend = soopCriterionDto
+  .partial({ id: true, description: true, createdAt: true, updatedAt: true })
+  .omit({ platform: true })
+  .extend({ platformId: uuid });
+export type SoopCriterionAppend = z.infer<typeof soopCriterionAppend>;

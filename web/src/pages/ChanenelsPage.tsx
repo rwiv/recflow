@@ -25,6 +25,9 @@ export function ChannelsPage() {
           <TabButton>
             <Link to="/nodes">Nodes</Link>
           </TabButton>
+          <TabButton>
+            <Link to="/criteria">Criteria</Link>
+          </TabButton>
         </TabList>
       </div>
       {pageState && (

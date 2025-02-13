@@ -8,11 +8,13 @@ import { TestPage } from '@/pages/TestPage.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ChannelsPage } from '@/pages/ChanenelsPage.tsx';
 import { NodesPage } from '@/pages/NodesPage.tsx';
+import { CriterionPage } from '@/pages/CriterionPage.tsx';
 
 const routes: RouteObject[] = [
   { path: '/', element: <LivesPage /> },
   { path: '/channels', element: <ChannelsPage /> },
   { path: '/nodes', element: <NodesPage /> },
+  { path: '/criteria', element: <CriterionPage /> },
 ];
 
 if (configs.isDev) {

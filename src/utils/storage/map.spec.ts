@@ -1,15 +1,18 @@
 import { describe, it, afterEach, expect } from 'vitest';
-import { readEnv } from '../../common/config/env.js';
+import path from 'path';
+import dotenv from 'dotenv';
 import { createRedisClient } from './redis.js';
 import { AsyncMap } from './interface.js';
 import { RedisMap } from './map.redis.js';
+import { readRedisConfig } from '../../common/config/env.utils.js';
 
-const env = readEnv();
+dotenv.config({ path: path.resolve('dev', '.env') });
+const conf = readRedisConfig();
 
 describe('RedisMap (with real Redis client)', async () => {
   const keysKey = 'test:keys';
   const keyPrefix = 'test:prefix:';
-  const redis = await createRedisClient(env.redis);
+  const redis = await createRedisClient(conf);
   const map: AsyncMap<string, { name: string }> = new RedisMap(redis, keysKey, keyPrefix);
   // const map: AsyncMap<string, { name: string }> = new MemoryMap();
 

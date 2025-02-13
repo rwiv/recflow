@@ -1,14 +1,17 @@
 import { describe, it, afterEach, expect } from 'vitest';
-import { readEnv } from '../../common/config/env.js';
+import path from 'path';
+import dotenv from 'dotenv';
 import { createRedisClient } from './redis.js';
 import { AsyncSet } from './interface.js';
 import { RedisSet } from './set.redis.js';
+import { readRedisConfig } from '../../common/config/env.utils.js';
 
-const env = readEnv();
+dotenv.config({ path: path.resolve('dev', '.env') });
+const conf = readRedisConfig();
 
 describe('RedisSet', async () => {
   const testKey = 'test:set';
-  const redis = await createRedisClient(env.redis);
+  const redis = await createRedisClient(conf);
   const set: AsyncSet<string> = new RedisSet<string>(redis, testKey);
   // const set: AsyncSet<string> = new MemorySet<string>();
 

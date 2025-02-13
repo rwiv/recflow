@@ -45,6 +45,5 @@ export async function updateChannelDescription(id: string, description: string |
 
 export async function deleteChannel(channelId: string) {
   const url = `${configs.endpoint}/api/channels/${channelId}`;
-  const res = await request(url, { method: 'DELETE' });
-  return (await res.json()) as ChannelDto;
+  await request(url, { method: 'DELETE' });
 }

@@ -5,7 +5,7 @@ import { criterionRuleNameUnion } from '../spec/criterion.rule.schema.js';
 export const criterionEnt = z.object({
   id: uuid,
   name: nonempty,
-  description: z.string().nullable(),
+  description: nonempty.nullable(),
   platformId: uuid,
   enforceCreds: z.boolean(),
   minUserCnt: z.number().int().nonnegative(),

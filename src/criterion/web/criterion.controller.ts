@@ -21,7 +21,7 @@ export class CriterionController {
     return this.criterionFinder.findSoopCriteria();
   }
 
-  @Delete('/delete/:criterionId')
+  @Delete('/:criterionId')
   delete(@Param('criterionId') criterionId: string) {
     return this.criterionWriter.delete(criterionId);
   }

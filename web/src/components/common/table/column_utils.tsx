@@ -4,21 +4,6 @@ import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/date.ts';
 
-export function baseColumnDef<T>(
-  cid: string,
-  header: string | undefined = undefined,
-  className: string = '',
-): ColumnDef<T> {
-  if (!header) {
-    header = firstLetterUppercase(cid);
-  }
-  return {
-    accessorKey: cid,
-    header,
-    cell: ({ row }) => <div className={className}>{row.getValue(cid)}</div>,
-  };
-}
-
 export function sortableColumnDef<T>(cid: string, header: string | undefined = undefined): ColumnDef<T> {
   if (!header) {
     header = firstLetterUppercase(cid);

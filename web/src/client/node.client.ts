@@ -14,10 +14,10 @@ export async function fetchNodeGroups() {
 
 export async function createNode(append: NodeAppend) {
   const { method, headers, body } = getIngredients('POST', append);
-  const res = await request(`${configs.endpoint}/api/nodes`, {
-    method,
-    headers,
-    body,
-  });
+  const res = await request(`${configs.endpoint}/api/nodes`, { method, headers, body });
   return (await res.json()) as NodeDto;
+}
+
+export async function deleteNode(nodeId: string) {
+  await request(`${configs.endpoint}/api/nodes/${nodeId}`, { method: 'DELETE' });
 }

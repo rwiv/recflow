@@ -1,5 +1,6 @@
 import { flexRender, Table as TableType } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table.tsx';
+import { getStyleCell, getStyleHeader } from '@/common/style.ts';
 
 interface TableContentProps<T> {
   table: TableType<T>;
@@ -13,8 +14,9 @@ export function TableContent<T>({ table, columnLength }: TableContentProps<T>) {
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
+              const { cn, style } = getStyleHeader(header);
               return (
-                <TableHead key={header.id}>
+                <TableHead key={header.id} className={cn} css={style}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -28,11 +30,14 @@ export function TableContent<T>({ table, columnLength }: TableContentProps<T>) {
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
             <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+              {row.getVisibleCells().map((cell) => {
+                const { cn, style } = getStyleCell(cell);
+                return (
+                  <TableCell key={cell.id} className={cn} css={style}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           ))
         ) : (

@@ -1,4 +1,4 @@
-import { TableContent } from '@/components/channel/content/TableContent.tsx';
+import { ChannelTableContent } from '@/components/channel/content/ChannelTableContent.tsx';
 import { useEffect } from 'react';
 import { PageNavigation } from '@/components/channel/search/ChannelNavigation.tsx';
 import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
@@ -70,7 +70,7 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
         </div>
       </div>
       <div className="rounded-md border">
-        {pageResult?.channels && <TableContent channels={pageResult.channels} />}
+        {pageResult?.channels && <ChannelTableContent channels={pageResult.channels} />}
       </div>
       <div className="my-7">{pagination()}</div>
     </div>

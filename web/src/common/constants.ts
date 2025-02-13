@@ -1,7 +1,6 @@
 export const LIVES_QUERY_KEY = 'lives';
 export const CHANNELS_QUERY_KEY = 'channels';
 export const TAGS_QUERY_KEY = 'tags';
-export const SCHEDULE_QUERY_KEY = 'schedule';
 
 export const NODES_QUERY_KEY = 'nodes';
 export const NODE_GROUPS_QUERY_KEY = 'nodeGroups';

@@ -20,8 +20,7 @@ export async function deleteLive(recordId: string, cmd: ExitCmd) {
   const url = `${configs.endpoint}/api/lives`;
   const req = { recordId, cmd };
   const { method, headers, body } = getIngredients('DELETE', req);
-  const res = await request(url, { method, headers, body });
-  return (await res.json()) as LiveDto;
+  await request(url, { method, headers, body });
 }
 
 export async function isScheduled() {

@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { ChannelRow } from '@/components/channel/content/ChannelRow.tsx';
 import { ChannelDto } from '@/client/channel.types.ts';
 
-export function TableContent({ channels }: { channels: ChannelDto[] }) {
+export function ChannelTableContent({ channels }: { channels: ChannelDto[] }) {
   return (
     <Table>
       <TableHeader>

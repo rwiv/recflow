@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseFilters } from '@nestjs/common';
 import { NodeFinder } from '../service/node.finder.js';
 import { NodeWriter } from '../service/node.writer.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
@@ -25,5 +25,10 @@ export class NodeController {
   @Post('/')
   create(@Body() append: NodeAppend) {
     return this.writer.create(nodeAppend.parse(append), true);
+  }
+
+  @Delete('/:nodeId')
+  delete(@Param('nodeId') nodeId: string) {
+    return this.writer.delete(nodeId);
   }
 }

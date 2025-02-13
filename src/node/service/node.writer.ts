@@ -59,9 +59,7 @@ export class NodeWriter {
     }
     const states = await this.stateRepo.findByNodeId(id);
     return db.transaction(async (tx) => {
-      for (const state of states) {
-        await this.stateRepo.delete(state.id, tx);
-      }
+      await Promise.all(states.map((state) => this.stateRepo.delete(state.id, tx)));
       await this.nodeRepo.delete(id, tx);
     });
   }

@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { CriterionRepository } from '../storage/criterion.repository.js';
 import { CriterionMapper } from './criterion.mapper.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChzzkCriterionDto, PlatformCriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
+import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
+import { CriterionEnt } from '../storage/criterion.entity.schema.js';
+import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
 @Injectable()
 export class CriterionFinder {
@@ -16,16 +20,26 @@ export class CriterionFinder {
   async findAll(): Promise<PlatformCriterionDto[]> {
     const entities = await this.crRepo.findAll();
     const promises = entities.map(async (ent) => {
-      const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
-      if (platform.name === 'chzzk') {
-        return this.mapper.mapToChzzk({ ...ent, platform });
-      } else if (platform.name === 'soop') {
-        return this.mapper.mapToSoop({ ...ent, platform });
-      } else {
-        throw new ValidationError(`Invalid platform name: name=${platform.name}`);
-      }
+      return this.map(ent, await this.pfFinder.findByIdNotNull(ent.platformId));
     });
     return Promise.all(promises);
+  }
+
+  async findById(id: string, tx: Tx = db): Promise<PlatformCriterionDto | undefined> {
+    const ent = await this.crRepo.findById(id, tx);
+    if (!ent) return undefined;
+    const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
+    return this.map(ent, platform, tx);
+  }
+
+  private map(ent: CriterionEnt, platform: PlatformDto, tx: Tx = db): Promise<PlatformCriterionDto> {
+    if (platform.name === 'chzzk') {
+      return this.mapper.mapToChzzk({ ...ent, platform }, tx);
+    } else if (platform.name === 'soop') {
+      return this.mapper.mapToSoop({ ...ent, platform }, tx);
+    } else {
+      throw new EnumCheckError(`Invalid platform name: name=${platform.name}`);
+    }
   }
 
   async findChzzkCriteria(): Promise<ChzzkCriterionDto[]> {

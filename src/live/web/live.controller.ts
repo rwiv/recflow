@@ -13,7 +13,6 @@ import {
   liveDeleteRequest,
   LiveDeleteRequest,
 } from './live.web.schema.js';
-import { LivePeriodTaskManager } from '../task/live.task.manger.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -22,7 +21,6 @@ export class LiveController {
     private readonly liveService: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
     private readonly liveFinder: LiveFinder,
-    private readonly taskManager: LivePeriodTaskManager,
   ) {}
 
   @Get('/')
@@ -45,22 +43,6 @@ export class LiveController {
       withNodeStates: false,
     };
     return this.liveFinder.findAll(opt);
-  }
-
-  @Get('/schedule/stat')
-  async scheduled() {
-    const status = await this.taskManager.getRegisterTaskStatus();
-    return { status };
-  }
-
-  @Post('/schedule/start')
-  async startSchedule() {
-    await this.taskManager.insertRegisterTask(true);
-  }
-
-  @Post('/schedule/stop')
-  async stopSchedule() {
-    await this.taskManager.cancelRegisterTask();
   }
 
   @Delete('/purge')

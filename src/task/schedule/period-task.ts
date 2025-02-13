@@ -11,6 +11,8 @@ export type PeriodTaskStatus = z.infer<typeof periodTaskStatus>;
 const delayMsSchema = z.number().int().positive();
 
 export class PeriodTask {
+  public readonly taskName: string;
+
   private status: PeriodTaskStatus = 'inactive';
   private cancelFlag = false;
 
@@ -22,6 +24,7 @@ export class PeriodTask {
     if (!delayMsSchema.parse(delayMs)) {
       throw new ValidationError('delayMs must be a positive integer');
     }
+    this.taskName = task.name;
   }
 
   getStatus() {
@@ -29,7 +32,7 @@ export class PeriodTask {
   }
 
   async start() {
-    log.info(`PeriodTask started: name=${this.task.getName()}`);
+    log.info(`PeriodTask started: name=${this.task.name}`);
     this.status = 'active';
     while (true) {
       if (this.cancelFlag) {
@@ -43,7 +46,7 @@ export class PeriodTask {
       await delay(this.delayMs);
     }
     this.status = 'canceled';
-    log.info(`PeriodTask canceled: name=${this.task.getName()}`);
+    log.info(`PeriodTask canceled: name=${this.task.name}`);
   }
 
   cancel() {

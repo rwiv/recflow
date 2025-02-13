@@ -25,7 +25,8 @@ export class PlatformRepository {
       id: append.id ?? uuid(),
       createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(platformTable).values(platformEntAppendReq.parse(entReq)).returning());
+    const ent = await tx.insert(platformTable).values(platformEntAppendReq.parse(entReq)).returning();
+    return oneNotNull(ent);
   }
 
   async findAll(tx: Tx = db) {

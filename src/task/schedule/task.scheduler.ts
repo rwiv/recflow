@@ -11,16 +11,23 @@ export class TaskScheduler {
 
   constructor(private readonly eh: TaskErrorHandler) {}
 
+  allPeriodTasks() {
+    return Array.from(this.periodTaskMap.values());
+  }
+
   getPeriodTask(taskName: string) {
     return this.periodTaskMap.get(taskName);
   }
 
-  addPeriodTask(task: Task, delayMs: number) {
-    if (this.periodTaskMap.has(task.getName())) {
-      throw new ConflictError(`task already exists: taskName=${task.getName()}`);
+  addPeriodTask(task: Task, delayMs: number, withStart: boolean = false) {
+    if (this.periodTaskMap.has(task.name)) {
+      throw new ConflictError(`task already exists: taskName=${task.name}`);
     }
     const periodTask = new PeriodTask(task, delayMs, this.eh);
-    this.periodTaskMap.set(task.getName(), periodTask);
+    this.periodTaskMap.set(task.name, periodTask);
+    if (withStart) {
+      periodTask.start();
+    }
   }
 
   cancelPeriodTask(taskName: string) {
@@ -28,17 +35,5 @@ export class TaskScheduler {
     if (!periodTask) throw NotFoundError.from('PeriodTask', 'name', taskName);
     periodTask.cancel();
     this.periodTaskMap.delete(taskName);
-  }
-
-  runPeriodTasks() {
-    for (const periodTask of this.periodTaskMap.values()) {
-      periodTask.start();
-    }
-  }
-
-  clear() {
-    for (const taskName of this.periodTaskMap.keys()) {
-      this.cancelPeriodTask(taskName);
-    }
   }
 }

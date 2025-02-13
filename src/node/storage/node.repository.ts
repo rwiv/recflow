@@ -20,7 +20,8 @@ export class NodeRepository {
       isCordoned: append.isCordoned ?? false,
       createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(nodeTable).values(nodeEntAppendReq.parse(req)).returning());
+    const ent = await tx.insert(nodeTable).values(nodeEntAppendReq.parse(req)).returning();
+    return oneNotNull(ent);
   }
 
   async findByNodeTier(tier: number, tx: Tx = db): Promise<[NodeEnt, NodeGroupEnt][]> {

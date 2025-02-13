@@ -3,8 +3,7 @@ import { AppModule } from './app.module.js';
 import { ENV } from './common/config/config.module.js';
 import { Env } from './common/config/env.js';
 import { AppInitializer } from './common/module/initializer.js';
-import { TaskScheduler } from './task/schedule/task.scheduler.js';
-import { LivePeriodTaskManager } from './live/task/live.task.manger.js';
+import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,11 +18,8 @@ async function bootstrap() {
     await init.initProd();
   }
 
-  const liveTasks = app.get(LivePeriodTaskManager);
-  await liveTasks.initInject();
-
-  const scheduler = app.get(TaskScheduler);
-  scheduler.runPeriodTasks();
+  const liveTaskInit = app.get(LiveTaskInitializer);
+  await liveTaskInit.init();
 
   await app.listen(env.appPort);
 }

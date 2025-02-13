@@ -6,7 +6,6 @@ import { useTable } from '@/components/common/table/useTable.ts';
 import { LiveDto } from '@/client/live.types.ts';
 import { liveColumns } from '@/components/live/liveColumns.tsx';
 import { CommandTools } from '@/components/live/tools/CommandTools.tsx';
-import { ScheduleButton } from '@/components/live/tools/ScheduleButton.tsx';
 import { FilterInput } from '@/components/common/table/FilterInput.tsx';
 
 export function LiveTable({ data }: { data: LiveDto[] }) {
@@ -21,7 +20,6 @@ export function LiveTable({ data }: { data: LiveDto[] }) {
         </div>
         <div className="flex gap-2">
           <ColumnSelector table={table} />
-          <ScheduleButton />
         </div>
       </div>
       <div className="rounded-md border">

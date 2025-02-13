@@ -15,13 +15,14 @@ type LiveEntAppendRequest = z.infer<typeof liveEntAppendReq>;
 @Injectable()
 export class LiveRepository {
   async create(append: LiveEntAppend, tx: Tx = db) {
-    const ent: LiveEntAppendRequest = {
+    const req: LiveEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
       isDeleted: append.isDeleted ?? false,
       createdAt: append.createdAt ?? new Date(),
     };
-    return oneNotNull(await tx.insert(liveTable).values(liveEntAppendReq.parse(ent)).returning());
+    const ent = await tx.insert(liveTable).values(liveEntAppendReq.parse(req)).returning();
+    return oneNotNull(ent);
   }
 
   async delete(id: string, tx: Tx = db) {

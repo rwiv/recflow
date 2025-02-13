@@ -5,7 +5,7 @@ import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
 import { z } from 'zod';
 import { liveCriterionTable } from '../../infra/db/schema.js';
-import { oneNotNull } from '../../utils/list.js';
+import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
 
 const criterionEntAppendReq = criterionEnt.partial({ description: true, updatedAt: true });
@@ -37,11 +37,11 @@ export class CriterionRepository {
 
   async findById(id: string, tx: Tx = db) {
     const ent = await tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.id, id));
-    return oneNotNull(ent);
+    return oneNullable(ent);
   }
 
   async findByName(name: string, tx: Tx = db) {
     const ent = await tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.name, name));
-    return oneNotNull(ent);
+    return oneNullable(ent);
   }
 }

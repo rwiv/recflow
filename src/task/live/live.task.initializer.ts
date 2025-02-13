@@ -1,0 +1,34 @@
+import { Injectable } from '@nestjs/common';
+import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
+import { LiveCoordinator } from '../../live/registry/live.coordinator.js';
+import { LiveRefresher } from '../../live/access/live.refresher.js';
+import { TaskScheduler } from '../schedule/task.scheduler.js';
+import { LiveCleanupTask } from './tasks/live.cleanup-task.js';
+import {
+  DEFAULT_CLEANUP_CYCLE,
+  DEFAULT_REFRESH_CYCLE,
+  DEFAULT_REGISTER_CHECK_CYCLE,
+} from './spec/live.task.contants.js';
+import { LiveRefreshTask } from './tasks/live.refresh-task.js';
+import { LiveRegisterCheckTask } from './tasks/live.register-check.task.js';
+
+@Injectable()
+export class LiveTaskInitializer {
+  constructor(
+    private readonly crFinder: CriterionFinder,
+    private readonly liveCoordinator: LiveCoordinator,
+    private readonly liveRefresher: LiveRefresher,
+    private readonly scheduler: TaskScheduler,
+  ) {}
+
+  async init() {
+    const registerCheckTask = new LiveRegisterCheckTask(this.crFinder, this.liveCoordinator, this.scheduler);
+    this.scheduler.addPeriodTask(registerCheckTask, DEFAULT_REGISTER_CHECK_CYCLE, true);
+
+    const cleanupTask = new LiveCleanupTask(this.liveCoordinator);
+    this.scheduler.addPeriodTask(cleanupTask, DEFAULT_CLEANUP_CYCLE, true);
+
+    const refreshTask = new LiveRefreshTask(this.liveRefresher);
+    this.scheduler.addPeriodTask(refreshTask, DEFAULT_REFRESH_CYCLE, true);
+  }
+}

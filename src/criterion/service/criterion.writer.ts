@@ -16,6 +16,7 @@ import {
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { CriterionRuleFinder } from './criterion.rule.finder.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class CriterionWriter {
@@ -85,6 +86,16 @@ export class CriterionWriter {
         positiveCates: find(unitEntities, cateRule, true),
         negativeCates: find(unitEntities, cateRule, false),
       };
+    });
+  }
+
+  async delete(criterionId: string) {
+    const ent = await this.criterionRepo.findById(criterionId);
+    if (!ent) throw NotFoundError.from('Criterion', 'id', criterionId);
+    const units = await this.unitRepo.findByCriterionId(ent.id);
+    return db.transaction(async (tx) => {
+      await Promise.all(units.map((unit) => this.unitRepo.delete(unit.id, tx)));
+      return this.criterionRepo.delete(criterionId, tx);
     });
   }
 }

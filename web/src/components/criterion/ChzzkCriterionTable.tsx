@@ -5,9 +5,9 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
-import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
 import { ChzzkCriterionDto } from '@/client/criterion.schema.ts';
 import { chzzkCriterionColumns } from '@/components/criterion/chzzkCriterionColumns.tsx';
+import { CriterionCreateButton } from '@/components/criterion/CriterionCreateButton.tsx';
 
 export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
   const table = useTable(data, chzzkCriterionColumns);
@@ -17,7 +17,7 @@ export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
       <div className="flex items-center mb-4">
         <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
-          <NodeCreateButton />
+          <CriterionCreateButton />
         </div>
         <ColumnSelector table={table} />
       </div>

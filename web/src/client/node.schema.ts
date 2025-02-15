@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { platformDto, platformNameEnum } from '@/client/common.schema.ts';
+import { nonempty, uuid } from '@/common/common.schema.ts';
 
 export const nodeTypeNameEnum = z.enum(['worker', 'argo']);
 export type NodeTypeName = z.infer<typeof nodeTypeNameEnum>;
@@ -31,16 +32,16 @@ const nodeStateDto = z.object({
 export type NodeStateDto = z.infer<typeof nodeStateDto>;
 
 export const nodeDto = z.object({
-  id: z.string().length(32),
-  name: z.string().nonempty(),
-  endpoint: z.string().nonempty(),
+  id: uuid,
+  name: nonempty,
+  endpoint: nonempty,
   weight: z.coerce.number().nonnegative(),
   totalCapacity: z.coerce.number().nonnegative(),
   isCordoned: z.boolean(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
   type: nodeTypeDto,
-  groupId: z.string().length(32),
+  groupId: uuid,
   group: nodeGroupDto.optional(),
   states: z.array(nodeStateDto).optional(),
 });
@@ -59,6 +60,7 @@ export const nodeAppend = nodeDto
     updatedAt: true,
     group: true,
     states: true,
+    type: true,
   })
-  .extend({ capacities });
+  .extend({ capacities, typeName: nodeTypeNameEnum });
 export type NodeAppend = z.infer<typeof nodeAppend>;

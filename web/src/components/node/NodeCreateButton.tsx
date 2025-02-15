@@ -1,25 +1,24 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { FieldValues, Path, useForm, UseFormReturn } from 'react-hook-form';
 import { z, ZodError } from 'zod';
 import { Button } from '@/components/ui/button.tsx';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChangeEvent, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog.tsx';
-import { DialogClose } from '@radix-ui/react-dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
+import { ChangeEvent, ChangeEventHandler, useRef } from 'react';
+import { SelectItem } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { nodeAppend, NodeGroupDto } from '@/client/node.schema.ts';
+import { nodeAppend } from '@/client/node.schema.ts';
 import { createNode, fetchNodeGroups } from '@/client/node.client.ts';
+import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
+import { TextFormField } from '@/components/common/form/TextFormField.tsx';
+import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
+import { css, SerializedStyles } from '@emotion/react';
+import { firstLetterUppercase } from '@/common/utils.ts';
+import { CheckFormField } from '@/components/common/form/CheckFormField.tsx';
+import { PlatformName, platformNameEnum } from '@/client/common.schema.ts';
+import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 
 const FormSchema = nodeAppend.extend({
   typeName: z.string().nonempty(),
@@ -33,25 +32,6 @@ export function NodeCreateButton() {
     queryKey: [NODE_GROUPS_QUERY_KEY],
     queryFn: fetchNodeGroups,
   });
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="secondary">Add</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Add New Node</DialogTitle>
-          <DialogDescription>Click save when you're done.</DialogDescription>
-        </DialogHeader>
-        {nodeGroups && <CreateForm nodeGroups={nodeGroups} cb={() => closeBtnRef.current?.click()} />}
-        <DialogClose ref={closeBtnRef} />
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb: () => void }) {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -59,6 +39,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       name: '',
       endpoint: '',
       weight: '',
+      isCordoned: false,
       totalCapacity: '',
       groupId: '',
       typeName: '',
@@ -72,8 +53,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const res = await createNode(nodeAppend.parse(data));
-      console.log(res);
+      await createNode(nodeAppend.parse(data));
     } catch (e) {
       if (e instanceof ZodError) {
         for (const err of e.errors) {
@@ -84,10 +64,10 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       }
     }
     await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
-    cb();
+    closeBtnRef.current?.click();
   }
 
-  const onChangeCapacity = (e: ChangeEvent<HTMLInputElement>, platformName: string) => {
+  const onChangeCapacity = (e: ChangeEvent<HTMLInputElement>, platformName: PlatformName) => {
     const capacities = form.getValues('capacities');
     const capacity = capacities.find((c) => c.platformName === platformName);
     const rest = capacities.filter((c) => c.platformName !== platformName);
@@ -100,151 +80,81 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
     }
   };
 
+  if (!nodeGroups) return <Button variant="secondary">Loading...</Button>;
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="endpoint"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Endpoint</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Endpoint" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="weight"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Weight</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Weight" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="totalCapacity"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Total Capacity</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Total Capacity" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="groupId"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Group</FormLabel>
-              <Select onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Group" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {nodeGroups.map((group) => (
-                    <SelectItem key={group.id} value={group.id}>
-                      {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="typeName"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="worker">WORKER</SelectItem>
-                  <SelectItem value="argo">ARGO</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="capacities"
-          render={() => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Chzzk Capacity</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Chzzk Capacity" onChange={(e) => onChangeCapacity(e, 'chzzk')} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="capacities"
-          render={() => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Soop Capacity</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Soop Capacity" onChange={(e) => onChangeCapacity(e, 'soop')} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="capacities"
-          render={() => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Soop Capacity</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Twitch Capacity" onChange={(e) => onChangeCapacity(e, 'twitch')} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex flex-row justify-end mt-5">
-          <Button type="submit" className="px-7">
-            Save
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <DialogButton
+      contentCn="sm:max-w-md overflow-auto"
+      contentStyle={css({ maxHeight: '50rem' })}
+      label="Add"
+      title="Add New Node"
+      closeRef={closeBtnRef}
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <TextFormField form={form} name="name" />
+          <TextFormField form={form} name="endpoint" />
+          <TextFormField form={form} name="weight" />
+          <CheckFormField form={form} name="isCordoned" label="Cordoned" />
+          <TextFormField form={form} name="totalCapacity" label="Total Capacity" />
+          <SelectFormField form={form} name="groupId">
+            {nodeGroups.map((group) => (
+              <SelectItem key={group.id} value={group.id}>
+                {group.name}
+              </SelectItem>
+            ))}
+          </SelectFormField>
+          <SelectFormField form={form} name="typeName">
+            <SelectItem value="worker">WORKER</SelectItem>
+            <SelectItem value="argo">ARGO</SelectItem>
+          </SelectFormField>
+          {platformNameEnum.options.map((platformName, idx) => (
+            <CapacitiesField
+              key={idx}
+              form={form}
+              name="capacities"
+              label={`${firstLetterUppercase(platformName)} Capacity`}
+              onChange={(e) => onChangeCapacity(e, platformName)}
+            />
+          ))}
+          <FormSubmitButton />
+        </form>
+      </Form>
+    </DialogButton>
+  );
+}
+
+interface CapacitiesProps<T extends FieldValues> {
+  form: UseFormReturn<T>;
+  name: Path<T>;
+  label: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  className?: string;
+  style?: SerializedStyles;
+}
+
+export function CapacitiesField<T extends FieldValues>({
+  form,
+  name,
+  label,
+  onChange,
+  className,
+  style,
+}: CapacitiesProps<T>) {
+  style = style || formItemStyle;
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={() => (
+        <FormItem className={className} css={style}>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input onChange={onChange} />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 }

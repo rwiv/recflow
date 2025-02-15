@@ -3,6 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/date.ts';
+import { firstLetterUppercase } from '@/common/utils.ts';
 
 export function sortableColumnDef<T>(cid: string, header: string | undefined = undefined): ColumnDef<T> {
   if (!header) {
@@ -20,10 +21,6 @@ export function sortableColumnDef<T>(cid: string, header: string | undefined = u
     },
     cell: ({ row }) => <div>{row.getValue(cid)}</div>,
   };
-}
-
-function firstLetterUppercase(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): ColumnDef<T> {

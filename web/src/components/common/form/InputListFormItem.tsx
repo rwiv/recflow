@@ -5,18 +5,22 @@ import { formItemStyle } from '@/components/common/styles/form.ts';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
+import { SerializedStyles } from '@emotion/react';
 
 interface InputListFormItemProps<T extends FieldValues> {
   field: ControllerRenderProps<T>;
-  label: string;
   values: string[];
+  label?: string;
+  style?: SerializedStyles;
 }
 
 export function InputListFormItem<T extends FieldValues>({
   field,
   label,
   values,
+  style,
 }: InputListFormItemProps<T>) {
+  style = style || formItemStyle;
   const [input, setInput] = useState('');
   const addValue = () => {
     if (!input) return;
@@ -24,7 +28,7 @@ export function InputListFormItem<T extends FieldValues>({
     setInput('');
   };
   return (
-    <FormItem css={formItemStyle}>
+    <FormItem css={style}>
       <FormLabel>{label}</FormLabel>
       <FormControl>
         <div className="flex flex-col">

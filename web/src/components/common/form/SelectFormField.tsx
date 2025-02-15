@@ -3,12 +3,14 @@ import { SerializedStyles } from '@emotion/react';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { ReactNode } from 'react';
+import { firstLetterUppercase } from '@/common/utils.ts';
+import { formItemStyle } from '@/components/common/styles/form.ts';
 
 interface SelectFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   name: Path<T>;
-  label: string;
   children: ReactNode;
+  label?: string;
   className?: string;
   style?: SerializedStyles;
 }
@@ -21,6 +23,8 @@ export function SelectFormField<T extends FieldValues>({
   className,
   style,
 }: SelectFormFieldProps<T>) {
+  label = label || firstLetterUppercase(name);
+  style = style || formItemStyle;
   return (
     <FormField
       control={form.control}
@@ -31,7 +35,7 @@ export function SelectFormField<T extends FieldValues>({
           <Select onValueChange={field.onChange}>
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder="Select Platform" />
+                <SelectValue placeholder={`Select ${label}`} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>{children}</SelectContent>

@@ -17,7 +17,7 @@ export interface ChannelDto {
   followerCnt: number;
   platform: PlatformDto;
   priority: PriorityDto;
-  followed: boolean;
+  isFollowed: boolean;
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -28,7 +28,7 @@ export interface ChannelAppend {
   pid: string;
   platformName: PlatformName;
   priorityName: string;
-  followed: boolean;
+  isFollowed: boolean;
   description: string | null;
   tagNames: string[];
 }
@@ -37,7 +37,7 @@ export interface ChannelUpdate {
   id: string;
   form: {
     priorityName?: string;
-    followed?: boolean;
+    isFollowed?: boolean;
     description?: string | null;
   };
 }

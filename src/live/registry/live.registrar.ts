@@ -44,7 +44,7 @@ export class LiveRegistrar {
       const append: ChannelAppendWithInfo = {
         // TODO: update
         priorityName: CHANNEL_PRIORIES_VALUE_MAP.none,
-        followed: false,
+        isFollowed: false,
       };
       channel = await this.chWriter.createWithInfo(append, channelInfo);
     }

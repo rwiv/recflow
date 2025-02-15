@@ -20,8 +20,8 @@ export class ChannelUpdater {
     return this.update(update);
   }
 
-  async updateFollowed(id: string, followed: boolean) {
-    const update: ChannelEntUpdate = { id, form: { followed } };
+  async updateFollowed(id: string, isFollowed: boolean) {
+    const update: ChannelEntUpdate = { id, form: { isFollowed } };
     return this.update(update);
   }
 

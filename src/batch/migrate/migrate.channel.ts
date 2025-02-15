@@ -8,8 +8,9 @@ import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js'
 import { tagDto } from '../../channel/spec/tag.dto.schema.js';
 import { nonempty } from '../../common/data/common.schema.js';
 
-const fetchedChannel = channelDto.extend({
+const fetchedChannel = channelDto.omit({ isFollowed: true }).extend({
   id: nonempty,
+  followed: z.boolean(),
   platform: platformDto.extend({ id: nonempty }),
   priority: priorityDto.extend({ id: nonempty }),
   tags: z.array(tagDto.extend({ id: nonempty })).optional(),
@@ -32,6 +33,7 @@ export class ChannelBatchMigrator extends BatchMigrator {
     const req: ChannelAppend = {
       ...channel,
       id: undefined, // TODO: remove
+      isFollowed: channel.followed,
       platformName: channel.platform.name,
       priorityName: channel.priority.name,
       createdAt: new Date(channel.createdAt),

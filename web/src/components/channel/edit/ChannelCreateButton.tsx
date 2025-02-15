@@ -33,7 +33,7 @@ const FormSchema = z.object({
   platformName: platformNameEnum,
   pid: nonempty,
   priorityName: nonempty,
-  followed: z.boolean(),
+  isFollowed: z.boolean(),
   description: z.string(),
   tagNames: z.array(nonempty),
 });
@@ -48,7 +48,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       platformName: 'chzzk',
       pid: '',
       priorityName: 'none',
-      followed: false,
+      isFollowed: false,
       description: '',
       tagNames: [],
     },

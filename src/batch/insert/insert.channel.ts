@@ -14,7 +14,7 @@ export class ChannelBatchInserter {
         pid,
         platformName: req.platform,
         priorityName: req.priority,
-        followed: false,
+        isFollowed: false,
         description: null,
         tagNames: req.tagNames.filter((t: string) => t.length > 0),
       };

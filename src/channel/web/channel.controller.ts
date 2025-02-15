@@ -81,10 +81,10 @@ export class ChannelController {
     return this.chUpdater.updatePriority(update.id, notNull(update.form.priorityName));
   }
 
-  @Patch('/followed')
+  @Patch('/isFollowed')
   patchFollowed(@Body() req: ChannelUpdate) {
     const update = channelUpdate.parse(req);
-    return this.chUpdater.updateFollowed(update.id, notNull(update.form?.followed));
+    return this.chUpdater.updateFollowed(update.id, notNull(update.form?.isFollowed));
   }
 
   @Patch('/description')

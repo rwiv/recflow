@@ -12,7 +12,7 @@ export function mockChannel(
     profileImgUrl: 'http://example.com',
     followerCnt,
     priorityName,
-    followed: false,
+    isFollowed: false,
     description: null,
   };
   return channelAppend.parse(append);

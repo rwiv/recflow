@@ -27,9 +27,9 @@ export async function updateChannelPriority(id: string, priorityName: string) {
   return (await res.json()) as ChannelDto;
 }
 
-export async function updateChannelFollowed(id: string, followed: boolean) {
-  const url = `${configs.endpoint}/api/channels/followed`;
-  const req: ChannelUpdate = { id, form: { followed } };
+export async function updateChannelFollowed(id: string, isFollowed: boolean) {
+  const url = `${configs.endpoint}/api/channels/isFollowed`;
+  const req: ChannelUpdate = { id, form: { isFollowed } };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
   return (await res.json()) as ChannelDto;

@@ -40,7 +40,7 @@ export class ChannelQueryRepository {
   }
 
   async findByFollowedFlag(
-    followed: boolean,
+    isFollowed: boolean,
     platformName: PlatformName,
     tx: Tx = db,
   ): Promise<ChannelEnt[]> {
@@ -48,7 +48,7 @@ export class ChannelQueryRepository {
       .select()
       .from(channelTable)
       .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
-      .where(and(eq(channelTable.followed, followed), eq(platformTable.name, platformName)));
+      .where(and(eq(channelTable.isFollowed, isFollowed), eq(platformTable.name, platformName)));
     return rows.map((row) => row.channel);
   }
 

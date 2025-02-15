@@ -25,7 +25,7 @@ export function ChannelActions({ channel }: { channel: ChannelDto }) {
   const deleteRef = useRef<HTMLButtonElement>(null);
 
   const updateFollowed = async () => {
-    await updateChannelFollowed(channel.id, !channel.followed);
+    await updateChannelFollowed(channel.id, !channel.isFollowed);
     await refresh();
   };
 
@@ -53,7 +53,7 @@ export function ChannelActions({ channel }: { channel: ChannelDto }) {
           <DropdownMenuItem onClick={() => attachRef.current?.click()}>Attach</DropdownMenuItem>
           <DropdownMenuItem onClick={() => updateRef.current?.click()}>Update</DropdownMenuItem>
           <DropdownMenuItem onClick={() => updateFollowed()}>
-            {channel.followed ? 'Unfollow' : 'Follow'}
+            {channel.isFollowed ? 'Unfollow' : 'Follow'}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => deleteRef.current?.click()}>Delete</DropdownMenuItem>
         </DropdownMenuContent>

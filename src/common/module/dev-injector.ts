@@ -73,8 +73,8 @@ export class DevInitInjector {
         platformName: info.platform,
         // priorityName: randomElem(CHANNEL_PRIORITIES),
         priorityName: 'skip',
-        // followed: randomElem([true, false] as const),
-        followed: false,
+        // isFollowed: randomElem([true, false] as const),
+        isFollowed: false,
         description: null,
       };
       await this.channelWriter.createWithTagNames(

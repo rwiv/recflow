@@ -56,7 +56,7 @@ export const channelTable = pgTable(
     priorityId: uuid('priority_id')
       .notNull()
       .references(() => channelPriorityTable.id),
-    followed: boolean().notNull(),
+    isFollowed: boolean('is_followed').notNull(),
     description: text(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),

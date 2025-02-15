@@ -50,7 +50,7 @@ export function mockChannel(): ChannelDto {
       createdAt: faker.date.anytime(),
       updatedAt: faker.date.anytime(),
     },
-    followed: randomElem([true, false]),
+    isFollowed: randomElem([true, false]),
     description: faker.lorem.sentence(),
     createdAt: faker.date.anytime(),
     updatedAt: faker.date.anytime(),

@@ -24,7 +24,7 @@ export type ChannelDto = z.infer<typeof channelDto>;
 //   username: string;
 //   profileImgUrl: string | null;
 //   followerCnt: number;
-//   followed: boolean;
+//   isFollowed: boolean;
 //   description: string | null;
 //   createdAt: Date;
 //   updatedAt: Date;
@@ -44,7 +44,7 @@ export const channelAppendWithFetch = channelAppend
     pid: true,
     platformName: true,
     priorityName: true,
-    followed: true,
+    isFollowed: true,
     description: true,
   })
   .extend({
@@ -54,7 +54,7 @@ export type ChannelAppendWithFetch = z.infer<typeof channelAppendWithFetch>;
 
 export const channelAppendWithInfo = channelAppendWithFetch.pick({
   priorityName: true,
-  followed: true,
+  isFollowed: true,
   description: true,
   tagNames: true,
 });
@@ -62,7 +62,7 @@ export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
 
 export const channelUpdateForm = channelEntUpdateForm
   .pick({
-    followed: true,
+    isFollowed: true,
     description: true,
   })
   .extend({

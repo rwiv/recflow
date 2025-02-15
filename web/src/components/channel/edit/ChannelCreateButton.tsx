@@ -1,14 +1,4 @@
 import { useRef, useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { css, SerializedStyles } from '@emotion/react';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
@@ -16,45 +6,37 @@ import { useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { TagCreateSelect } from '@/components/channel/edit/TagCreateSelect.tsx';
-import { Input } from '@/components/ui/input.tsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
+import { SelectItem } from '@/components/ui/select.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { Textarea } from '@/components/ui/textarea.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { ChannelAppend } from '@/client/channel.types.ts';
 import { platformNameEnum } from '@/client/common.schema.ts';
-
-const FormSchema = z.object({
-  platformName: platformNameEnum,
-  pid: z.string().nonempty(),
-  priorityName: z.string().nonempty(),
-  followed: z.boolean(),
-  description: z.string(),
-  tagNames: z.array(z.string()),
-});
+import { nonempty } from '@/common/common.schema.ts';
+import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
+import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
+import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
+import { TextFormField } from '@/components/common/form/TextFormField.tsx';
+import { TextAreaFormField } from '@/components/common/form/TextAreaFormField.tsx';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="secondary" className="ml-1" css={css({ width: '5rem' })}>
-          Add
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Add New Channel</DialogTitle>
-          <DialogDescription>Click save when you're done.</DialogDescription>
-        </DialogHeader>
-        <CreateForm cb={() => closeBtnRef?.current?.click()} />
-        <DialogClose ref={closeBtnRef} />
-      </DialogContent>
-    </Dialog>
+    <DialogButton label="Add" title="Add New Node" closeRef={closeBtnRef}>
+      <CreateForm cb={() => closeBtnRef.current?.click()} />
+    </DialogButton>
   );
 }
+
+const FormSchema = z.object({
+  platformName: platformNameEnum,
+  pid: nonempty,
+  priorityName: nonempty,
+  followed: z.boolean(),
+  description: z.string(),
+  tagNames: z.array(nonempty),
+});
 
 export function CreateForm({ cb }: { cb: () => void }) {
   const queryClient = useQueryClient();
@@ -94,88 +76,26 @@ export function CreateForm({ cb }: { cb: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="priorityName"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Priority</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Priority" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="must">MUST</SelectItem>
-                  <SelectItem value="should">SHOULD</SelectItem>
-                  <SelectItem value="may">MAY</SelectItem>
-                  <SelectItem value="review">REVIEW</SelectItem>
-                  <SelectItem value="skip">SKIP</SelectItem>
-                  <SelectItem value="none">NONE</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="platformName"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Platform</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="chzzk">CHZZK</SelectItem>
-                  <SelectItem value="soop">SOOP</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="pid"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>UID</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter Channel ID..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
+        <SelectFormField form={form} name="priorityName" label="Priority" defaultValue="none">
+          <SelectItem value="must">MUST</SelectItem>
+          <SelectItem value="should">SHOULD</SelectItem>
+          <SelectItem value="may">MAY</SelectItem>
+          <SelectItem value="review">REVIEW</SelectItem>
+          <SelectItem value="skip">SKIP</SelectItem>
+          <SelectItem value="none">NONE</SelectItem>
+        </SelectFormField>
+        <SelectFormField form={form} name="platformName" label="Platform">
+          <SelectItem value="chzzk">CHZZK</SelectItem>
+          <SelectItem value="soop">SOOP</SelectItem>
+        </SelectFormField>
+        <TextFormField form={form} name="pid" label="Channel UID" />
+        <TextAreaFormField
+          form={form}
           name="description"
-          render={({ field }) => (
-            <FormItem css={formItemStyle}>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Write a description about channel..."
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          placeholder="Write a description about channel..."
         />
         <TagSelectField form={form} style={formItemStyle} />
-        <div className="flex flex-row justify-end mt-5">
-          <Button type="submit" className="px-7">
-            Save
-          </Button>
-        </div>
+        <FormSubmitButton />
       </form>
     </Form>
   );

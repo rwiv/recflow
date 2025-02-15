@@ -24,6 +24,7 @@ export function TextFormField<T extends FieldValues>({
 }: TextFormFieldProps<T>) {
   label = label || firstLetterUppercase(name);
   style = style || formItemStyle;
+  placeholder = placeholder || `Enter ${label}...`;
   return (
     <FormField
       control={form.control}

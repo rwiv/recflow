@@ -5,7 +5,7 @@ import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { LiveDto } from '@/client/live.types.ts';
 import { liveColumns } from '@/components/live/liveColumns.tsx';
-import { CommandTools } from '@/components/live/tools/CommandTools.tsx';
+import { CommandTools } from '@/components/live/CommandTools.tsx';
 import { FilterInput } from '@/components/common/table/FilterInput.tsx';
 
 export function LiveTable({ data }: { data: LiveDto[] }) {

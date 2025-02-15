@@ -1,24 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button.tsx';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
+import { Form } from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { ReactNode, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog.tsx';
-import { DialogClose } from '@radix-ui/react-dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
+import { SelectItem } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { updateChannelPriority } from '@/client/channel.client.ts';
 import { ChannelDto } from '@/client/channel.types.ts';
+import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
+import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
+import { DialogBase } from '@/components/common/layout/DialogBase.tsx';
 
 const FormSchema = z.object({
   priority: z.string().nonempty(),
@@ -27,17 +20,9 @@ const FormSchema = z.object({
 export function PriorityUpdateDialog({ channel, children }: { channel: ChannelDto; children: ReactNode }) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Update Channel Priority</DialogTitle>
-          <DialogDescription>Click save when you're done.</DialogDescription>
-        </DialogHeader>
-        <CreateForm channel={channel} cb={() => closeBtnRef?.current?.click()} />
-        <DialogClose ref={closeBtnRef} />
-      </DialogContent>
-    </Dialog>
+    <DialogBase title="Update Channel Priority" closeRef={closeBtnRef} triggerNode={children}>
+      <CreateForm channel={channel} cb={() => closeBtnRef?.current?.click()} />
+    </DialogBase>
   );
 }
 
@@ -62,36 +47,19 @@ function CreateForm({ channel, cb }: { channel: ChannelDto; cb: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
+        <SelectFormField
+          form={form}
           name="priority"
-          render={({ field }) => (
-            <FormItem css={css({ marginTop: '0.4rem', marginBottom: '2rem' })}>
-              <FormLabel>Priority</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Priority" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="must">MUST</SelectItem>
-                  <SelectItem value="should">SHOULD</SelectItem>
-                  <SelectItem value="may">MAY</SelectItem>
-                  <SelectItem value="review">REVIEW</SelectItem>
-                  <SelectItem value="skip">SKIP</SelectItem>
-                  <SelectItem value="none">NONE</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex flex-row justify-end mt-5">
-          <Button type="submit" className="px-7">
-            Save
-          </Button>
-        </div>
+          style={css({ marginTop: '0.4rem', marginBottom: '2rem' })}
+        >
+          <SelectItem value="must">MUST</SelectItem>
+          <SelectItem value="should">SHOULD</SelectItem>
+          <SelectItem value="may">MAY</SelectItem>
+          <SelectItem value="review">REVIEW</SelectItem>
+          <SelectItem value="skip">SKIP</SelectItem>
+          <SelectItem value="none">NONE</SelectItem>
+        </SelectFormField>
+        <FormSubmitButton />
       </form>
     </Form>
   );

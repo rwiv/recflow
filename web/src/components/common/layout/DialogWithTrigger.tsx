@@ -1,43 +1,31 @@
 import { ReactNode, RefObject } from 'react';
-import { Button } from '@/components/ui/button.tsx';
 import { SerializedStyles } from '@emotion/react';
 import { DialogBase } from '@/components/common/layout/DialogBase.tsx';
 
 interface DialogButtonProps {
-  label: string;
   title: string;
   closeRef: RefObject<HTMLButtonElement>;
+  triggerRef: RefObject<HTMLButtonElement>;
   children: ReactNode;
   description?: string;
-  buttonCn?: string;
-  buttonStyle?: SerializedStyles;
-  buttonVariant?: 'link' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | null;
   contentCn?: string;
   contentStyle?: SerializedStyles;
 }
 
-export function DialogButton({
-  label,
+export function DialogWithTrigger({
   title,
   closeRef,
+  triggerRef,
   children,
   description,
-  buttonVariant,
-  buttonCn,
-  buttonStyle,
   contentCn,
   contentStyle,
 }: DialogButtonProps) {
-  buttonVariant = buttonVariant || 'secondary';
   return (
     <DialogBase
       title={title}
       closeRef={closeRef}
-      triggerNode={
-        <Button variant={buttonVariant} className={buttonCn} css={buttonStyle}>
-          {label}
-        </Button>
-      }
+      triggerNode={<button ref={triggerRef} />}
       description={description}
       contentCn={contentCn}
       contentStyle={contentStyle}

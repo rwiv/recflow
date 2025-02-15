@@ -2,7 +2,7 @@ import { Table } from '@tanstack/react-table';
 import { LiveDto } from '@/client/live.types.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/live.client.ts';
-import { LiveCreateButton } from '@/components/live/tools/LiveCreateButton.tsx';
+import { LiveCreateButton } from '@/components/live/LiveCreateButton.tsx';
 import { ReactNode } from 'react';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { Button } from '@/components/ui/button.tsx';

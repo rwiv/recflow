@@ -1,35 +1,30 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { SerializedStyles } from '@emotion/react';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
-import { ReactNode } from 'react';
+import { SerializedStyles } from '@emotion/react';
 import { firstLetterUppercase } from '@/common/utils.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
+import { Textarea } from '@/components/ui/textarea.tsx';
 
-interface SelectFormFieldProps<T extends FieldValues> {
+interface TextFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   name: Path<T>;
-  children: ReactNode;
   label?: string;
   placeholder?: string;
   className?: string;
   style?: SerializedStyles;
-  defaultValue?: string;
 }
 
-export function SelectFormField<T extends FieldValues>({
+export function TextAreaFormField<T extends FieldValues>({
   form,
   name,
   label,
   placeholder,
-  children,
   className,
   style,
-  defaultValue,
-}: SelectFormFieldProps<T>) {
+}: TextFormFieldProps<T>) {
   label = label || firstLetterUppercase(name);
   style = style || formItemStyle;
-  placeholder = placeholder || `Select a ${label}...`;
+  placeholder = placeholder || `Write about ${label}...`;
   return (
     <FormField
       control={form.control}
@@ -37,14 +32,9 @@ export function SelectFormField<T extends FieldValues>({
       render={({ field }) => (
         <FormItem className={className} css={style}>
           <FormLabel>{label}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={defaultValue ?? field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder={<span className="text-muted-foreground">{placeholder}</span>} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>{children}</SelectContent>
-          </Select>
+          <FormControl>
+            <Textarea placeholder={placeholder} className="resize-none" {...field} />
+          </FormControl>
           <FormMessage />
         </FormItem>
       )}

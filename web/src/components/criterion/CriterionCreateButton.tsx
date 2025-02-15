@@ -1,13 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z, ZodError } from 'zod';
-import { Button } from '@/components/ui/button.tsx';
 import { Form, FormField } from '@/components/ui/form.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { SelectItem } from '@/components/ui/select.tsx';
 import { CHZZK_CRITERIA_QUERY_KEY, PLATFORMS_QUERY_KEY } from '@/common/constants.ts';
-import { formItemStyle } from '@/components/common/styles/form.ts';
 import { fetchPlatforms } from '@/client/platform.client.ts';
 import { chzzkCriterionAppend } from '@/client/criterion.schema.ts';
 import { nonempty } from '@/common/common.schema.ts';
@@ -19,6 +17,7 @@ import { createChzzkCriterion } from '@/client/criterion.client.ts';
 import { InputListFormItem } from '@/components/common/form/InputListFormItem.tsx';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
+import { PlatformDto } from '@/client/common.schema.ts';
 
 interface Unit {
   name:
@@ -47,13 +46,28 @@ const formSchema = chzzkCriterionAppend.extend({
 });
 
 export function CriterionCreateButton() {
-  const queryClient = useQueryClient();
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   const { data: platforms } = useQuery({
     queryKey: [PLATFORMS_QUERY_KEY],
     queryFn: fetchPlatforms,
   });
+
+  return (
+    <DialogButton
+      contentCn="sm:max-w-lg overflow-auto"
+      contentStyle={css({ maxHeight: '50rem' })}
+      label="Add"
+      title="Add New Chzzk Criterion"
+      closeRef={closeBtnRef}
+    >
+      {platforms && <CreateForm platforms={platforms} cb={() => closeBtnRef.current?.click()} />}
+    </DialogButton>
+  );
+}
+
+export function CreateForm({ platforms, cb }: { platforms: PlatformDto[]; cb: () => void }) {
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -91,46 +105,36 @@ export function CriterionCreateButton() {
       }
     }
     await queryClient.invalidateQueries({ queryKey: [CHZZK_CRITERIA_QUERY_KEY] });
-    closeBtnRef.current?.click();
+    cb();
   }
 
-  if (!platforms) return <Button variant="secondary">Loading...</Button>;
-
   return (
-    <DialogButton
-      contentCn="sm:max-w-md overflow-auto"
-      contentStyle={css({ maxHeight: '50rem' })}
-      label="Add"
-      title="Add New Node"
-      closeRef={closeBtnRef}
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <TextFormField form={form} name="name" label="Name" style={formItemStyle} />
-          <CheckFormField form={form} name="enforceCreds" label="Enforce Credentials" />
-          <TextFormField form={form} name="description" label="Description" style={formItemStyle} />
-          <TextFormField form={form} name="minUserCnt" label="Minimum User Count" style={formItemStyle} />
-          <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" style={formItemStyle} />
-          <SelectFormField form={form} name="platformId">
-            {platforms.map((platform) => (
-              <SelectItem key={platform.id} value={platform.id}>
-                {platform.name}
-              </SelectItem>
-            ))}
-          </SelectFormField>
-          {unitReqs.map((unit, idx) => (
-            <FormField
-              key={idx}
-              control={form.control}
-              name={unit.name}
-              render={({ field }) => (
-                <InputListFormItem field={field} label={unit.label} values={form.getValues(unit.name)} />
-              )}
-            />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <TextFormField form={form} name="name" label="Name" />
+        <CheckFormField form={form} name="enforceCreds" label="Enforce Credentials" />
+        <TextFormField form={form} name="description" label="Description" />
+        <TextFormField form={form} name="minUserCnt" label="Minimum User Count" />
+        <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" />
+        <SelectFormField form={form} name="platformId">
+          {platforms.map((platform) => (
+            <SelectItem key={platform.id} value={platform.id}>
+              {platform.name}
+            </SelectItem>
           ))}
-          <FormSubmitButton />
-        </form>
-      </Form>
-    </DialogButton>
+        </SelectFormField>
+        {unitReqs.map((unit, idx) => (
+          <FormField
+            key={idx}
+            control={form.control}
+            name={unit.name}
+            render={({ field }) => (
+              <InputListFormItem field={field} label={unit.label} values={form.getValues(unit.name)} />
+            )}
+          />
+        ))}
+        <FormSubmitButton />
+      </form>
+    </Form>
   );
 }

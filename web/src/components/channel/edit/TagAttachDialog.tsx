@@ -1,26 +1,18 @@
 import { RefObject, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog.tsx';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { Button } from '@/components/ui/button.tsx';
 import { TagAttachSelect } from '@/components/channel/edit/TagAttachSelect.tsx';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { css } from '@emotion/react';
 import { attachTag } from '@/client/tag.client.ts';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { ChannelDto } from '@/client/channel.types.ts';
+import { DialogWithTrigger } from '@/components/common/layout/DialogWithTrigger.tsx';
+import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 
 interface TagAttachDialogProps {
   channel: ChannelDto;
@@ -34,19 +26,9 @@ const FormSchema = z.object({
 export function TagAttachDialog({ channel, triggerRef }: TagAttachDialogProps) {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button ref={triggerRef} />
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Attach Tag</DialogTitle>
-          <DialogDescription>Click save when you're done.</DialogDescription>
-        </DialogHeader>
-        <AttachForm channel={channel} cb={() => closeBtnRef.current?.click()} />
-        <DialogClose ref={closeBtnRef} />
-      </DialogContent>
-    </Dialog>
+    <DialogWithTrigger closeRef={closeBtnRef} triggerRef={triggerRef} title="Attach Tag">
+      <AttachForm channel={channel} cb={() => closeBtnRef.current?.click()} />
+    </DialogWithTrigger>
   );
 }
 
@@ -94,11 +76,7 @@ export function AttachForm({ channel, cb }: { channel: ChannelDto; cb: () => voi
             </FormItem>
           )}
         />
-        <div className="flex flex-row justify-end mt-5">
-          <Button type="submit" className="px-7">
-            Save
-          </Button>
-        </div>
+        <FormSubmitButton />
       </form>
     </Form>
   );

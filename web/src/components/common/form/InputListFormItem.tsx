@@ -11,12 +11,14 @@ interface InputListFormItemProps<T extends FieldValues> {
   field: ControllerRenderProps<T>;
   values: string[];
   label?: string;
+  placeholder?: string;
   style?: SerializedStyles;
 }
 
 export function InputListFormItem<T extends FieldValues>({
   field,
   label,
+  placeholder,
   values,
   style,
 }: InputListFormItemProps<T>) {
@@ -33,7 +35,7 @@ export function InputListFormItem<T extends FieldValues>({
       <FormControl>
         <div className="flex flex-col">
           <div className="flex flex-row space-x-2">
-            <Input value={input} onChange={(ev) => setInput(ev.target.value)} />
+            <Input placeholder={placeholder} value={input} onChange={(ev) => setInput(ev.target.value)} />
             <Button type="button" variant="outline" onClick={() => addValue()}>
               Add
             </Button>

@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Task } from '../spec/task.interface.js';
-import { PeriodTask } from './period-task.js';
+import { PeriodTask, PeriodTaskStatus } from './period-task.js';
 import { TaskErrorHandler } from './task.error-handler.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+
+export interface TaskStatus {
+  name: string;
+  delayMs: number;
+  status: PeriodTaskStatus;
+  promise: string;
+  executionCnt: number;
+}
 
 @Injectable()
 export class TaskScheduler {
@@ -11,12 +19,14 @@ export class TaskScheduler {
 
   constructor(private readonly eh: TaskErrorHandler) {}
 
-  allPeriodTasks() {
-    return Array.from(this.periodTaskMap.values());
+  allPeriodTaskStats() {
+    return Array.from(this.periodTaskMap.values()).map((t) => this.toTaskStatus(t));
   }
 
-  getPeriodTask(taskName: string) {
-    return this.periodTaskMap.get(taskName);
+  getPeriodTaskStatus(taskName: string) {
+    const periodTask = this.periodTaskMap.get(taskName);
+    if (!periodTask) return undefined;
+    return this.toTaskStatus(periodTask);
   }
 
   addPeriodTask(task: Task, delayMs: number, withStart: boolean = false) {
@@ -35,5 +45,15 @@ export class TaskScheduler {
     if (!periodTask) throw NotFoundError.from('PeriodTask', 'name', taskName);
     periodTask.cancel();
     this.periodTaskMap.delete(taskName);
+  }
+
+  private toTaskStatus(t: PeriodTask): TaskStatus {
+    return {
+      name: t.taskName,
+      delayMs: t.delayMs,
+      status: t.getStatus(),
+      promise: t.getPromiseState(),
+      executionCnt: t.executionCnt,
+    };
   }
 }

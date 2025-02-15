@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { NodeDto } from '@/client/node.schema.ts';
-import { NodeActions } from '@/components/node/NodeActions.tsx';
+import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 
 export const nameCid = 'name';
 export const weightCid = 'weight';
@@ -73,20 +73,8 @@ const cordonedColumn: ColumnDef<NodeDto> = {
   meta: { header: { width: '10rem' } },
 };
 
-const actionColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'actions',
-  header: () => <div className="justify-self-end mr-6">Actions</div>,
-  cell: ({ row }) => {
-    return (
-      <div className="justify-self-end mr-8">
-        <NodeActions node={row.original} />
-      </div>
-    );
-  },
-  meta: { header: { width: '10rem' } },
-};
-
 export const nodeColumns: ColumnDef<NodeDto>[] = [
+  createSelectColumn('select'),
   nameColumn,
   groupColumn,
   nodeTypeColumn,
@@ -94,5 +82,4 @@ export const nodeColumns: ColumnDef<NodeDto>[] = [
   chzzkColumn,
   soopColumn,
   cordonedColumn,
-  actionColumn,
 ];

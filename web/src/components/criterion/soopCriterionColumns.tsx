@@ -1,6 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { SoopCriterionDto } from '@/client/criterion.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
+import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 
 const nameColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'name',
@@ -51,11 +52,12 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<SoopCriterio
 }
 
 export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
+  createSelectColumn('select'),
   nameColumn,
   descriptionColumn,
   enforceCredsColumn,
   minUserCntColumn,
   minFollowCntColumn,
   createUnitColumn('positiveCates', 'p_cates'),
-  createUnitColumn('positiveCates', 'n_cates'),
+  createUnitColumn('negativeCates', 'n_cates'),
 ];

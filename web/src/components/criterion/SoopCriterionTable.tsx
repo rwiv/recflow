@@ -8,9 +8,27 @@ import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
 import { SoopCriterionDto } from '@/client/criterion.schema.ts';
 import { soopCriterionColumns } from '@/components/criterion/soopCriterionColumns.tsx';
 import { SoopCriterionCreateButton } from '@/components/criterion/SoopCriterionCreateButton.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import { deleteCriterion } from '@/client/criterion.client.ts';
+import { useQueryClient } from '@tanstack/react-query';
+import { SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 
 export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
+  const queryClient = useQueryClient();
   const table = useTable(data, soopCriterionColumns);
+
+  const onDelete = async () => {
+    const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
+    table.toggleAllPageRowsSelected(false);
+    for (const criterion of checked) {
+      try {
+        await deleteCriterion(criterion.id);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    await queryClient.invalidateQueries({ queryKey: [SOOP_CRITERIA_QUERY_KEY] });
+  };
 
   return (
     <div className="w-full">
@@ -18,6 +36,9 @@ export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
         <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
           <SoopCriterionCreateButton />
+          <Button variant="secondary" onClick={onDelete}>
+            Delete
+          </Button>
         </div>
         <ColumnSelector table={table} />
       </div>

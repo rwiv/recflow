@@ -1,6 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { ChzzkCriterionDto } from '@/client/criterion.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
+import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 
 const nameColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'name',
@@ -57,6 +58,7 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<ChzzkCriteri
 }
 
 export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
+  createSelectColumn('select'),
   nameColumn,
   descriptionColumn,
   enforceCredsColumn,

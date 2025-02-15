@@ -19,20 +19,19 @@ export class LiveRegisterCheckTask implements Task {
     const criteria = await this.crFinder.findAll();
     for (const cr of criteria) {
       const taskName = `${liveTaskName.LIVE_REGISTER}_${cr.name}`;
-      const existing = this.scheduler.getPeriodTask(taskName);
-      if (!existing) {
-        const newTask = new LiveRegisterTask(cr, this.liveCoordinator);
+      if (!this.scheduler.getPeriodTaskStatus(taskName)) {
+        const newTask = new LiveRegisterTask(cr.id, cr.name, this.crFinder, this.liveCoordinator);
         this.scheduler.addPeriodTask(newTask, DEFAULT_REGISTER_CYCLE, true);
       }
     }
 
-    const existingRegisterPeriodTasks = this.scheduler.allPeriodTasks().filter((t) => {
-      return t.taskName.startsWith(liveTaskName.LIVE_REGISTER);
+    const existingRegisterPeriodTasks = this.scheduler.allPeriodTaskStats().filter((t) => {
+      return t.name.startsWith(liveTaskName.LIVE_REGISTER);
     });
     for (const existing of existingRegisterPeriodTasks) {
-      const crName = existing.taskName.replace(`${liveTaskName.LIVE_REGISTER}_`, '');
+      const crName = existing.name.replace(`${liveTaskName.LIVE_REGISTER}_`, '');
       if (!criteria.find((c) => c.name === crName)) {
-        this.scheduler.cancelPeriodTask(existing.taskName);
+        this.scheduler.cancelPeriodTask(existing.name);
       }
     }
   }

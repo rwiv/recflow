@@ -94,15 +94,20 @@ export function CreateForm({ cb }: { cb: () => void }) {
         <TextFormField form={form} name="name" label="Name" />
         <CheckFormField form={form} name="enforceCreds" label="Enforce Credentials" />
         <TextFormField form={form} name="description" label="Description" />
-        <TextFormField form={form} name="minUserCnt" label="Minimum User Count" />
-        <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" />
+        <TextFormField form={form} name="minUserCnt" label="Minimum User Count" placeholder="0" />
+        <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" placeholder="0" />
         {unitReqs.map((unit, idx) => (
           <FormField
             key={idx}
             control={form.control}
             name={unit.name}
             render={({ field }) => (
-              <InputListFormItem field={field} label={unit.label} values={form.getValues(unit.name)} />
+              <InputListFormItem
+                field={field}
+                label={unit.label}
+                values={form.getValues(unit.name)}
+                placeholder="Add query conditions..."
+              />
             )}
           />
         ))}

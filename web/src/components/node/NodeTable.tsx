@@ -7,9 +7,27 @@ import { useTable } from '@/components/common/table/useTable.ts';
 import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
 import { NodeDto } from '@/client/node.schema.ts';
 import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
+import { useQueryClient } from '@tanstack/react-query';
+import { NODES_QUERY_KEY } from '@/common/constants.ts';
+import { deleteNode } from '@/client/node.client.ts';
+import { Button } from '@/components/ui/button.tsx';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
+  const queryClient = useQueryClient();
   const table = useTable(data, nodeColumns);
+
+  const onDelete = async () => {
+    const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
+    table.toggleAllPageRowsSelected(false);
+    for (const node of checked) {
+      try {
+        await deleteNode(node.id);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
+  };
 
   return (
     <div className="w-full">
@@ -17,6 +35,9 @@ export function NodeTable({ data }: { data: NodeDto[] }) {
         <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
           <NodeCreateButton />
+          <Button variant="secondary" onClick={onDelete}>
+            Delete
+          </Button>
         </div>
         <ColumnSelector table={table} />
       </div>

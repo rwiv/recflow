@@ -48,7 +48,7 @@ const formSchema = nodeAppend.omit({ capacities: true }).extend({
 
 const middleSchema = formSchema.extend({
   typeName: nodeTypeNameEnum,
-  weight: z.coerce.number().nonnegative(),
+  weight: z.coerce.number().positive(),
   totalCapacity: z.coerce.number().nonnegative(),
   chzzkCapacity: z.coerce.number().nonnegative(),
   soopCapacity: z.coerce.number().nonnegative(),
@@ -92,8 +92,11 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" />
         <TextFormField form={form} name="endpoint" />
-        <TextFormField form={form} name="weight" />
         <CheckFormField form={form} name="isCordoned" label="Cordoned" />
+        <SelectFormField form={form} name="typeName" label="Node Type">
+          <SelectItem value="worker">WORKER</SelectItem>
+          <SelectItem value="argo">ARGO</SelectItem>
+        </SelectFormField>
         <SelectFormField form={form} name="groupId" label="Node Group">
           {nodeGroups.map((group) => (
             <SelectItem key={group.id} value={group.id}>
@@ -101,13 +104,10 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
             </SelectItem>
           ))}
         </SelectFormField>
-        <SelectFormField form={form} name="typeName" label="Node Type">
-          <SelectItem value="worker">WORKER</SelectItem>
-          <SelectItem value="argo">ARGO</SelectItem>
-        </SelectFormField>
-        <TextFormField form={form} name="totalCapacity" label="Total Capacity" />
-        <TextFormField form={form} name="chzzkCapacity" label="Chzzk Capacity" />
-        <TextFormField form={form} name="soopCapacity" label="Soop Capacity" />
+        <TextFormField form={form} name="weight" placeholder="1" />
+        <TextFormField form={form} name="totalCapacity" label="Total Capacity" placeholder="10" />
+        <TextFormField form={form} name="chzzkCapacity" label="Chzzk Capacity" placeholder="0" />
+        <TextFormField form={form} name="soopCapacity" label="Soop Capacity" placeholder="0" />
         <FormSubmitButton />
       </form>
     </Form>

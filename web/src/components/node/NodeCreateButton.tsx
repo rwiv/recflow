@@ -1,23 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues, Path, useForm, UseFormReturn } from 'react-hook-form';
-import { z, ZodError } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Form } from '@/components/ui/form.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChangeEvent, ChangeEventHandler, useRef } from 'react';
+import { useRef } from 'react';
 import { SelectItem } from '@/components/ui/select.tsx';
-import { Input } from '@/components/ui/input.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
-import { formItemStyle } from '@/components/common/styles/form.ts';
-import { nodeAppend, NodeGroupDto } from '@/client/node.schema.ts';
+import { nodeAppend, NodeCapacities, NodeGroupDto, nodeTypeNameEnum } from '@/client/node.schema.ts';
 import { createNode, fetchNodeGroups } from '@/client/node.client.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
-import { css, SerializedStyles } from '@emotion/react';
-import { firstLetterUppercase } from '@/common/utils.ts';
+import { css } from '@emotion/react';
 import { CheckFormField } from '@/components/common/form/CheckFormField.tsx';
-import { PlatformName, platformNameEnum } from '@/client/common.schema.ts';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
+import { parse } from '@/common/utils.form.ts';
+import { nonempty } from '@/common/common.schema.ts';
 
 export function NodeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -40,10 +38,20 @@ export function NodeCreateButton() {
   );
 }
 
-const formSchema = nodeAppend.extend({
-  typeName: z.string().nonempty(),
-  weight: z.string().nonempty(),
-  totalCapacity: z.string().nonempty(),
+const formSchema = nodeAppend.omit({ capacities: true }).extend({
+  typeName: nonempty,
+  weight: nonempty,
+  totalCapacity: nonempty,
+  chzzkCapacity: nonempty,
+  soopCapacity: nonempty,
+});
+
+const middleSchema = formSchema.extend({
+  typeName: nodeTypeNameEnum,
+  weight: z.coerce.number().nonnegative(),
+  totalCapacity: z.coerce.number().nonnegative(),
+  chzzkCapacity: z.coerce.number().nonnegative(),
+  soopCapacity: z.coerce.number().nonnegative(),
 });
 
 export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb: () => void }) {
@@ -56,45 +64,28 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       endpoint: '',
       weight: '',
       isCordoned: false,
-      totalCapacity: '',
       groupId: '',
       typeName: '',
-      capacities: [
-        { platformName: 'chzzk', capacity: -1 },
-        { platformName: 'soop', capacity: -1 },
-        { platformName: 'twitch', capacity: -1 },
-      ],
+      totalCapacity: '',
+      chzzkCapacity: '',
+      soopCapacity: '',
     },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    try {
-      await createNode(nodeAppend.parse(data));
-    } catch (e) {
-      if (e instanceof ZodError) {
-        for (const err of e.errors) {
-          const path = z.enum(formSchema.keyof()._def.values).parse(err.path.toString());
-          form.setError(path, { message: err.message });
-        }
-        return;
-      }
-    }
+    const middleData = parse(middleSchema, data, form);
+    if (!middleData) return;
+    const capacities: NodeCapacities = [
+      { platformName: 'chzzk', capacity: middleData.chzzkCapacity },
+      { platformName: 'soop', capacity: middleData.soopCapacity },
+      { platformName: 'twitch', capacity: 0 },
+    ];
+    const req = nodeAppend.parse({ ...middleData, capacities });
+    if (!req) return;
+    await createNode(req);
     await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
     cb();
   }
-
-  const onChangeCapacity = (e: ChangeEvent<HTMLInputElement>, platformName: PlatformName) => {
-    const capacities = form.getValues('capacities');
-    const capacity = capacities.find((c) => c.platformName === platformName);
-    const rest = capacities.filter((c) => c.platformName !== platformName);
-    if (capacity) {
-      const newCapacity = {
-        ...capacity,
-        capacity: parseInt(e.target.value),
-      };
-      form.setValue('capacities', [...rest, newCapacity]);
-    }
-  };
 
   return (
     <Form {...form}>
@@ -103,7 +94,6 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
         <TextFormField form={form} name="endpoint" />
         <TextFormField form={form} name="weight" />
         <CheckFormField form={form} name="isCordoned" label="Cordoned" />
-        <TextFormField form={form} name="totalCapacity" label="Total Capacity" />
         <SelectFormField form={form} name="groupId" label="Node Group">
           {nodeGroups.map((group) => (
             <SelectItem key={group.id} value={group.id}>
@@ -115,52 +105,11 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
           <SelectItem value="worker">WORKER</SelectItem>
           <SelectItem value="argo">ARGO</SelectItem>
         </SelectFormField>
-        {platformNameEnum.options.map((platformName, idx) => (
-          <CapacitiesField
-            key={idx}
-            form={form}
-            name="capacities"
-            label={`${firstLetterUppercase(platformName)} Capacity`}
-            onChange={(e) => onChangeCapacity(e, platformName)}
-          />
-        ))}
+        <TextFormField form={form} name="totalCapacity" label="Total Capacity" />
+        <TextFormField form={form} name="chzzkCapacity" label="Chzzk Capacity" />
+        <TextFormField form={form} name="soopCapacity" label="Soop Capacity" />
         <FormSubmitButton />
       </form>
     </Form>
-  );
-}
-
-interface CapacitiesProps<T extends FieldValues> {
-  form: UseFormReturn<T>;
-  name: Path<T>;
-  label: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  className?: string;
-  style?: SerializedStyles;
-}
-
-export function CapacitiesField<T extends FieldValues>({
-  form,
-  name,
-  label,
-  onChange,
-  className,
-  style,
-}: CapacitiesProps<T>) {
-  style = style || formItemStyle;
-  return (
-    <FormField
-      control={form.control}
-      name={name}
-      render={() => (
-        <FormItem className={className} css={style}>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <Input onChange={onChange} />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
   );
 }

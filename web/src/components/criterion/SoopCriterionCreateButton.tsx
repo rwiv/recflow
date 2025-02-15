@@ -2,98 +2,78 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z, ZodError } from 'zod';
 import { Form, FormField } from '@/components/ui/form.tsx';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { SelectItem } from '@/components/ui/select.tsx';
-import { CHZZK_CRITERIA_QUERY_KEY, PLATFORMS_QUERY_KEY } from '@/common/constants.ts';
+import { SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 import { fetchPlatforms } from '@/client/platform.client.ts';
-import { chzzkCriterionAppend } from '@/client/criterion.schema.ts';
+import { soopCriterionAppend } from '@/client/criterion.schema.ts';
 import { nonempty } from '@/common/common.schema.ts';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
-import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
 import { CheckFormField } from '@/components/common/form/CheckFormField.tsx';
 import { css } from '@emotion/react';
-import { createChzzkCriterion } from '@/client/criterion.client.ts';
+import { createSoopCriterion } from '@/client/criterion.client.ts';
 import { InputListFormItem } from '@/components/common/form/InputListFormItem.tsx';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
-import { PlatformDto } from '@/client/common.schema.ts';
 
 interface Unit {
-  name:
-    | 'positiveTags'
-    | 'negativeTags'
-    | 'positiveKeywords'
-    | 'negativeKeywords'
-    | 'positiveWps'
-    | 'negativeWps';
+  name: 'positiveCates' | 'negativeCates';
   label: string;
 }
 
 const unitReqs: Unit[] = [
-  { name: 'positiveTags', label: 'Positive Tags' },
-  { name: 'negativeTags', label: 'Negative Tags' },
-  { name: 'positiveKeywords', label: 'Positive Keywords' },
-  { name: 'negativeKeywords', label: 'Negative Keywords' },
-  { name: 'positiveWps', label: 'Positive WatchpartyNo' },
-  { name: 'negativeWps', label: 'Negative WatchpartyNo' },
+  { name: 'positiveCates', label: 'Positive Cates' },
+  { name: 'negativeCates', label: 'Negative Cates' },
 ];
 
-const formSchema = chzzkCriterionAppend.extend({
+const formSchema = soopCriterionAppend.omit({ platformId: true }).extend({
   description: z.string(),
   minUserCnt: nonempty,
   minFollowCnt: nonempty,
 });
 
-export function CriterionCreateButton() {
+export function SoopCriterionCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  const { data: platforms } = useQuery({
-    queryKey: [PLATFORMS_QUERY_KEY],
-    queryFn: fetchPlatforms,
-  });
 
   return (
     <DialogButton
       contentCn="sm:max-w-lg overflow-auto"
       contentStyle={css({ maxHeight: '50rem' })}
       label="Add"
-      title="Add New Chzzk Criterion"
+      title="Add New Soop Criterion"
       closeRef={closeBtnRef}
     >
-      {platforms && <CreateForm platforms={platforms} cb={() => closeBtnRef.current?.click()} />}
+      <CreateForm cb={() => closeBtnRef.current?.click()} />
     </DialogButton>
   );
 }
 
-export function CreateForm({ platforms, cb }: { platforms: PlatformDto[]; cb: () => void }) {
+export function CreateForm({ cb }: { cb: () => void }) {
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      platformId: '',
       description: '',
       enforceCreds: false,
       minUserCnt: '',
       minFollowCnt: '',
-      positiveTags: [],
-      negativeTags: [],
-      positiveKeywords: [],
-      negativeKeywords: [],
-      positiveWps: [],
-      negativeWps: [],
+      positiveCates: [],
+      negativeCates: [],
     },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    const platform = (await fetchPlatforms()).find((it) => it.name === 'soop');
+    if (!platform) throw new Error('Platform not found');
     const newData = {
       ...data,
       description: data.description == '' ? null : data.description,
+      platformId: platform.id,
     };
     try {
-      await createChzzkCriterion(chzzkCriterionAppend.parse(newData));
+      await createSoopCriterion(soopCriterionAppend.parse(newData));
     } catch (e) {
       if (e instanceof ZodError) {
         console.log(e);
@@ -104,7 +84,7 @@ export function CreateForm({ platforms, cb }: { platforms: PlatformDto[]; cb: ()
         return;
       }
     }
-    await queryClient.invalidateQueries({ queryKey: [CHZZK_CRITERIA_QUERY_KEY] });
+    await queryClient.invalidateQueries({ queryKey: [SOOP_CRITERIA_QUERY_KEY] });
     cb();
   }
 
@@ -116,13 +96,6 @@ export function CreateForm({ platforms, cb }: { platforms: PlatformDto[]; cb: ()
         <TextFormField form={form} name="description" label="Description" />
         <TextFormField form={form} name="minUserCnt" label="Minimum User Count" />
         <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" />
-        <SelectFormField form={form} name="platformId">
-          {platforms.map((platform) => (
-            <SelectItem key={platform.id} value={platform.id}>
-              {platform.name}
-            </SelectItem>
-          ))}
-        </SelectFormField>
         {unitReqs.map((unit, idx) => (
           <FormField
             key={idx}

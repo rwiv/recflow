@@ -47,12 +47,13 @@ export const nodeDto = z.object({
 });
 export type NodeDto = z.infer<typeof nodeDto>;
 
-const capacities = z.array(
+export const nodeCapacities = z.array(
   z.object({
     platformName: platformNameEnum,
     capacity: z.number().nonnegative(),
   }),
 );
+export type NodeCapacities = z.infer<typeof nodeCapacities>;
 export const nodeAppend = nodeDto
   .omit({
     id: true,
@@ -62,5 +63,5 @@ export const nodeAppend = nodeDto
     states: true,
     type: true,
   })
-  .extend({ capacities, typeName: nodeTypeNameEnum });
+  .extend({ capacities: nodeCapacities, typeName: nodeTypeNameEnum });
 export type NodeAppend = z.infer<typeof nodeAppend>;

@@ -5,19 +5,19 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
-import { ChzzkCriterionDto } from '@/client/criterion.schema.ts';
-import { chzzkCriterionColumns } from '@/components/criterion/chzzkCriterionColumns.tsx';
-import { ChzzkCriterionCreateButton } from '@/components/criterion/ChzzkCriterionCreateButton.tsx';
+import { SoopCriterionDto } from '@/client/criterion.schema.ts';
+import { soopCriterionColumns } from '@/components/criterion/soopCriterionColumns.tsx';
+import { SoopCriterionCreateButton } from '@/components/criterion/SoopCriterionCreateButton.tsx';
 
-export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
-  const table = useTable(data, chzzkCriterionColumns);
+export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
+  const table = useTable(data, soopCriterionColumns);
 
   return (
     <div className="w-full">
       <div className="flex items-center mb-4">
         <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
-          <ChzzkCriterionCreateButton />
+          <SoopCriterionCreateButton />
         </div>
         <ColumnSelector table={table} />
       </div>

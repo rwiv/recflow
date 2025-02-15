@@ -9,6 +9,8 @@ import { fetchChannels } from '@/client/channel.client.ts';
 import { fetchChzzkCriteria, fetchSoopCriteria } from '@/client/criterion.client.ts';
 import { ChzzkCriterionDto, SoopCriterionDto } from '@/client/criterion.schema.ts';
 import { ChzzkCriterionTable } from '@/components/criterion/ChzzkCriterionTable.tsx';
+import { SoopCriterionTable } from '@/components/criterion/SoopCriterionTable.tsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
 
 export function CriterionPage() {
   const queryClient = useQueryClient();
@@ -21,8 +23,6 @@ export function CriterionPage() {
     queryFn: fetchSoopCriteria,
   });
   const { pageState, setPageState } = useChannelPageStore();
-  console.log(chzzkCriteria);
-  console.log(soopCriteria);
 
   useEffect(() => {
     setPageState(ChannelPageState.default());
@@ -52,7 +52,22 @@ export function CriterionPage() {
           <TabButton active>Criteria</TabButton>
         </TabList>
       </div>
-      <div className="mx-10 my-3">{chzzkCriteria && <ChzzkCriterionTable data={chzzkCriteria} />}</div>
+      <div className="mx-10 my-3">
+        <Tabs defaultValue="chzzk">
+          <TabsList>
+            <TabsTrigger value="chzzk">Chzzk</TabsTrigger>
+            <TabsTrigger value="soop">Soop</TabsTrigger>
+          </TabsList>
+          <div className="my-5">
+            <TabsContent value="chzzk">
+              {chzzkCriteria && <ChzzkCriterionTable data={chzzkCriteria} />}
+            </TabsContent>
+            <TabsContent value="soop">
+              {soopCriteria && <SoopCriterionTable data={soopCriteria} />}
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 }

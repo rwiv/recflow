@@ -34,13 +34,15 @@ export function InputListFormItem<T extends FieldValues>({
         <div className="flex flex-col">
           <div className="flex flex-row space-x-2">
             <Input value={input} onChange={(ev) => setInput(ev.target.value)} />
-            <Button type="button" onClick={() => addValue()}>
+            <Button type="button" variant="outline" onClick={() => addValue()}>
               Add
             </Button>
           </div>
           <div className="flex space-x-1 mt-2">
             {values.map((value, i) => (
-              <Badge key={i}>{value}</Badge>
+              <Badge variant="secondary" key={i}>
+                {value}
+              </Badge>
             ))}
           </div>
         </div>

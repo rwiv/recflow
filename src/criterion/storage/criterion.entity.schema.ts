@@ -41,7 +41,7 @@ export const criterionUnitEnt = z.object({
   criterionId: uuid,
   ruleId: uuid,
   value: nonempty,
-  positive: z.boolean(),
+  isPositive: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });

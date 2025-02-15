@@ -13,7 +13,7 @@ export function mockLive(): LiveDto {
     nodeId: faker.string.uuid().replace(/-/g, ''),
     liveTitle: faker.lorem.sentence(),
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
-    adult: randomElem([true, false]),
+    isAdult: randomElem([true, false]),
     createdAt: faker.date.anytime().toISOString(),
     updatedAt: faker.date.anytime().toISOString(),
     deletedAt: faker.date.anytime().toISOString(),

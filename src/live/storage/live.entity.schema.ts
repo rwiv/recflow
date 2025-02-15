@@ -8,7 +8,7 @@ export const liveEnt = z.object({
   nodeId: uuid,
   liveTitle: z.string().min(1),
   viewCnt: z.number().int().nonnegative(),
-  adult: z.boolean(),
+  isAdult: z.boolean(),
   isDeleted: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),

@@ -104,20 +104,15 @@ function unitAppend(
   criterion: CriterionEnt,
   rule: CriterionRuleEnt,
   value: string,
-  positive: boolean,
+  isPositive: boolean,
 ): CriterionUnitEntAppend {
-  return {
-    criterionId: criterion.id,
-    ruleId: rule.id,
-    value,
-    positive,
-  };
+  return { criterionId: criterion.id, ruleId: rule.id, value, isPositive };
 }
 
 function find(unitEntities: CriterionUnitEnt[], rule: CriterionRuleEnt, positive: boolean): string[] {
   if (positive) {
-    return unitEntities.filter((it) => it.ruleId === rule.id && it.positive).map((it) => it.value);
+    return unitEntities.filter((it) => it.ruleId === rule.id && it.isPositive).map((it) => it.value);
   } else {
-    return unitEntities.filter((it) => it.ruleId === rule.id && !it.positive).map((it) => it.value);
+    return unitEntities.filter((it) => it.ruleId === rule.id && !it.isPositive).map((it) => it.value);
   }
 }

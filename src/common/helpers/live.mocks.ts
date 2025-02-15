@@ -28,7 +28,7 @@ export function mockLiveInfo(n: number, pid: string): LiveInfo {
     liveId: 1,
     liveTitle: `live${n}`,
     viewCnt: 1,
-    adult: false,
+    isAdult: false,
     openDate: '2021-01-01',
     content: mockChzzkLiveInfo(n, pid),
   };

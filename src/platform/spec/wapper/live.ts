@@ -12,7 +12,7 @@ export interface LiveInfo {
   liveId: number;
   liveTitle: string;
   viewCnt: number;
-  adult: boolean;
+  isAdult: boolean;
   openDate: string;
   content: PlatformLiveInfo;
 }
@@ -25,7 +25,7 @@ export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
     liveId: info.liveId,
     liveTitle: info.liveTitle,
     viewCnt: info.concurrentUserCount,
-    adult: info.adult,
+    isAdult: info.adult,
     openDate: new Date(info.openDate).toISOString(),
     content: info,
   };
@@ -39,7 +39,7 @@ export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
     liveId: parseInteger(info.broadNo),
     liveTitle: info.broadTitle,
     viewCnt: parseInteger(info.totalViewCnt),
-    adult: info.adult,
+    isAdult: info.adult,
     openDate: new Date(info.broadStart).toISOString(),
     content: info,
   };

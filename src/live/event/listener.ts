@@ -52,13 +52,13 @@ export class LiveEventListener {
     }
     if (live.platform.name === 'chzzk') {
       let cookies: Cookie[] | undefined = undefined;
-      if (enforceCreds || live.adult) {
+      if (enforceCreds || live.isAdult) {
         cookies = await this.authClient.requestChzzkCookies();
       }
       await this.stdl.requestChzzkLive(nodeEndpoint, live.channel.pid, cookies);
     } else if (live.platform.name === 'soop') {
       let cred: SoopCredential | undefined = undefined;
-      if (enforceCreds || live.adult) {
+      if (enforceCreds || live.isAdult) {
         cred = await this.authClient.requestSoopCred();
       }
       await this.stdl.requestSoopLive(nodeEndpoint, live.channel.pid, cred);

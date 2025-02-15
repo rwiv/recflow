@@ -174,7 +174,7 @@ export const liveTable = pgTable('live', {
     .references(() => nodeTable.id),
   liveTitle: text('live_title').notNull(),
   viewCnt: integer('view_cnt').notNull(),
-  adult: boolean().notNull(),
+  isAdult: boolean('is_adult').notNull(),
   isDeleted: boolean('is_deleted').notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
@@ -219,7 +219,7 @@ export const liveCriterionUnitTable = pgTable('live_criterion_unit', {
     .notNull()
     .references(() => liveCriterionRuleTable.id),
   value: text().notNull(),
-  positive: boolean().notNull(),
+  isPositive: boolean('is_positive').notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
 });

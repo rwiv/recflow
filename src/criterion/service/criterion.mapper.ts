@@ -49,8 +49,8 @@ export class CriterionMapper {
   }
 
   private findUnitsValues(units: CriterionUnitEnt[], ruleId: string) {
-    const positive = units.filter((u) => u.positive && u.ruleId === ruleId).map((u) => u.value);
-    const negative = units.filter((u) => !u.positive && u.ruleId === ruleId).map((u) => u.value);
+    const positive = units.filter((u) => u.isPositive && u.ruleId === ruleId).map((u) => u.value);
+    const negative = units.filter((u) => !u.isPositive && u.ruleId === ruleId).map((u) => u.value);
     return { positive, negative };
   }
 }

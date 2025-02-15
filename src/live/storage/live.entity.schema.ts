@@ -9,7 +9,7 @@ export const liveEnt = z.object({
   liveTitle: z.string().min(1),
   viewCnt: z.number().int().nonnegative(),
   isAdult: z.boolean(),
-  isDeleted: z.boolean(),
+  isDisabled: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),
@@ -18,7 +18,7 @@ export type LiveEnt = z.infer<typeof liveEnt>;
 
 export const liveEntAppend = liveEnt.partial({
   id: true,
-  isDeleted: true,
+  isDisabled: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,

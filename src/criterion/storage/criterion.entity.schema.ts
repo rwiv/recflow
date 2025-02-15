@@ -8,6 +8,7 @@ export const criterionEnt = z.object({
   description: nonempty.nullable(),
   platformId: uuid,
   enforceCreds: z.boolean(),
+  isDeactivated: z.boolean(),
   minUserCnt: z.number().int().nonnegative(),
   minFollowCnt: z.number().int().nonnegative(),
   createdAt: z.coerce.date(),
@@ -18,6 +19,7 @@ export type CriterionEnt = z.infer<typeof criterionEnt>;
 export const criterionEntAppend = criterionEnt.partial({
   id: true,
   description: true,
+  isDeactivated: true,
   createdAt: true,
   updatedAt: true,
 });

@@ -33,7 +33,7 @@ export class LiveFinder {
       withDeleted = false;
     }
     if (!ent) return undefined;
-    if (ent.isDeleted && !withDeleted) return undefined;
+    if (ent.isDisabled && !withDeleted) return undefined;
     return this.mapper.map(ent);
   }
 

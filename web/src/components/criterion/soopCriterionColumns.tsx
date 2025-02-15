@@ -21,6 +21,12 @@ const enforceCredsColumn: ColumnDef<SoopCriterionDto> = {
   cell: ({ row }) => <div className="ml-9 my-1">{row.original.enforceCreds ? 'Yes' : 'No'}</div>,
 };
 
+const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'isDeactivated',
+  header: () => <div className="ml-9 my-1">Deactivated</div>,
+  cell: ({ row }) => <div className="ml-9 my-1">{row.original.isDeactivated ? 'Yes' : 'No'}</div>,
+};
+
 const minUserCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minUserCnt',
   header: () => <div className="ml-9 my-1">minUserCnt</div>,
@@ -40,7 +46,7 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<SoopCriterio
     accessorKey: key,
     header: () => <div className="ml-9 my-1">{header}</div>,
     cell: ({ row }) => (
-      <div className="ml-9 my-1">
+      <div className="ml-9 my-1 space-x-1">
         {row.original[key].map((value, i) => (
           <Badge key={i} className="cursor-default">
             {value}
@@ -56,6 +62,7 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   nameColumn,
   descriptionColumn,
   enforceCredsColumn,
+  isDeactivatedColumn,
   minUserCntColumn,
   minFollowCntColumn,
   createUnitColumn('positiveCates', 'p_cates'),

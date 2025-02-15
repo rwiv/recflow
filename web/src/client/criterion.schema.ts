@@ -8,6 +8,7 @@ export const criterionDto = z.object({
   description: nonempty.nullable(),
   platform: platformDto,
   enforceCreds: z.boolean(),
+  isDeactivated: z.boolean(),
   minUserCnt: z.coerce.number().int().nonnegative(),
   minFollowCnt: z.coerce.number().int().nonnegative(),
   createdAt: z.coerce.date(),

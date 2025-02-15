@@ -21,6 +21,12 @@ const enforceCredsColumn: ColumnDef<ChzzkCriterionDto> = {
   cell: ({ row }) => <div className="ml-9 my-1">{row.original.enforceCreds ? 'Yes' : 'No'}</div>,
 };
 
+const isDeactivatedColumn: ColumnDef<ChzzkCriterionDto> = {
+  accessorKey: 'isDeactivated',
+  header: () => <div className="ml-9 my-1">Deactivated</div>,
+  cell: ({ row }) => <div className="ml-9 my-1">{row.original.isDeactivated ? 'Yes' : 'No'}</div>,
+};
+
 const minUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'minUserCnt',
   header: () => <div className="ml-9 my-1">minUserCnt</div>,
@@ -46,7 +52,7 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<ChzzkCriteri
     accessorKey: key,
     header: () => <div className="ml-9 my-1">{header}</div>,
     cell: ({ row }) => (
-      <div className="ml-9 my-1">
+      <div className="ml-9 my-1 space-x-1">
         {row.original[key].map((value, i) => (
           <Badge key={i} className="cursor-default">
             {value}
@@ -62,6 +68,7 @@ export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
   nameColumn,
   descriptionColumn,
   enforceCredsColumn,
+  isDeactivatedColumn,
   minUserCntColumn,
   minFollowCntColumn,
   createUnitColumn('positiveTags', 'p_tags'),

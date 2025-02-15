@@ -36,7 +36,7 @@ export class LiveRegistrar {
 
   async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto) {
     const exists = await this.liveFinder.findByPid(liveInfo.pid);
-    if (exists && !exists.isDeleted) {
+    if (exists && !exists.isDisabled) {
       throw new ConflictError(`Already exists: ${liveInfo.pid}`);
     }
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
@@ -72,15 +72,15 @@ export class LiveRegistrar {
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!purge) {
-      if (live.isDeleted) throw new ConflictError(`Already deleted: ${recordId}`);
+      if (live.isDisabled) throw new ConflictError(`Already deleted: ${recordId}`);
       const update: LiveUpdate = {
         id: live.id,
-        form: { isDeleted: true, deletedAt: new Date() },
+        form: { isDisabled: true, deletedAt: new Date() },
       };
       await this.liveWriter.update(update);
       await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
     } else {
-      if (!live.isDeleted) {
+      if (!live.isDisabled) {
         await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
       }
       await this.liveWriter.delete(recordId);

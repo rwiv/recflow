@@ -17,7 +17,7 @@ export function mockLive(): LiveDto {
     createdAt: faker.date.anytime().toISOString(),
     updatedAt: faker.date.anytime().toISOString(),
     deletedAt: faker.date.anytime().toISOString(),
-    isDeleted: randomElem([true, false]),
+    isDisabled: randomElem([true, false]),
     node: undefined,
   };
 }

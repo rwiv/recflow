@@ -18,7 +18,7 @@ export class LiveRepository {
     const req: LiveEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
-      isDeleted: append.isDeleted ?? false,
+      isDisabled: append.isDisabled ?? false,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(liveTable).values(liveEntAppendReq.parse(req)).returning();
@@ -37,11 +37,11 @@ export class LiveRepository {
     return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)));
   }
 
-  async findByIsDeleted(isDeleted: boolean, tx: Tx = db) {
+  async findByIsDeleted(isDisabled: boolean, tx: Tx = db) {
     return tx
       .select()
       .from(liveTable)
-      .where(eq(liveTable.isDeleted, isDeleted))
+      .where(eq(liveTable.isDisabled, isDisabled))
       .orderBy(asc(liveTable.createdAt));
   }
 

@@ -6,6 +6,7 @@ export const priorityEnt = z.object({
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
   tier: z.number().int().positive(),
+  shouldNotify: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
@@ -21,6 +22,7 @@ export type PriorityEnt = z.infer<typeof priorityEnt>;
 export const priorityEntAppend = priorityEnt.partial({
   id: true,
   description: true,
+  shouldNotify: true,
   createdAt: true,
   updatedAt: true,
 });

@@ -10,7 +10,7 @@ export interface LiveDto {
   liveTitle: string;
   viewCnt: number;
   isAdult: boolean;
-  isDeleted: boolean;
+  isDisabled: boolean;
   createdAt: string;
   updatedAt: string | undefined;
   deletedAt: string | undefined;

@@ -1,8 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { CriterionFinder } from '../service/criterion.finder.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { CriterionWriter } from '../service/criterion.writer.js';
-import { ChzzkCriterionAppend, SoopCriterionAppend } from '../spec/criterion.dto.schema.js';
+import {
+  ChzzkCriterionAppend,
+  criterionUpdate,
+  CriterionUpdate,
+  SoopCriterionAppend,
+} from '../spec/criterion.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/criteria')
@@ -30,6 +35,12 @@ export class CriterionController {
   @Post('/soop')
   createSoopCriterion(@Body() append: SoopCriterionAppend) {
     return this.criterionWriter.createSoopCriterion(append);
+  }
+
+  @Put('/:criterionId')
+  update(@Param('criterionId') criterionId: string, @Body() req: CriterionUpdate) {
+    const update = criterionUpdate.parse(req);
+    return this.criterionWriter.update(criterionId, update);
   }
 
   @Delete('/:criterionId')

@@ -5,6 +5,7 @@ import {
   ChannelAppendWithInfo,
   ChannelDto,
   ChannelAppend,
+  ChannelUpdate,
 } from '../spec/channel.dto.schema.js';
 import { TagDetachment, TagDto } from '../spec/tag.dto.schema.js';
 import { Injectable } from '@nestjs/common';
@@ -98,6 +99,11 @@ export class ChannelWriter {
   async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo) {
     const append: ChannelAppend = { ...appendInfo, ...info, platformName: info.platform };
     return this.createWithTagNames(append, appendInfo.tagNames);
+  }
+
+  async update(id: string, req: ChannelUpdate) {
+    const ent = await this.chCmd.update(id, req);
+    return this.chMapper.map(ent);
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelDto> {

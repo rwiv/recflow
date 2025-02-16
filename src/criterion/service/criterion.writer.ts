@@ -4,6 +4,7 @@ import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js
 import {
   ChzzkCriterionAppend,
   ChzzkCriterionDto,
+  CriterionUpdate,
   SoopCriterionAppend,
   SoopCriterionDto,
 } from '../spec/criterion.dto.schema.js';
@@ -87,6 +88,10 @@ export class CriterionWriter {
         negativeCates: find(unitEntities, cateRule, false),
       };
     });
+  }
+
+  async update(id: string, req: CriterionUpdate) {
+    await this.criterionRepo.update(id, req);
   }
 
   async delete(criterionId: string) {

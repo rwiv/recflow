@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NodeRepository } from '../storage/node.repository.js';
 import { NodeTypeRepository } from '../storage/node-type.repository.js';
 import { NodeStateRepository } from '../storage/node-state.repository.js';
-import { NodeAppend, NodeDto, NodeStateDto } from '../spec/node.dto.schema.js';
+import { NodeAppend, NodeDto, NodeStateDto, NodeUpdate } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeEntAppend, NodeStateEntAppend } from '../spec/node.entity.schema.js';
 import { db } from '../../infra/db/db.js';
@@ -50,6 +50,10 @@ export class NodeWriter {
       const record = await this.mapper.map(nodeEnt, withGroup, false, tx);
       return { ...record, states };
     });
+  }
+
+  async update(id: string, req: NodeUpdate) {
+    await this.nodeRepo.update(id, req);
   }
 
   async delete(id: string) {

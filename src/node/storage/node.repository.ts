@@ -3,10 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { nodeGroupTable, nodeTable } from '../../infra/db/schema.js';
-import { nodeEnt, NodeEnt, NodeEntAppend, NodeGroupEnt } from '../spec/node.entity.schema.js';
+import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate, NodeGroupEnt } from '../spec/node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true });
 type NodeEntAppendRequest = z.infer<typeof nodeEntAppendReq>;
@@ -43,6 +44,18 @@ export class NodeRepository {
 
   async findAll(tx: Tx = db) {
     return tx.select().from(nodeTable);
+  }
+
+  async update(id: string, update: NodeEntUpdate, tx: Tx = db) {
+    const node = await this.findById(id, tx);
+    if (!node) throw NotFoundError.from('NodeEnt', 'id', id);
+    const req: NodeEnt = {
+      ...node,
+      ...update,
+      updatedAt: new Date(),
+    };
+    const ent = await tx.update(nodeTable).set(nodeEnt.parse(req)).where(eq(nodeTable.id, id)).returning();
+    return oneNotNull(ent);
   }
 
   async delete(id: string, tx: Tx = db) {

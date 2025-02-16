@@ -16,6 +16,17 @@ export const criterionDto = z.object({
 });
 export type CriterionDto = z.infer<typeof criterionDto>;
 
+// Platform cannot be changed
+export const criterionUpdate = criterionDto
+  .omit({
+    id: true,
+    platform: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .partial();
+export type CriterionUpdate = z.infer<typeof criterionUpdate>;
+
 export const chzzkCriterionDto = criterionDto.extend({
   positiveTags: z.array(nonempty),
   negativeTags: z.array(nonempty),

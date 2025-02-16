@@ -6,8 +6,8 @@ import {
   Param,
   ParseBoolPipe,
   ParseIntPipe,
-  Patch,
   Post,
+  Put,
   Query,
   UseFilters,
 } from '@nestjs/common';
@@ -22,7 +22,6 @@ import {
   ChannelSortType,
 } from '../spec/channel.dto.schema.js';
 import { ChannelFinder } from '../service/channel.finder.js';
-import { ChannelUpdater } from '../service/channel.updater.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../service/channel.searcher.js';
@@ -35,7 +34,6 @@ export class ChannelController {
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly chSearcher: ChannelSearcher,
-    private readonly chUpdater: ChannelUpdater,
   ) {}
 
   @Get('/')
@@ -74,19 +72,10 @@ export class ChannelController {
     return this.chWriter.createWithFetch(channelAppendWithFetch.parse(req));
   }
 
-  @Patch('/:channelId')
+  @Put('/:channelId')
   update(@Param('channelId') channelId: string, @Body() req: ChannelUpdate) {
     const update = channelUpdate.parse(req);
-    const { priorityName, isFollowed, description } = update;
-    if (priorityName !== undefined) {
-      return this.chUpdater.updatePriority(channelId, priorityName);
-    } else if (isFollowed !== undefined) {
-      return this.chUpdater.updateFollowed(channelId, isFollowed);
-    } else if (description !== undefined) {
-      return this.chUpdater.updateDescription(channelId, description);
-    } else {
-      throw new ValidationError('invalid update request');
-    }
+    return this.chWriter.update(channelId, update);
   }
 
   @Delete('/:channelId')

@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionEnt, criterionEnt, CriterionEntAppend } from '../spec/criterion.entity.schema.js';
+import {
+  CriterionEnt,
+  criterionEnt,
+  CriterionEntAppend,
+  CriterionEntUpdate,
+} from '../spec/criterion.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
@@ -7,6 +12,7 @@ import { z } from 'zod';
 import { liveCriterionTable } from '../../infra/db/schema.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const criterionEntAppendReq = criterionEnt.partial({ description: true, updatedAt: true });
 type CriterionEntAppendReq = z.infer<typeof criterionEntAppendReq>;
@@ -44,5 +50,21 @@ export class CriterionRepository {
   async findByName(name: string, tx: Tx = db) {
     const ent = await tx.select().from(liveCriterionTable).where(eq(liveCriterionTable.name, name));
     return oneNullable(ent);
+  }
+
+  async update(id: string, update: CriterionEntUpdate, tx: Tx = db) {
+    const cr = await this.findById(id, tx);
+    if (!cr) throw NotFoundError.from('Criterion', 'id', id);
+    const req: CriterionEnt = {
+      ...cr,
+      ...update,
+      updatedAt: new Date(),
+    };
+    const ent = await tx
+      .update(liveCriterionTable)
+      .set(criterionEnt.parse(req))
+      .where(eq(liveCriterionTable.id, id))
+      .returning();
+    return oneNotNull(ent);
   }
 }

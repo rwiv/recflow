@@ -47,6 +47,7 @@ export function mockChannel(): ChannelDto {
       id: faker.string.uuid().replace(/-/g, ''),
       name: randomElem(['must', 'should', 'may', 'review', 'skip', 'none']),
       tier: faker.number.int({ min: 1, max: 3 }),
+      shouldNotify: randomElem([true, false]),
       createdAt: faker.date.anytime(),
       updatedAt: faker.date.anytime(),
     },

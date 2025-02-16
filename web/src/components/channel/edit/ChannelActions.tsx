@@ -12,7 +12,7 @@ import { useRef } from 'react';
 import { TagAttachDialog } from '@/components/channel/edit/TagAttachDialog.tsx';
 import { ChannelDto } from '@/client/channel.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
-import { deleteChannel, updateChannelFollowed } from '@/client/channel.client.ts';
+import { deleteChannel, updateChannelIsFollowed } from '@/client/channel.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
 import { ChannelUpdateDialog } from '@/components/channel/edit/ChannelUpdateDialog.tsx';
@@ -25,7 +25,7 @@ export function ChannelActions({ channel }: { channel: ChannelDto }) {
   const deleteRef = useRef<HTMLButtonElement>(null);
 
   const updateFollowed = async () => {
-    await updateChannelFollowed(channel.id, !channel.isFollowed);
+    await updateChannelIsFollowed(channel.id, !channel.isFollowed);
     await refresh();
   };
 

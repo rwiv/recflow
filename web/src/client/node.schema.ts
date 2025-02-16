@@ -47,6 +47,19 @@ export const nodeDto = z.object({
 });
 export type NodeDto = z.infer<typeof nodeDto>;
 
+// NodeType cannot be changed
+export const nodeUpdate = nodeDto
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    type: true,
+    group: true,
+    states: true,
+  })
+  .partial();
+export type NodeUpdate = z.infer<typeof nodeUpdate>;
+
 export const nodeCapacities = z.array(
   z.object({
     platformName: platformNameEnum,

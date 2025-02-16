@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { NodeFinder } from '../service/node.finder.js';
 import { NodeWriter } from '../service/node.writer.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
-import { nodeAppend, NodeAppend } from '../spec/node.dto.schema.js';
+import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/nodes')
@@ -25,6 +25,12 @@ export class NodeController {
   @Post('/')
   create(@Body() append: NodeAppend) {
     return this.writer.create(nodeAppend.parse(append), true);
+  }
+
+  @Put('/:nodeId')
+  update(@Param('nodeId') nodeId: string, @Body() req: NodeUpdate) {
+    const update = nodeUpdate.parse(req);
+    return this.writer.update(nodeId, update);
   }
 
   @Delete('/:nodeId')

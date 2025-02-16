@@ -16,7 +16,7 @@ export class LiveRegisterCheckTask implements Task {
   ) {}
 
   async run(): Promise<void> {
-    const criteria = await this.crFinder.findAll();
+    const criteria = (await this.crFinder.findAll()).filter((cr) => !cr.isDeactivated);
     for (const cr of criteria) {
       const taskName = `${liveTaskName.LIVE_REGISTER}_${cr.name}`;
       if (!this.scheduler.getPeriodTaskStatus(taskName)) {

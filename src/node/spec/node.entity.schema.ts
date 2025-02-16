@@ -16,6 +16,12 @@ export const nodeEnt = z.object({
 });
 export type NodeEnt = z.infer<typeof nodeEnt>;
 
+// NodeType cannot be changed
+export const nodeEntUpdate = nodeEnt
+  .omit({ id: true, typeId: true, createdAt: true, updatedAt: true })
+  .partial();
+export type NodeEntUpdate = z.infer<typeof nodeEntUpdate>;
+
 export const nodeEntAppend = nodeEnt.partial({
   id: true,
   isCordoned: true,
@@ -76,5 +82,5 @@ export const nodeStateEntAppend = nodeStateEnt.partial({
 });
 export type NodeStateEntAppend = z.infer<typeof nodeStateEntAppend>;
 
-export const nodeEntUpdate = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
-export type NodeStateEntUpdate = z.infer<typeof nodeEntUpdate>;
+export const nodeStateEntUpdate = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export type NodeStateEntUpdate = z.infer<typeof nodeStateEntUpdate>;

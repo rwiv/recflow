@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { nodeEnt, nodeEntAppend, nodeGroupEnt, nodeStateEnt, nodeTypeEnt } from './node.entity.schema.js';
+import {
+  nodeEnt,
+  nodeEntAppend,
+  nodeEntUpdate,
+  nodeGroupEnt,
+  nodeStateEnt,
+  nodeTypeEnt,
+} from './node.entity.schema.js';
 import { nodeTypeNameEnum } from './node.enum.schema.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
@@ -16,6 +23,9 @@ export const nodeDto = nodeEnt.omit({ typeId: true }).extend({
   states: z.array(nodeStateDto).optional(),
 });
 export type NodeDto = z.infer<typeof nodeDto>;
+
+export const nodeUpdate = nodeEntUpdate;
+export type NodeUpdate = z.infer<typeof nodeUpdate>;
 
 export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
   typeName: nodeTypeNameEnum,

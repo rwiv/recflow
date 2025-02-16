@@ -67,7 +67,7 @@ export class LiveRegistrar {
       purge = false;
     }
 
-    const live = await this.liveFinder.findById(recordId, { withDeleted: true });
+    const live = await this.liveFinder.findById(recordId, { withDisabled: true });
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!purge) {

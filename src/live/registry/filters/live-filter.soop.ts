@@ -28,7 +28,7 @@ export class SoopLiveFilter {
     const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop');
     if (channel) {
       const ng = await this.ngRepo.findByTier(channel.priority.tier);
-      if (ng) {
+      if (ng.length > 0) {
         return liveInfo;
       } else {
         return null;

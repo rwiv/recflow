@@ -5,7 +5,7 @@ import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface FindOptions {
-  withDeleted?: boolean;
+  withDisabled?: boolean;
 }
 
 @Injectable()
@@ -28,12 +28,12 @@ export class LiveFinder {
   }
 
   private async filterByOpts(ent: LiveEnt | undefined, opts: FindOptions = {}) {
-    let withDeleted = opts.withDeleted;
-    if (withDeleted === undefined) {
-      withDeleted = false;
+    let withDisabled = opts.withDisabled;
+    if (withDisabled === undefined) {
+      withDisabled = false;
     }
     if (!ent) return undefined;
-    if (ent.isDisabled && !withDeleted) return undefined;
+    if (ent.isDisabled && !withDisabled) return undefined;
     return this.mapper.map(ent);
   }
 

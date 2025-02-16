@@ -37,7 +37,7 @@ export class LiveCoordinator {
   }
 
   private async registerFollowedLive(ch: ChannelDto, cr: PlatformCriterionDto) {
-    if (await this.liveFinder.findByPid(ch.pid, { withDeleted: true })) return null;
+    if (await this.liveFinder.findByPid(ch.pid, { withDisabled: true })) return null;
     const chanInfo = await this.fetcher.fetchChannel(ch.platform.name, ch.pid, false);
     if (!chanInfo || !chanInfo.openLive) return null;
 
@@ -52,7 +52,7 @@ export class LiveCoordinator {
    * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
    */
   private async registerQueriedLive(newInfo: LiveInfo, cr: PlatformCriterionDto) {
-    if (await this.liveFinder.findByPid(newInfo.pid, { withDeleted: true })) return null;
+    if (await this.liveFinder.findByPid(newInfo.pid, { withDisabled: true })) return null;
     const channel = await this.fetcher.fetchChannel(newInfo.type, newInfo.pid, false);
     if (!channel?.openLive) return null;
     await this.liveRegistrar.add(newInfo, channel, cr);

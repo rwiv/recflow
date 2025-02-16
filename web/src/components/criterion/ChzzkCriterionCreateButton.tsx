@@ -67,7 +67,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       name: '',
       description: '',
       enforceCreds: false,
-      isDeactivated: false,
+      isDeactivated: true,
       minUserCnt: '',
       minFollowCnt: '',
       positiveTags: [],

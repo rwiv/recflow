@@ -40,8 +40,9 @@ export class ChannelPageStateBuilder {
   setSorted(sorted: string | null | undefined): this {
     if (!sorted) {
       this.sortBy = 'updatedAt';
+    } else {
+      this.sortBy = channelSortTypeEnum.parse(sorted);
     }
-    this.sortBy = channelSortTypeEnum.parse(sorted);
     return this;
   }
 

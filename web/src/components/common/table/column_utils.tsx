@@ -3,7 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/date.ts';
-import { firstLetterUppercase } from '@/common/utils.ts';
+import { firstLetterUppercase } from '@/common/utils.common.ts';
 
 export function sortableColumnDef<T>(cid: string, header: string | undefined = undefined): ColumnDef<T> {
   if (!header) {

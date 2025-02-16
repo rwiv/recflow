@@ -4,7 +4,8 @@ import { getIngredients, request } from '@/client/utils.ts';
 
 export async function fetchTags() {
   const res = await request(`${configs.endpoint}/api/channels/tags`);
-  return (await res.json()) as TagDto[];
+  const tags = (await res.json()) as TagDto[];
+  return tags.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function attachTag(req: TagAttachment) {

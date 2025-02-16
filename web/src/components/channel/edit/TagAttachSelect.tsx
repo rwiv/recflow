@@ -17,7 +17,6 @@ import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { TagDto } from '@/client/tag.types.ts';
 import { SerializedStyles } from '@emotion/react';
 import { fetchTags } from '@/client/tag.client.ts';
-import { sortedTags } from '@/common/utils.ts';
 
 interface TagSelectProps {
   existsTags: TagDto[];
@@ -106,5 +105,6 @@ export function TagAttachSelect({
 
 function nonDuplicatedSortedTags(exists: TagDto[], reqTags: TagDto[]): TagDto[] {
   const tagSet = new Set(exists.map((tag) => tag.id));
-  return sortedTags(reqTags.filter((tag) => !tagSet.has(tag.id)));
+  const tags = reqTags.filter((tag) => !tagSet.has(tag.id));
+  return tags.sort((a, b) => a.name.localeCompare(b.name));
 }

@@ -3,7 +3,7 @@ import { SerializedStyles } from '@emotion/react';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { firstLetterUppercase } from '@/common/utils.ts';
+import { firstLetterUppercase } from '@/common/utils.common.ts';
 
 interface TextFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;

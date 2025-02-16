@@ -17,7 +17,6 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { TagDto } from '@/client/tag.types.ts';
-import { sortedTags } from '@/common/utils.ts';
 
 export function TagQuerySelect() {
   const navigate = useNavigate();
@@ -92,7 +91,7 @@ export function TagQuerySelect() {
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
               {tags &&
-                sortedTags(tags).map((tag) => (
+                tags.map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                     <Check className={getCheckedStyle(tag)} />

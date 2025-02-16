@@ -1,7 +1,7 @@
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/utils.ts';
 import { NodeAppend, NodeGroupDto, NodeDto, NodeUpdate, nodeDto } from '@/client/node.schema.ts';
-import { parseList } from '@/common/utils.ts';
+import { parseList } from '@/common/utils.schema.ts';
 
 export async function fetchNodes() {
   const res = await request(`${configs.endpoint}/api/nodes`);

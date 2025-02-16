@@ -2,9 +2,9 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { NODES_QUERY_KEY } from '@/common/constants.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
-import { switchBatchCn } from '@/common/style.ts';
 import { NodeDto } from '@/client/node.schema.ts';
 import { updateNodeIsCordoned } from '@/client/node.client.ts';
+import { switchBatchCn } from '@/components/common/styles/common.ts';
 
 export function CordonedBadge({ node }: { node: NodeDto }) {
   const queryClient = useQueryClient();

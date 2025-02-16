@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { ActivationBadge } from '@/components/criterion/units/ActivationBadge.tsx';
 import { EnforceCredentialsBadge } from '@/components/criterion/units/EnforceCredentialsBadge.tsx';
+import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
 
 const nameColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'name',
@@ -26,13 +27,13 @@ const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
 const minUserCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minUserCnt',
   header: () => <div className="justify-self-center">minUserCnt</div>,
-  cell: ({ row }) => <div className="justify-self-center">{row.original.minUserCnt}</div>,
+  cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
 };
 
 const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minFollowCnt',
   header: () => <div className="justify-self-center">minFollowCnt</div>,
-  cell: ({ row }) => <div className="justify-self-center">{row.original.minFollowCnt}</div>,
+  cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
 };
 
 type ChzzkKey = 'positiveCates' | 'negativeCates';

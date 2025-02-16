@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/date.ts';
 import { firstLetterUppercase } from '@/common/utils.common.ts';
+import { cn } from '@/lib/utils.ts';
+import { ColumnMetaStyle } from '@/components/common/styles/meta.ts';
 
 export function sortableColumnDef<T>(cid: string, header: string | undefined = undefined): ColumnDef<T> {
   if (!header) {
@@ -23,12 +25,14 @@ export function sortableColumnDef<T>(cid: string, header: string | undefined = u
   };
 }
 
-export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): ColumnDef<T> {
+export function createSelectColumn<T>(cid: string, meta?: ColumnMetaStyle, className?: string): ColumnDef<T> {
+  const globalCn = cn('ml-3', className);
+  meta = meta ?? { header: { width: '4rem' } };
   return {
     id: cid,
     header: ({ table }) => (
       <Checkbox
-        className={className}
+        className={globalCn}
         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -36,7 +40,7 @@ export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): 
     ),
     cell: ({ row }) => (
       <Checkbox
-        className={className}
+        className={globalCn}
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -44,6 +48,7 @@ export function createSelectColumn<T>(cid: string, className: string = 'mx-2'): 
     ),
     enableSorting: false,
     enableHiding: false,
+    meta,
   };
 }
 

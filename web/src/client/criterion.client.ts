@@ -35,12 +35,20 @@ export async function createSoopCriterion(append: SoopCriterionAppend) {
   return (await res.json()) as SoopCriterionDto;
 }
 
+export function updateCriterionEnforceCreds(id: string, enforceCreds: boolean) {
+  return updateCriterion(id, undefined, enforceCreds);
+}
+
 export function updateCriterionIsDeactivated(id: string, isDeactivated: boolean) {
   return updateCriterion(id, undefined, undefined, isDeactivated);
 }
 
-export function updateCriterionEnforceCreds(id: string, enforceCreds: boolean) {
-  return updateCriterion(id, undefined, enforceCreds);
+export function updateCriterionMinUserCnt(id: string, minUserCnt: number) {
+  return updateCriterion(id, undefined, undefined, undefined, minUserCnt);
+}
+
+export function updateCriterionMinFollowCnt(id: string, minFollowCnt: number) {
+  return updateCriterion(id, undefined, undefined, undefined, undefined, minFollowCnt);
 }
 
 async function updateCriterion(

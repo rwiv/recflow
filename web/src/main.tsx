@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ChannelsPage } from '@/pages/ChanenelsPage.tsx';
 import { NodesPage } from '@/pages/NodesPage.tsx';
 import { CriterionPage } from '@/pages/CriterionPage.tsx';
+import { Toaster } from '@/components/ui/toaster.tsx';
 
 const routes: RouteObject[] = [
   { path: '/', element: <LivesPage /> },
@@ -27,5 +28,6 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <RouterProvider router={router} />
+    <Toaster />
   </QueryClientProvider>,
 );

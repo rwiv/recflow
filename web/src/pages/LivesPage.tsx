@@ -5,9 +5,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useEffect } from 'react';
-import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
+import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 import { fetchChannels } from '@/client/channel.client.ts';
 
 export function LivesPage() {

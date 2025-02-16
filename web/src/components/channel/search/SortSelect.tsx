@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 
 export function SortSelect() {
   const navigate = useNavigate();

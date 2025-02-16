@@ -14,7 +14,7 @@ import { ChannelDto } from '@/client/channel.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { deleteChannel, updateChannelIsFollowed } from '@/client/channel.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { ChannelUpdateDialog } from '@/components/channel/edit/ChannelUpdateDialog.tsx';
 
 export function ChannelActions({ channel }: { channel: ChannelDto }) {

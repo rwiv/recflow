@@ -7,7 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination.tsx';
-import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
+import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 
 interface PageNavigationProps {
   pageState: ChannelPageState;

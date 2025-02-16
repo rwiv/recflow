@@ -1,10 +1,10 @@
 import { ChannelTable } from '@/components/channel/ChannelTable.tsx';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { Link, useSearchParams } from 'react-router';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { DEFAULT_PAGE_NUMBER } from '@/common/constants.ts';
 import { useEffect } from 'react';
-import { ChannelPageStateBuilder } from '@/hooks/ChannelPageStateBuilder.ts';
+import { ChannelPageStateBuilder } from '@/hooks/channel/ChannelPageStateBuilder.ts';
 
 export function ChannelsPage() {
   const [searchParams] = useSearchParams();

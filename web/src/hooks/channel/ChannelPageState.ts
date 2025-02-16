@@ -1,5 +1,5 @@
 import { CHANNELS_QUERY_KEY } from '@/common/constants.ts';
-import { ChannelPageStateBuilder } from '@/hooks/ChannelPageStateBuilder.ts';
+import { ChannelPageStateBuilder } from '@/hooks/channel/ChannelPageStateBuilder.ts';
 import { ChannelSortType } from '@/client/common.schema.ts';
 
 export class ChannelPageState {

@@ -1,5 +1,5 @@
 import { DEFAULT_PAGE_SIZE } from '@/common/constants.ts';
-import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
+import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 import { ChannelSortType, channelSortTypeEnum } from '@/client/common.schema.ts';
 
 export class ChannelPageStateBuilder {

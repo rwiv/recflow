@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';

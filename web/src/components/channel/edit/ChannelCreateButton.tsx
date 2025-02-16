@@ -10,7 +10,7 @@ import { SelectItem } from '@/components/ui/select.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel.client.ts';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { ChannelAppend } from '@/client/channel.types.ts';
 import { platformNameEnum } from '@/client/common.schema.ts';
 import { nonempty } from '@/common/common.schema.ts';

@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useNavigate } from 'react-router';
 
 export function PrioritySelect() {

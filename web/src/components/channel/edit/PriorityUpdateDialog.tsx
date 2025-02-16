@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ReactNode, useRef } from 'react';
 import { SelectItem } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { updateChannelPriority } from '@/client/channel.client.ts';
 import { ChannelDto } from '@/client/channel.types.ts';
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';

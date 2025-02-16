@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form.tsx';
-import { useChannelPageStore } from '@/hooks/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { updateChannelDescription } from '@/client/channel.client.ts';
 import { ChannelDto } from '@/client/channel.types.ts';
 import { DialogWithTrigger } from '@/components/common/layout/DialogWithTrigger.tsx';

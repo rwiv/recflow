@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ChannelPageState } from '@/hooks/ChannelPageState.ts';
+import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 
 interface GlobalState {
   pageState: ChannelPageState | null;

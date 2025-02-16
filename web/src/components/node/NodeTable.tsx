@@ -4,7 +4,7 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
+import { nodeColumns } from '@/components/node/nodeColumns.tsx';
 import { NodeDto } from '@/client/node.schema.ts';
 import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
@@ -32,7 +32,7 @@ export function NodeTable({ data }: { data: NodeDto[] }) {
   return (
     <div className="w-full">
       <div className="flex items-center mb-4">
-        <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
+        <FilterInput table={table} columnId={'name'} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
           <NodeCreateButton />
           <Button variant="secondary" onClick={onDelete}>

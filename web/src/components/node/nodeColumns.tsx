@@ -1,75 +1,68 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { NodeDto } from '@/client/node.schema.ts';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
-
-export const nameCid = 'name';
-export const weightCid = 'weight';
+import { CordonedBadge } from '@/components/node/units/CordonedBadge.tsx';
+import { NodeGroupBadge } from '@/components/node/units/GroupUpdateDialog.tsx';
 
 const nameColumn: ColumnDef<NodeDto> = {
-  accessorKey: nameCid,
-  header: () => <div className="ml-9 my-1">Name</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.name}</div>,
+  accessorKey: 'name',
+  header: () => <div className="justify-self-center">Name</div>,
+  cell: ({ row }) => <div className="justify-self-center">{row.original.name}</div>,
 };
 
 const weightColumn: ColumnDef<NodeDto> = {
-  accessorKey: weightCid,
-  header: () => <div>Weight</div>,
-  cell: ({ row }) => <div>{row.original.weight}</div>,
+  accessorKey: 'weight',
+  header: () => <div className="justify-self-center">Weight</div>,
+  cell: ({ row }) => <div className="justify-self-center">{row.original.weight}</div>,
 };
 
 const chzzkColumn: ColumnDef<NodeDto> = {
   accessorKey: 'chzzk',
-  header: 'Chzzk',
+  header: () => <div className="justify-self-center">Chzzk</div>,
   cell: ({ row }) => {
     const node = row.original;
     const state = node.states?.find((s) => s.platform.name === 'chzzk');
     if (!state) {
-      return <div>Not Found</div>;
+      return <div className="justify-self-center">Not Found</div>;
     }
     const content = `${state.assigned} (${state.capacity})`;
-    return <div>{content}</div>;
+    return <div className="justify-self-center">{content}</div>;
   },
 };
 
 const soopColumn: ColumnDef<NodeDto> = {
   accessorKey: 'soop',
-  header: 'Soop',
+  header: () => <div className="justify-self-center">Soop</div>,
   cell: ({ row }) => {
     const node = row.original;
     const state = node.states?.find((s) => s.platform.name === 'soop');
     if (!state) {
-      return <div>Not Found</div>;
+      return <div className="justify-self-center">Not Found</div>;
     }
     const content = `${state.assigned} (${state.capacity})`;
-    return <div>{content}</div>;
+    return <div className="justify-self-center">{content}</div>;
   },
 };
 
 const groupColumn: ColumnDef<NodeDto> = {
   accessorKey: 'group',
-  header: 'Group',
-  cell: ({ row }) => {
-    const name = row.original.group?.name;
-    return <div>{name}</div>;
-  },
+  header: () => <div className="justify-self-center">Group</div>,
+  cell: ({ row }) => <NodeGroupBadge node={row.original} />,
 };
 
 const nodeTypeColumn: ColumnDef<NodeDto> = {
   accessorKey: 'type',
-  header: 'Type',
+  header: () => <div className="justify-self-center">Type</div>,
   cell: ({ row }) => {
     const name = row.original.type.name;
-    return <div>{name}</div>;
+    return <div className="justify-self-center">{name}</div>;
   },
 };
 
 const cordonedColumn: ColumnDef<NodeDto> = {
   accessorKey: 'isCordoned',
-  header: () => <div className="justify-self-center">Cordoned</div>,
-  cell: ({ row }) => {
-    const value = row.original.isCordoned ? 'Yes' : 'No';
-    return <div className="justify-self-center">{value}</div>;
-  },
+  header: () => <div className="justify-self-center">Activated</div>,
+  cell: ({ row }) => <CordonedBadge node={row.original} />,
   meta: { header: { width: '10rem' } },
 };
 

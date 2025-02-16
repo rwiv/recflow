@@ -23,7 +23,7 @@ export class CriterionRepository {
     const entReq: CriterionEntAppendReq = {
       ...append,
       id: append.id ?? uuid(),
-      isDeactivated: append.isDeactivated ?? false,
+      isDeactivated: append.isDeactivated ?? true,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(liveCriterionTable).values(criterionEntAppendReq.parse(entReq)).returning();

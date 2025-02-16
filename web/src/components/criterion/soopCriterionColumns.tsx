@@ -2,41 +2,37 @@ import { ColumnDef } from '@tanstack/react-table';
 import { SoopCriterionDto } from '@/client/criterion.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
+import { ActivationBadge } from '@/components/criterion/units/ActivationBadge.tsx';
+import { EnforceCredentialsBadge } from '@/components/criterion/units/EnforceCredentialsBadge.tsx';
 
 const nameColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'name',
-  header: () => <div className="ml-9 my-1">Name</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.name}</div>,
-};
-
-const descriptionColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'description',
-  header: () => <div className="ml-9 my-1">Description</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.description}</div>,
+  header: () => <div className="justify-self-center">Name</div>,
+  cell: ({ row }) => <div className="justify-self-center">{row.original.name}</div>,
 };
 
 const enforceCredsColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'enforceCreds',
-  header: () => <div className="ml-9 my-1">enforceCreds</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.enforceCreds ? 'Yes' : 'No'}</div>,
+  header: () => <div className="justify-self-center">enforceCreds</div>,
+  cell: ({ row }) => <EnforceCredentialsBadge criterion={row.original} />,
 };
 
 const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'isDeactivated',
-  header: () => <div className="ml-9 my-1">Deactivated</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.isDeactivated ? 'Yes' : 'No'}</div>,
+  header: () => <div className="justify-self-center">Activated</div>,
+  cell: ({ row }) => <ActivationBadge criterion={row.original} />,
 };
 
 const minUserCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minUserCnt',
-  header: () => <div className="ml-9 my-1">minUserCnt</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.minUserCnt}</div>,
+  header: () => <div className="justify-self-center">minUserCnt</div>,
+  cell: ({ row }) => <div className="justify-self-center">{row.original.minUserCnt}</div>,
 };
 
 const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minFollowCnt',
-  header: () => <div className="ml-9 my-1">minFollowCnt</div>,
-  cell: ({ row }) => <div className="ml-9 my-1">{row.original.minFollowCnt}</div>,
+  header: () => <div className="justify-self-center">minFollowCnt</div>,
+  cell: ({ row }) => <div className="justify-self-center">{row.original.minFollowCnt}</div>,
 };
 
 type ChzzkKey = 'positiveCates' | 'negativeCates';
@@ -44,9 +40,9 @@ type ChzzkKey = 'positiveCates' | 'negativeCates';
 function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<SoopCriterionDto> {
   return {
     accessorKey: key,
-    header: () => <div className="ml-9 my-1">{header}</div>,
+    header: () => <div className="justify-self-center">{header}</div>,
     cell: ({ row }) => (
-      <div className="ml-9 my-1 space-x-1">
+      <div className="justify-self-center space-x-1">
         {row.original[key].map((value, i) => (
           <Badge key={i} className="cursor-default">
             {value}
@@ -60,7 +56,6 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<SoopCriterio
 export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   createSelectColumn('select'),
   nameColumn,
-  descriptionColumn,
   enforceCredsColumn,
   isDeactivatedColumn,
   minUserCntColumn,

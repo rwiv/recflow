@@ -2,20 +2,25 @@ import { getIngredients, request } from '@/client/utils.ts';
 import { configs } from '@/common/configs.ts';
 import {
   ChzzkCriterionAppend,
+  chzzkCriterionDto,
   ChzzkCriterionDto,
   CriterionUpdate,
   SoopCriterionAppend,
+  soopCriterionDto,
   SoopCriterionDto,
 } from '@/client/criterion.schema.ts';
+import { parseList } from '@/common/utils.ts';
 
 export async function fetchChzzkCriteria() {
   const res = await request(`${configs.endpoint}/api/criteria/chzzk`);
-  return (await res.json()) as ChzzkCriterionDto[];
+  const criteria = parseList(chzzkCriterionDto, await res.json());
+  return criteria.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 }
 
 export async function fetchSoopCriteria() {
   const res = await request(`${configs.endpoint}/api/criteria/soop`);
-  return (await res.json()) as SoopCriterionDto[];
+  const criteria = parseList(soopCriterionDto, await res.json());
+  return criteria.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 }
 
 export async function createChzzkCriterion(append: ChzzkCriterionAppend) {
@@ -32,6 +37,10 @@ export async function createSoopCriterion(append: SoopCriterionAppend) {
 
 export function updateCriterionIsDeactivated(id: string, isDeactivated: boolean) {
   return updateCriterion(id, undefined, undefined, isDeactivated);
+}
+
+export function updateCriterionEnforceCreds(id: string, enforceCreds: boolean) {
+  return updateCriterion(id, undefined, enforceCreds);
 }
 
 async function updateCriterion(

@@ -3,6 +3,7 @@ import { NodeFinder } from '../service/node.finder.js';
 import { NodeWriter } from '../service/node.writer.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
+import { NodeUpdater } from '../service/node.updater.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/nodes')
@@ -10,6 +11,7 @@ export class NodeController {
   constructor(
     private readonly finder: NodeFinder,
     private readonly writer: NodeWriter,
+    private readonly updater: NodeUpdater,
   ) {}
 
   @Get('/')
@@ -30,7 +32,7 @@ export class NodeController {
   @Put('/:nodeId')
   update(@Param('nodeId') nodeId: string, @Body() req: NodeUpdate) {
     const update = nodeUpdate.parse(req);
-    return this.writer.update(nodeId, update);
+    return this.updater.update(nodeId, update);
   }
 
   @Delete('/:nodeId')

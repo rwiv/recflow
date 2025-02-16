@@ -24,3 +24,7 @@ export function getStyleCell<T>(cell: Cell<T, unknown>) {
   const style = meta?.cell?.width ? css({ width: meta.cell.width }) : undefined;
   return { cn, style };
 }
+
+export function switchBatchCn(flag: boolean) {
+  return flag ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600';
+}

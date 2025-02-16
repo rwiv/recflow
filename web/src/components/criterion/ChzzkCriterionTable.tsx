@@ -4,7 +4,6 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { nameCid, nodeColumns } from '@/components/node/nodeColumns.tsx';
 import { ChzzkCriterionDto } from '@/client/criterion.schema.ts';
 import { chzzkCriterionColumns } from '@/components/criterion/chzzkCriterionColumns.tsx';
 import { ChzzkCriterionCreateButton } from '@/components/criterion/ChzzkCriterionCreateButton.tsx';
@@ -33,7 +32,7 @@ export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
   return (
     <div className="w-full">
       <div className="flex items-center mb-4">
-        <FilterInput table={table} columnId={nameCid} placeholder="Filter names..." />
+        <FilterInput table={table} columnId={'name'} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
           <ChzzkCriterionCreateButton />
           <Button variant="secondary" onClick={onDelete}>
@@ -43,7 +42,7 @@ export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
         <ColumnSelector table={table} />
       </div>
       <div className="rounded-md border">
-        <TableContent table={table} columnLength={nodeColumns.length} />
+        <TableContent table={table} columnLength={chzzkCriterionColumns.length} />
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <SelectedRowCount table={table} />

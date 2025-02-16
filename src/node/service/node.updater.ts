@@ -7,6 +7,8 @@ import { Tx } from '../../infra/db/types.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
+import { NodeUpdate } from '../spec/node.dto.schema.js';
+import { NodeRepository } from '../storage/node.repository.js';
 
 export const syncForm = z.array(
   z.object({
@@ -19,9 +21,14 @@ export type SyncForm = z.infer<typeof syncForm>;
 @Injectable()
 export class NodeUpdater {
   constructor(
+    private readonly nodeRepo: NodeRepository,
     private readonly stateRepo: NodeStateRepository,
     private readonly finder: NodeFinder,
   ) {}
+
+  async update(id: string, req: NodeUpdate) {
+    await this.nodeRepo.update(id, req);
+  }
 
   async updateCnt(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
     return tx.transaction(async (txx) => {

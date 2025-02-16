@@ -1,10 +1,12 @@
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/utils.ts';
-import { NodeAppend, NodeGroupDto, NodeDto, NodeUpdate } from '@/client/node.schema.ts';
+import { NodeAppend, NodeGroupDto, NodeDto, NodeUpdate, nodeDto } from '@/client/node.schema.ts';
+import { parseList } from '@/common/utils.ts';
 
 export async function fetchNodes() {
   const res = await request(`${configs.endpoint}/api/nodes`);
-  return (await res.json()) as NodeDto[];
+  const nodes = parseList(nodeDto, await res.json());
+  return nodes.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function fetchNodeGroups() {
@@ -20,6 +22,10 @@ export async function createNode(append: NodeAppend) {
 
 export function updateNodeIsCordoned(id: string, isCordoned: boolean) {
   return updateNode(id, undefined, undefined, undefined, undefined, isCordoned, undefined);
+}
+
+export function updateNodeGroup(id: string, groupId: string) {
+  return updateNode(id, undefined, undefined, undefined, undefined, undefined, groupId);
 }
 
 async function updateNode(

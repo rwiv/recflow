@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.3.5
+  tag: 0.3.6
   pullSecret: image-pull-secret
 
 affinity: {}
@@ -51,7 +51,3 @@ externals:
   ntfy:
     endpoint: http://ntfy.common.svc.cluster.local
     topic: stmgr
-
-configMap:
-  name: stmgr-conf
-  mountPath: /app/conf

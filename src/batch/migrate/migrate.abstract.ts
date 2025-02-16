@@ -1,6 +1,7 @@
 import fs from 'fs';
 import readline from 'node:readline';
 import { log } from 'jslog';
+import { exists } from '../../utils/file.js';
 
 export abstract class BatchMigrator {
   abstract migrateOne(line: string): Promise<void>;
@@ -21,7 +22,9 @@ export abstract class BatchMigrator {
   }
 
   async backup(endpoint: string, filePath: string) {
-    await fs.promises.unlink(filePath);
+    if (await exists(filePath)) {
+      await fs.promises.unlink(filePath);
+    }
     const ws = fs.createWriteStream(filePath, { flags: 'a' });
     await this.backupRun(endpoint, (line) => this.writeLine(line, ws));
     ws.end();

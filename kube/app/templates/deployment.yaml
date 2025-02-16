@@ -19,8 +19,6 @@ spec:
           env:
             - name: NODE_ENV
               value: prod
-            - name: CONFIG_PATH
-              value: {{ .Values.configMap.mountPath }}/conf.yaml
             - name: APP_PORT
               value: "{{ .Values.app.server.port }}"
             - name: STREAMQ_URL
@@ -76,16 +74,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.postgres.secretName }}
                   key: {{ .Values.app.postgres.passwordKey }}
-          volumeMounts:
-            - name: conf
-              mountPath: {{ .Values.configMap.mountPath }}
-              readOnly: true
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
-      volumes:
-        - name: conf
-          configMap:
-            name: {{ .Values.configMap.name }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

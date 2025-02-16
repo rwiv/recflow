@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from './live.entity.schema.js';
+import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from '../spec/live.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
@@ -58,21 +58,17 @@ export class LiveRepository {
     return tx.select().from(liveTable).where(eq(liveTable.nodeId, nodeId));
   }
 
-  async update(update: LiveEntUpdate, tx: Tx = db) {
-    const live = await this.findById(update.id, tx);
+  async update(id: string, update: LiveEntUpdate, tx: Tx = db) {
+    const live = await this.findById(id, tx);
     if (!live) {
-      throw NotFoundError.from('Live', 'id', update.id);
+      throw NotFoundError.from('Live', 'id', id);
     }
     const entReq: LiveEnt = {
       ...live,
-      ...update.form,
+      ...update,
       updatedAt: new Date(),
     };
-    const ent = await tx
-      .update(liveTable)
-      .set(liveEnt.parse(entReq))
-      .where(eq(liveTable.id, update.id))
-      .returning();
+    const ent = await tx.update(liveTable).set(liveEnt.parse(entReq)).where(eq(liveTable.id, id)).returning();
     return oneNotNull(ent);
   }
 }

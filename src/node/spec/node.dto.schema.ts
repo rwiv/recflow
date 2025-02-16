@@ -1,11 +1,5 @@
 import { z } from 'zod';
-import {
-  nodeEnt,
-  nodeEntAppend,
-  nodeGroupEnt,
-  nodeStateEnt,
-  nodeTypeEnt,
-} from '../storage/node.entity.schema.js';
+import { nodeEnt, nodeEntAppend, nodeGroupEnt, nodeStateEnt, nodeTypeEnt } from './node.entity.schema.js';
 import { nodeTypeNameEnum } from './node.enum.schema.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';

@@ -6,7 +6,7 @@ import { ChzzkCriterionDto, PlatformCriterionDto, SoopCriterionDto } from '../sp
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
-import { CriterionEnt } from '../storage/criterion.entity.schema.js';
+import { CriterionEnt } from '../spec/criterion.entity.schema.js';
 import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { criterionRuleEnt, CriterionRuleEntAppend } from './criterion.entity.schema.js';
+import { criterionRuleEnt, CriterionRuleEntAppend } from '../spec/criterion.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { uuid } from '../../utils/uuid.js';

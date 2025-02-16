@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NodeEnt, NodeStateEnt } from '../storage/node.entity.schema.js';
+import { NodeEnt, NodeStateEnt } from '../spec/node.entity.schema.js';
 import { NodeDto, NodeStateDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';

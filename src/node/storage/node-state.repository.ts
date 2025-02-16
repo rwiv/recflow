@@ -1,6 +1,11 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { nodeStateEnt, NodeStateEnt, NodeStateEntAppend, NodeStateEntUpdate } from './node.entity.schema.js';
+import {
+  nodeStateEnt,
+  NodeStateEnt,
+  NodeStateEntAppend,
+  NodeStateEntUpdate,
+} from '../spec/node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeStateTable } from '../../infra/db/schema.js';
@@ -45,19 +50,19 @@ export class NodeStateRepository {
     await tx.delete(nodeStateTable).where(eq(nodeStateTable.id, id));
   }
 
-  async update(update: NodeStateEntUpdate, tx: Tx = db) {
-    const nodeState = await this.findById(update.id, tx);
-    if (!nodeState) throw NotFoundError.from('NodeState', 'id', update.id);
+  async update(id: string, update: NodeStateEntUpdate, tx: Tx = db) {
+    const nodeState = await this.findById(id, tx);
+    if (!nodeState) throw NotFoundError.from('NodeState', 'id', id);
     const req: NodeStateEnt = {
       ...nodeState,
-      ...update.form,
+      ...update,
       updatedAt: new Date(),
     };
     return oneNotNull(
       await tx
         .update(nodeStateTable)
         .set(nodeStateEnt.parse(req))
-        .where(eq(nodeStateTable.id, update.id))
+        .where(eq(nodeStateTable.id, id))
         .returning(),
     );
   }

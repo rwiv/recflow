@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveEntAppend, LiveEntUpdate } from '../storage/live.entity.schema.js';
+import { LiveEntAppend } from '../spec/live.entity.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveMapper } from './live.mapper.js';
 import { LiveUpdate } from '../spec/live.dto.schema.js';
@@ -40,12 +40,11 @@ export class LiveWriter {
   }
 
   async updateByLive(id: string, live: LiveInfo) {
-    const req: LiveEntUpdate = { id, form: { ...live } };
-    const ent = await this.liveRepo.update(req);
+    const ent = await this.liveRepo.update(id, { ...live });
     return this.mapper.map(ent);
   }
 
-  async update(update: LiveUpdate) {
-    return this.mapper.map(await this.liveRepo.update(update));
+  async update(id: string, update: LiveUpdate) {
+    return this.mapper.map(await this.liveRepo.update(id, update));
   }
 }

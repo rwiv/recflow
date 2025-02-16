@@ -12,7 +12,7 @@ import {
   CriterionRuleEnt,
   CriterionUnitEnt,
   CriterionUnitEntAppend,
-} from '../storage/criterion.entity.schema.js';
+} from '../spec/criterion.entity.schema.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { CriterionRuleFinder } from './criterion.rule.finder.js';

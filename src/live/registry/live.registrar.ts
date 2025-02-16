@@ -13,7 +13,6 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { LiveWriter } from '../access/live.writer.js';
-import { LiveUpdate } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../access/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 
@@ -73,11 +72,7 @@ export class LiveRegistrar {
 
     if (!purge) {
       if (live.isDisabled) throw new ConflictError(`Already deleted: ${recordId}`);
-      const update: LiveUpdate = {
-        id: live.id,
-        form: { isDisabled: true, deletedAt: new Date() },
-      };
-      await this.liveWriter.update(update);
+      await this.liveWriter.update(live.id, { isDisabled: true, deletedAt: new Date() });
       await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
     } else {
       if (!live.isDisabled) {

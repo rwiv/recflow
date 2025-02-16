@@ -13,7 +13,7 @@ import { nodeTypeNameEnum } from '../../node/spec/node.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/default.node.constraints.js';
 import { PriorityEntAppend } from '../../channel/storage/priority.schema.js';
-import { NodeGroupAppend } from '../../node/storage/node.entity.schema.js';
+import { NodeGroupAppend } from '../../node/spec/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
 import {

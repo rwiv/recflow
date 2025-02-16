@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionUnitEnt } from '../storage/criterion.entity.schema.js';
+import { CriterionUnitEnt } from '../spec/criterion.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { ChzzkCriterionDto, CriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';

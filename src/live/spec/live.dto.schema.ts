@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { liveEnt, liveEntUpdate } from '../storage/live.entity.schema.js';
+import { liveEnt, liveEntUpdate } from './live.entity.schema.js';
 import { nodeDto } from '../../node/spec/node.dto.schema.js';
 import { channelDto } from '../../channel/spec/channel.dto.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';

@@ -25,9 +25,5 @@ export const liveEntAppend = liveEnt.partial({
 });
 export type LiveEntAppend = z.infer<typeof liveEntAppend>;
 
-const liveEntUpdateForm = liveEnt.omit({ id: true }).partial();
-export const liveEntUpdate = z.object({
-  id: uuid,
-  form: liveEntUpdateForm,
-});
+export const liveEntUpdate = liveEnt.omit({ id: true }).partial();
 export type LiveEntUpdate = z.infer<typeof liveEntUpdate>;

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { NodeStateRepository } from '../storage/node-state.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from './node.finder.js';
-import { NodeStateEntUpdate } from '../storage/node.entity.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
@@ -37,16 +36,14 @@ export class NodeUpdater {
       if (num === -1 && state.assigned < 1) {
         throw new ValidationError(`Node has no assigned count: nodeId=${nodeId}, platformId=${pfId}`);
       }
-      const update: NodeStateEntUpdate = { id: state.id, form: { assigned: state.assigned + num } };
-      await this.stateRepo.update(update, txx);
+      await this.stateRepo.update(state.id, { assigned: state.assigned + num }, txx);
     });
   }
 
   async synchronize(liveStates: SyncForm) {
     return db.transaction(async (tx) => {
       for (const state of await this.stateRepo.findAll(tx)) {
-        const update: NodeStateEntUpdate = { id: state.id, form: { assigned: 0 } };
-        await this.stateRepo.update(update);
+        await this.stateRepo.update(state.id, { assigned: 0 });
       }
 
       for (const live of liveStates) {

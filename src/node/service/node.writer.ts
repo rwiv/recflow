@@ -4,7 +4,7 @@ import { NodeTypeRepository } from '../storage/node-type.repository.js';
 import { NodeStateRepository } from '../storage/node-state.repository.js';
 import { NodeAppend, NodeDto, NodeStateDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeEntAppend, NodeStateEntAppend } from '../storage/node.entity.schema.js';
+import { NodeEntAppend, NodeStateEntAppend } from '../spec/node.entity.schema.js';
 import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';

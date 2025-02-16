@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { criterionEnt } from '../storage/criterion.entity.schema.js';
+import { criterionEnt } from './criterion.entity.schema.js';
 import { nonempty, uuid } from '../../common/data/common.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 

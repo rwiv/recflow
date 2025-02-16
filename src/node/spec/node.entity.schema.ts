@@ -76,11 +76,5 @@ export const nodeStateEntAppend = nodeStateEnt.partial({
 });
 export type NodeStateEntAppend = z.infer<typeof nodeStateEntAppend>;
 
-export const nodeStateEntUpdateForm = nodeStateEnt
-  .omit({ id: true, createdAt: true, updatedAt: true })
-  .partial();
-export const nodeEntUpdate = z.object({
-  id: z.string(),
-  form: nodeStateEntUpdateForm,
-});
+export const nodeEntUpdate = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type NodeStateEntUpdate = z.infer<typeof nodeEntUpdate>;

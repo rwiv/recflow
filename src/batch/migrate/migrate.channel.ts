@@ -12,7 +12,7 @@ const fetchedChannel = channelDto.omit({ isFollowed: true }).extend({
   id: nonempty,
   followed: z.boolean(),
   platform: platformDto.extend({ id: nonempty }),
-  priority: priorityDto.extend({ id: nonempty }),
+  priority: priorityDto.extend({ id: nonempty }).omit({ shouldNotify: true }),
   tags: z.array(tagDto.extend({ id: nonempty })).optional(),
 });
 const fetchedChannelsResult = z.object({
@@ -36,8 +36,6 @@ export class ChannelBatchMigrator extends BatchMigrator {
       isFollowed: channel.followed,
       platformName: channel.platform.name,
       priorityName: channel.priority.name,
-      createdAt: new Date(channel.createdAt),
-      updatedAt: new Date(channel.updatedAt),
     };
     // const tagIds = channel.tags?.map((t) => t.id) ?? [];
     // await this.chWriter.createWithTagIds(req, tagIds);

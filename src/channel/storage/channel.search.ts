@@ -7,7 +7,7 @@ import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from './tag.query.js';
 import { Injectable } from '@nestjs/common';
 import { PriorityRepository } from './priority.repository.js';
-import { ChannelPageEntResult } from './channel.entity.schema.js';
+import { ChannelPageEntResult } from '../spec/channel.entity.schema.js';
 import { channelSortTypeEnum, ChannelSortType } from '../spec/channel.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';

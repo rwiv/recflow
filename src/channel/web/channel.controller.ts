@@ -23,7 +23,6 @@ import {
 } from '../spec/channel.dto.schema.js';
 import { ChannelFinder } from '../service/channel.finder.js';
 import { ChannelUpdater } from '../service/channel.updater.js';
-import { notNull } from '../../utils/null.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../service/channel.searcher.js';
@@ -75,22 +74,19 @@ export class ChannelController {
     return this.chWriter.createWithFetch(channelAppendWithFetch.parse(req));
   }
 
-  @Patch('/priority')
-  patchPriority(@Body() req: ChannelUpdate) {
+  @Patch('/:channelId')
+  update(@Param('channelId') channelId: string, @Body() req: ChannelUpdate) {
     const update = channelUpdate.parse(req);
-    return this.chUpdater.updatePriority(update.id, notNull(update.form.priorityName));
-  }
-
-  @Patch('/isFollowed')
-  patchFollowed(@Body() req: ChannelUpdate) {
-    const update = channelUpdate.parse(req);
-    return this.chUpdater.updateFollowed(update.id, notNull(update.form?.isFollowed));
-  }
-
-  @Patch('/description')
-  patchDescription(@Body() req: ChannelUpdate) {
-    const update = channelUpdate.parse(req);
-    return this.chUpdater.updateDescription(update.id, update.form.description ?? null);
+    const { priorityName, isFollowed, description } = update;
+    if (priorityName !== undefined) {
+      return this.chUpdater.updatePriority(channelId, priorityName);
+    } else if (isFollowed !== undefined) {
+      return this.chUpdater.updateFollowed(channelId, isFollowed);
+    } else if (description !== undefined) {
+      return this.chUpdater.updateDescription(channelId, description);
+    } else {
+      throw new ValidationError('invalid update request');
+    }
   }
 
   @Delete('/:channelId')

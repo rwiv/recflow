@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelDto } from '../spec/channel.dto.schema.js';
 import { PriorityRepository } from '../storage/priority.repository.js';
-import { ChannelEnt } from '../storage/channel.entity.schema.js';
+import { ChannelEnt } from '../spec/channel.entity.schema.js';
 import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';

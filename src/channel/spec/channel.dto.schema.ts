@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { tagDto } from './tag.dto.schema.js';
-import { channelEnt, channelEntAppend, channelEntUpdateForm } from '../storage/channel.entity.schema.js';
-import { uuid } from '../../common/data/common.schema.js';
+import { channelEnt, channelEntAppend, channelEntUpdate } from './channel.entity.schema.js';
 import { PriorityEnt, priorityEnt, priorityEntAppend } from '../storage/priority.schema.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
@@ -60,17 +59,8 @@ export const channelAppendWithInfo = channelAppendWithFetch.pick({
 });
 export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
 
-export const channelUpdateForm = channelEntUpdateForm
-  .pick({
-    isFollowed: true,
-    description: true,
-  })
-  .extend({
-    priorityName: z.string().nonempty().optional(),
-  });
-export const channelUpdate = z.object({
-  id: uuid,
-  form: channelUpdateForm,
+export const channelUpdate = channelEntUpdate.extend({
+  priorityName: z.string().nonempty().optional(),
 });
 export type ChannelUpdate = z.infer<typeof channelUpdate>;
 

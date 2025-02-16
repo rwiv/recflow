@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { tagEnt, TagEnt } from '../storage/tag.entity.schema.js';
+import { tagEnt, TagEnt } from './tag.entity.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
 
 export const tagDto = tagEnt;

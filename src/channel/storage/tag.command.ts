@@ -14,7 +14,7 @@ import {
   tagEnt,
   TagEntAppend,
   TagEntUpdate,
-} from './tag.entity.schema.js';
+} from '../spec/tag.entity.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { z } from 'zod';
@@ -40,14 +40,14 @@ export class TagCommandRepository {
     return oneNotNull(ent);
   }
 
-  async update(update: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
-    const tag = await this.tagQuery.findById(update.tagId, tx);
-    if (!tag) throw NotFoundError.from('ChannelTag', 'id', update.tagId);
-    const req: TagEnt = { ...tag, ...update.form, updatedAt: new Date() };
+  async update(id: string, update: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
+    const tag = await this.tagQuery.findById(id, tx);
+    if (!tag) throw NotFoundError.from('ChannelTag', 'id', id);
+    const req: TagEnt = { ...tag, ...update, updatedAt: new Date() };
     const ent = await tx
       .update(channelTagTable)
       .set(tagEnt.parse(req))
-      .where(eq(channelTagTable.id, update.tagId))
+      .where(eq(channelTagTable.id, id))
       .returning();
     return oneNotNull(ent);
   }

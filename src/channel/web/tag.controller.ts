@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Patch, Put, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseFilters } from '@nestjs/common';
 import { TagWriter } from '../service/tag.writer.js';
 import { TagFinder } from '../service/tag.finder.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
-import { tagEntUpdate, TagEntUpdate } from '../storage/tag.entity.schema.js';
 import { tagAttachment, TagAttachment, tagDetachment, TagDetachment } from '../spec/tag.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
@@ -16,11 +15,6 @@ export class TagController {
   @Get('/')
   tags() {
     return this.tagFinder.findAll();
-  }
-
-  @Put('/')
-  updateTag(@Body() req: TagEntUpdate) {
-    return this.tagWriter.update(tagEntUpdate.parse(req));
   }
 
   @Patch('/attach')

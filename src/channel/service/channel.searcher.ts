@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { channelPageResult, ChannelPageResult, ChannelSortType } from '../spec/channel.dto.schema.js';
-import { ChannelPageEntResult } from '../storage/channel.entity.schema.js';
+import { ChannelPageEntResult } from '../spec/channel.entity.schema.js';
 import { ChannelSearchRepository } from '../storage/channel.search.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { PageQuery } from '../../common/data/common.schema.js';

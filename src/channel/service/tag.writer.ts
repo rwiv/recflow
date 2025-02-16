@@ -5,7 +5,7 @@ import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { ChannelsToTagsEntAppend, TagEntAppend, TagEntUpdate } from '../storage/tag.entity.schema.js';
+import { ChannelsToTagsEntAppend, TagEntAppend } from '../spec/tag.entity.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
@@ -15,10 +15,6 @@ export class TagWriter {
     private readonly tagQuery: TagQueryRepository,
     private readonly chQuery: ChannelQueryRepository,
   ) {}
-
-  update(update: TagEntUpdate): Promise<TagDto> {
-    return this.tagCmd.update(update);
-  }
 
   attach(attach: TagAttachment, tx: Tx = db): Promise<TagDto> {
     return tx.transaction(async (txx) => {

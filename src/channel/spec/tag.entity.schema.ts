@@ -15,10 +15,7 @@ export const tagEntAppend = tagEnt
   .partial({ id: true, description: true });
 export type TagEntAppend = z.infer<typeof tagEntAppend>;
 
-export const tagEntUpdate = z.object({
-  tagId: uuid,
-  form: tagEntAppend.partial(),
-});
+export const tagEntUpdate = tagEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type TagEntUpdate = z.infer<typeof tagEntUpdate>;
 
 export const channelsToTagsEnt = z.object({

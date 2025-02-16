@@ -4,7 +4,7 @@ import { and, eq, like } from 'drizzle-orm';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../utils/list.js';
-import { ChannelEnt } from './channel.entity.schema.js';
+import { ChannelEnt } from '../spec/channel.entity.schema.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()

@@ -6,7 +6,7 @@ import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from './channel.query.js';
-import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from './channel.entity.schema.js';
+import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from '../spec/channel.entity.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
@@ -28,18 +28,18 @@ export class ChannelCommandRepository {
     return oneNotNull(ent);
   }
 
-  async update(update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
-    const channel = await this.chQuery.findById(update.id, tx);
-    if (!channel) throw NotFoundError.from('Channel', 'id', update.id);
+  async update(id: string, update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
+    const channel = await this.chQuery.findById(id, tx);
+    if (!channel) throw NotFoundError.from('Channel', 'id', id);
     const req: ChannelEnt = {
       ...channel,
-      ...update.form,
+      ...update,
       updatedAt: new Date(),
     };
     const ent = await tx
       .update(channelTable)
       .set(channelEnt.parse(req))
-      .where(eq(channelTable.id, update.id))
+      .where(eq(channelTable.id, id))
       .returning();
     return oneNotNull(ent);
   }

@@ -4,7 +4,7 @@ import { db } from '../../infra/db/db.js';
 import { channelTagMapTable, channelTagTable } from '../../infra/db/schema.js';
 import { oneNullable } from '../../utils/list.js';
 import { eq, inArray } from 'drizzle-orm';
-import { TagEnt } from './tag.entity.schema.js';
+import { TagEnt } from '../spec/tag.entity.schema.js';
 
 @Injectable()
 export class TagQueryRepository {

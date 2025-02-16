@@ -1,7 +1,7 @@
 import { ChannelCommandRepository } from '../storage/channel.command.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelMapper } from './channel.mapper.js';
-import { ChannelEntUpdate } from '../storage/channel.entity.schema.js';
+import { ChannelEntUpdate } from '../spec/channel.entity.schema.js';
 import { PriorityRepository } from '../storage/priority.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
@@ -16,22 +16,19 @@ export class ChannelUpdater {
   async updatePriority(id: string, priorityName: string) {
     const priority = await this.priRepo.findByName(priorityName);
     if (!priority) throw NotFoundError.from('Priority', 'name', priorityName);
-    const update: ChannelEntUpdate = { id, form: { priorityId: priority.id } };
-    return this.update(update);
+    return this.update(id, { priorityId: priority.id });
   }
 
   async updateFollowed(id: string, isFollowed: boolean) {
-    const update: ChannelEntUpdate = { id, form: { isFollowed } };
-    return this.update(update);
+    return this.update(id, { isFollowed });
   }
 
   async updateDescription(id: string, description: string | null) {
-    const update: ChannelEntUpdate = { id, form: { description } };
-    return this.update(update);
+    return this.update(id, { description });
   }
 
-  private async update(req: ChannelEntUpdate) {
-    const ent = await this.chCmd.update(req);
+  private async update(id: string, req: ChannelEntUpdate) {
+    const ent = await this.chCmd.update(id, req);
     return this.chMapper.map(ent);
   }
 }

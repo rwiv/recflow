@@ -35,12 +35,9 @@ export interface ChannelAppend {
 }
 
 export interface ChannelUpdate {
-  id: string;
-  form: {
-    priorityName?: string;
-    isFollowed?: boolean;
-    description?: string | null;
-  };
+  priorityName?: string;
+  isFollowed?: boolean;
+  description?: string | null;
 }
 
 export interface ChannelPageResult {

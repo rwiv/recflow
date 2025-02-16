@@ -20,24 +20,24 @@ export async function createChannel(req: ChannelAppend) {
 }
 
 export async function updateChannelPriority(id: string, priorityName: string) {
-  const url = `${configs.endpoint}/api/channels/priority`;
-  const req: ChannelUpdate = { id, form: { priorityName } };
+  const url = `${configs.endpoint}/api/channels/${id}`;
+  const req: ChannelUpdate = { priorityName };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
   return (await res.json()) as ChannelDto;
 }
 
 export async function updateChannelFollowed(id: string, isFollowed: boolean) {
-  const url = `${configs.endpoint}/api/channels/isFollowed`;
-  const req: ChannelUpdate = { id, form: { isFollowed } };
+  const url = `${configs.endpoint}/api/channels/${id}`;
+  const req: ChannelUpdate = { isFollowed };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
   return (await res.json()) as ChannelDto;
 }
 
 export async function updateChannelDescription(id: string, description: string | null) {
-  const url = `${configs.endpoint}/api/channels/description`;
-  const req: ChannelUpdate = { id, form: { description } };
+  const url = `${configs.endpoint}/api/channels/${id}`;
+  const req: ChannelUpdate = { description };
   const { method, headers, body } = getIngredients('PATCH', req);
   const res = await request(url, { method, headers, body });
   return (await res.json()) as ChannelDto;

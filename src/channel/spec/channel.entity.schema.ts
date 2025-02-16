@@ -25,11 +25,7 @@ export const channelEntAppend = channelEnt.partial({
 });
 export type ChannelEntAppend = z.infer<typeof channelEntAppend>;
 
-export const channelEntUpdateForm = channelEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
-export const channelEntUpdate = z.object({
-  id: z.string(),
-  form: channelEntUpdateForm,
-});
+export const channelEntUpdate = channelEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type ChannelEntUpdate = z.infer<typeof channelEntUpdate>;
 
 export const channelPageEntResult = z.object({

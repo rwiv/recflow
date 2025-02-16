@@ -17,10 +17,10 @@ import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PriorityRepository } from '../storage/priority.repository.js';
-import { ChannelEntAppend } from '../storage/channel.entity.schema.js';
+import { ChannelEntAppend } from '../spec/channel.entity.schema.js';
 import { hasDuplicates } from '../../utils/list.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { ChannelsToTagsEntAppend } from '../storage/tag.entity.schema.js';
+import { ChannelsToTagsEntAppend } from '../spec/tag.entity.schema.js';
 import { TagCommandRepository } from '../storage/tag.command.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 

@@ -16,10 +16,11 @@ export const criterionDto = z.object({
 });
 export type CriterionDto = z.infer<typeof criterionDto>;
 
-// Platform cannot be changed
+// name, platform cannot be changed
 export const criterionUpdate = criterionDto
   .omit({
     id: true,
+    name: true,
     platform: true,
     createdAt: true,
     updatedAt: true,

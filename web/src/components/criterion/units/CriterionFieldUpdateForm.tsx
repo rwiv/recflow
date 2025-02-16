@@ -7,24 +7,23 @@ import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/common/cons
 
 type Type = 'minUserCnt' | 'minFollowCnt';
 
-interface FieldUpdateFormProps {
+interface CriterionFieldUpdateForm {
   type: Type;
   criterion: CriterionDto;
 }
 
 const numSchema = z.coerce.number().nonnegative();
 
-export function CriterionFieldUpdateForm({ criterion, type }: FieldUpdateFormProps) {
+export function CriterionFieldUpdateForm({ type, criterion }: CriterionFieldUpdateForm) {
   const queryClient = useQueryClient();
   const value = getValue(type, criterion);
 
   const submit = async (value: string) => {
     try {
-      const minUserCnt = numSchema.parse(value);
       if (type === 'minUserCnt') {
-        await updateCriterionMinUserCnt(criterion.id, minUserCnt);
+        await updateCriterionMinUserCnt(criterion.id, numSchema.parse(value));
       } else if (type === 'minFollowCnt') {
-        await updateCriterionMinFollowCnt(criterion.id, minUserCnt);
+        await updateCriterionMinFollowCnt(criterion.id, numSchema.parse(value));
       }
       await queryClient.invalidateQueries({ queryKey: [CHZZK_CRITERIA_QUERY_KEY] });
       await queryClient.invalidateQueries({ queryKey: [SOOP_CRITERIA_QUERY_KEY] });
@@ -34,7 +33,7 @@ export function CriterionFieldUpdateForm({ criterion, type }: FieldUpdateFormPro
   };
 
   return (
-    <TextUpdateForm submit={submit} defaultValue={value}>
+    <TextUpdateForm submit={submit} defaultValue={value} validate={numSchema.parse}>
       <div className="justify-self-center">{value}</div>
     </TextUpdateForm>
   );

@@ -47,6 +47,11 @@ export const nodeDto = z.object({
 });
 export type NodeDto = z.infer<typeof nodeDto>;
 
+const nodeCapacity = z.object({
+  platformId: uuid,
+  capacity: z.number().int().nonnegative(),
+});
+export type NodeCapacity = z.infer<typeof nodeCapacity>;
 // NodeType cannot be changed
 export const nodeUpdate = nodeDto
   .omit({
@@ -57,6 +62,7 @@ export const nodeUpdate = nodeDto
     group: true,
     states: true,
   })
+  .extend({ capacity: nodeCapacity })
   .partial();
 export type NodeUpdate = z.infer<typeof nodeUpdate>;
 

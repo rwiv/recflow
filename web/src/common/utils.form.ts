@@ -16,6 +16,8 @@ export function parse<A extends FieldValues, B extends ZodRawShape>(
           form.setError(path.toString() as Path<A>, { message: err.message });
         }
       }
+    } else {
+      throw e;
     }
   }
 }

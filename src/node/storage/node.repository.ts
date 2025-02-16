@@ -46,6 +46,10 @@ export class NodeRepository {
     return tx.select().from(nodeTable);
   }
 
+  async refreshUpdatedAt(id: string, tx: Tx = db) {
+    return this.update(id, {}, tx);
+  }
+
   async update(id: string, update: NodeEntUpdate, tx: Tx = db) {
     const node = await this.findById(id, tx);
     if (!node) throw NotFoundError.from('NodeEnt', 'id', id);

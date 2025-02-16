@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { NodeUpdate } from '../spec/node.dto.schema.js';
 import { NodeRepository } from '../storage/node.repository.js';
+import { NodeStateEnt } from '../spec/node.entity.schema.js';
 
 export const syncForm = z.array(
   z.object({
@@ -30,21 +31,42 @@ export class NodeUpdater {
     await this.nodeRepo.update(id, req);
   }
 
-  async updateCnt(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
+  async updateCapacity(nodeId: string, platformId: string, capacity: number, tx: Tx = db) {
+    return tx.transaction(async (txx) => {
+      const states = await this.stateRepo.findByNodeIdAndPlatformIdForUpdate(nodeId, platformId, txx);
+      const state = this.validatedState(states, nodeId, platformId);
+      await this.stateRepo.update(state.id, { capacity }, txx);
+      await this.nodeRepo.refreshUpdatedAt(nodeId, txx);
+    });
+  }
+
+  async incrementAssignedCnt(nodeId: string, pfId: string, tx: Tx = db) {
+    return this.adjustAssignedCnt(nodeId, pfId, 1, tx);
+  }
+
+  async decrementAssignedCnt(nodeId: string, pfId: string, tx: Tx = db) {
+    return this.adjustAssignedCnt(nodeId, pfId, -1, tx);
+  }
+
+  private async adjustAssignedCnt(nodeId: string, pfId: string, num: 1 | -1, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       const states = await this.stateRepo.findByNodeIdAndPlatformIdForUpdate(nodeId, pfId, txx);
-      if (!states) {
-        throw new NotFoundError(`NodeStates Not found: nodeId=${nodeId}, platformId=${pfId}`);
-      }
-      if (states.length > 1) {
-        throw new ValidationError(`Multiple states found: nodeId=${nodeId}, platformId=${pfId}`);
-      }
-      const state = states[0];
+      const state = this.validatedState(states, nodeId, pfId);
       if (num === -1 && state.assigned < 1) {
         throw new ValidationError(`Node has no assigned count: nodeId=${nodeId}, platformId=${pfId}`);
       }
       await this.stateRepo.update(state.id, { assigned: state.assigned + num }, txx);
     });
+  }
+
+  private validatedState(states: NodeStateEnt[], nodeId: string, pfId: string) {
+    if (!states) {
+      throw new NotFoundError(`NodeStates Not found: nodeId=${nodeId}, platformId=${pfId}`);
+    }
+    if (states.length > 1) {
+      throw new ValidationError(`Multiple states found: nodeId=${nodeId}, platformId=${pfId}`);
+    }
+    return states[0];
   }
 
   async synchronize(liveStates: SyncForm) {
@@ -56,7 +78,7 @@ export class NodeUpdater {
       for (const live of liveStates) {
         const node = await this.finder.findById(live.nodeId);
         if (!node) throw NotFoundError.from('Node', 'id', live.nodeId);
-        await this.updateCnt(node.id, live.pfId, 1, tx);
+        await this.adjustAssignedCnt(node.id, live.pfId, 1, tx);
       }
     });
   }

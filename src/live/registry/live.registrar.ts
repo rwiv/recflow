@@ -52,7 +52,7 @@ export class LiveRegistrar {
       throw new FatalError(`No node matched for ${liveInfo.pid}`);
     }
     const created = await this.liveWriter.createByLive(liveInfo, node.id);
-    await this.nodeUpdater.updateCnt(node.id, channel.platform.id, 1);
+    await this.nodeUpdater.incrementAssignedCnt(node.id, channel.platform.id);
     await this.listener.onCreate(node.endpoint, created, cr);
     return created;
   }
@@ -73,10 +73,10 @@ export class LiveRegistrar {
     if (!purge) {
       if (live.isDisabled) throw new ConflictError(`Already deleted: ${recordId}`);
       await this.liveWriter.update(live.id, { isDisabled: true, deletedAt: new Date() });
-      await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
+      await this.nodeUpdater.decrementAssignedCnt(live.nodeId, live.platform.id);
     } else {
       if (!live.isDisabled) {
-        await this.nodeUpdater.updateCnt(live.nodeId, live.platform.id, -1);
+        await this.nodeUpdater.decrementAssignedCnt(live.nodeId, live.platform.id);
       }
       await this.liveWriter.delete(recordId);
     }

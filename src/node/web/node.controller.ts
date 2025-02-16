@@ -32,7 +32,11 @@ export class NodeController {
   @Put('/:nodeId')
   update(@Param('nodeId') nodeId: string, @Body() req: NodeUpdate) {
     const update = nodeUpdate.parse(req);
-    return this.updater.update(nodeId, update);
+    if (update.capacity) {
+      return this.updater.updateCapacity(nodeId, update.capacity.platformId, update.capacity.capacity);
+    } else {
+      return this.updater.update(nodeId, update);
+    }
   }
 
   @Delete('/:nodeId')

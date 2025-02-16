@@ -2,14 +2,18 @@ import { KeyboardEventHandler, MouseEventHandler, ReactNode, useEffect, useRef, 
 import { Input } from '@/components/ui/input.tsx';
 import { css } from '@emotion/react';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
+import { toast } from '@/hooks/use-toast.ts';
+import { ZodError } from 'zod';
+import { zodErrMsg } from '@/common/utils.schema.ts';
 
 interface TextUpdateFormProps {
   submit: (value: string) => void;
+  validate: (value: string) => void;
   children: ReactNode;
   defaultValue?: string;
 }
 
-export function TextUpdateForm({ submit, children, defaultValue }: TextUpdateFormProps) {
+export function TextUpdateForm({ submit, children, validate, defaultValue }: TextUpdateFormProps) {
   const valueRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -24,9 +28,21 @@ export function TextUpdateForm({ submit, children, defaultValue }: TextUpdateFor
   }, [valueRef]);
 
   const save = () => {
-    setIsEditing(false);
-    setInput(input);
-    submit(input);
+    try {
+      validate(input);
+      setIsEditing(false);
+      setInput(input);
+      submit(input);
+    } catch (e) {
+      console.error(e);
+      if (e instanceof ZodError) {
+        toast({ title: 'Invalid input', description: zodErrMsg(e) });
+      } else if (e instanceof Error) {
+        toast({ title: 'Invalid input', description: `${e.message}` });
+      } else {
+        toast({ title: 'Invalid input', description: 'Unknown error' });
+      }
+    }
   };
 
   const cancel = () => {
@@ -37,7 +53,11 @@ export function TextUpdateForm({ submit, children, defaultValue }: TextUpdateFor
   const onInputKeydown: KeyboardEventHandler<HTMLInputElement> = (ev) => {
     if (ev.key === 'Enter') {
       ev.preventDefault();
-      triggerRef.current?.click();
+      if (input === defaultValue) {
+        setIsEditing(false);
+      } else {
+        triggerRef.current?.click();
+      }
     } else if (ev.key === 'Escape') {
       cancel();
     }
@@ -70,6 +90,7 @@ export function TextUpdateForm({ submit, children, defaultValue }: TextUpdateFor
       </div>
       <div className="flex flex-row justify-self-center" css={css({ ...getStyle(!isEditing), width })}>
         <Input
+          css={css({ height: '2rem' })}
           value={input}
           onKeyDown={onInputKeydown}
           onMouseDown={onInputMouseDown}

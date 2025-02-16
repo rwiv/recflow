@@ -28,6 +28,10 @@ export class ChannelCommandRepository {
     return oneNotNull(ent);
   }
 
+  async refreshUpdatedAt(id: string, tx: Tx = db) {
+    return this.update(id, {}, tx);
+  }
+
   async update(id: string, update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.chQuery.findById(id, tx);
     if (!channel) throw NotFoundError.from('Channel', 'id', id);

@@ -16,9 +16,9 @@ export const criterionEnt = z.object({
 });
 export type CriterionEnt = z.infer<typeof criterionEnt>;
 
-// Platform cannot be changed
+// name, platform cannot be changed
 export const criterionEntUpdate = criterionEnt
-  .omit({ id: true, platformId: true, createdAt: true, updatedAt: true })
+  .omit({ id: true, name: true, platformId: true, createdAt: true, updatedAt: true })
   .partial();
 export type CriterionEntUpdate = z.infer<typeof criterionEntUpdate>;
 

@@ -1,6 +1,7 @@
 import { flexRender, Table as TableType } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table.tsx';
 import { getStyleCell, getStyleHeader } from '@/components/common/styles/meta.ts';
+import { css } from '@emotion/react';
 
 interface TableContentProps<T> {
   table: TableType<T>;
@@ -29,7 +30,11 @@ export function TableContent<T>({ table, columnLength }: TableContentProps<T>) {
       <TableBody>
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+            <TableRow
+              key={row.id}
+              data-state={row.getIsSelected() && 'selected'}
+              css={css({ height: '3rem' })}
+            >
               {row.getVisibleCells().map((cell) => {
                 const { cn, style } = getStyleCell(cell);
                 return (

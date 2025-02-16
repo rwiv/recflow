@@ -6,34 +6,42 @@ import { ActivationBadge } from '@/components/criterion/units/ActivationBadge.ts
 import { EnforceCredentialsBadge } from '@/components/criterion/units/EnforceCredentialsBadge.tsx';
 import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
 
+const NORMAL_WIDTH = '7rem';
+const EDITABLE_WIDTH = '9rem';
+
 const nameColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'name',
   header: () => <div className="justify-self-center">Name</div>,
   cell: ({ row }) => <div className="justify-self-center">{row.original.name}</div>,
+  meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const enforceCredsColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'enforceCreds',
   header: () => <div className="justify-self-center">enforceCreds</div>,
   cell: ({ row }) => <EnforceCredentialsBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const isDeactivatedColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'isDeactivated',
   header: () => <div className="justify-self-center">Activated</div>,
   cell: ({ row }) => <ActivationBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const minUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'minUserCnt',
   header: () => <div className="justify-self-center">minUserCnt</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
+  meta: { header: { width: EDITABLE_WIDTH } },
 };
 
 const minFollowCntColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'minFollowCnt',
   header: () => <div className="justify-self-center">minFollowCnt</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
+  meta: { header: { width: EDITABLE_WIDTH } },
 };
 
 type ChzzkKey =

@@ -18,7 +18,7 @@ const nodeUpdater = app.get(NodeUpdater);
 const ngRepo = app.get(NodeGroupRepository);
 const pfFinder = app.get(PlatformFinder);
 
-describe('ChannelService', async () => {
+describe('ChannelService', () => {
   beforeEach(async () => {
     await dropAll();
     await init.checkDb();
@@ -48,11 +48,11 @@ describe('ChannelService', async () => {
     const node2 = await nodeWriter.create(mockNode(2, ng.id));
 
     await Promise.all([
-      nodeUpdater.updateCnt(node1.id, chzzk.id, 1),
-      nodeUpdater.updateCnt(node2.id, soop.id, 1),
-      nodeUpdater.updateCnt(node2.id, soop.id, 1),
-      nodeUpdater.updateCnt(node2.id, soop.id, 1),
-      nodeUpdater.updateCnt(node2.id, soop.id, -1),
+      nodeUpdater.incrementAssignedCnt(node1.id, chzzk.id),
+      nodeUpdater.incrementAssignedCnt(node1.id, chzzk.id),
+      nodeUpdater.incrementAssignedCnt(node1.id, chzzk.id),
+      nodeUpdater.incrementAssignedCnt(node1.id, chzzk.id),
+      nodeUpdater.decrementAssignedCnt(node2.id, soop.id),
     ]);
     await print();
 

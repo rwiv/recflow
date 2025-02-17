@@ -6,7 +6,7 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelPriorityTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../utils/uuid.js';
-import { PriorityEnt, priorityEnt, PriorityEntAppend } from './priority.schema.js';
+import { PriorityEnt, priorityEnt, PriorityEntAppend } from '../spec/priority.schema.js';
 
 const priorityEntAppendReq = priorityEnt.partial({ description: true, updatedAt: true });
 type PriorityEntAppendRequest = z.infer<typeof priorityEntAppendReq>;

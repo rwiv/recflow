@@ -21,7 +21,7 @@ export async function fetchChannels(pageState: ChannelPageState, withTags: boole
 export async function fetchPriorities() {
   const res = await request(`${configs.endpoint}/api/channels/priorities`);
   const priorities = (await res.json()) as PriorityDto[];
-  return priorities.sort((a, b) => a.tier - b.tier);
+  return priorities.sort((a, b) => a.seq - b.seq);
 }
 
 export async function createChannel(req: ChannelAppend) {

@@ -6,6 +6,7 @@ export const priorityEnt = z.object({
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
   tier: z.number().int().positive(),
+  seq: z.number().int().nonnegative(),
   shouldNotify: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),

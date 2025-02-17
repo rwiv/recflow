@@ -3,6 +3,7 @@ import { PlatformRepository } from '../../platform/storage/platform.repository.j
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import {
+  CHANNEL_PRIORIES_SEQ_MAP,
   CHANNEL_PRIORIES_TIER_MAP,
   CHANNEL_PRIORITIES,
 } from '../../channel/spec/default.priority.constants.js';
@@ -11,7 +12,7 @@ import { NodeTypeRepository } from '../../node/storage/node-type.repository.js';
 import { nodeTypeNameEnum } from '../../node/spec/node.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/default.node.constraints.js';
-import { PriorityEntAppend } from '../../channel/storage/priority.schema.js';
+import { PriorityEntAppend } from '../../channel/spec/priority.schema.js';
 import { NodeGroupAppend } from '../../node/spec/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
@@ -55,7 +56,11 @@ export class AppInitializer {
       if (tier === undefined) {
         throw new MissingValueError(`tier is undefined for ${name}`);
       }
-      const append: PriorityEntAppend = { name: name as string, tier };
+      const seq = CHANNEL_PRIORIES_SEQ_MAP[name];
+      if (seq === undefined) {
+        throw new MissingValueError(`seq is undefined for ${name}`);
+      }
+      const append: PriorityEntAppend = { name: name as string, tier, seq };
       await this.priService.create(append);
     }
 

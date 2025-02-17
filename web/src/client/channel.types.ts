@@ -5,6 +5,7 @@ export interface PriorityDto {
   id: string;
   name: string;
   tier: number;
+  seq: number;
   shouldNotify: boolean;
   createdAt: Date;
   updatedAt: Date | null;

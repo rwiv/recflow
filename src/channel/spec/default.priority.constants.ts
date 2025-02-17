@@ -9,6 +9,15 @@ export const CHANNEL_PRIORIES_TIER_MAP = {
   none: 1,
 };
 
+export const CHANNEL_PRIORIES_SEQ_MAP = {
+  must: 1,
+  should: 2,
+  may: 3,
+  review: 4,
+  skip: 5,
+  none: 6,
+};
+
 export const CHANNEL_PRIORIES_VALUE_MAP = {
   must: 'must',
   should: 'should',

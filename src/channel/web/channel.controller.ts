@@ -26,6 +26,7 @@ import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../service/channel.searcher.js';
 import { PageQuery, pageQuery } from '../../common/data/common.schema.js';
+import { PriorityService } from '../service/priority.service.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -34,6 +35,7 @@ export class ChannelController {
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly chSearcher: ChannelSearcher,
+    private readonly priService: PriorityService,
   ) {}
 
   @Get('/')
@@ -81,5 +83,10 @@ export class ChannelController {
   @Delete('/:channelId')
   deleteChannel(@Param('channelId') channelId: string) {
     return this.chWriter.delete(channelId);
+  }
+
+  @Get('/priorities')
+  priorities() {
+    return this.priService.findAll();
   }
 }

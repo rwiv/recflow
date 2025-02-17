@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppInitializer } from './initializer.js';
-import { ChannelStorageModule } from '../../channel/storage/channel.storage.module.js';
 import { ChannelServiceModule } from '../../channel/service/channel.service.module.js';
 import { PlatformModule } from '../../platform/platform.module.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
@@ -13,7 +12,6 @@ import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
 
 @Module({
   imports: [
-    ChannelStorageModule,
     ChannelServiceModule,
     PlatformModule,
     NodeStorageModule,

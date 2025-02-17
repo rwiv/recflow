@@ -1,17 +1,26 @@
-import { ChannelAppend, channelAppend } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelAppend, channelAppend, PriorityDto } from '../../channel/spec/channel.dto.schema.js';
+import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export function mockChannel(
   n: number,
-  priorityName: string = 'must',
+  platform: PlatformDto | undefined,
+  priority: PriorityDto | undefined,
   followerCnt: number = 10,
 ): ChannelAppend {
+  if (!platform) {
+    throw new ValidationError('platform is required');
+  }
+  if (!priority) {
+    throw new ValidationError('priority is required');
+  }
   const append: ChannelAppend = {
-    platformName: 'chzzk',
+    platformId: platform.id,
     pid: `chzzk${n}`,
     username: `user${n}`,
     profileImgUrl: 'http://example.com',
     followerCnt,
-    priorityName,
+    priorityId: priority.id,
     isFollowed: false,
     description: null,
   };

@@ -1,5 +1,5 @@
 import { TagDto } from '@/client/tag.types.ts';
-import { PlatformDto, PlatformName } from '@/client/common.schema.ts';
+import { PlatformDto } from '@/client/common.schema.ts';
 
 export interface PriorityDto {
   id: string;
@@ -27,15 +27,15 @@ export interface ChannelDto {
 
 export interface ChannelAppend {
   pid: string;
-  platformName: PlatformName;
-  priorityName: string;
+  platformId: string;
+  priorityId: string;
   isFollowed: boolean;
   description: string | null;
   tagNames: string[];
 }
 
 export interface ChannelUpdate {
-  priorityName?: string;
+  priorityId?: string;
   isFollowed?: boolean;
   description?: string | null;
 }

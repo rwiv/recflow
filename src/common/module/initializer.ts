@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/storage/platform.repository.js';
-import { PriorityRepository } from '../../channel/storage/priority.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import {
@@ -20,12 +19,13 @@ import {
   chzzkCriterionRuleNameEnum,
   soopCriterionRuleNameEnum,
 } from '../../criterion/spec/criterion.rule.schema.js';
+import { PriorityService } from '../../channel/service/priority.service.js';
 
 @Injectable()
 export class AppInitializer {
   constructor(
     private readonly pfRepo: PlatformRepository,
-    private readonly priRepo: PriorityRepository,
+    private readonly priService: PriorityService,
     private readonly ntRepo: NodeTypeRepository,
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
@@ -49,14 +49,14 @@ export class AppInitializer {
       await this.pfRepo.create({ name });
     }
 
-    const cpNames = (await this.priRepo.findAll()).map((pri) => pri.name);
+    const cpNames = (await this.priService.findAll()).map((pri) => pri.name);
     for (const name of CHANNEL_PRIORITIES.filter((name) => !cpNames.includes(name))) {
       const tier = CHANNEL_PRIORIES_TIER_MAP[name];
       if (tier === undefined) {
         throw new MissingValueError(`tier is undefined for ${name}`);
       }
       const append: PriorityEntAppend = { name: name as string, tier };
-      await this.priRepo.create(append);
+      await this.priService.create(append);
     }
 
     const nodeTypes = (await this.ntRepo.findAll()).map((nt) => nt.name);

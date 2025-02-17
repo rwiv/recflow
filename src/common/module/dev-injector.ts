@@ -10,6 +10,9 @@ import { Injectable } from '@nestjs/common';
 import { readBatchConfig } from '../../batch/batch.config.js';
 import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
 import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { PriorityService } from '../../channel/service/priority.service.js';
 
 @Injectable()
 export class DevInitInjector {
@@ -19,6 +22,8 @@ export class DevInitInjector {
     private readonly fetcher: PlatformFetcher,
     private readonly nodeInserter: NodeBatchInserter,
     private readonly criterionInserter: CriterionBatchInserter,
+    private readonly pfFinder: PlatformFinder,
+    private readonly priService: PriorityService,
   ) {
     this.testChannelFilePath = path.join('dev', 'test_channel_infos.json');
   }
@@ -64,15 +69,20 @@ export class DevInitInjector {
   async insertTestChannels() {
     const text = await fs.promises.readFile(this.testChannelFilePath, 'utf8');
     const infos = JSON.parse(text) as ChannelInfo[];
+    const platforms = await this.pfFinder.findAll();
+    const priorities = await this.priService.findAll();
     for (const info of infos) {
       const tags: string[] = [];
       for (let i = 1; i < 10; i++) tags.push(`tag${i}`);
       const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
+      const platformId = platforms.find((pf) => pf.name === info.platform)?.id;
+      if (!platformId) throw NotFoundError.from('Platform', 'name', info.platform);
+      const priorityId = priorities.find((pri) => pri.name === 'skip')?.id;
+      if (!priorityId) throw NotFoundError.from('Priority', 'name', 'skip');
       const append: ChannelAppend = {
         ...info,
-        platformName: info.platform,
-        // priorityName: randomElem(CHANNEL_PRIORITIES),
-        priorityName: 'skip',
+        platformId,
+        priorityId,
         // isFollowed: randomElem([true, false] as const),
         isFollowed: false,
         description: null,

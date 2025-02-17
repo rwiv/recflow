@@ -3,7 +3,7 @@ import { SerializedStyles } from '@emotion/react';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { ReactNode } from 'react';
-import { firstLetterUppercase } from '@/common/utils.common.ts';
+import { firstLetterUppercase } from '@/common/utils.strings.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 
 interface SelectFormFieldProps<T extends FieldValues> {

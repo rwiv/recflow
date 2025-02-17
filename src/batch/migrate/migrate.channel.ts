@@ -1,20 +1,11 @@
 import { BatchMigrator } from './migrate.abstract.js';
 import { log } from 'jslog';
-import { ChannelAppend, channelDto, priorityDto } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelAppend, channelDto } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
-import { tagDto } from '../../channel/spec/tag.dto.schema.js';
-import { nonempty } from '../../common/data/common.schema.js';
 
-const fetchedChannel = channelDto.omit({ isFollowed: true }).extend({
-  id: nonempty,
-  followed: z.boolean(),
-  platform: platformDto.extend({ id: nonempty }),
-  priority: priorityDto.extend({ id: nonempty }).omit({ shouldNotify: true }),
-  tags: z.array(tagDto.extend({ id: nonempty })).optional(),
-});
+const fetchedChannel = channelDto;
 const fetchedChannelsResult = z.object({
   total: z.number().int().nonnegative(),
   channels: z.array(fetchedChannel),
@@ -33,9 +24,8 @@ export class ChannelBatchMigrator extends BatchMigrator {
     const req: ChannelAppend = {
       ...channel,
       id: undefined, // TODO: remove
-      isFollowed: channel.followed,
-      platformName: channel.platform.name,
-      priorityName: channel.priority.name,
+      platformId: channel.platform.id,
+      priorityId: channel.priority.id,
     };
     // const tagIds = channel.tags?.map((t) => t.id) ?? [];
     // await this.chWriter.createWithTagIds(req, tagIds);

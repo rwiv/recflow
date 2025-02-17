@@ -17,13 +17,13 @@ import { Tx } from '../../infra/db/types.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PriorityRepository } from '../storage/priority.repository.js';
 import { ChannelEntAppend } from '../spec/channel.entity.schema.js';
 import { hasDuplicates } from '../../utils/list.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { ChannelsToTagsEntAppend } from '../spec/tag.entity.schema.js';
 import { TagCommandRepository } from '../storage/tag.command.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { PriorityService } from './priority.service.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -31,7 +31,7 @@ export class ChannelWriter {
     private readonly chCmd: ChannelCommandRepository,
     private readonly chQuery: ChannelQueryRepository,
     private readonly pfFinder: PlatformFinder,
-    private readonly priRepo: PriorityRepository,
+    private readonly priService: PriorityService,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
     private readonly chMapper: ChannelMapper,
@@ -60,14 +60,12 @@ export class ChannelWriter {
     if (tagIds && hasDuplicates(tagIds)) {
       throw new ConflictError('Duplicate tag names');
     }
-    const platform = await this.pfFinder.findByNameNotNull(append.platformName);
+    const platform = await this.pfFinder.findByIdNotNull(append.platformId);
     const entities = await this.chQuery.findByPidAndPlatform(append.pid, platform.id);
     if (entities.length > 0) {
       throw new ConflictError(`Channel already exist ${append.username}`);
     }
-
-    const priority = await this.priRepo.findByName(append.priorityName);
-    if (!priority) throw NotFoundError.from('Priority', 'name', append.priorityName);
+    const priority = await this.priService.findByIdNotNull(append.priorityId);
 
     const entAppend: ChannelEntAppend = {
       ...append,
@@ -91,13 +89,15 @@ export class ChannelWriter {
   }
 
   async createWithFetch(appendFetch: ChannelAppendWithFetch) {
-    const info = await this.fetcher.fetchChannelNotNull(appendFetch.platformName, appendFetch.pid, false);
+    const platform = await this.pfFinder.findByIdNotNull(appendFetch.platformId);
+    const info = await this.fetcher.fetchChannelNotNull(platform.name, appendFetch.pid, false);
     const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
     return this.createWithInfo(appendInfo, info);
   }
 
   async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo) {
-    const append: ChannelAppend = { ...appendInfo, ...info, platformName: info.platform };
+    const platform = await this.pfFinder.findByNameNotNull(info.platform);
+    const append: ChannelAppend = { ...appendInfo, ...info, platformId: platform.id };
     return this.createWithTagNames(append, appendInfo.tagNames);
   }
 

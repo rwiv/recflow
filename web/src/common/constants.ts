@@ -1,6 +1,8 @@
 export const PLATFORMS_QUERY_KEY = 'platforms';
 
 export const LIVES_QUERY_KEY = 'lives';
+
+export const PRIORITIES_QUERY_KEY = 'priorities';
 export const CHANNELS_QUERY_KEY = 'channels';
 export const TAGS_QUERY_KEY = 'tags';
 

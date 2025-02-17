@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { css, SerializedStyles } from '@emotion/react';
 import { z } from 'zod';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
@@ -9,45 +9,66 @@ import { TagCreateSelect } from '@/components/channel/edit/TagCreateSelect.tsx';
 import { SelectItem } from '@/components/ui/select.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
-import { createChannel } from '@/client/channel.client.ts';
+import { createChannel, fetchPriorities } from '@/client/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
-import { ChannelAppend } from '@/client/channel.types.ts';
-import { platformNameEnum } from '@/client/common.schema.ts';
-import { nonempty } from '@/common/common.schema.ts';
+import { ChannelAppend, PriorityDto } from '@/client/channel.types.ts';
+import { PlatformDto } from '@/client/common.schema.ts';
+import { nonempty, uuid } from '@/common/common.schema.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { TextAreaFormField } from '@/components/common/form/TextAreaFormField.tsx';
+import { PLATFORMS_QUERY_KEY, PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
+import { fetchPlatforms } from '@/client/platform.client.ts';
+import { uppercase } from '@/common/utils.strings.ts';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const { data: platforms } = useQuery({
+    queryKey: [PLATFORMS_QUERY_KEY],
+    queryFn: fetchPlatforms,
+  });
+  const { data: priorities } = useQuery({
+    queryKey: [PRIORITIES_QUERY_KEY],
+    queryFn: fetchPriorities,
+  });
+
   return (
     <DialogButton label="Add" title="Add New Node" closeRef={closeBtnRef}>
-      <CreateForm cb={() => closeBtnRef.current?.click()} />
+      {platforms && priorities && (
+        <CreateForm platforms={platforms} priorities={priorities} cb={() => closeBtnRef.current?.click()} />
+      )}
     </DialogButton>
   );
 }
 
 const FormSchema = z.object({
-  platformName: platformNameEnum,
+  platformId: uuid,
+  priorityId: uuid,
   pid: nonempty,
-  priorityName: nonempty,
   isFollowed: z.boolean(),
   description: z.string(),
   tagNames: z.array(nonempty),
 });
 
-export function CreateForm({ cb }: { cb: () => void }) {
+interface ChannelCreateProps {
+  platforms: PlatformDto[];
+  priorities: PriorityDto[];
+  cb: () => void;
+}
+
+export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      platformName: 'chzzk',
+      platformId: '',
       pid: '',
-      priorityName: 'none',
+      priorityId: '',
       isFollowed: false,
       description: '',
       tagNames: [],
@@ -76,17 +97,19 @@ export function CreateForm({ cb }: { cb: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <SelectFormField form={form} name="priorityName" label="Priority" defaultValue="none">
-          <SelectItem value="must">MUST</SelectItem>
-          <SelectItem value="should">SHOULD</SelectItem>
-          <SelectItem value="may">MAY</SelectItem>
-          <SelectItem value="review">REVIEW</SelectItem>
-          <SelectItem value="skip">SKIP</SelectItem>
-          <SelectItem value="none">NONE</SelectItem>
+        <SelectFormField form={form} name="priorityId" label="Priority">
+          {priorities.map((p) => (
+            <SelectItem key={p.id} value={p.id}>
+              {uppercase(p.name)}
+            </SelectItem>
+          ))}
         </SelectFormField>
-        <SelectFormField form={form} name="platformName" label="Platform">
-          <SelectItem value="chzzk">CHZZK</SelectItem>
-          <SelectItem value="soop">SOOP</SelectItem>
+        <SelectFormField form={form} name="platformId" label="Platform">
+          {platforms.map((p) => (
+            <SelectItem key={p.id} value={p.id}>
+              {uppercase(p.name)}
+            </SelectItem>
+          ))}
         </SelectFormField>
         <TextFormField form={form} name="pid" label="Channel UID" />
         <TextAreaFormField

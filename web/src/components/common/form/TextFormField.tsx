@@ -2,7 +2,7 @@ import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { SerializedStyles } from '@emotion/react';
 import { Input } from '@/components/ui/input.tsx';
-import { firstLetterUppercase } from '@/common/utils.common.ts';
+import { firstLetterUppercase } from '@/common/utils.strings.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 
 interface TextFormFieldProps<T extends FieldValues> {

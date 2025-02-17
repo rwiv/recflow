@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelDto } from '../spec/channel.dto.schema.js';
-import { PriorityRepository } from '../storage/priority.repository.js';
 import { ChannelEnt } from '../spec/channel.entity.schema.js';
 import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { PriorityService } from './priority.service.js';
 
 @Injectable()
 export class ChannelMapper {
   constructor(
     private readonly pfFinder: PlatformFinder,
-    private readonly priRepo: PriorityRepository,
+    private readonly priService: PriorityService,
     private readonly tagQuery: TagQueryRepository,
   ) {}
 
@@ -27,8 +26,7 @@ export class ChannelMapper {
 
   async map(ent: ChannelEnt, tx: Tx = db): Promise<ChannelDto> {
     const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
-    const priority = await this.priRepo.findById(ent.priorityId, tx);
-    if (!priority) throw NotFoundError.from('Priority', 'id', ent.priorityId);
+    const priority = await this.priService.findByIdNotNull(ent.priorityId, tx);
     return { ...ent, platform, priority };
   }
 

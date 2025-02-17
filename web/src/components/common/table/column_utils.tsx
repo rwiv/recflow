@@ -3,7 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
 import { formatTimeAgo } from '@/lib/date.ts';
-import { firstLetterUppercase } from '@/common/utils.common.ts';
+import { firstLetterUppercase } from '@/common/utils.strings.ts';
 import { cn } from '@/lib/utils.ts';
 import { ColumnMetaStyle } from '@/components/common/styles/meta.ts';
 

@@ -10,9 +10,13 @@ import { mockNode } from '../../common/helpers/node.mocks.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { mockChannel } from '../../common/helpers/channel.mocks.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { PriorityService } from '../../channel/service/priority.service.js';
 
 const app = await createTestApp();
 const init = app.get(AppInitializer);
+const pfFinder = app.get(PlatformFinder);
+const priService = app.get(PriorityService);
 const ngRepo = app.get(NodeGroupRepository);
 const nodeWriter = app.get(NodeWriter);
 const liveWriter = app.get(LiveWriter);
@@ -31,7 +35,9 @@ describe('ChannelService', () => {
   it('create', async () => {
     const ng = notNull(await ngRepo.findByName('main'));
     const node = await nodeWriter.create(mockNode(1, ng.id), true);
-    const ch = await chWriter.createWithTagNames(mockChannel(1), ['tag1', 'tag2']);
+    const pf = await pfFinder.findByNameNotNull('chzzk');
+    const pri = await priService.findByNameNotNull('none');
+    const ch = await chWriter.createWithTagNames(mockChannel(1, pf, pri), ['tag1', 'tag2']);
     const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), node.id);
     console.log(live1);
 

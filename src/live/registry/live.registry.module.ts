@@ -11,6 +11,7 @@ import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { LiveCoordinator } from './live.coordinator.js';
+import { ChannelStorageModule } from '../../channel/storage/channel.storage.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LiveCoordinator } from './live.coordinator.js';
     NodeStorageModule,
     LiveAccessModule,
     ChannelServiceModule,
+    ChannelStorageModule,
     NodeServiceModule,
     PlatformModule,
     LiveEventModule,

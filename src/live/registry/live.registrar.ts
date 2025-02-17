@@ -15,6 +15,7 @@ import { NodeUpdater } from '../../node/service/node.updater.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { LiveFinder } from '../access/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { PriorityService } from '../../channel/service/priority.service.js';
 
 export interface DeleteOptions {
   purge?: boolean;
@@ -29,6 +30,7 @@ export class LiveRegistrar {
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
+    private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
   ) {}
@@ -40,9 +42,10 @@ export class LiveRegistrar {
     }
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
     if (!channel) {
+      // TODO: update
+      const none = await this.priService.findByNameNotNull(CHANNEL_PRIORIES_VALUE_MAP.none);
       const append: ChannelAppendWithInfo = {
-        // TODO: update
-        priorityName: CHANNEL_PRIORIES_VALUE_MAP.none,
+        priorityId: none.id,
         isFollowed: false,
       };
       channel = await this.chWriter.createWithInfo(append, channelInfo);

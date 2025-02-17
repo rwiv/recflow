@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { SerializedStyles } from '@emotion/react';
-import { firstLetterUppercase } from '@/common/utils.common.ts';
+import { firstLetterUppercase } from '@/common/utils.strings.ts';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { Textarea } from '@/components/ui/textarea.tsx';
 

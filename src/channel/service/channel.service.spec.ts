@@ -6,31 +6,49 @@ import { ChannelFinder } from './channel.finder.js';
 import { AppInitializer } from '../../common/module/initializer.js';
 import { ChannelWriter } from './channel.writer.js';
 import { ChannelSearcher } from './channel.searcher.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { PriorityService } from './priority.service.js';
+import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+import { PriorityDto } from '../spec/channel.dto.schema.js';
 
 const app = await createTestApp();
 const init = app.get(AppInitializer);
+const pfFinder = app.get(PlatformFinder);
+const priService = app.get(PriorityService);
 const chFinder = app.get(ChannelFinder);
 const chSearcher = app.get(ChannelSearcher);
 const chWriter = app.get(ChannelWriter);
 
 describe('ChannelService', () => {
+  let pf: PlatformDto | undefined = undefined;
+  let must: PriorityDto | undefined = undefined;
+  let should: PriorityDto | undefined = undefined;
+  let may: PriorityDto | undefined = undefined;
   beforeEach(async () => {
     await dropAll();
     await init.checkDb();
+    pf = await pfFinder.findByNameNotNull('chzzk');
+    must = await priService.findByNameNotNull('must');
+    should = await priService.findByNameNotNull('should');
+    may = await priService.findByNameNotNull('may');
   });
 
   afterAll(async () => {
     await dropAll();
   });
 
+  function add(n: number, priority: PriorityDto | undefined, followerCnt: number, tagNames: string[]) {
+    return chWriter.createWithTagNames(mockChannel(n, pf, priority, followerCnt), tagNames);
+  }
+
   it('create', async () => {
-    const channel = await chWriter.createWithTagNames(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chWriter.createWithTagNames(mockChannel(1, pf, must), ['tag1', 'tag2']);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });
 
   it('delete', async () => {
-    const channel = await chWriter.createWithTagNames(mockChannel(1), ['tag1', 'tag2']);
+    const channel = await chWriter.createWithTagNames(mockChannel(1, pf, must), ['tag1', 'tag2']);
     await chWriter.delete(channel.id);
     expect(await chFinder.findById(channel.id)).toBeUndefined();
   });
@@ -38,20 +56,20 @@ describe('ChannelService', () => {
   it('findPage', async () => {
     for (let i = 1; i <= 15; i++) {
       if (i <= 5) {
-        await add(i, 'must', 100 - i, ['tag1', 'tag2']);
+        await add(i, must, 100 - i, ['tag1', 'tag2']);
       } else if (i <= 10) {
-        await add(i, 'must', 100 - i, ['tag2', 'tag3']);
+        await add(i, must, 100 - i, ['tag2', 'tag3']);
       } else {
-        await add(i, 'must', 100 - i, ['tag3', 'tag4']);
+        await add(i, must, 100 - i, ['tag3', 'tag4']);
       }
     }
     for (let i = 16; i <= 30; i++) {
       if (i <= 20) {
-        await add(i, 'should', 100 - i, ['tag4', 'tag5', 'tag10', 'tag11']);
+        await add(i, should, 100 - i, ['tag4', 'tag5', 'tag10', 'tag11']);
       } else if (i <= 25) {
-        await add(i, 'should', 100 - i, ['tag4', 'tag5']);
+        await add(i, should, 100 - i, ['tag4', 'tag5']);
       } else {
-        await add(i, 'may', 100 - i, ['tag4', 'tag5', 'tag12', 'tag13']);
+        await add(i, may, 100 - i, ['tag4', 'tag5', 'tag12', 'tag13']);
       }
     }
 
@@ -81,7 +99,3 @@ describe('ChannelService', () => {
     }
   });
 });
-
-function add(n: number, priority: string, followerCnt: number, tagNames: string[]) {
-  return chWriter.createWithTagNames(mockChannel(n, priority, followerCnt), tagNames);
-}

@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { tagDto } from './tag.dto.schema.js';
 import { channelEnt, channelEntAppend, channelEntUpdate } from './channel.entity.schema.js';
 import { PriorityEnt, priorityEnt, priorityEntAppend } from '../storage/priority.schema.js';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
 export const priorityDto = priorityEnt;
@@ -32,17 +31,14 @@ export type ChannelDto = z.infer<typeof channelDto>;
 //   tags?: TagDto[];
 // }
 
-export const channelAppend = channelEntAppend.omit({ platformId: true, priorityId: true }).extend({
-  platformName: platformNameEnum,
-  priorityName: z.string().nonempty(),
-});
+export const channelAppend = channelEntAppend;
 export type ChannelAppend = z.infer<typeof channelAppend>;
 
 export const channelAppendWithFetch = channelAppend
   .pick({
     pid: true,
-    platformName: true,
-    priorityName: true,
+    platformId: true,
+    priorityId: true,
     isFollowed: true,
     description: true,
   })
@@ -51,12 +47,7 @@ export const channelAppendWithFetch = channelAppend
   });
 export type ChannelAppendWithFetch = z.infer<typeof channelAppendWithFetch>;
 
-export const channelAppendWithInfo = channelAppendWithFetch.pick({
-  priorityName: true,
-  isFollowed: true,
-  description: true,
-  tagNames: true,
-});
+export const channelAppendWithInfo = channelAppendWithFetch.omit({ pid: true, platformId: true });
 export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
 
 export const channelUpdate = channelEntUpdate.extend({

@@ -1,9 +1,11 @@
+import { z } from 'zod';
 import { AmqpConfig } from '../../common/config/config.types.js';
 
-interface QueueState {
-  name: string;
-  state: string;
-}
+const queueState = z.object({
+  name: z.string(),
+  state: z.string(),
+});
+const queueStates = z.array(queueState);
 
 export class AmqpHttp {
   constructor(private readonly conf: AmqpConfig) {}
@@ -21,6 +23,6 @@ export class AmqpHttp {
         Authorization: `Basic ${Buffer.from(`${this.conf.username}:${this.conf.password}`).toString('base64')}`,
       },
     });
-    return (await res.json()) as QueueState[];
+    return queueStates.parse(await res.json());
   }
 }

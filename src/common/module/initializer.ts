@@ -11,7 +11,7 @@ import { platformNameEnum } from '../../platform/spec/storage/platform.enum.sche
 import { NodeTypeRepository } from '../../node/storage/node-type.repository.js';
 import { nodeTypeNameEnum } from '../../node/spec/node.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
-import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/default.node.constraints.js';
+import { NODE_TYPES, NODE_TYPES_TIER_MAP } from '../../node/spec/default.node.constants.js';
 import { PriorityEntAppend } from '../../channel/spec/priority.schema.js';
 import { NodeGroupAppend } from '../../node/spec/node.entity.schema.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';

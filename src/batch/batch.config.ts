@@ -3,7 +3,7 @@ import yaml from 'js-yaml';
 import { z } from 'zod';
 import { CHANNEL_PRIORITIES } from '../channel/spec/default.priority.constants.js';
 import { nodeTypeNameEnum } from '../node/spec/node.enum.schema.js';
-import { NODE_TYPES } from '../node/spec/default.node.constraints.js';
+import { NODE_TYPES } from '../node/spec/default.node.constants.js';
 import { nonempty } from '../common/data/common.schema.js';
 import { platformNameEnum } from '../platform/spec/storage/platform.enum.schema.js';
 

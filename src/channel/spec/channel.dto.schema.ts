@@ -16,20 +16,6 @@ export const channelDto = channelEnt.omit({ platformId: true, priorityId: true }
   tags: z.array(tagDto).optional(),
 });
 export type ChannelDto = z.infer<typeof channelDto>;
-// export interface ChannelDto {
-//   id: string;
-//   pid: string;
-//   username: string;
-//   profileImgUrl: string | null;
-//   followerCnt: number;
-//   isFollowed: boolean;
-//   description: string | null;
-//   createdAt: Date;
-//   updatedAt: Date;
-//   platform: PlatformDto
-//   priority: PriorityDto
-//   tags?: TagDto[];
-// }
 
 export const channelAppend = channelEntAppend;
 export type ChannelAppend = z.infer<typeof channelAppend>;

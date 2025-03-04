@@ -21,7 +21,7 @@ export class LiveTaskInitializer {
     private readonly scheduler: TaskScheduler,
   ) {}
 
-  async init() {
+  init() {
     const registerCheckTask = new LiveRegisterCheckTask(this.crFinder, this.liveCoordinator, this.scheduler);
     this.scheduler.addPeriodTask(registerCheckTask, DEFAULT_REGISTER_CHECK_CYCLE, true);
 

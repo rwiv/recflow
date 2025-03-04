@@ -18,28 +18,34 @@ export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
   async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
+    const createdAt = append.createdAt ?? new Date();
     const req: ChannelEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
-      createdAt: append.createdAt ?? new Date(),
+      createdAt,
       updatedAt: append.updatedAt ?? new Date(),
+      refreshedAt: append.refreshedAt ?? createdAt,
     };
     const ent = await tx.insert(channelTable).values(channelEntAppendReq.parse(req)).returning();
     return oneNotNull(ent);
   }
 
-  async refreshUpdatedAt(id: string, tx: Tx = db) {
-    return this.update(id, {}, tx);
+  async setUpdatedAtNow(id: string, tx: Tx = db) {
+    return this.update(id, {}, false, tx);
   }
 
-  async update(id: string, update: ChannelEntUpdate, tx: Tx = db): Promise<ChannelEnt> {
+  async update(id: string, update: ChannelEntUpdate, isRefresh: boolean, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.chQuery.findById(id, tx);
     if (!channel) throw NotFoundError.from('Channel', 'id', id);
     const req: ChannelEnt = {
       ...channel,
       ...update,
-      updatedAt: new Date(),
     };
+    if (isRefresh) {
+      req.refreshedAt = new Date();
+    } else {
+      req.updatedAt = new Date();
+    }
     const ent = await tx
       .update(channelTable)
       .set(channelEnt.parse(req))

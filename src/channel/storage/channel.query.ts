@@ -1,6 +1,6 @@
 import { db } from '../../infra/db/db.js';
 import { channelTagMapTable, channelTable, platformTable } from '../../infra/db/schema.js';
-import { and, eq, like } from 'drizzle-orm';
+import { and, asc, desc, eq, isNull, like } from 'drizzle-orm';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../utils/list.js';
@@ -52,7 +52,7 @@ export class ChannelQueryRepository {
     return rows.map((row) => row.channel);
   }
 
-  async findChannelsByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
+  async findByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
     const rows = await tx
       .select()
       .from(channelTagMapTable)
@@ -60,5 +60,9 @@ export class ChannelQueryRepository {
       .where(eq(channelTagMapTable.tagId, tagId))
       .limit(limit);
     return rows.map((row) => row.channel).filter((tag) => tag !== null);
+  }
+
+  async findEarliestRefreshed(limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
+    return tx.select().from(channelTable).orderBy(asc(channelTable.refreshedAt)).limit(limit);
   }
 }

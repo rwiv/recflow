@@ -32,6 +32,14 @@ export class ChannelFinder {
     };
   }
 
+  async findEarliestRefreshedOne(withTags: boolean = false) {
+    const entities = await this.chQuery.findEarliestRefreshed(1);
+    if (entities.length !== 1) {
+      throw new ConflictError('No channel found');
+    }
+    return this.chMapper.loadRelation(await this.chMapper.map(entities[0]), withTags);
+  }
+
   async findByPid(pid: string, withTags: boolean = false) {
     const entities = await this.chQuery.findByPid(pid);
     const channels = await this.chMapper.mapAll(entities);

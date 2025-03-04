@@ -46,7 +46,7 @@ export class NodeRepository {
     return tx.select().from(nodeTable);
   }
 
-  async refreshUpdatedAt(id: string, tx: Tx = db) {
+  async setUpdatedAtNow(id: string, tx: Tx = db) {
     return this.update(id, {}, tx);
   }
 

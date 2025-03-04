@@ -24,6 +24,7 @@ import { ChannelsToTagsEntAppend } from '../spec/tag.entity.schema.js';
 import { TagCommandRepository } from '../storage/tag.command.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from './priority.service.js';
+import { ChannelFinder } from './channel.finder.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -34,6 +35,7 @@ export class ChannelWriter {
     private readonly priService: PriorityService,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
+    private readonly chFinder: ChannelFinder,
     private readonly chMapper: ChannelMapper,
     private readonly fetcher: PlatformFetcher,
     private readonly tagCmd: TagCommandRepository,
@@ -101,8 +103,8 @@ export class ChannelWriter {
     return this.createWithTagNames(append, appendInfo.tagNames);
   }
 
-  async update(id: string, req: ChannelUpdate) {
-    const ent = await this.chCmd.update(id, req);
+  async update(id: string, req: ChannelUpdate, isRefresh: boolean) {
+    const ent = await this.chCmd.update(id, req, isRefresh);
     return this.chMapper.map(ent);
   }
 
@@ -119,5 +121,16 @@ export class ChannelWriter {
       await this.chCmd.delete(channel.id, txx);
       return channel;
     });
+  }
+
+  async refresh(): Promise<ChannelDto> {
+    const channel = await this.chFinder.findEarliestRefreshedOne();
+    const info = await this.fetcher.fetchChannelNotNull(channel.platform.name, channel.pid, false);
+    const update: ChannelUpdate = {
+      username: info.username,
+      profileImgUrl: info.profileImgUrl,
+      followerCnt: info.followerCnt,
+    };
+    return this.update(channel.id, update, true);
   }
 }

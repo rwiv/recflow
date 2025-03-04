@@ -7,6 +7,7 @@ import { db } from '../../infra/db/db.js';
 import { ChannelQueryRepository } from '../storage/channel.query.js';
 import { ChannelsToTagsEntAppend, TagEntAppend } from '../spec/tag.entity.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { ChannelCommandRepository } from '../storage/channel.command.js';
 
 @Injectable()
 export class TagWriter {
@@ -14,6 +15,7 @@ export class TagWriter {
     private readonly tagCmd: TagCommandRepository,
     private readonly tagQuery: TagQueryRepository,
     private readonly chQuery: ChannelQueryRepository,
+    private readonly chCmd: ChannelCommandRepository,
   ) {}
 
   attach(attach: TagAttachment, tx: Tx = db): Promise<TagDto> {
@@ -28,6 +30,7 @@ export class TagWriter {
         tagId: tag.id,
       };
       await this.tagCmd.bind(bind, txx);
+      await this.chCmd.setUpdatedAtNow(attach.channelId, tx);
       return tag;
     });
   }
@@ -38,15 +41,17 @@ export class TagWriter {
       throw NotFoundError.from('ChannelTag', 'id', bind.tagId);
     }
     await this.tagCmd.bind(bind, tx);
+    await this.chCmd.setUpdatedAtNow(bind.channelId, tx);
     return tag;
   }
 
   detach(detach: TagDetachment, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       await this.tagCmd.unbind(detach.channelId, detach.tagId, txx);
-      if ((await this.chQuery.findChannelsByTagId(detach.tagId, 1, txx)).length === 0) {
+      if ((await this.chQuery.findByTagId(detach.tagId, 1, txx)).length === 0) {
         await this.tagCmd.delete(detach.tagId, txx);
       }
+      await this.chCmd.setUpdatedAtNow(detach.channelId, tx);
     });
   }
 }

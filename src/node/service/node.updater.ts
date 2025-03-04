@@ -36,7 +36,7 @@ export class NodeUpdater {
       const states = await this.stateRepo.findByNodeIdAndPlatformIdForUpdate(nodeId, platformId, txx);
       const state = this.validatedState(states, nodeId, platformId);
       await this.stateRepo.update(state.id, { capacity }, txx);
-      await this.nodeRepo.refreshUpdatedAt(nodeId, txx);
+      await this.nodeRepo.setUpdatedAtNow(nodeId, txx);
     });
   }
 

@@ -4,6 +4,7 @@ import { ENV } from './common/config/config.module.js';
 import { Env } from './common/config/env.js';
 import { AppInitializer } from './common/module/initializer.js';
 import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
+import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,8 +19,8 @@ async function bootstrap() {
     await init.initProd();
   }
 
-  const liveTaskInit = app.get(LiveTaskInitializer);
-  await liveTaskInit.init();
+  app.get(LiveTaskInitializer).init();
+  app.get(ChannelTaskInitializer).init();
 
   await app.listen(env.appPort);
 }

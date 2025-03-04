@@ -17,7 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog.tsx';
-import { Checkbox } from '@/components/ui/checkbox.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +25,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
+import {Switch} from "@/components/ui/switch.tsx";
+import {Label} from "@/components/ui/label.tsx";
 
 export function LiveRemoveButton({ table }: { table: Table<LiveDto> }) {
   const queryClient = useQueryClient();
@@ -33,10 +34,11 @@ export function LiveRemoveButton({ table }: { table: Table<LiveDto> }) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const finishRef = useRef<HTMLButtonElement>(null);
 
+  const getSelectedItems = () => table.getFilteredSelectedRowModel().rows.map((it) => it.original);
+
   const remove = async (cmd: ExitCmd, isPurge: boolean) => {
-    const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
     table.toggleAllPageRowsSelected(false);
-    for (const live of checked) {
+    for (const live of getSelectedItems()) {
       try {
         await deleteLive(live.id, cmd, isPurge);
       } catch (e) {
@@ -50,37 +52,23 @@ export function LiveRemoveButton({ table }: { table: Table<LiveDto> }) {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary">Remove</Button>
+          {table.getRowModel().rows && (
+            <Button variant="secondary" disabled={getSelectedItems().length === 0}>
+              Remove
+            </Button>
+          )}
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>Commands</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              deleteRef.current?.click();
-            }}
-          >
-            Delete
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              cancelRef.current?.click();
-            }}
-          >
-            Cancel
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              finishRef.current?.click();
-            }}
-          >
-            Finish
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => deleteRef.current?.click()}>Only Data</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => finishRef.current?.click()}>Early Finish</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => cancelRef.current?.click()}>Erase Files ⚠️</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialog onClick={(isPurge) => remove('delete', isPurge)} triggerRef={deleteRef} />
-      <AlertDialog onClick={(isPurge) => remove('cancel', isPurge)} triggerRef={cancelRef} />
       <AlertDialog onClick={(isPurge) => remove('finish', isPurge)} triggerRef={finishRef} />
+      <AlertDialog onClick={(isPurge) => remove('cancel', isPurge)} triggerRef={cancelRef} />
     </div>
   );
 }
@@ -108,20 +96,9 @@ export function AlertDialog({ onClick, triggerRef }: AlertDialogProps) {
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="isPurge"
-            checked={isPurge}
-            onCheckedChange={() => {
-              setIsPurge((prev) => !prev);
-            }}
-          />
-          <label
-            htmlFor="isPurge"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Whether to Purge the channel
-          </label>
+        <div className="flex items-center space-x-2 mt-1 mb-1.5">
+          <Switch id="isPurge" checked={isPurge} onCheckedChange={() => setIsPurge((prev) => !prev)}/>
+          <Label htmlFor="isPurge">Whether to Purge the channel</Label>
         </div>
         <AlertDialogFooter>
           <AlertDialogCancel>{cancelText}</AlertDialogCancel>

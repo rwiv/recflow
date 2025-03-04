@@ -62,6 +62,6 @@ export class LiveCoordinator {
     const pid = liveDto.channel.pid;
     const channel = await this.fetcher.fetchChannel(liveDto.platform.name, pid, false);
     if (channel?.openLive) return null;
-    await this.liveRegistrar.delete(liveDto.id, { purge: true });
+    await this.liveRegistrar.remove(liveDto.id, { isPurge: true });
   }
 }

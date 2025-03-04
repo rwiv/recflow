@@ -16,9 +16,9 @@ export async function createLive(pid: string, platform: PlatformName) {
   return (await res.json()) as LiveDto;
 }
 
-export async function deleteLive(recordId: string, cmd: ExitCmd) {
+export async function deleteLive(recordId: string, cmd: ExitCmd, isPurge: boolean) {
   const url = `${configs.endpoint}/api/lives`;
-  const req = { recordId, cmd };
+  const req = { recordId, cmd, isPurge };
   const { method, headers, body } = getIngredients('DELETE', req);
   await request(url, { method, headers, body });
 }

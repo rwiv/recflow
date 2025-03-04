@@ -22,7 +22,7 @@ export function LiveCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <DialogButton label="Add" title="Add New Live" closeRef={closeBtnRef}>
+    <DialogButton label="Append" title="Add New Live" closeRef={closeBtnRef}>
       <CreateForm cb={() => closeBtnRef.current?.click()} />
     </DialogButton>
   );

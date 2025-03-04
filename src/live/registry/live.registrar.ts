@@ -18,7 +18,7 @@ import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 
 export interface DeleteOptions {
-  purge?: boolean;
+  isPurge?: boolean;
   exitCmd?: ExitCmd;
 }
 
@@ -60,28 +60,30 @@ export class LiveRegistrar {
     return created;
   }
 
-  async delete(recordId: string, opts: DeleteOptions = {}) {
+  async remove(recordId: string, opts: DeleteOptions = {}) {
     let exitCmd = opts.exitCmd;
     if (exitCmd === undefined) {
       exitCmd = 'delete';
     }
-    let purge = opts.purge;
-    if (purge === undefined) {
-      purge = false;
+    let isPurge = opts.isPurge;
+    if (isPurge === undefined) {
+      isPurge = false;
     }
 
     const live = await this.liveFinder.findById(recordId, { withDisabled: true });
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
-    if (!purge) {
-      if (live.isDisabled) throw new ConflictError(`Already deleted: ${recordId}`);
+    if (!isPurge) {
+      // soft delete
+      if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
       await this.liveWriter.update(live.id, { isDisabled: true, deletedAt: new Date() });
       await this.nodeUpdater.decrementAssignedCnt(live.nodeId, live.platform.id);
     } else {
+      // hard delete
+      await this.liveWriter.delete(recordId);
       if (!live.isDisabled) {
         await this.nodeUpdater.decrementAssignedCnt(live.nodeId, live.platform.id);
       }
-      await this.liveWriter.delete(recordId);
     }
 
     await this.listener.onDelete(live, exitCmd);
@@ -91,7 +93,7 @@ export class LiveRegistrar {
 
   async purgeAll() {
     const lives = await this.liveFinder.findAllDeleted();
-    const promises = lives.map((record) => this.delete(record.id, { purge: true }));
+    const promises = lives.map((record) => this.remove(record.id, { isPurge: true }));
     return Promise.all(promises);
   }
 }

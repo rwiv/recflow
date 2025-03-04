@@ -62,7 +62,7 @@ export class LiveController {
 
   @Delete('/')
   async delete(@Body() req: LiveDeleteRequest) {
-    const { recordId, cmd } = liveDeleteRequest.parse(req);
-    return this.liveService.delete(recordId, { exitCmd: exitCmd.parse(cmd) });
+    const { recordId, cmd, isPurge } = liveDeleteRequest.parse(req);
+    return this.liveService.remove(recordId, { exitCmd: exitCmd.parse(cmd), isPurge });
   }
 }

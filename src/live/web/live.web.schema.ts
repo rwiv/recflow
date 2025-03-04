@@ -12,5 +12,6 @@ export type LiveAppendRequest = z.infer<typeof liveAppendRequest>;
 export const liveDeleteRequest = z.object({
   recordId: uuid,
   cmd: exitCmd,
+  isPurge: z.boolean(),
 });
 export type LiveDeleteRequest = z.infer<typeof liveDeleteRequest>;

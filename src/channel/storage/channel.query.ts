@@ -66,7 +66,7 @@ export class ChannelQueryRepository {
     return tx
       .select()
       .from(channelTable)
-      .orderBy(sql`${channelTable.refreshedAt} ASC NULLS FIRST`)
+      .orderBy(sql`${channelTable.lastRefreshedAt} ASC NULLS FIRST`)
       .limit(limit);
   }
 }

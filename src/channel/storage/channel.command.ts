@@ -10,7 +10,11 @@ import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from '../s
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
-const channelEntAppendReq = channelEnt.partial({ profileImgUrl: true, description: true, refreshedAt: true });
+const channelEntAppendReq = channelEnt.partial({
+  profileImgUrl: true,
+  description: true,
+  lastRefreshedAt: true,
+});
 type ChannelEntAppendRequest = z.infer<typeof channelEntAppendReq>;
 
 @Injectable()
@@ -40,7 +44,7 @@ export class ChannelCommandRepository {
       ...update,
     };
     if (isRefresh) {
-      req.refreshedAt = new Date();
+      req.lastRefreshedAt = new Date();
     } else {
       req.updatedAt = new Date();
     }

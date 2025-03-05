@@ -7,7 +7,11 @@ import { firstLetterUppercase } from '@/common/utils.strings.ts';
 import { cn } from '@/lib/utils.ts';
 import { ColumnMetaStyle } from '@/components/common/styles/meta.ts';
 
-export function sortableColumnDef<T>(cid: string, header: string | undefined = undefined): ColumnDef<T> {
+export function sortableColumnDef<T>(
+  cid: string,
+  header: string | undefined = undefined,
+  getCellCn: (origin: T) => string | undefined,
+): ColumnDef<T> {
   if (!header) {
     header = firstLetterUppercase(cid);
   }
@@ -21,7 +25,7 @@ export function sortableColumnDef<T>(cid: string, header: string | undefined = u
         </Button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue(cid)}</div>,
+    cell: ({ row }) => <div className={getCellCn(row.original)}>{row.getValue(cid)}</div>,
   };
 }
 
@@ -52,7 +56,12 @@ export function createSelectColumn<T>(cid: string, meta?: ColumnMetaStyle, class
   };
 }
 
-export function dateColumnDef<T>(cid: string, header: string, getDate: (elem: T) => Date): ColumnDef<T> {
+export function dateColumnDef<T>(
+  cid: string,
+  header: string,
+  getDate: (elem: T) => Date,
+  getCellCn: (origin: T) => string | undefined,
+): ColumnDef<T> {
   return {
     accessorKey: cid,
     header: ({ column }) => {
@@ -64,7 +73,7 @@ export function dateColumnDef<T>(cid: string, header: string, getDate: (elem: T)
       );
     },
     cell: ({ row }) => {
-      return <div>{formatTimeAgo(getDate(row.original))}</div>;
+      return <div className={getCellCn(row.original)}>{formatTimeAgo(getDate(row.original))}</div>;
     },
     sortingFn: (rowA, rowB, _) => {
       const dateA = getDate(rowA.original);

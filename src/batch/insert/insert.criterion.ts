@@ -22,6 +22,7 @@ export class CriterionBatchInserter {
     for (const chzzk of req.chzzk) {
       const append: ChzzkCriterionAppend = { ...chzzk, platformId: chzzkPlatform.id };
       const parsed = chzzkCriterionAppend.parse(append);
+      parsed.isDeactivated = false;
       const created = await this.criterionWriter.createChzzkCriterion(parsed);
       log.info(`Inserted criterion: ${created.name}`);
     }

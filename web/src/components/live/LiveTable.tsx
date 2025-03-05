@@ -8,11 +8,18 @@ import { liveColumns } from '@/components/live/liveColumns.tsx';
 import { LiveRemoveButton } from '@/components/live/LiveRemoveButton.tsx';
 import { FilterInput } from '@/components/common/table/FilterInput.tsx';
 import { LiveCreateButton } from '@/components/live/LiveCreateButton.tsx';
-import {Switch} from "@/components/ui/switch.tsx";
-import {Label} from "@/components/ui/label.tsx";
+import { Switch } from '@/components/ui/switch.tsx';
+import { Label } from '@/components/ui/label.tsx';
+import { Dispatch, SetStateAction } from 'react';
 
-export function LiveTable({ data }: { data: LiveDto[] }) {
-  const table = useTable(data, liveColumns, 15);
+interface LiveTableProps {
+  lives: LiveDto[];
+  withDisabled: boolean;
+  setWithDisabled: Dispatch<SetStateAction<boolean>>;
+}
+
+export function LiveTable({ lives, withDisabled, setWithDisabled }: LiveTableProps) {
+  const table = useTable(lives, liveColumns, 15);
 
   return (
     <div className="w-full">
@@ -20,20 +27,24 @@ export function LiveTable({ data }: { data: LiveDto[] }) {
         <div className="flex">
           <FilterInput table={table} columnId={'node'} placeholder="Filter nodes..." />
           <div className="flex gap-1.5 mx-5">
-            <LiveCreateButton/>
-            <LiveRemoveButton table={table}/>
+            <LiveCreateButton />
+            <LiveRemoveButton table={table} />
             <div className="flex items-center space-x-2 w-40 ml-3 mt-0.5">
-              <Switch id="withDisabled"/>
+              <Switch
+                id="withDisabled"
+                checked={withDisabled}
+                onCheckedChange={() => setWithDisabled((prev) => !prev)}
+              />
               <Label htmlFor="withDisabled">Include Disabled</Label>
             </div>
           </div>
         </div>
         <div className="flex gap-2">
-          <ColumnSelector table={table}/>
+          <ColumnSelector table={table} />
         </div>
       </div>
       <div className="rounded-md border">
-        <TableContent table={table} columnLength={liveColumns.length}/>
+        <TableContent table={table} columnLength={liveColumns.length} />
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <SelectedRowCount table={table} />

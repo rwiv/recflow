@@ -3,8 +3,8 @@ import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/utils.ts';
 import { ExitCmd, PlatformName } from '@/client/common.schema.ts';
 
-export async function fetchLives() {
-  const res = await request(`${configs.endpoint}/api/lives`);
+export async function fetchAllLives() {
+  const res = await request(`${configs.endpoint}/api/lives/all`);
   return (await res.json()) as LiveDto[];
 }
 

@@ -3,15 +3,15 @@ import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
-import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
 import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
+import { NodeSelector } from '../../../node/service/node.selector.js';
 
 @Injectable()
 export class SoopLiveFilter {
   constructor(
     private readonly fetcher: PlatformFetcher,
     private readonly chFinder: ChannelFinder,
-    private readonly ngRepo: NodeGroupRepository,
+    private readonly nodeSelector: NodeSelector,
   ) {}
 
   async getFiltered(lives: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {
@@ -27,8 +27,8 @@ export class SoopLiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop');
     if (channel) {
-      const ng = await this.ngRepo.findByTier(channel.priority.tier);
-      if (ng.length > 0) {
+      const node = await this.nodeSelector.match(channel);
+      if (node) {
         return liveInfo;
       } else {
         return null;

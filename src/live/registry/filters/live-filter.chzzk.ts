@@ -4,15 +4,15 @@ import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
-import { NodeGroupRepository } from '../../../node/storage/node-group.repository.js';
 import { ChzzkCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
+import { NodeSelector } from '../../../node/service/node.selector.js';
 
 @Injectable()
 export class ChzzkLiveFilter {
   constructor(
     private readonly fetcher: PlatformFetcher,
     private readonly chFinder: ChannelFinder,
-    private readonly ngRepo: NodeGroupRepository,
+    private readonly nodeSelector: NodeSelector,
   ) {}
 
   async getFiltered(lives: LiveInfo[], cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
@@ -36,8 +36,8 @@ export class ChzzkLiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
     if (channel) {
-      const ng = await this.ngRepo.findByTier(channel.priority.tier);
-      if (ng.length > 0) {
+      const node = await this.nodeSelector.match(channel);
+      if (node) {
         return liveInfo;
       } else {
         return null;

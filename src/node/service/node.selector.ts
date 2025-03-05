@@ -11,7 +11,7 @@ const LIMIT_COUNT = 100;
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(channel: ChannelDto) {
+  async match(channel: ChannelDto): Promise<NodeDto | undefined> {
     const pfId = channel.platform.id;
 
     // search for available nodes
@@ -24,7 +24,7 @@ export class NodeSelector {
       // find nodes in the current tier without cordon
       const raw = (await this.nodeFinder.findByNodeTier(curTier)).filter((node) => !node.isCordoned);
       if (raw.length === 0) {
-        throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
+        return undefined;
       }
       // filter nodes that have available capacity
       nodes = raw.filter((node) => {

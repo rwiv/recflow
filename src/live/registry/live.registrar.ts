@@ -51,8 +51,8 @@ export class LiveRegistrar {
       channel = await this.chWriter.createWithInfo(append, channelInfo);
     }
     const node = await this.nodeSelector.match(channel);
-    if (node === null) {
-      throw new FatalError(`No node matched for ${liveInfo.pid}`);
+    if (!node) {
+      throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
     }
     const created = await this.liveWriter.createByLive(liveInfo, node.id);
     await this.nodeUpdater.incrementAssignedCnt(node.id, channel.platform.id);

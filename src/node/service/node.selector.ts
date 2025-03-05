@@ -47,7 +47,7 @@ export class NodeSelector {
     }
 
     // select the node with the minimum assigned count
-    const candidates = nodes.filter((node) => node.weight === minWeight);
+    const candidates = sortedByEarliestAssigned(nodes.filter((node) => node.weight === minWeight));
     let minNode = candidates[0];
     for (let i = 1; i < candidates.length; i++) {
       const curState = this.findState(candidates[i], pfId);
@@ -66,4 +66,12 @@ export class NodeSelector {
     }
     return target;
   }
+}
+
+export function sortedByEarliestAssigned(nodes: NodeDto[]) {
+  return nodes.sort((a, b) => {
+    if (!a.lastAssignedAt) return -1;
+    if (!b.lastAssignedAt) return 1;
+    return a.lastAssignedAt.getTime() - b.lastAssignedAt.getTime();
+  });
 }

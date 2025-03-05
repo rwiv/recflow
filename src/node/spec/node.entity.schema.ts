@@ -13,6 +13,7 @@ export const nodeEnt = z.object({
   groupId: uuid,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
+  lastAssignedAt: z.coerce.date().nullable(),
 });
 export type NodeEnt = z.infer<typeof nodeEnt>;
 
@@ -28,6 +29,7 @@ export const nodeEntAppend = nodeEnt.partial({
   description: true,
   createdAt: true,
   updatedAt: true,
+  lastAssignedAt: true,
 });
 export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
 

@@ -147,8 +147,13 @@ export const nodeTable = pgTable(
       .references(() => nodeGroupTable.id),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
+    lastAssignedAt: timestamp('last_assigned_at'),
   },
-  (t) => [uniqueIndex('node_name_idx').on(t.name), index('node_weight_idx').on(t.weight)],
+  (t) => [
+    uniqueIndex('node_name_idx').on(t.name),
+    index('node_weight_idx').on(t.weight),
+    index('node_last_assigned_at_idx').on(t.lastAssignedAt.nullsFirst()),
+  ],
 );
 
 export const nodeStateTable = pgTable('node_state', {

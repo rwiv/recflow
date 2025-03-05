@@ -9,7 +9,7 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
-const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true });
+const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true, lastAssignedAt: true });
 type NodeEntAppendRequest = z.infer<typeof nodeEntAppendReq>;
 
 @Injectable()
@@ -48,6 +48,10 @@ export class NodeRepository {
 
   async setUpdatedAtNow(id: string, tx: Tx = db) {
     return this.update(id, {}, tx);
+  }
+
+  async setLastAssignedAtNow(id: string, tx: Tx = db) {
+    return this.update(id, { lastAssignedAt: new Date() }, tx);
   }
 
   async update(id: string, update: NodeEntUpdate, tx: Tx = db) {

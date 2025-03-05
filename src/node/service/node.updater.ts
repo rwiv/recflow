@@ -41,7 +41,8 @@ export class NodeUpdater {
   }
 
   async incrementAssignedCnt(nodeId: string, pfId: string, tx: Tx = db) {
-    return this.adjustAssignedCnt(nodeId, pfId, 1, tx);
+    await this.adjustAssignedCnt(nodeId, pfId, 1, tx);
+    await this.nodeRepo.setLastAssignedAtNow(nodeId, tx);
   }
 
   async decrementAssignedCnt(nodeId: string, pfId: string, tx: Tx = db) {

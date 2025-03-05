@@ -10,7 +10,7 @@ import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from '../s
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
-const channelEntAppendReq = channelEnt.partial({ profileImgUrl: true, description: true });
+const channelEntAppendReq = channelEnt.partial({ profileImgUrl: true, description: true, refreshedAt: true });
 type ChannelEntAppendRequest = z.infer<typeof channelEntAppendReq>;
 
 @Injectable()
@@ -18,13 +18,11 @@ export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
   async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
-    const createdAt = append.createdAt ?? new Date();
     const req: ChannelEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
-      createdAt,
+      createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? new Date(),
-      refreshedAt: append.refreshedAt ?? createdAt,
     };
     const ent = await tx.insert(channelTable).values(channelEntAppendReq.parse(req)).returning();
     return oneNotNull(ent);

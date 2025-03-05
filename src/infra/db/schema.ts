@@ -62,7 +62,7 @@ export const channelTable = pgTable(
     description: text(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),
-    refreshedAt: timestamp('refreshed_at').notNull(),
+    refreshedAt: timestamp('refreshed_at'),
   },
   (t) => [
     index('channel_pid_idx').on(t.pid),
@@ -70,7 +70,7 @@ export const channelTable = pgTable(
     index('channel_follow_cnt_idx').on(t.followerCnt),
     index('channel_created_at_idx').on(t.createdAt),
     index('channel_updated_at_idx').on(t.updatedAt),
-    index('channel_refreshed_at_idx').on(t.refreshedAt),
+    index('channel_refreshed_at_idx').on(t.refreshedAt.nullsFirst()),
   ],
 );
 

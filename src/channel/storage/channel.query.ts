@@ -1,6 +1,6 @@
 import { db } from '../../infra/db/db.js';
 import { channelTagMapTable, channelTable, platformTable } from '../../infra/db/schema.js';
-import { and, asc, desc, eq, isNull, like } from 'drizzle-orm';
+import { and, eq, like, sql } from 'drizzle-orm';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../utils/list.js';
@@ -63,6 +63,10 @@ export class ChannelQueryRepository {
   }
 
   async findEarliestRefreshed(limit: number, tx: Tx = db): Promise<ChannelEnt[]> {
-    return tx.select().from(channelTable).orderBy(asc(channelTable.refreshedAt)).limit(limit);
+    return tx
+      .select()
+      .from(channelTable)
+      .orderBy(sql`${channelTable.refreshedAt} ASC NULLS FIRST`)
+      .limit(limit);
   }
 }

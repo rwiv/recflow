@@ -1,6 +1,7 @@
-import { ChannelAppend, channelAppend, PriorityDto } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelAppend, channelAppend } from '../../channel/spec/channel.dto.schema.js';
 import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { PriorityDto } from '../../channel/spec/priority.schema.js';
 
 export function mockChannel(
   n: number,

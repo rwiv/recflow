@@ -1,5 +1,5 @@
 import { TagCommandRepository } from '../storage/tag.command.js';
-import { TagAttachment, TagDetachment, TagDto } from '../spec/tag.dto.schema.js';
+import { TagAttachment, TagDetachment, TagDto, TagUpdate } from '../spec/tag.dto.schema.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
@@ -53,5 +53,9 @@ export class TagWriter {
       }
       await this.chCmd.setUpdatedAtNow(detach.channelId, tx);
     });
+  }
+
+  update(id: string, update: TagUpdate, tx: Tx = db) {
+    return this.tagCmd.update(id, update, tx);
   }
 }

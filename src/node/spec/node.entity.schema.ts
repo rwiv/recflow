@@ -58,13 +58,25 @@ export const nodeGroupEnt = z.object({
 });
 export type NodeGroupEnt = z.infer<typeof nodeGroupEnt>;
 
-export const nodeGroupAppend = nodeGroupEnt.partial({
+export const nodeGroupDto = nodeGroupEnt;
+export type NodeGroupDto = NodeGroupEnt;
+
+export const nodeGroupEntAppend = nodeGroupEnt.partial({
   id: true,
   description: true,
   createdAt: true,
   updatedAt: true,
 });
-export type NodeGroupAppend = z.infer<typeof nodeGroupAppend>;
+export type NodeGroupEntAppend = z.infer<typeof nodeGroupAppend>;
+
+export const nodeGroupAppend = nodeGroupEntAppend;
+export type NodeGroupAppend = NodeGroupEntAppend;
+
+export const nodeGroupEntUpdate = nodeGroupEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export type NodeGroupEntUpdate = z.infer<typeof nodeGroupEntUpdate>;
+
+export const nodeGroupUpdate = nodeGroupEntUpdate;
+export type NodeGroupUpdate = NodeGroupEntUpdate;
 
 export const nodeStateEnt = z.object({
   id: uuid,

@@ -1,8 +1,15 @@
-import { Body, Controller, Get, Patch, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Put, UseFilters } from '@nestjs/common';
 import { TagWriter } from '../service/tag.writer.js';
 import { TagFinder } from '../service/tag.finder.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
-import { tagAttachment, TagAttachment, tagDetachment, TagDetachment } from '../spec/tag.dto.schema.js';
+import {
+  tagAttachment,
+  TagAttachment,
+  tagDetachment,
+  TagDetachment,
+  tagUpdate,
+  TagUpdate,
+} from '../spec/tag.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels/tags')
@@ -25,5 +32,11 @@ export class TagController {
   @Patch('/detach')
   detachTag(@Body() req: TagDetachment) {
     return this.tagWriter.detach(tagDetachment.parse(req));
+  }
+
+  @Put('/:tagId')
+  update(@Param('tagId') tagId: string, @Body() req: TagUpdate) {
+    const update = tagUpdate.parse(req);
+    return this.tagWriter.update(tagId, update);
   }
 }

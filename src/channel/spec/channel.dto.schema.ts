@@ -1,14 +1,8 @@
 import { z } from 'zod';
 import { tagDto } from './tag.dto.schema.js';
 import { channelEnt, channelEntAppend, channelEntUpdate } from './channel.entity.schema.js';
-import { PriorityEnt, priorityEnt, priorityEntAppend } from './priority.schema.js';
+import { priorityDto } from './priority.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
-
-export const priorityDto = priorityEnt;
-export type PriorityDto = PriorityEnt;
-
-export const priorityAppend = priorityEntAppend;
-export type PriorityAppend = z.infer<typeof priorityAppend>;
 
 export const channelDto = channelEnt.omit({ platformId: true, priorityId: true }).extend({
   platform: platformDto,

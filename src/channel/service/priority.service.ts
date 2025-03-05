@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PriorityRepository } from '../storage/priority.repository.js';
 import { ChannelQueryRepository } from '../storage/channel.query.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { PriorityAppend, PriorityDto } from '../spec/channel.dto.schema.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { PriorityAppend, PriorityDto, PriorityUpdate } from '../spec/priority.schema.js';
 
 @Injectable()
 export class PriorityService {
@@ -53,5 +53,9 @@ export class PriorityService {
       throw new ValidationError('Cannot delete priority with associated channels');
     }
     await this.priRepo.delete(id);
+  }
+
+  async update(id: string, update: PriorityUpdate, tx: Tx = db) {
+    return this.priRepo.update(id, update, tx);
   }
 }

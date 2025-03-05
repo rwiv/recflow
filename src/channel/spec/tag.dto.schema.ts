@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { tagEnt, TagEnt } from './tag.entity.schema.js';
+import { tagEnt, TagEnt, tagEntUpdate } from './tag.entity.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
 
 export const tagDto = tagEnt;
@@ -16,3 +16,6 @@ export const tagDetachment = z.object({
   tagId: uuid,
 });
 export type TagDetachment = z.infer<typeof tagDetachment>;
+
+export const tagUpdate = tagEntUpdate;
+export type TagUpdate = z.infer<typeof tagUpdate>;

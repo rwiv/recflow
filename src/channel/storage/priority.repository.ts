@@ -6,7 +6,8 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelPriorityTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { uuid } from '../../utils/uuid.js';
-import { PriorityEnt, priorityEnt, PriorityEntAppend } from '../spec/priority.schema.js';
+import { PriorityEnt, priorityEnt, PriorityEntAppend, PriorityEntUpdate } from '../spec/priority.schema.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const priorityEntAppendReq = priorityEnt.partial({ description: true, updatedAt: true });
 type PriorityEntAppendRequest = z.infer<typeof priorityEntAppendReq>;
@@ -27,6 +28,22 @@ export class PriorityRepository {
 
   async delete(id: string, tx: Tx = db) {
     await tx.delete(channelPriorityTable).where(eq(channelPriorityTable.id, id));
+  }
+
+  async update(id: string, update: PriorityEntUpdate, tx: Tx = db): Promise<PriorityEnt> {
+    const priority = await this.findById(id, tx);
+    if (!priority) throw NotFoundError.from('Priority', 'id', id);
+    const req: PriorityEnt = {
+      ...priority,
+      ...update,
+      updatedAt: new Date(),
+    };
+    const ent = await tx
+      .update(channelPriorityTable)
+      .set(priorityEnt.parse(req))
+      .where(eq(channelPriorityTable.id, id))
+      .returning();
+    return oneNotNull(ent);
   }
 
   async findAll(tx: Tx = db): Promise<PriorityEnt[]> {

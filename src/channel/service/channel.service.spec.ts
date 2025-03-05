@@ -9,7 +9,7 @@ import { ChannelSearcher } from './channel.searcher.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from './priority.service.js';
 import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
-import { PriorityDto } from '../spec/channel.dto.schema.js';
+import { PriorityDto } from '../spec/priority.schema.js';
 
 const app = await createTestApp();
 const init = app.get(AppInitializer);

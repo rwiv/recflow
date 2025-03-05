@@ -11,13 +11,6 @@ export const priorityEnt = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
-// export interface PriorityEnt {
-//   id: string;
-//   name: string;
-//   tier: number;
-//   createdAt: Date;
-//   updatedAt: Date | null;
-// }
 export type PriorityEnt = z.infer<typeof priorityEnt>;
 
 export const priorityEntAppend = priorityEnt.partial({
@@ -28,3 +21,15 @@ export const priorityEntAppend = priorityEnt.partial({
   updatedAt: true,
 });
 export type PriorityEntAppend = z.infer<typeof priorityEntAppend>;
+
+export const priorityEntUpdate = priorityEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export type PriorityEntUpdate = z.infer<typeof priorityEntUpdate>;
+
+export const priorityDto = priorityEnt;
+export type PriorityDto = PriorityEnt;
+
+export const priorityAppend = priorityEntAppend;
+export type PriorityAppend = z.infer<typeof priorityAppend>;
+
+export const priorityUpdate = priorityEntUpdate;
+export type PriorityUpdate = z.infer<typeof priorityUpdate>;

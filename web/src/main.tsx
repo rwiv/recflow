@@ -6,7 +6,7 @@ import { configs } from '@/common/configs.ts';
 import { LivePage } from '@/pages/LivePage.tsx';
 import { TestPage } from '@/pages/TestPage.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ChannelPage } from '@/pages/ChanenelsPage.tsx';
+import { ChannelPage } from '@/pages/ChanenelPage.tsx';
 import { NodePage } from '@/pages/NodePage.tsx';
 import { CriterionPage } from '@/pages/CriterionPage.tsx';
 import { Toaster } from '@/components/ui/toaster.tsx';

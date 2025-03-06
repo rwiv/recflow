@@ -85,7 +85,7 @@ export function TextUpdateForm({ submit, children, validate, defaultValue }: Tex
 
   return (
     <>
-      <div ref={valueRef} css={getStyle(isEditing)} onMouseDown={onValueMouseDown}>
+      <div ref={valueRef} className="min-h-5" css={getStyle(isEditing)} onMouseDown={onValueMouseDown}>
         {children}
       </div>
       <div className="flex flex-row justify-self-center" css={css({ ...getStyle(!isEditing), width })}>

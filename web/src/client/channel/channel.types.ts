@@ -24,6 +24,9 @@ export const priorityAppend = priorityDto.partial({
 });
 export type PriorityAppend = z.infer<typeof priorityAppend>;
 
+export const priorityUpdate = priorityDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export type PriorityUpdate = z.infer<typeof priorityUpdate>;
+
 export interface ChannelDto {
   id: string;
   pid: string;

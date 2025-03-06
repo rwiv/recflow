@@ -4,18 +4,17 @@ import { z } from 'zod';
 import { Form } from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/common/constants.ts';
+import { nodeGroupAppend } from '@/client/node/node.schema.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { css } from '@emotion/react';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { parse } from '@/common/utils.form.ts';
 import { nonempty } from '@/common/common.schema.ts';
-import { priorityAppend } from '@/client/channel/priority.schema.ts';
-import { createPriority } from '@/client/channel/priority.client.ts';
-import { CheckFormField } from '@/components/common/form/CheckFormField.tsx';
+import { createNodeGroup } from '@/client/node/node-group.client.ts';
 
-export function PriorityCreateButton() {
+export function NodeGroupCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -31,15 +30,13 @@ export function PriorityCreateButton() {
   );
 }
 
-const formSchema = priorityAppend.extend({
+const formSchema = nodeGroupAppend.extend({
   description: z.string(),
   tier: nonempty,
-  seq: nonempty,
 });
 const middleSchema = formSchema.extend({
   description: z.string().nullable(),
   tier: z.coerce.number().positive(),
-  seq: z.coerce.number().positive(),
 });
 
 export function CreateForm({ cb }: { cb: () => void }) {
@@ -50,9 +47,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       name: '',
       description: '',
-      shouldNotify: false,
       tier: '',
-      seq: '',
     },
   });
 
@@ -62,8 +57,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
     if (middleData.description === '') {
       middleData.description = null;
     }
-    await createPriority(priorityAppend.parse(middleData));
-    await queryClient.invalidateQueries({ queryKey: [PRIORITIES_QUERY_KEY] });
+    await createNodeGroup(nodeGroupAppend.parse(middleData));
+    await queryClient.invalidateQueries({ queryKey: [NODE_GROUPS_QUERY_KEY] });
     cb();
   }
 
@@ -72,9 +67,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" />
         <TextFormField form={form} name="description" />
-        <CheckFormField form={form} name="shouldNotify" label="Notify" />
         <TextFormField form={form} name="tier" />
-        <TextFormField form={form} name="seq" />
         <FormSubmitButton />
       </form>
     </Form>

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uuid } from '../../../../src/common/data/common.schema.ts';
+import { uuid } from '@/common/common.schema.ts';
 
 export const tagDto = z.object({
   id: uuid,
@@ -21,6 +21,11 @@ export const tagDetachment = z.object({
   tagId: uuid,
 });
 export type TagDetachment = z.infer<typeof tagDetachment>;
+
+export const tagAppend = tagDto
+  .omit({ createdAt: true, updatedAt: true })
+  .partial({ id: true, description: true });
+export type TagAppend = z.infer<typeof tagAppend>;
 
 export const tagUpdate = tagDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type TagUpdate = z.infer<typeof tagUpdate>;

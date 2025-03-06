@@ -1,10 +1,11 @@
 import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 import { configs } from '@/common/configs.ts';
-import { NodeGroupAppend, NodeGroupDto } from '@/client/node/node.schema.ts';
+import { NodeGroupAppend, NodeGroupDto, NodeGroupUpdate } from '@/client/node/node.schema.ts';
 
 export async function fetchNodeGroups() {
   const res = await request(`${configs.endpoint}/api/nodes/groups`);
-  return (await res.json()) as NodeGroupDto[];
+  const nodeGroups = (await res.json()) as NodeGroupDto[];
+  return nodeGroups.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createNodeGroup(append: NodeGroupAppend) {
@@ -15,4 +16,23 @@ export async function createNodeGroup(append: NodeGroupAppend) {
 
 export async function deleteNodeGroup(nodeGroupId: string) {
   await request(`${configs.endpoint}/api/nodes/groups/${nodeGroupId}`, { method: 'DELETE' });
+}
+
+export async function updateNodeGroupName(id: string, name: string) {
+  return updateTag(id, name, undefined, undefined);
+}
+
+export function updateNodeGroupDescription(id: string, description: string | null) {
+  return updateTag(id, undefined, description);
+}
+
+export function updateNodeGroupTier(id: string, tier: number) {
+  return updateTag(id, undefined, undefined, tier);
+}
+
+async function updateTag(id: string, name?: string, description?: string | null, tier?: number) {
+  const url = `${configs.endpoint}/api/nodes/groups/${id}`;
+  const req: NodeGroupUpdate = { name, description, tier };
+  const { method, headers, body } = getIngredients('PUT', req);
+  await request(url, { method, headers, body });
 }

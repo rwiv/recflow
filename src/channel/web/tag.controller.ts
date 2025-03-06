@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Param, Patch, Put, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, UseFilters } from '@nestjs/common';
 import { TagWriter } from '../service/tag.writer.js';
 import { TagFinder } from '../service/tag.finder.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import {
+  tagAppend,
+  TagAppend,
   tagAttachment,
   TagAttachment,
   tagDetachment,
@@ -22,6 +24,11 @@ export class TagController {
   @Get('/')
   tags() {
     return this.tagFinder.findAll();
+  }
+
+  @Post('/')
+  create(@Body() req: TagAppend) {
+    return this.tagWriter.create(tagAppend.parse(req));
   }
 
   @Patch('/attach')

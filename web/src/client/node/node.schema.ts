@@ -15,7 +15,7 @@ export const nodeGroupDto = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
-  tier: z.number().int().positive(),
+  tier: z.coerce.number().int().positive(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
@@ -28,6 +28,9 @@ export const nodeGroupAppend = nodeGroupDto.partial({
   updatedAt: true,
 });
 export type NodeGroupAppend = z.infer<typeof nodeGroupAppend>;
+
+export const nodeGroupUpdate = nodeGroupDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export type NodeGroupUpdate = z.infer<typeof nodeGroupUpdate>;
 
 const nodeStateDto = z.object({
   id: z.string(),

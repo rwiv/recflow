@@ -1,5 +1,5 @@
 import { TagCommandRepository } from '../storage/tag.command.js';
-import { TagAttachment, TagDetachment, TagDto, TagUpdate } from '../spec/tag.dto.schema.js';
+import { TagAppend, TagAttachment, TagDetachment, TagDto, TagUpdate } from '../spec/tag.dto.schema.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
@@ -17,6 +17,10 @@ export class TagWriter {
     private readonly chQuery: ChannelQueryRepository,
     private readonly chCmd: ChannelCommandRepository,
   ) {}
+
+  create(append: TagAppend, tx: Tx = db) {
+    return this.tagCmd.create(append, tx);
+  }
 
   attach(attach: TagAttachment, tx: Tx = db): Promise<TagDto> {
     return tx.transaction(async (txx) => {

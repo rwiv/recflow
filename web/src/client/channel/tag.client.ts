@@ -1,5 +1,5 @@
 import { configs } from '@/common/configs.ts';
-import { TagAttachment, TagDetachment, TagDto, TagUpdate } from '@/client/channel/tag.schema.ts';
+import { TagAppend, TagAttachment, TagDetachment, TagDto, TagUpdate } from '@/client/channel/tag.schema.ts';
 import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 
 export async function fetchTags() {
@@ -18,6 +18,12 @@ export async function detachTag(req: TagDetachment) {
   const url = `${configs.endpoint}/api/channels/tags/detach`;
   const { method, headers, body } = getIngredients('PATCH', req);
   return request(url, { method, headers, body });
+}
+
+export async function createTag(append: TagAppend) {
+  const { method, headers, body } = getIngredients('POST', append);
+  const res = await request(`${configs.endpoint}/api/channels/tags`, { method, headers, body });
+  return (await res.json()) as TagAppend;
 }
 
 export async function deleteTag(tagId: string) {

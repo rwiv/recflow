@@ -5,8 +5,9 @@ import {
   sortableColumnDef,
 } from '@/components/common/table/column_utils.tsx';
 import { LiveDto } from '@/client/live.types.ts';
-import { getChannelUrl, getLiveUrl } from '@/lib/platform.ts';
+import { getLiveUrl } from '@/lib/platform.ts';
 import { cn } from '@/lib/utils.ts';
+import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
 
 export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
@@ -19,11 +20,7 @@ const channelColumn: ColumnDef<LiveDto> = {
   header: 'Channel',
   cell: ({ row }) => {
     const live = row.original;
-    return (
-      <div className={cn('font-medium my-1', live.isDisabled && disabledCn)}>
-        <a href={getChannelUrl(live.platform.name, live.channel.pid)}>{live.channel.username}</a>
-      </div>
-    );
+    return <ChannelInfoCell channel={live.channel} className={live.isDisabled ? disabledCn : undefined} />;
   },
   filterFn: (rows, _, filterValue) => {
     return rows.original.channel.username.includes(filterValue);
@@ -62,21 +59,8 @@ const nodeColumn: ColumnDef<LiveDto> = {
   },
 };
 
-const platformColumn: ColumnDef<LiveDto> = {
-  accessorKey: 'platform',
-  header: 'Platform',
-  cell: ({ row }) => {
-    const live = row.original;
-    return <div className={cn('my-1 uppercase', live.isDisabled && disabledCn)}>{live.platform.name}</div>;
-  },
-  filterFn: (rows, _, filterValue) => {
-    return rows.original.platform.name.includes(filterValue);
-  },
-};
-
 export const liveColumns: ColumnDef<LiveDto>[] = [
   createSelectColumn(selectCid),
-  platformColumn,
   channelColumn,
   titleColumn,
   sortableColumnDef(viewCntCid, 'Viewers', (live) => (live.isDisabled ? disabledCn : undefined)),

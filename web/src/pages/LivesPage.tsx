@@ -23,9 +23,9 @@ export function LivesPage() {
   useEffect(() => {
     if (!lives) return;
     if (withDisabled) {
-      setTargetLives(lives.filter((live) => !live.isDisabled));
-    } else {
       setTargetLives(lives);
+    } else {
+      setTargetLives(lives.filter((live) => !live.isDisabled));
     }
   }, [lives, withDisabled]);
 

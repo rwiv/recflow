@@ -4,29 +4,29 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { SoopCriterionDto } from '@/client/criterion/criterion.schema.ts';
-import { soopCriterionColumns } from '@/components/criterion/soopCriterionColumns.tsx';
-import { SoopCriterionCreateButton } from '@/components/criterion/SoopCriterionCreateButton.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { deleteCriterion } from '@/client/criterion/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
+import { TAGS_QUERY_KEY } from '@/common/constants.ts';
+import { Button } from '@/components/ui/button.tsx';
+import { TagDto } from '@/client/channel/tag.schema.ts';
+import { tagColumns } from '@/components/tag/tagColumns.tsx';
+import { deleteTag } from '@/client/channel/tag.client.ts';
+import { TagCreateButton } from '@/components/tag/TagCreateButton.tsx';
 
-export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
+export function TagTable({ data }: { data: TagDto[] }) {
   const queryClient = useQueryClient();
-  const table = useTable(data, soopCriterionColumns);
+  const table = useTable(data, tagColumns);
 
   const onDelete = async () => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
     table.toggleAllPageRowsSelected(false);
-    for (const criterion of checked) {
+    for (const tag of checked) {
       try {
-        await deleteCriterion(criterion.id);
+        await deleteTag(tag.id);
       } catch (e) {
         console.error(e);
       }
     }
-    await queryClient.invalidateQueries({ queryKey: [SOOP_CRITERIA_QUERY_KEY] });
+    await queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
   };
 
   return (
@@ -34,7 +34,7 @@ export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
       <div className="flex items-center mb-4">
         <FilterInput table={table} columnId={'name'} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
-          <SoopCriterionCreateButton />
+          <TagCreateButton />
           <Button variant="secondary" onClick={onDelete}>
             Remove
           </Button>
@@ -42,7 +42,7 @@ export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
         <ColumnSelector table={table} />
       </div>
       <div className="rounded-md border">
-        <TableContent table={table} columnLength={soopCriterionColumns.length} />
+        <TableContent table={table} columnLength={tagColumns.length} />
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <SelectedRowCount table={table} />

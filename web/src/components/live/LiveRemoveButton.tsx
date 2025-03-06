@@ -95,7 +95,7 @@ export function LiveRemoveButton({ table }: LiveRemoveButtonProps) {
         <DropdownMenuContent>
           <DropdownMenuLabel>Commands</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => deleteRef.current?.click()}>Only Data</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => deleteRef.current?.click()}>Delete Data</DropdownMenuItem>
           <DropdownMenuItem onClick={() => finishRef.current?.click()}>Early Finish</DropdownMenuItem>
           <DropdownMenuItem onClick={() => cancelRef.current?.click()}>Erase Files ⚠️</DropdownMenuItem>
         </DropdownMenuContent>

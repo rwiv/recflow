@@ -36,7 +36,7 @@ export function NodeTable({ data }: { data: NodeDto[] }) {
         <div className="flex gap-1.5 mx-5">
           <NodeCreateButton />
           <Button variant="secondary" onClick={onDelete}>
-            Delete
+            Remove
           </Button>
         </div>
         <ColumnSelector table={table} />

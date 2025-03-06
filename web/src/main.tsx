@@ -11,10 +11,12 @@ import { NodePage } from '@/pages/NodePage.tsx';
 import { CriterionPage } from '@/pages/CriterionPage.tsx';
 import { Toaster } from '@/components/ui/toaster.tsx';
 import { PriorityPage } from '@/pages/PriorityPage.tsx';
+import { TagPage } from '@/pages/TagPage.tsx';
 
 const routes: RouteObject[] = [
   { path: '/', element: <LivePage /> },
   { path: '/channels', element: <ChannelPage /> },
+  { path: '/tags', element: <TagPage /> },
   { path: '/priorities', element: <PriorityPage /> },
   { path: '/nodes', element: <NodePage /> },
   { path: '/criteria', element: <CriterionPage /> },

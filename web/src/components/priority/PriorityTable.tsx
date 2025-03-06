@@ -4,13 +4,13 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { priorityColumns } from '@/components/priority/priorityColumns.tsx';
 import { deletePriority } from '@/client/channel/priority.client.ts';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
+import { PriorityCreateButton } from '@/components/priority/PriorityCreateButton.tsx';
 
 export function PriorityTable({ data }: { data: PriorityDto[] }) {
   const queryClient = useQueryClient();
@@ -34,9 +34,9 @@ export function PriorityTable({ data }: { data: PriorityDto[] }) {
       <div className="flex items-center mb-4">
         <FilterInput table={table} columnId={'name'} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
-          <NodeCreateButton />
+          <PriorityCreateButton />
           <Button variant="secondary" onClick={onDelete}>
-            Delete
+            Remove
           </Button>
         </div>
         <ColumnSelector table={table} />

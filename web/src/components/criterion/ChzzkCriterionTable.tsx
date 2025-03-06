@@ -36,7 +36,7 @@ export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
         <div className="flex gap-1.5 mx-5">
           <ChzzkCriterionCreateButton />
           <Button variant="secondary" onClick={onDelete}>
-            Delete
+            Remove
           </Button>
         </div>
         <ColumnSelector table={table} />

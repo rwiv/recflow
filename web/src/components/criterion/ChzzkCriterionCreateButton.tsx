@@ -49,7 +49,7 @@ export function ChzzkCriterionCreateButton() {
     <DialogButton
       contentCn="sm:max-w-lg overflow-auto"
       contentStyle={css({ maxHeight: '50rem' })}
-      label="Add"
+      label="Append"
       title="Add New Chzzk Criterion"
       closeRef={closeBtnRef}
     >

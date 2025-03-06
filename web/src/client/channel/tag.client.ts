@@ -20,6 +20,10 @@ export async function detachTag(req: TagDetachment) {
   return request(url, { method, headers, body });
 }
 
+export async function deleteTag(tagId: string) {
+  await request(`${configs.endpoint}/api/channels/tags/${tagId}`, { method: 'DELETE' });
+}
+
 export function updateTagName(id: string, name: string) {
   return updateTag(id, name, undefined);
 }

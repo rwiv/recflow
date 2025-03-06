@@ -1,6 +1,6 @@
 import { configs } from '@/common/configs.ts';
-import { TagAttachment, TagDetachment, TagDto } from '@/client/tag.types.ts';
-import { getIngredients, request } from '@/client/utils.ts';
+import { TagAttachment, TagDetachment, TagDto } from '@/client/channel/tag.types.ts';
+import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 
 export async function fetchTags() {
   const res = await request(`${configs.endpoint}/api/channels/tags`);

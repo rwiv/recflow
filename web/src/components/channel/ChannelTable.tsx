@@ -9,7 +9,7 @@ import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
 import { DEFAULT_PAGINATION_SIZE } from '@/common/constants.ts';
-import { fetchChannels } from '@/client/channel.client.ts';
+import { fetchChannels } from '@/client/channel/channel.client.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
 import { TagQuerySelect } from '@/components/channel/search/TagQuerySelect.tsx';

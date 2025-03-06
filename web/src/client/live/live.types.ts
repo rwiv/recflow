@@ -1,6 +1,6 @@
-import { ChannelDto } from '@/client/channel.types.ts';
-import { PlatformDto } from '@/client/common.schema.ts';
-import { NodeDto } from '@/client/node.schema.ts';
+import { ChannelDto } from '@/client/channel/channel.types.ts';
+import { PlatformDto } from '@/client/common/platform.schema.ts';
+import { NodeDto } from '@/client/node/node.schema.ts';
 
 export interface LiveDto {
   id: string;

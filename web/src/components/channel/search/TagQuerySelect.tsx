@@ -3,7 +3,7 @@ import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
-import { fetchTags } from '@/client/tag.client.ts';
+import { fetchTags } from '@/client/channel/tag.client.ts';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { cn } from '@/lib/utils.ts';
@@ -16,7 +16,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command.tsx';
-import { TagDto } from '@/client/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.types.ts';
 
 export function TagQuerySelect() {
   const navigate = useNavigate();

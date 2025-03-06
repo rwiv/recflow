@@ -1,7 +1,7 @@
-import { CriterionDto } from '@/client/criterion.schema.ts';
+import { CriterionDto } from '@/client/criterion/criterion.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { updateCriterionIsDeactivated } from '@/client/criterion.client.ts';
+import { updateCriterionIsDeactivated } from '@/client/criterion/criterion.client.ts';
 import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { switchBatchCn } from '@/components/common/styles/common.ts';

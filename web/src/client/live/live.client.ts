@@ -1,7 +1,8 @@
-import { LiveDto } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live/live.types.ts';
 import { configs } from '@/common/configs.ts';
-import { getIngredients, request } from '@/client/utils.ts';
-import { ExitCmd, PlatformName } from '@/client/common.schema.ts';
+import { getIngredients, request } from '@/client/common/common.client.utils.ts';
+import { PlatformName } from '@/client/common/platform.schema.ts';
+import {ExitCmd} from "@/client/common/common.schema.ts";
 
 export async function fetchAllLives() {
   const res = await request(`${configs.endpoint}/api/lives/all`);

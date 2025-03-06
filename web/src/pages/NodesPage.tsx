@@ -4,11 +4,11 @@ import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
 import { NodeTable } from '@/components/node/NodeTable.tsx';
 import { NODES_QUERY_KEY } from '@/common/constants.ts';
-import { NodeDto } from '@/client/node.schema.ts';
-import { fetchNodes } from '@/client/node.client.ts';
+import { NodeDto } from '@/client/node/node.schema.ts';
+import { fetchNodes } from '@/client/node/node.client.ts';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
-import { fetchChannels } from '@/client/channel.client.ts';
+import { fetchChannels } from '@/client/channel/channel.client.ts';
 
 export function NodesPage() {
   const queryClient = useQueryClient();

@@ -4,7 +4,7 @@ import {
   dateColumnDef,
   sortableColumnDef,
 } from '@/components/common/table/column_utils.tsx';
-import { LiveDto } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live/live.types.ts';
 import { getLiveUrl } from '@/lib/platform.ts';
 import { cn } from '@/lib/utils.ts';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';

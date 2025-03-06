@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { NodeDto } from '@/client/node.schema.ts';
+import { NodeDto } from '@/client/node/node.schema.ts';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { CordonedBadge } from '@/components/node/units/CordonedBadge.tsx';
 import { NodeGroupBadge } from '@/components/node/units/GroupUpdateDialog.tsx';

@@ -1,5 +1,5 @@
-import { TagDto } from '@/client/tag.types.ts';
-import { PlatformDto } from '@/client/common.schema.ts';
+import { TagDto } from '@/client/channel/tag.types.ts';
+import { PlatformDto } from '@/client/common/platform.schema.ts';
 
 export interface PriorityDto {
   id: string;

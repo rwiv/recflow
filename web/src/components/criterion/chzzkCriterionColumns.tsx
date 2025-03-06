@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { ChzzkCriterionDto } from '@/client/criterion.schema.ts';
+import { ChzzkCriterionDto } from '@/client/criterion/criterion.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { ActivationBadge } from '@/components/criterion/units/ActivationBadge.tsx';

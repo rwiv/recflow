@@ -6,8 +6,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { SelectItem } from '@/components/ui/select.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
-import { nodeAppend, NodeCapacities, NodeGroupDto, nodeTypeNameEnum } from '@/client/node.schema.ts';
-import { createNode, fetchNodeGroups } from '@/client/node.client.ts';
+import { nodeAppend, NodeCapacities, NodeGroupDto, nodeTypeNameEnum } from '@/client/node/node.schema.ts';
+import { createNode } from '@/client/node/node.client.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
@@ -16,6 +16,7 @@ import { CheckFormField } from '@/components/common/form/CheckFormField.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { parse } from '@/common/utils.form.ts';
 import { nonempty } from '@/common/common.schema.ts';
+import {fetchNodeGroups} from "@/client/node/node-group.client.ts";
 
 export function NodeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

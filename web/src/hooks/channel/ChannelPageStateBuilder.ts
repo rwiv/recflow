@@ -1,6 +1,6 @@
 import { DEFAULT_PAGE_SIZE } from '@/common/constants.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
-import { ChannelSortType, channelSortTypeEnum } from '@/client/common.schema.ts';
+import {ChannelSortType, channelSortTypeEnum} from "@/client/common/common.schema.ts";
 
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;

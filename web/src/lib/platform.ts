@@ -1,4 +1,4 @@
-import { PlatformName } from '@/client/common.schema.ts';
+import { PlatformName } from '@/client/common/platform.schema.ts';
 
 export function getChannelUrl(type: PlatformName, channelId: string) {
   switch (type) {

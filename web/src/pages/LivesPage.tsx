@@ -1,6 +1,6 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
-import { LiveDto } from '@/client/live.types.ts';
-import { fetchAllLives } from '@/client/live.client.ts';
+import { LiveDto } from '@/client/live/live.types.ts';
+import { fetchAllLives } from '@/client/live/live.client.ts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
@@ -8,7 +8,7 @@ import { LIVES_QUERY_KEY } from '@/common/constants.ts';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useEffect, useState } from 'react';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
-import { fetchChannels } from '@/client/channel.client.ts';
+import { fetchChannels } from '@/client/channel/channel.client.ts';
 
 export function LivesPage() {
   const queryClient = useQueryClient();

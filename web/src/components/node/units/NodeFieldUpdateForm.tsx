@@ -2,10 +2,10 @@ import { TextUpdateForm } from '@/components/common/layout/TextUpdateForm.tsx';
 import { z } from 'zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { NODES_QUERY_KEY, PLATFORMS_QUERY_KEY } from '@/common/constants.ts';
-import { NodeDto } from '@/client/node.schema.ts';
-import { updateNodeCapacity, updateNodeTotalCapacity, updateNodeWeight } from '@/client/node.client.ts';
-import { fetchPlatforms } from '@/client/platform.client.ts';
-import { PlatformDto } from '@/client/common.schema.ts';
+import { NodeDto } from '@/client/node/node.schema.ts';
+import { updateNodeCapacity, updateNodeTotalCapacity, updateNodeWeight } from '@/client/node/node.client.ts';
+import { fetchPlatforms } from '@/client/common/platform.client.ts';
+import { PlatformDto } from '@/client/common/platform.schema.ts';
 
 type Type = 'weight' | 'totalCapacity' | 'chzzkCapacity' | 'soopCapacity';
 

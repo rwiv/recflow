@@ -3,10 +3,9 @@ import {
   ChannelUpdate,
   ChannelDto,
   ChannelPageResult,
-  PriorityDto,
-} from '@/client/channel.types.ts';
+} from '@/client/channel/channel.types.ts';
 import { configs } from '@/common/configs.ts';
-import { getIngredients, request } from '@/client/utils.ts';
+import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 
 export async function fetchChannels(pageState: ChannelPageState, withTags: boolean = true) {
@@ -16,12 +15,6 @@ export async function fetchChannels(pageState: ChannelPageState, withTags: boole
   }
   const res = await request(`${configs.endpoint}/api/channels?${qs}`);
   return (await res.json()) as ChannelPageResult;
-}
-
-export async function fetchPriorities() {
-  const res = await request(`${configs.endpoint}/api/channels/priorities`);
-  const priorities = (await res.json()) as PriorityDto[];
-  return priorities.sort((a, b) => a.seq - b.seq);
 }
 
 export async function createChannel(req: ChannelAppend) {

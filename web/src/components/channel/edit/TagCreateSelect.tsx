@@ -12,10 +12,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { KeyboardEventHandler, useState } from 'react';
 import { css } from '@emotion/react';
-import { fetchTags } from '@/client/tag.client.ts';
+import { fetchTags } from '@/client/channel/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
-import { TagDto } from '@/client/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.types.ts';
 
 interface EditTagSelectProps {
   existsTagNames: string[];

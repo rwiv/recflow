@@ -8,9 +8,9 @@ import { formItemStyle } from '@/components/common/styles/form.ts';
 import { TagAttachSelect } from '@/components/channel/edit/TagAttachSelect.tsx';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { css } from '@emotion/react';
-import { attachTag } from '@/client/tag.client.ts';
+import { attachTag } from '@/client/channel/tag.client.ts';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
-import { ChannelDto } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { DialogWithTrigger } from '@/components/common/layout/DialogWithTrigger.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 

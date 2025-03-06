@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { prettyDate } from '@/lib/date.ts';
 import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
-import { ChannelDto } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { PriorityUpdateDialog } from '@/components/channel/edit/PriorityUpdateDialog.tsx';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
 

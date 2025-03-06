@@ -1,4 +1,4 @@
-import { getIngredients, request } from '@/client/utils.ts';
+import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 import { configs } from '@/common/configs.ts';
 import {
   ChzzkCriterionAppend,
@@ -8,7 +8,7 @@ import {
   SoopCriterionAppend,
   soopCriterionDto,
   SoopCriterionDto,
-} from '@/client/criterion.schema.ts';
+} from '@/client/criterion/criterion.schema.ts';
 import { parseList } from '@/common/utils.schema.ts';
 
 export async function fetchChzzkCriteria() {

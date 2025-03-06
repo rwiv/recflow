@@ -4,11 +4,11 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { SoopCriterionDto } from '@/client/criterion.schema.ts';
+import { SoopCriterionDto } from '@/client/criterion/criterion.schema.ts';
 import { soopCriterionColumns } from '@/components/criterion/soopCriterionColumns.tsx';
 import { SoopCriterionCreateButton } from '@/components/criterion/SoopCriterionCreateButton.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { deleteCriterion } from '@/client/criterion.client.ts';
+import { deleteCriterion } from '@/client/criterion/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 

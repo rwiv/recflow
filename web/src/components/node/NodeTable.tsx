@@ -5,11 +5,11 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { nodeColumns } from '@/components/node/nodeColumns.tsx';
-import { NodeDto } from '@/client/node.schema.ts';
+import { NodeDto } from '@/client/node/node.schema.ts';
 import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { NODES_QUERY_KEY } from '@/common/constants.ts';
-import { deleteNode } from '@/client/node.client.ts';
+import { deleteNode } from '@/client/node/node.client.ts';
 import { Button } from '@/components/ui/button.tsx';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {

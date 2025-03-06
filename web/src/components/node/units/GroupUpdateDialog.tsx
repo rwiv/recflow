@@ -9,11 +9,12 @@ import { css } from '@emotion/react';
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { DialogBase } from '@/components/common/layout/DialogBase.tsx';
-import { NodeDto, NodeGroupDto } from '@/client/node.schema.ts';
+import { NodeDto, NodeGroupDto } from '@/client/node/node.schema.ts';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
-import { fetchNodeGroups, updateNodeGroup } from '@/client/node.client.ts';
+import { updateNodeNodeGroup } from '@/client/node/node.client.ts';
 import { uuid } from '@/common/common.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
+import {fetchNodeGroups} from "@/client/node/node-group.client.ts";
 
 export function NodeGroupBadge({ node }: { node: NodeDto }) {
   return (
@@ -57,7 +58,7 @@ function CreateForm({ node, nodeGroups, cb }: { node: NodeDto; nodeGroups: NodeG
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    await updateNodeGroup(node.id, data.groupId);
+    await updateNodeNodeGroup(node.id, data.groupId);
     await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
     cb();
   }

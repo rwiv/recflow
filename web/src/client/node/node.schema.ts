@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { platformDto, platformNameEnum } from '@/client/common.schema.ts';
+import { platformDto, platformNameEnum } from '@/client/common/platform.schema.ts';
 import { nonempty, uuid } from '@/common/common.schema.ts';
 
 export const nodeTypeNameEnum = z.enum(['worker', 'argo']);

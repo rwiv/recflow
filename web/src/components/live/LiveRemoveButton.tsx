@@ -1,11 +1,10 @@
 import { Table } from '@tanstack/react-table';
-import { LiveDto } from '@/client/live.types.ts';
+import { LiveDto } from '@/client/live/live.types.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteLive } from '@/client/live.client.ts';
+import { deleteLive } from '@/client/live/live.client.ts';
 import { RefObject, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button.tsx';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';
-import { ExitCmd } from '@/client/common.schema.ts';
 import {
   AlertDialog as AlertDialogContainer,
   AlertDialogAction,
@@ -27,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
 import { Label } from '@/components/ui/label.tsx';
+import {ExitCmd} from "@/client/common/common.schema.ts";
 
 interface LiveRemoveButtonProps {
   table: Table<LiveDto>;

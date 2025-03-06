@@ -5,13 +5,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { TagDto } from '@/client/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.types.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { useRef } from 'react';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChannelDto } from '@/client/channel.types.ts';
-import { detachTag } from '@/client/tag.client.ts';
+import { ChannelDto } from '@/client/channel/channel.types.ts';
+import { detachTag } from '@/client/channel/tag.client.ts';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 
 interface TagBadgeProps {

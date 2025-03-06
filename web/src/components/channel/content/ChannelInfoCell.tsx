@@ -1,7 +1,7 @@
 import { getChannelUrl } from '@/lib/platform.ts';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
 import { Skeleton } from '@/components/ui/skeleton.tsx';
-import { ChannelDto } from '@/client/channel.types.ts';
+import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { cn } from '@/lib/utils.ts';
 
 interface ChannelInfoCellProps {

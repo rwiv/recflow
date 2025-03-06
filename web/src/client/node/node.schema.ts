@@ -11,14 +11,23 @@ const nodeTypeDto = z.object({
   updatedAt: z.string().datetime().nullable(),
 });
 
-const nodeGroupDto = z.object({
-  id: z.string(),
-  name: z.string(),
-  tier: z.number().positive(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().nullable(),
+export const nodeGroupDto = z.object({
+  id: uuid,
+  name: z.string().nonempty(),
+  description: z.string().nonempty().nullable(),
+  tier: z.number().int().positive(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 export type NodeGroupDto = z.infer<typeof nodeGroupDto>;
+
+export const nodeGroupAppend = nodeGroupDto.partial({
+  id: true,
+  description: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type NodeGroupAppend = z.infer<typeof nodeGroupAppend>;
 
 const nodeStateDto = z.object({
   id: z.string(),

@@ -15,7 +15,7 @@ import { DialogBase } from '@/components/common/layout/DialogBase.tsx';
 import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
 import { uuid } from '@/common/common.schema.ts';
 import { uppercase } from '@/common/utils.strings.ts';
-import {fetchPriorities} from "@/client/channel/priority.client.ts";
+import { fetchPriorities } from '@/client/channel/priority.client.ts';
 
 const FormSchema = z.object({
   priorityId: uuid,

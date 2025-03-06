@@ -1,6 +1,6 @@
 import { CHANNELS_QUERY_KEY } from '@/common/constants.ts';
 import { ChannelPageStateBuilder } from '@/hooks/channel/ChannelPageStateBuilder.ts';
-import {ChannelSortType} from "@/client/common/common.schema.ts";
+import { ChannelSortType } from '@/client/common/common.schema.ts';
 
 export class ChannelPageState {
   curPageNum: number;

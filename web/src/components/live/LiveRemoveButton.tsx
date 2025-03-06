@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
 import { Label } from '@/components/ui/label.tsx';
-import {ExitCmd} from "@/client/common/common.schema.ts";
+import { ExitCmd } from '@/client/common/common.schema.ts';
 
 interface LiveRemoveButtonProps {
   table: Table<LiveDto>;

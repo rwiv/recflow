@@ -1,7 +1,10 @@
 import { TextUpdateForm } from '@/components/common/layout/TextUpdateForm.tsx';
 import { CriterionDto } from '@/client/criterion/criterion.schema.ts';
 import { z } from 'zod';
-import { updateCriterionMinFollowCnt, updateCriterionMinUserCnt } from '@/client/criterion/criterion.client.ts';
+import {
+  updateCriterionMinFollowCnt,
+  updateCriterionMinUserCnt,
+} from '@/client/criterion/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 

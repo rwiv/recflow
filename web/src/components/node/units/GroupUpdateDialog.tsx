@@ -14,7 +14,7 @@ import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { updateNodeNodeGroup } from '@/client/node/node.client.ts';
 import { uuid } from '@/common/common.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
-import {fetchNodeGroups} from "@/client/node/node-group.client.ts";
+import { fetchNodeGroups } from '@/client/node/node-group.client.ts';
 
 export function NodeGroupBadge({ node }: { node: NodeDto }) {
   return (

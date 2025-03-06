@@ -1,15 +1,28 @@
 import { TagDto } from '@/client/channel/tag.types.ts';
 import { PlatformDto } from '@/client/common/platform.schema.ts';
+import { z } from 'zod';
+import { uuid } from '@/common/common.schema.ts';
 
-export interface PriorityDto {
-  id: string;
-  name: string;
-  tier: number;
-  seq: number;
-  shouldNotify: boolean;
-  createdAt: Date;
-  updatedAt: Date | null;
-}
+export const priorityDto = z.object({
+  id: uuid,
+  name: z.string().nonempty(),
+  description: z.string().nonempty().nullable(),
+  tier: z.number().int().positive(),
+  seq: z.number().int().nonnegative(),
+  shouldNotify: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
+});
+export type PriorityDto = z.infer<typeof priorityDto>;
+
+export const priorityAppend = priorityDto.partial({
+  id: true,
+  description: true,
+  shouldNotify: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type PriorityAppend = z.infer<typeof priorityAppend>;
 
 export interface ChannelDto {
   id: string;

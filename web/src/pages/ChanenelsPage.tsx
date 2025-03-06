@@ -1,12 +1,12 @@
 import { ChannelTable } from '@/components/channel/ChannelTable.tsx';
-import { TabButton, TabList } from '@/components/common/layout/Tab.tsx';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { DEFAULT_PAGE_NUMBER } from '@/common/constants.ts';
 import { useEffect } from 'react';
 import { ChannelPageStateBuilder } from '@/hooks/channel/ChannelPageStateBuilder.ts';
+import { PageHeaderTab } from '@/components/common/layout/PageHeaderTab.tsx';
 
-export function ChannelsPage() {
+export function ChannelPage() {
   const [searchParams] = useSearchParams();
   const { pageState, setPageState } = useChannelPageStore();
 
@@ -16,20 +16,7 @@ export function ChannelsPage() {
 
   return (
     <div>
-      <div className="mx-10 my-3">
-        <TabList className="my-3">
-          <TabButton>
-            <Link to="/">Lives</Link>
-          </TabButton>
-          <TabButton active>Channels</TabButton>
-          <TabButton>
-            <Link to="/nodes">Nodes</Link>
-          </TabButton>
-          <TabButton>
-            <Link to="/criteria">Criteria</Link>
-          </TabButton>
-        </TabList>
-      </div>
+      {pageState && <PageHeaderTab channel channelUrl={`/channels?${pageState.toQueryString()}`} />}
       {pageState && (
         <div className="mx-10 my-3">
           <ChannelTable pageState={pageState} />

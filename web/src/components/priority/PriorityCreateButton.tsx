@@ -18,7 +18,7 @@ import { parse } from '@/common/utils.form.ts';
 import { nonempty } from '@/common/common.schema.ts';
 import { fetchNodeGroups } from '@/client/node/node-group.client.ts';
 
-export function NodeCreateButton() {
+export function PriorityCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   const { data: nodeGroups } = useQuery({

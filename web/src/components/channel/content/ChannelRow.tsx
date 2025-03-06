@@ -6,12 +6,13 @@ import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
 import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { PriorityUpdateDialog } from '@/components/channel/edit/PriorityUpdateDialog.tsx';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
+import { css } from '@emotion/react';
 
 export function ChannelRow({ channel }: { channel: ChannelDto }) {
   return (
     <TableRow>
       <TableCell>
-        <ChannelInfoCell channel={channel} />
+        <ChannelInfoCell channel={channel} css={css({ width: '15rem' })} />
       </TableCell>
       <TableCell>
         <PriorityUpdateDialog channel={channel}>

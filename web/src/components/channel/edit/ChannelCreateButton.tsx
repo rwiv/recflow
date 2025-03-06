@@ -22,7 +22,7 @@ import { TextAreaFormField } from '@/components/common/form/TextAreaFormField.ts
 import { PLATFORMS_QUERY_KEY, PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
 import { fetchPlatforms } from '@/client/common/platform.client.ts';
 import { uppercase } from '@/common/utils.strings.ts';
-import {fetchPriorities} from "@/client/channel/priority.client.ts";
+import { fetchPriorities } from '@/client/channel/priority.client.ts';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import { TagDto } from '@/client/channel/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.schema.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { useRef } from 'react';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';

@@ -8,7 +8,7 @@ import {
   updatePrioritySeq,
   updatePriorityTier,
 } from '@/client/channel/priority.client.ts';
-import { PriorityDto } from '@/client/channel/channel.types.ts';
+import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 type Type = 'name' | 'description' | 'tier' | 'seq';
 

@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { LiveDto } from '@/client/live/live.types.ts';
 import { randomElem } from '@/lib/list.ts';
 import { ChannelDto } from '@/client/channel/channel.types.ts';
-import { TagDto } from '@/client/channel/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.schema.ts';
 import { PlatformDto, platformNameEnum } from '@/client/common/platform.schema.ts';
 
 export function mockLive(): LiveDto {

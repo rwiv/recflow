@@ -16,7 +16,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command.tsx';
-import { TagDto } from '@/client/channel/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.schema.ts';
 
 export function TagQuerySelect() {
   const navigate = useNavigate();

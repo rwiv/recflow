@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
-import { PriorityDto } from '@/client/channel/channel.types.ts';
 import { fetchPriorities } from '@/client/channel/priority.client.ts';
 import { PriorityTable } from '@/components/priority/PriorityTable.tsx';
 import { PageHeaderTab } from '@/components/common/layout/PageHeaderTab.tsx';
+import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 export function PriorityPage() {
   const { data: nodes } = useQuery<PriorityDto[]>({

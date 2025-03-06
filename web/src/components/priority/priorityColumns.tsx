@@ -1,8 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
-import { PriorityDto } from '@/client/channel/channel.types.ts';
 import { NotifyBadge } from '@/components/priority/units/NotifyBadge.tsx';
 import { PriorityFieldUpdateForm } from '@/components/priority/units/PriorityFieldUpdateForm.tsx';
+import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 const EDITABLE_WIDTH = '15rem';
 

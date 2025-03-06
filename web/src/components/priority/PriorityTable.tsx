@@ -8,9 +8,9 @@ import { NodeCreateButton } from '@/components/node/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
 import { Button } from '@/components/ui/button.tsx';
-import { PriorityDto } from '@/client/channel/channel.types.ts';
 import { priorityColumns } from '@/components/priority/priorityColumns.tsx';
 import { deletePriority } from '@/client/channel/priority.client.ts';
+import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 export function PriorityTable({ data }: { data: PriorityDto[] }) {
   const queryClient = useQueryClient();

@@ -8,7 +8,7 @@ import { SelectItem } from '@/components/ui/select.tsx';
 import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { updateChannelPriority } from '@/client/channel/channel.client.ts';
-import { ChannelDto, PriorityDto } from '@/client/channel/channel.types.ts';
+import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { DialogBase } from '@/components/common/layout/DialogBase.tsx';
@@ -16,6 +16,7 @@ import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
 import { uuid } from '@/common/common.schema.ts';
 import { uppercase } from '@/common/utils.strings.ts';
 import { fetchPriorities } from '@/client/channel/priority.client.ts';
+import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 const FormSchema = z.object({
   priorityId: uuid,

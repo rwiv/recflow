@@ -1,6 +1,6 @@
 import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 import { configs } from '@/common/configs.ts';
-import { PriorityAppend, PriorityDto, PriorityUpdate } from '@/client/channel/channel.types.ts';
+import { PriorityAppend, PriorityDto, PriorityUpdate } from '@/client/channel/priority.schema.ts';
 
 export async function fetchPriorities() {
   const res = await request(`${configs.endpoint}/api/channels/priorities`);

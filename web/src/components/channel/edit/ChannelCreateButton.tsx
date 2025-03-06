@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { formItemStyle } from '@/components/common/styles/form.ts';
 import { createChannel } from '@/client/channel/channel.client.ts';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
-import { ChannelAppend, PriorityDto } from '@/client/channel/channel.types.ts';
+import { ChannelAppend } from '@/client/channel/channel.types.ts';
 import { PlatformDto } from '@/client/common/platform.schema.ts';
 import { nonempty, uuid } from '@/common/common.schema.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
@@ -23,6 +23,7 @@ import { PLATFORMS_QUERY_KEY, PRIORITIES_QUERY_KEY } from '@/common/constants.ts
 import { fetchPlatforms } from '@/client/common/platform.client.ts';
 import { uppercase } from '@/common/utils.strings.ts';
 import { fetchPriorities } from '@/client/channel/priority.client.ts';
+import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

@@ -15,7 +15,7 @@ import { css } from '@emotion/react';
 import { fetchTags } from '@/client/channel/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { TAGS_QUERY_KEY } from '@/common/constants.ts';
-import { TagDto } from '@/client/channel/tag.types.ts';
+import { TagDto } from '@/client/channel/tag.schema.ts';
 
 interface EditTagSelectProps {
   existsTagNames: string[];

@@ -9,10 +9,18 @@ import {
 import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useNavigate } from 'react-router';
+import {useQuery} from "@tanstack/react-query";
+import {PRIORITIES_QUERY_KEY} from "@/common/constants.ts";
+import {fetchPriorities} from "@/client/channel/priority.client.ts";
 
 export function PrioritySelect() {
   const navigate = useNavigate();
   const { pageState } = useChannelPageStore();
+
+  const { data: priorities } = useQuery({
+    queryKey: [PRIORITIES_QUERY_KEY],
+    queryFn: fetchPriorities,
+  });
 
   const onChange = async (value: string) => {
     if (!pageState) return;
@@ -37,12 +45,11 @@ export function PrioritySelect() {
       <SelectContent>
         <SelectGroup>
           <SelectItem value="all">ALL</SelectItem>
-          <SelectItem value="must">MUST</SelectItem>
-          <SelectItem value="should">SHOULD</SelectItem>
-          <SelectItem value="may">MAY</SelectItem>
-          <SelectItem value="review">REVIEW</SelectItem>
-          <SelectItem value="skip">SKIP</SelectItem>
-          <SelectItem value="none">NONE</SelectItem>
+          {priorities?.map((priority) => (
+            <SelectItem key={priority.id} value={priority.name}>
+              {priority.name}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

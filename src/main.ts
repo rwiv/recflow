@@ -15,8 +15,6 @@ async function bootstrap() {
   if (env.nodeEnv !== 'prod') {
     app.enableCors();
     await init.initDev();
-  } else {
-    await init.initProd();
   }
 
   app.get(LiveTaskInitializer).init();

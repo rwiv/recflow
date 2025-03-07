@@ -35,7 +35,7 @@ export class PriorityRepository {
   async update(id: string, update: PriorityEntUpdate, tx: Tx = db): Promise<PriorityEnt> {
     const priority = await this.findById(id, tx);
     if (!priority) throw NotFoundError.from('Priority', 'id', id);
-    if (priority.name === DEFAULT_PRIORITY_NAME && priority.name !== update.name) {
+    if (priority.name === DEFAULT_PRIORITY_NAME && update.name !== undefined) {
       throw new ValidationError('Cannot update default priority name');
     }
     const req: PriorityEnt = {

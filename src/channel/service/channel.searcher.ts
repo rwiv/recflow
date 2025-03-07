@@ -15,11 +15,10 @@ export class ChannelSearcher {
   async findByQuery(
     page: PageQuery,
     sortBy?: ChannelSortType,
-    priority?: string,
-    tagName?: string,
+    priorityName?: string,
     withTags: boolean = false,
   ) {
-    const entRet = await this.chSearch.findByQuery(page, sortBy, priority, tagName);
+    const entRet = await this.chSearch.findByQuery(page, sortBy, priorityName);
     return this.toPageResult(entRet, withTags);
   }
 

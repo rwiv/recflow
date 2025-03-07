@@ -66,7 +66,11 @@ export class ChannelController {
       sortBy = channelSortTypeEnum.parse(st);
     }
     const pq: PageQuery = { page, size };
-    return this.chSearcher.findByQuery(pageQuery.parse(pq), sortBy, priority, tagName, withTags);
+    if (tagName) {
+      return this.chSearcher.findByAnyTag([tagName], undefined, pq, sortBy, priority, withTags);
+    } else {
+      return this.chSearcher.findByQuery(pageQuery.parse(pq), sortBy, priority, withTags);
+    }
   }
 
   @Post('/')

@@ -24,25 +24,10 @@ export class ChannelSearchRepository {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priorityName?: string,
-    tagName?: string,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
-
-    if (tagName) {
-      const tag = await this.tagQuery.findByName(tagName, tx);
-      if (!tag) return { total: 0, channels: [] };
-
-      let nqb = qb
-        .innerJoin(channelTagMapTable, eq(channelTagMapTable.channelId, channelTable.id))
-        .where(and(...conds, eq(channelTagMapTable.tagId, tag.id)));
-
-      const total = await tx.$count(qb);
-      if (page) nqb = this.withPage(nqb, page);
-      return { total, channels: (await nqb).map((r) => r.channel) };
-    }
-
     if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));

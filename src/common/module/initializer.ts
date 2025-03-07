@@ -33,10 +33,6 @@ export class AppInitializer {
     private readonly devInjector: DevInitInjector,
   ) {}
 
-  async initProd() {
-    await this.checkDb();
-  }
-
   async initDev() {
     await dropAll();
     await this.checkDb();

@@ -7,8 +7,6 @@ import { NodeSelector } from '../../node/service/node.selector.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { FatalError } from '../../utils/errors/errors/FatalError.js';
-import { CHANNEL_PRIORIES_VALUE_MAP } from '../../channel/spec/default.priority.constants.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
@@ -16,6 +14,7 @@ import { LiveWriter } from '../access/live.writer.js';
 import { LiveFinder } from '../access/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
+import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -42,8 +41,7 @@ export class LiveRegistrar {
     }
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
     if (!channel) {
-      // TODO: Error occurs when changing 'none' to another name
-      const none = await this.priService.findByNameNotNull(CHANNEL_PRIORIES_VALUE_MAP.none);
+      const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
       const append: ChannelAppendWithInfo = {
         priorityId: none.id,
         isFollowed: false,

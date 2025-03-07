@@ -8,6 +8,8 @@ import { eq } from 'drizzle-orm';
 import { uuid } from '../../utils/uuid.js';
 import { PriorityEnt, priorityEnt, PriorityEntAppend, PriorityEntUpdate } from '../spec/priority.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { DEFAULT_PRIORITY_NAME } from '../spec/priority.constants.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 const priorityEntAppendReq = priorityEnt.partial({ description: true, updatedAt: true });
 type PriorityEntAppendRequest = z.infer<typeof priorityEntAppendReq>;
@@ -33,6 +35,9 @@ export class PriorityRepository {
   async update(id: string, update: PriorityEntUpdate, tx: Tx = db): Promise<PriorityEnt> {
     const priority = await this.findById(id, tx);
     if (!priority) throw NotFoundError.from('Priority', 'id', id);
+    if (priority.name === DEFAULT_PRIORITY_NAME && priority.name !== update.name) {
+      throw new ValidationError('Cannot update default priority name');
+    }
     const req: PriorityEnt = {
       ...priority,
       ...update,

@@ -30,10 +30,13 @@ export function ChannelRow({ channel }: { channel: ChannelDto }) {
         <div className="mr-4">{channel.description}</div>
       </TableCell>
       <TableCell>
-        <div className="justify-self-end mr-5">{channel.followerCnt}</div>
+        <div className="justify-self-center">{channel.followerCnt}</div>
       </TableCell>
       <TableCell>
-        <div className="justify-self-end mr-5">{prettyDate(new Date(channel.updatedAt))}</div>
+        <div className="justify-self-center">{prettyDate(new Date(channel.updatedAt))}</div>
+      </TableCell>
+      <TableCell>
+        <div className="justify-self-center">{prettyDate(new Date(channel.createdAt))}</div>
       </TableCell>
       <TableCell>
         <div className="justify-self-end mr-8">

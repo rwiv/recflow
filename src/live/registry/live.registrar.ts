@@ -42,7 +42,7 @@ export class LiveRegistrar {
     }
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
     if (!channel) {
-      // TODO: update
+      // TODO: Error occurs when changing 'none' to another name
       const none = await this.priService.findByNameNotNull(CHANNEL_PRIORIES_VALUE_MAP.none);
       const append: ChannelAppendWithInfo = {
         priorityId: none.id,

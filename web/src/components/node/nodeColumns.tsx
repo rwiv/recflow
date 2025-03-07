@@ -4,14 +4,23 @@ import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { CordonedBadge } from '@/components/node/units/CordonedBadge.tsx';
 import { NodeGroupBadge } from '@/components/node/units/GroupUpdateDialog.tsx';
 import { NodeFieldUpdateForm } from '@/components/node/units/NodeFieldUpdateForm.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
 
-const EDITABLE_WIDTH = '16rem';
+const EDITABLE_WIDTH = '12rem';
+const SWITCH_SIDTH = '10rem';
 
 const nameColumn: ColumnDef<NodeDto> = {
   accessorKey: 'name',
   header: () => <div className="justify-self-center">Name</div>,
-  cell: ({ row }) => <div className="justify-self-center">{row.original.name}</div>,
+  cell: ({ row }) => <NodeFieldUpdateForm type="name" node={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
+};
+
+const cordonedColumn: ColumnDef<NodeDto> = {
+  accessorKey: 'isCordoned',
+  header: () => <div className="justify-self-center">Activated</div>,
+  cell: ({ row }) => <CordonedBadge node={row.original} />,
+  meta: { header: { width: SWITCH_SIDTH } },
 };
 
 const totalCapacityColumn: ColumnDef<NodeDto> = {
@@ -25,17 +34,22 @@ const groupColumn: ColumnDef<NodeDto> = {
   accessorKey: 'group',
   header: () => <div className="justify-self-center">Group</div>,
   cell: ({ row }) => <NodeGroupBadge node={row.original} />,
-  meta: { header: { width: '10rem' } },
+  meta: { header: { width: SWITCH_SIDTH } },
 };
 
 const nodeTypeColumn: ColumnDef<NodeDto> = {
   accessorKey: 'type',
   header: () => <div className="justify-self-center">Type</div>,
   cell: ({ row }) => {
-    const name = row.original.type.name;
-    return <div className="justify-self-center">{name}</div>;
+    return (
+      <div className="justify-self-center">
+        <button>
+          <Badge variant="secondary">{row.original.type.name}</Badge>
+        </button>
+      </div>
+    );
   },
-  meta: { header: { width: '10rem' } },
+  meta: { header: { width: SWITCH_SIDTH } },
 };
 
 const weightColumn: ColumnDef<NodeDto> = {
@@ -59,20 +73,21 @@ const soopColumn: ColumnDef<NodeDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-const cordonedColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'isCordoned',
-  header: () => <div className="justify-self-center">Activated</div>,
-  cell: ({ row }) => <CordonedBadge node={row.original} />,
+const endpointColumn: ColumnDef<NodeDto> = {
+  accessorKey: 'endpoint',
+  header: () => <div className="justify-self-center">Endpoint</div>,
+  cell: ({ row }) => <NodeFieldUpdateForm type="endpoint" node={row.original} />,
 };
 
 export const nodeColumns: ColumnDef<NodeDto>[] = [
   createSelectColumn('select'),
   nameColumn,
+  cordonedColumn,
   groupColumn,
   nodeTypeColumn,
   weightColumn,
   totalCapacityColumn,
   chzzkColumn,
   soopColumn,
-  cordonedColumn,
+  endpointColumn,
 ];

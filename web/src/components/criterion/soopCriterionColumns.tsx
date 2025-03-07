@@ -65,8 +65,8 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<SoopCriterio
 export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   createSelectColumn('select'),
   nameColumn,
-  enforceCredsColumn,
   isDeactivatedColumn,
+  enforceCredsColumn,
   minUserCntColumn,
   minFollowCntColumn,
   createUnitColumn('positiveCates', 'p_cates'),

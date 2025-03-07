@@ -15,8 +15,12 @@ export async function createNode(append: NodeAppend) {
   return (await res.json()) as NodeDto;
 }
 
-export function updateNodeIsCordoned(id: string, isCordoned: boolean) {
-  return updateNode(id, undefined, undefined, undefined, undefined, isCordoned, undefined, undefined);
+export function updateNodeName(id: string, name: string) {
+  return updateNode(id, name, undefined, undefined, undefined, undefined, undefined, undefined);
+}
+
+export function updateNodeEndpoint(id: string, endpoint: string) {
+  return updateNode(id, undefined, endpoint, undefined, undefined, undefined, undefined, undefined);
 }
 
 export function updateNodeNodeGroup(id: string, groupId: string) {
@@ -33,6 +37,10 @@ export function updateNodeTotalCapacity(id: string, totalCapacity: number) {
 
 export function updateNodeCapacity(id: string, capacity: NodeCapacity) {
   return updateNode(id, undefined, undefined, undefined, undefined, undefined, undefined, capacity);
+}
+
+export function updateNodeIsCordoned(id: string, isCordoned: boolean) {
+  return updateNode(id, undefined, undefined, undefined, undefined, isCordoned, undefined, undefined);
 }
 
 async function updateNode(

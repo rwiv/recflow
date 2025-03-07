@@ -1,15 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
+import { createSelectColumn, dateColumnDef } from '@/components/common/table/column_utils.tsx';
 import { TagDto } from '@/client/channel/tag.schema.ts';
 import { TagFieldUpdateForm } from '@/components/tag/TagFieldUpdateForm.tsx';
 
-const EDITABLE_WIDTH = '15rem';
+const DEFAULT_WIDTH = '15rem';
 
 const nameColumn: ColumnDef<TagDto> = {
   accessorKey: 'name',
   header: () => <div className="justify-self-center">Name</div>,
   cell: ({ row }) => <TagFieldUpdateForm type="name" tag={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
+  meta: { header: { width: DEFAULT_WIDTH } },
 };
 
 const descriptionColumn: ColumnDef<TagDto> = {
@@ -18,4 +18,15 @@ const descriptionColumn: ColumnDef<TagDto> = {
   cell: ({ row }) => <TagFieldUpdateForm type="description" tag={row.original} />,
 };
 
-export const tagColumns: ColumnDef<TagDto>[] = [createSelectColumn('select'), nameColumn, descriptionColumn];
+export const tagColumns: ColumnDef<TagDto>[] = [
+  createSelectColumn('select'),
+  nameColumn,
+  descriptionColumn,
+  dateColumnDef<TagDto>('createdAt', 'CreatedAt', (elem) => new Date(elem.createdAt), DEFAULT_WIDTH),
+  dateColumnDef<TagDto>(
+    'updatedAt',
+    'UpdatedAt',
+    (elem) => (elem.updatedAt ? new Date(elem.updatedAt) : undefined),
+    DEFAULT_WIDTH,
+  ),
+];

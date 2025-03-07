@@ -1,22 +1,22 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
+import { createSelectColumn, dateColumnDef } from '@/components/common/table/column_utils.tsx';
 import { NodeGroupDto } from '@/client/node/node.schema.ts';
 import { NodeGroupFieldUpdateForm } from '@/components/nodegroup/NodeGroupFieldUpdateForm.tsx';
 
-const EDITABLE_WIDTH = '15rem';
+const DEFAULT_WIDTH = '15rem';
 
 const nameColumn: ColumnDef<NodeGroupDto> = {
   accessorKey: 'name',
   header: () => <div className="justify-self-center">Name</div>,
   cell: ({ row }) => <NodeGroupFieldUpdateForm type="name" nodeGroup={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
+  meta: { header: { width: DEFAULT_WIDTH } },
 };
 
 const tierColumn: ColumnDef<NodeGroupDto> = {
   accessorKey: 'tier',
   header: () => <div className="justify-self-center">Tier</div>,
   cell: ({ row }) => <NodeGroupFieldUpdateForm type="tier" nodeGroup={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
+  meta: { header: { width: DEFAULT_WIDTH } },
 };
 
 const descriptionColumn: ColumnDef<NodeGroupDto> = {
@@ -30,4 +30,11 @@ export const nodeGroupColumns: ColumnDef<NodeGroupDto>[] = [
   nameColumn,
   tierColumn,
   descriptionColumn,
+  dateColumnDef<NodeGroupDto>('createdAt', 'CreatedAt', (elem) => new Date(elem.createdAt), DEFAULT_WIDTH),
+  dateColumnDef<NodeGroupDto>(
+    'updatedAt',
+    'UpdatedAt',
+    (elem) => (elem.updatedAt ? new Date(elem.updatedAt) : undefined),
+    DEFAULT_WIDTH,
+  ),
 ];

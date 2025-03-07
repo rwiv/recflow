@@ -71,8 +71,8 @@ function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<ChzzkCriteri
 export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
   createSelectColumn('select'),
   nameColumn,
-  enforceCredsColumn,
   isDeactivatedColumn,
+  enforceCredsColumn,
   minUserCntColumn,
   minFollowCntColumn,
   createUnitColumn('positiveTags', 'p_tags'),

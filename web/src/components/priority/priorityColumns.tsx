@@ -1,10 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
+import { createSelectColumn, dateColumnDef } from '@/components/common/table/column_utils.tsx';
 import { NotifyBadge } from '@/components/priority/units/NotifyBadge.tsx';
 import { PriorityFieldUpdateForm } from '@/components/priority/units/PriorityFieldUpdateForm.tsx';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
-const EDITABLE_WIDTH = '15rem';
+const EDITABLE_WIDTH = '12rem';
+const DEFAULT_WIDTH = '11rem';
 
 const nameColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'name',
@@ -37,14 +38,21 @@ const notifyColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'shouldNotify',
   header: () => <div className="justify-self-center">Notify</div>,
   cell: ({ row }) => <NotifyBadge priority={row.original} />,
-  meta: { header: { width: '10rem' } },
+  meta: { header: { width: DEFAULT_WIDTH } },
 };
 
 export const priorityColumns: ColumnDef<PriorityDto>[] = [
   createSelectColumn('select'),
   nameColumn,
   tierColumn,
-  descriptionColumn,
   seqColumn,
+  descriptionColumn,
+  dateColumnDef<PriorityDto>('createdAt', 'CreatedAt', (elem) => new Date(elem.createdAt), DEFAULT_WIDTH),
+  dateColumnDef<PriorityDto>(
+    'updatedAt',
+    'UpdatedAt',
+    (elem) => (elem.updatedAt ? new Date(elem.updatedAt) : undefined),
+    DEFAULT_WIDTH,
+  ),
   notifyColumn,
 ];

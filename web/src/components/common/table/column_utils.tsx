@@ -11,21 +11,31 @@ export function sortableColumnDef<T>(
   cid: string,
   header: string | undefined = undefined,
   getCellCn: (origin: T) => string | undefined,
+  width?: string,
 ): ColumnDef<T> {
   if (!header) {
     header = firstLetterUppercase(cid);
+  }
+  if (!width) {
+    width = '15em';
   }
   return {
     accessorKey: cid,
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          {header}
-          <ArrowUpDown />
-        </Button>
+        <div className="justify-self-center">
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            {header}
+            <ArrowUpDown />
+          </Button>
+        </div>
       );
     },
-    cell: ({ row }) => <div className={getCellCn(row.original)}>{row.getValue(cid)}</div>,
+    cell: ({ row }) => {
+      const className = cn(getCellCn(row.original), 'justify-self-center');
+      return <div className={className}>{row.getValue(cid)}</div>;
+    },
+    meta: { header: { width } },
   };
 }
 
@@ -59,26 +69,42 @@ export function createSelectColumn<T>(cid: string, meta?: ColumnMetaStyle, class
 export function dateColumnDef<T>(
   cid: string,
   header: string,
-  getDate: (elem: T) => Date,
-  getCellCn: (origin: T) => string | undefined,
+  getDate: (elem: T) => Date | undefined,
+  width?: string,
+  getCellCn?: (origin: T) => string | undefined,
 ): ColumnDef<T> {
+  if (!width) {
+    width = '15em';
+  }
   return {
     accessorKey: cid,
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          {header}
-          <ArrowUpDown />
-        </Button>
+        <div className="justify-self-center">
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            {header}
+            <ArrowUpDown />
+          </Button>
+        </div>
       );
     },
     cell: ({ row }) => {
-      return <div className={getCellCn(row.original)}>{formatTimeAgo(getDate(row.original))}</div>;
+      const inputCn = getCellCn ? getCellCn(row.original) : undefined;
+      const className = cn(inputCn, 'justify-self-center');
+      const date = getDate(row.original);
+      if (!date) {
+        return <div className={className}>-</div>;
+      }
+      return <div className={className}>{formatTimeAgo(date)}</div>;
     },
     sortingFn: (rowA, rowB, _) => {
       const dateA = getDate(rowA.original);
       const dateB = getDate(rowB.original);
+      if (!dateA || !dateB) {
+        return 0;
+      }
       return dateA.getTime() - dateB.getTime(); // Ascending
     },
+    meta: { header: { width } },
   };
 }

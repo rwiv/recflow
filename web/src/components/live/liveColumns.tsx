@@ -8,23 +8,39 @@ import { LiveDto } from '@/client/live/live.types.ts';
 import { getLiveUrl } from '@/lib/platform.ts';
 import { cn } from '@/lib/utils.ts';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
 
 export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
-export const createdAtCit = 'createdAt';
 
-const disabledCn = 'opacity-40';
+const DISABLED_CN = 'opacity-40';
+const DEFAULT_WIDTH = '15rem';
 
 const channelColumn: ColumnDef<LiveDto> = {
   accessorKey: 'channel',
-  header: 'Channel',
+  header: () => <div className="">Channel</div>,
   cell: ({ row }) => {
     const live = row.original;
-    return <ChannelInfoCell channel={live.channel} className={live.isDisabled ? disabledCn : undefined} />;
+    return <ChannelInfoCell channel={live.channel} className={live.isDisabled ? DISABLED_CN : undefined} />;
   },
   filterFn: (rows, _, filterValue) => {
     return rows.original.channel.username.includes(filterValue);
   },
+  meta: { header: { width: DEFAULT_WIDTH } },
+};
+
+const priorityColumn: ColumnDef<LiveDto> = {
+  accessorKey: 'priority',
+  header: () => <div className="ml-1">Priority</div>,
+  cell: ({ row }) => (
+    <button className="uppercase">
+      <Badge variant="default">{row.original.channel.priority.name}</Badge>
+    </button>
+  ),
+  filterFn: (rows, _, filterValue) => {
+    return rows.original.channel.priority.name.includes(filterValue);
+  },
+  meta: { header: { width: '8rem' } },
 };
 
 const titleColumn: ColumnDef<LiveDto> = {
@@ -33,7 +49,7 @@ const titleColumn: ColumnDef<LiveDto> = {
   cell: ({ row }) => {
     const live = row.original;
     return (
-      <div className={cn('my-1', live.isDisabled && disabledCn)}>
+      <div className={cn('my-1', live.isDisabled && DISABLED_CN)}>
         <a href={getLiveUrl(live.platform.name, live.channel.pid)}>{live.liveTitle}</a>
       </div>
     );
@@ -45,11 +61,11 @@ const titleColumn: ColumnDef<LiveDto> = {
 
 const nodeColumn: ColumnDef<LiveDto> = {
   accessorKey: 'node',
-  header: 'Node',
+  header: () => <div className="justify-self-center">Node</div>,
   cell: ({ row }) => {
     const live = row.original;
     return (
-      <div className={cn('my-1', live.isDisabled && disabledCn)}>
+      <div className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
         {`${live.node?.name} (${live.node?.group?.name})`}
       </div>
     );
@@ -57,18 +73,21 @@ const nodeColumn: ColumnDef<LiveDto> = {
   filterFn: (rows, _, filterValue) => {
     return rows.original.node?.name.includes(filterValue) ?? false;
   },
+  meta: { header: { width: DEFAULT_WIDTH } },
 };
 
 export const liveColumns: ColumnDef<LiveDto>[] = [
   createSelectColumn(selectCid),
   channelColumn,
+  priorityColumn,
   titleColumn,
-  sortableColumnDef(viewCntCid, 'Viewers', (live) => (live.isDisabled ? disabledCn : undefined)),
+  sortableColumnDef(viewCntCid, 'Viewers', (live) => (live.isDisabled ? DISABLED_CN : undefined)),
   dateColumnDef<LiveDto>(
-    createdAtCit,
-    'Save Time',
+    'createdAt',
+    'CreatedAt',
     (elem) => new Date(elem.createdAt),
-    (live) => (live.isDisabled ? disabledCn : undefined),
+    DEFAULT_WIDTH,
+    (live) => (live.isDisabled ? DISABLED_CN : undefined),
   ),
   nodeColumn,
 ];

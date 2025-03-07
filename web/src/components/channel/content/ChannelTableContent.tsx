@@ -15,10 +15,13 @@ export function ChannelTableContent({ channels }: { channels: ChannelDto[] }) {
           <TableHead css={css({ width: '20rem' })}>Tags</TableHead>
           <TableHead>Description</TableHead>
           <TableHead css={css({ width: '8rem' })}>
-            <div className="justify-self-end">Followers</div>
+            <div className="justify-self-center">Followers</div>
           </TableHead>
           <TableHead css={css({ width: '11em' })}>
-            <div className="justify-self-end mr-6">Date</div>
+            <div className="justify-self-center">UpdatedAt</div>
+          </TableHead>
+          <TableHead css={css({ width: '11em' })}>
+            <div className="justify-self-center">CreatedAt</div>
           </TableHead>
           <TableHead css={css({ width: '8em' })}>
             <div className="justify-self-end mr-6">Actions</div>

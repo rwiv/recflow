@@ -4,14 +4,14 @@ import { mockNode } from '../../common/helpers/node.mocks.js';
 import { notNull } from '../../utils/null.js';
 import { NodeUpdater, SyncForm } from './node.updater.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
-import { AppInitializer } from '../../common/module/initializer.js';
+import { DevInitializer } from '../../common/module/dev-initializer.js';
 import { NodeWriter } from './node.writer.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 
 const app = await createTestApp();
-const init = app.get(AppInitializer);
+const init = app.get(DevInitializer);
 const nodeWriter = app.get(NodeWriter);
 const nodeFinder = app.get(NodeFinder);
 const nodeUpdater = app.get(NodeUpdater);
@@ -20,8 +20,7 @@ const pfFinder = app.get(PlatformFinder);
 
 describe('ChannelService', () => {
   beforeEach(async () => {
-    await dropAll();
-    await init.checkDb();
+    await init.initDev();
   });
 
   afterAll(async () => {

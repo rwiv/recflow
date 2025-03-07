@@ -9,9 +9,9 @@ import {
 import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useNavigate } from 'react-router';
-import {useQuery} from "@tanstack/react-query";
-import {PRIORITIES_QUERY_KEY} from "@/common/constants.ts";
-import {fetchPriorities} from "@/client/channel/priority.client.ts";
+import { useQuery } from '@tanstack/react-query';
+import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
+import { fetchPriorities } from '@/client/channel/priority.client.ts';
 
 export function PrioritySelect() {
   const navigate = useNavigate();

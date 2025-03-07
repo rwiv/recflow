@@ -3,7 +3,7 @@ import { dropAll } from '../../infra/db/utils.js';
 import { mockChannel } from '../../common/helpers/channel.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { ChannelFinder } from './channel.finder.js';
-import { AppInitializer } from '../../common/module/initializer.js';
+import { DevInitializer } from '../../common/module/dev-initializer.js';
 import { ChannelWriter } from './channel.writer.js';
 import { ChannelSearcher } from './channel.searcher.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
@@ -12,7 +12,7 @@ import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js'
 import { PriorityDto } from '../spec/priority.schema.js';
 
 const app = await createTestApp();
-const init = app.get(AppInitializer);
+const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
 const priService = app.get(PriorityService);
 const chFinder = app.get(ChannelFinder);
@@ -25,8 +25,7 @@ describe('ChannelService', () => {
   let should: PriorityDto | undefined = undefined;
   let may: PriorityDto | undefined = undefined;
   beforeEach(async () => {
-    await dropAll();
-    await init.checkDb();
+    await init.initDev();
     pf = await pfFinder.findByNameNotNull('chzzk');
     must = await priService.findByNameNotNull('must');
     should = await priService.findByNameNotNull('should');

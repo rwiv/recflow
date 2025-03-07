@@ -23,7 +23,6 @@ export class ChannelBatchMigrator extends BatchMigrator {
     const channel = fetchedChannel.parse(chan);
     const req: ChannelAppend = {
       ...channel,
-      id: undefined, // TODO: remove
       platformId: channel.platform.id,
       priorityId: channel.priority.id,
     };

@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterAll } from 'vitest';
 import { createTestApp } from '../../common/helpers/helper.app.js';
-import { AppInitializer } from '../../common/module/initializer.js';
+import { DevInitializer } from '../../common/module/dev-initializer.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { LiveWriter } from './live.writer.js';
 import { mockLiveInfo } from '../../common/helpers/live.mocks.js';
@@ -14,7 +14,7 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 
 const app = await createTestApp();
-const init = app.get(AppInitializer);
+const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
 const priService = app.get(PriorityService);
 const ngRepo = app.get(NodeGroupRepository);
@@ -24,8 +24,7 @@ const chWriter = app.get(ChannelWriter);
 
 describe('ChannelService', () => {
   beforeEach(async () => {
-    await dropAll();
-    await init.checkDb();
+    await init.initDev();
   });
 
   afterAll(async () => {

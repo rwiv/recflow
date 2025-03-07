@@ -19,11 +19,9 @@ export function PageHeaderTab(props: HeaderTabProps) {
     <div className="mx-10 my-3 space-x-2">
       <TabList className="my-3">
         <PageTabButton isActive={props.live ?? false} to={'/'} content={'Lives'} />
-        <PageTabButton isActive={props.criterion ?? false} to={'/criteria'} content={'Criteria'} />
-      </TabList>
-      <TabList className="my-3">
         <PageTabButton isActive={props.node ?? false} to={'/nodes'} content={'Nodes'} />
         <PageTabButton isActive={props.nodeGroup ?? false} to={'/node-groups'} content={'Groups'} />
+        <PageTabButton isActive={props.criterion ?? false} to={'/criteria'} content={'Criteria'} />
       </TabList>
       <TabList className="my-3">
         <PageTabButton isActive={props.channel ?? false} to={channelUrl} content={'Channels'} />

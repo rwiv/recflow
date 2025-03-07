@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
-import { formatTimeAgo } from '@/lib/date.ts';
+import { prettyDate } from '@/lib/date.ts';
 import { firstLetterUppercase } from '@/common/utils.strings.ts';
 import { cn } from '@/lib/utils.ts';
 import { ColumnMetaStyle } from '@/components/common/styles/meta.ts';
@@ -95,7 +95,7 @@ export function dateColumnDef<T>(
       if (!date) {
         return <div className={className}>-</div>;
       }
-      return <div className={className}>{formatTimeAgo(date)}</div>;
+      return <div className={className}>{prettyDate(date)}</div>;
     },
     sortingFn: (rowA, rowB, _) => {
       const dateA = getDate(rowA.original);

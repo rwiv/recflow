@@ -37,13 +37,13 @@ export class LiveWriter {
     return { ...ent, channel, platform, node };
   }
 
-  async delete(id: string) {
-    return this.liveRepo.delete(id);
+  async delete(id: string, tx: Tx = db) {
+    return this.liveRepo.delete(id, tx);
   }
 
-  async updateByLive(id: string, live: LiveInfo) {
-    const ent = await this.liveRepo.update(id, { ...live });
-    return this.mapper.map(ent);
+  async updateByLive(id: string, live: LiveInfo, tx: Tx = db) {
+    const ent = await this.liveRepo.update(id, { ...live }, tx);
+    return this.mapper.map(ent, tx);
   }
 
   async update(id: string, update: LiveUpdate, tx: Tx = db) {

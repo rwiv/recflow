@@ -22,8 +22,8 @@ export class LiveFinder {
     return this.filterByOpts(ent, opts);
   }
 
-  async findByPid(pid: string, opts: FindOptions = {}) {
-    const entities = await this.liveRepo.findByPid(pid);
+  async findByPid(pid: string, tx: Tx = db, opts: FindOptions = {}) {
+    const entities = await this.liveRepo.findByPid(pid, tx);
     if (entities.length === 0) return undefined;
     if (entities.length > 1) throw new ValidationError(`Duplicated live entities: pid=${pid}`);
     return this.filterByOpts(entities[0], opts);

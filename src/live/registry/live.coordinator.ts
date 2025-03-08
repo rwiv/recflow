@@ -9,6 +9,8 @@ import { LiveFinder } from '../access/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { PlatformLiveFilter } from './live.filter.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
 
 @Injectable()
 export class LiveCoordinator {
@@ -36,8 +38,8 @@ export class LiveCoordinator {
     await Promise.all(lives.map((live) => this.deregisterLive(live)));
   }
 
-  private async registerFollowedLive(ch: ChannelDto, cr: PlatformCriterionDto) {
-    if (await this.liveFinder.findByPid(ch.pid, { withDisabled: true })) return null;
+  private async registerFollowedLive(ch: ChannelDto, cr: PlatformCriterionDto, tx: Tx = db) {
+    if (await this.liveFinder.findByPid(ch.pid, tx, { withDisabled: true })) return null;
     const chanInfo = await this.fetcher.fetchChannel(ch.platform.name, ch.pid, false);
     if (!chanInfo || !chanInfo.openLive) return null;
 
@@ -51,8 +53,8 @@ export class LiveCoordinator {
    * 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있다.
    * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
    */
-  private async registerQueriedLive(newInfo: LiveInfo, cr: PlatformCriterionDto) {
-    if (await this.liveFinder.findByPid(newInfo.pid, { withDisabled: true })) return null;
+  private async registerQueriedLive(newInfo: LiveInfo, cr: PlatformCriterionDto, tx: Tx = db) {
+    if (await this.liveFinder.findByPid(newInfo.pid, tx, { withDisabled: true })) return null;
     const channel = await this.fetcher.fetchChannel(newInfo.type, newInfo.pid, false);
     if (!channel?.openLive) return null;
     await this.liveRegistrar.add(newInfo, channel, cr);

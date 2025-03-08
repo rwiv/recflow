@@ -41,20 +41,20 @@ export class ChannelWriter {
     private readonly tagCmd: TagCommandRepository,
   ) {}
 
-  async createWithTagNames(append: ChannelAppend, tagNames?: string[]) {
-    return db.transaction(async (tx) => {
+  async createWithTagNames(append: ChannelAppend, tagNames?: string[], tx: Tx = db) {
+    return tx.transaction(async (txx) => {
       const tagIds: string[] = [];
       if (tagNames && tagNames.length > 0) {
         for (const tagName of tagNames) {
-          const tag = await this.tagQuery.findByName(tagName, tx);
+          const tag = await this.tagQuery.findByName(tagName, txx);
           if (tag) {
             tagIds.push(tag.id);
           } else {
-            tagIds.push((await this.tagCmd.create({ name: tagName }, tx)).id);
+            tagIds.push((await this.tagCmd.create({ name: tagName }, txx)).id);
           }
         }
       }
-      return this.createWithTagIds(append, tagIds, tx);
+      return this.createWithTagIds(append, tagIds, txx);
     });
   }
 
@@ -97,14 +97,14 @@ export class ChannelWriter {
     return this.createWithInfo(appendInfo, info);
   }
 
-  async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo) {
-    const platform = await this.pfFinder.findByNameNotNull(info.platform);
+  async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo, tx: Tx = db) {
+    const platform = await this.pfFinder.findByNameNotNull(info.platform, tx);
     const append: ChannelAppend = { ...appendInfo, ...info, platformId: platform.id };
-    return this.createWithTagNames(append, appendInfo.tagNames);
+    return this.createWithTagNames(append, appendInfo.tagNames, tx);
   }
 
-  async update(id: string, req: ChannelUpdate, isRefresh: boolean) {
-    const ent = await this.chCmd.update(id, req, isRefresh);
+  async update(id: string, req: ChannelUpdate, isRefresh: boolean, tx: Tx = db) {
+    const ent = await this.chCmd.update(id, req, isRefresh, tx);
     return this.chMapper.map(ent);
   }
 

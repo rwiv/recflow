@@ -6,15 +6,15 @@ import { LiveFinder } from '../access/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
-import { LiveEventListener } from '../event/listener.js';
-import { LiveWriter } from '../access/live.writer.js';
-import { NodeSelector } from '../../node/service/node.selector.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { log } from 'jslog';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { LiveRegistrar } from './live.registrar.js';
+import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
+import { LiveWriter } from '../access/live.writer.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class LiveRecoveryManager {
@@ -23,29 +23,30 @@ export class LiveRecoveryManager {
     @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
+    private readonly liveRegistrar: LiveRegistrar,
     private readonly nodeUpdater: NodeUpdater,
-    private readonly nodeSelector: NodeSelector,
-    private readonly listener: LiveEventListener,
+    private readonly fetcher: PlatformFetcher,
   ) {}
 
   async check(tx: Tx = db) {
     for (const invalidLive of await this.findInvalidLives()) {
+      const { platform, channel } = invalidLive;
       await tx.transaction(async (txx) => {
         if (!invalidLive.nodeId) {
           throw new MissingValueError(`nodeId is missing: ${invalidLive.id}`);
         }
         await this.nodeUpdater.update(invalidLive.nodeId, { isCordoned: true }, txx);
-        const newNode = await this.nodeSelector.match(invalidLive.channel, txx);
-        if (!newNode) {
-          throw NotFoundError.from('Node', 'id', invalidLive.nodeId);
+        await this.liveWriter.delete(invalidLive.id, txx);
+        const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true);
+        if (!channelInfo?.liveInfo) {
+          throw NotFoundError.from('channel.liveInfo', 'pid', channelInfo.pid);
         }
-        const updated = await this.liveWriter.update(invalidLive.id, { nodeId: newNode.id }, txx);
-        await this.nodeUpdater.setLastAssignedAtNow(newNode.id, txx);
-        await this.listener.onCreate(newNode.endpoint, invalidLive);
-        log.info('LiveChecker: recovered', {
-          channelName: updated.channel.username,
-          nodeName: newNode.name,
+        log.info(`Recovery live`, {
+          platform: platform.name,
+          channel: channel.username,
+          node: invalidLive.node?.name,
         });
+        await this.liveRegistrar.add(channelInfo.liveInfo, channelInfo, undefined, txx);
       });
     }
   }
@@ -54,7 +55,7 @@ export class LiveRecoveryManager {
     const prefix = AMQP_EXIT_QUEUE_PREFIX;
     const queues = await this.amqpHttp.fetchByPattern(`${prefix}.*`);
     const invalidLives: LiveDto[] = [];
-    for (const live of await this.liveFinder.findAllActives()) {
+    for (const live of await this.liveFinder.findAllActives({ withNode: true })) {
       const queueName = `${prefix}.${live.platform.name}.${live.channel.pid}`;
       if (!queues.find((q) => q.name === queueName)) {
         invalidLives.push(live);

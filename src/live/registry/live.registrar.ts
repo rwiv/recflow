@@ -38,33 +38,33 @@ export class LiveRegistrar {
   ) {}
 
   async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto, tx: Tx = db) {
-    const exists = await this.liveFinder.findByPid(liveInfo.pid);
+    const exists = await this.liveFinder.findByPid(liveInfo.pid, tx);
     if (exists && !exists.isDisabled) {
       throw new ConflictError(`Already exists: ${liveInfo.pid}`);
     }
-    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
+    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false, tx);
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
       const append: ChannelAppendWithInfo = {
         priorityId: none.id,
         isFollowed: false,
       };
-      channel = await this.chWriter.createWithInfo(append, channelInfo);
+      channel = await this.chWriter.createWithInfo(append, channelInfo, tx);
     }
-    const node = await this.nodeSelector.match(channel);
+    const node = await this.nodeSelector.match(channel, tx);
     if (!node) {
       throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
     }
-    const nodeState = node.states?.find((s) => s.platform.id === channel.platform.id);
     return tx.transaction(async (txx) => {
       const created = await this.liveWriter.createByLive(liveInfo, node.id, txx);
       await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
       await this.listener.onCreate(node.endpoint, created, cr);
       log.info('New Live', {
-        channelName: created.channel.username,
+        platform: created.platform.name,
+        channel: created.channel.username,
         title: created.liveTitle,
         node: node.name,
-        assigned: nodeState?.assigned,
+        assigned: node.states?.find((s) => s.platform.id === channel.platform.id)?.assigned,
       });
     });
   }

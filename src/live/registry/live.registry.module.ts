@@ -10,7 +10,7 @@ import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveCoordinator } from './live.coordinator.js';
-import { LiveChecker } from './live.checker.js';
+import { LiveRecoveryManager } from './live.recovery.manager.js';
 import { InfraModule } from '../../infra/infra.module.js';
 
 @Module({
@@ -29,8 +29,8 @@ import { InfraModule } from '../../infra/infra.module.js';
     PlatformLiveFilter,
     ChzzkLiveFilter,
     SoopLiveFilter,
-    LiveChecker,
+    LiveRecoveryManager,
   ],
-  exports: [LiveRegistrar, LiveCoordinator, LiveChecker],
+  exports: [LiveRegistrar, LiveCoordinator, LiveRecoveryManager],
 })
 export class LiveRegistryModule {}

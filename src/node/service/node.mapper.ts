@@ -21,8 +21,8 @@ export class NodeMapper {
     private readonly pfFinder: PlatformFinder,
   ) {}
 
-  async mapAll(entities: NodeEnt[], withGroup: boolean = false, withStates: boolean = false) {
-    return Promise.all(entities.map((ent) => this.map(ent, withGroup, withStates)));
+  async mapAll(entities: NodeEnt[], withGroup: boolean = false, withStates: boolean = false, tx: Tx = db) {
+    return Promise.all(entities.map((ent) => this.map(ent, withGroup, withStates, tx)));
   }
 
   async map(

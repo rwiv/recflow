@@ -5,12 +5,15 @@ import { LiveRefresher } from '../../live/access/live.refresher.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
 import { LiveCleanupTask } from './tasks/live.cleanup-task.js';
 import {
+  DEFAULT_RECOVERY_CYCLE,
   DEFAULT_CLEANUP_CYCLE,
   DEFAULT_REFRESH_CYCLE,
   DEFAULT_REGISTER_CHECK_CYCLE,
 } from './spec/live.task.contants.js';
 import { LiveRefreshTask } from './tasks/live.refresh-task.js';
 import { LiveRegisterCheckTask } from './tasks/live.register-check.task.js';
+import { LiveRecoveryTask } from './tasks/live-recovery.task.js';
+import { LiveRecoveryManager } from '../../live/registry/live.recovery.manager.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -18,6 +21,7 @@ export class LiveTaskInitializer {
     private readonly crFinder: CriterionFinder,
     private readonly liveCoordinator: LiveCoordinator,
     private readonly liveRefresher: LiveRefresher,
+    private readonly liveRecoveryManager: LiveRecoveryManager,
     private readonly scheduler: TaskScheduler,
   ) {}
 
@@ -30,5 +34,8 @@ export class LiveTaskInitializer {
 
     const refreshTask = new LiveRefreshTask(this.liveRefresher);
     this.scheduler.addPeriodTask(refreshTask, DEFAULT_REFRESH_CYCLE, true);
+
+    const recoveryTask = new LiveRecoveryTask(this.liveRecoveryManager);
+    this.scheduler.addPeriodTask(recoveryTask, DEFAULT_RECOVERY_CYCLE, true);
   }
 }

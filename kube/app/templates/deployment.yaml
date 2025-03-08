@@ -74,6 +74,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.postgres.secretName }}
                   key: {{ .Values.app.postgres.passwordKey }}
+            - name: LIVE_RECOVERY_WAIT_TIME_MS
+              value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- with .Values.affinity }}

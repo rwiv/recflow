@@ -17,6 +17,7 @@ export interface Env {
   ntfyTopic: string;
   amqp: AmqpConfig;
   pg: PostgresConfig;
+  liveRecoveryWaitTimeMs: number;
 }
 
 export function readEnv(): Env {
@@ -50,6 +51,11 @@ export function readEnv(): Env {
   const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
   if (ntfyEndpoint === undefined || ntfyTopic === undefined) throw Error('ntfy data is undefined');
 
+  const liveRecoveryWaitTimeMs = parseInteger(
+    process.env.LIVE_RECOVERY_WAIT_TIME_MS,
+    'liveRecoveryWaitTimeMs',
+  );
+
   return {
     nodeEnv,
     appPort,
@@ -61,5 +67,6 @@ export function readEnv(): Env {
     ntfyTopic,
     amqp: readAmqpConfig(),
     pg: readPgConfig(),
+    liveRecoveryWaitTimeMs,
   };
 }

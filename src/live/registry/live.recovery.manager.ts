@@ -12,10 +12,14 @@ import { NodeSelector } from '../../node/service/node.selector.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { log } from 'jslog';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 
 @Injectable()
-export class LiveChecker {
+export class LiveRecoveryManager {
   constructor(
+    @Inject(ENV) private readonly env: Env,
     @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
@@ -35,9 +39,13 @@ export class LiveChecker {
         if (!newNode) {
           throw NotFoundError.from('Node', 'id', invalidLive.nodeId);
         }
-        await this.liveWriter.update(invalidLive.id, { nodeId: newNode.id }, txx);
+        const updated = await this.liveWriter.update(invalidLive.id, { nodeId: newNode.id }, txx);
         await this.nodeUpdater.setLastAssignedAtNow(newNode.id, txx);
         await this.listener.onCreate(newNode.endpoint, invalidLive);
+        log.info('LiveChecker: recovered', {
+          channelName: updated.channel.username,
+          nodeName: newNode.name,
+        });
       });
     }
   }
@@ -52,6 +60,7 @@ export class LiveChecker {
         invalidLives.push(live);
       }
     }
-    return invalidLives;
+    const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);
+    return invalidLives.filter((live) => live.createdAt < threshold);
   }
 }

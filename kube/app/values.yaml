@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.4.2
+  tag: 0.4.3
   pullSecret: image-pull-secret
 
 affinity: {}
@@ -39,6 +39,8 @@ app:
     secretName: stmgr-postgres
     usernameKey: username
     passwordKey: password
+  configs:
+    liveRecoveryWaitTimeMs: 120000
 
 externals:
   streamq:

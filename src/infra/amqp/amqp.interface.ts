@@ -12,5 +12,4 @@ export interface Amqp {
 
 export interface AmqpHttp {
   fetchByPattern(pattern: string): Promise<QueueState[]>;
-  fetchAllQueues(): Promise<QueueState[]>;
 }

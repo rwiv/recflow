@@ -57,7 +57,7 @@ export class NodeGroupRepository {
     return tx.select().from(nodeGroupTable).where(eq(nodeGroupTable.tier, tier));
   }
 
-  async findAll() {
-    return db.select().from(nodeGroupTable);
+  async findAll(tx: Tx = db) {
+    return tx.select().from(nodeGroupTable);
   }
 }

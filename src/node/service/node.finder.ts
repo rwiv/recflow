@@ -35,12 +35,12 @@ export class NodeFinder {
     return Promise.all(promises);
   }
 
-  async findAll(withGroup: boolean = false, withStates: boolean = false) {
-    const entities = await this.nodeRepo.findAll();
-    return this.mapper.mapAll(entities, withGroup, withStates);
+  async findAll(withGroup: boolean = false, withStates: boolean = false, tx: Tx = db) {
+    const entities = await this.nodeRepo.findAll(tx);
+    return this.mapper.mapAll(entities, withGroup, withStates, tx);
   }
 
-  async findAllGroups() {
-    return this.groupRepo.findAll();
+  async findAllGroups(tx: Tx = db) {
+    return this.groupRepo.findAll(tx);
   }
 }

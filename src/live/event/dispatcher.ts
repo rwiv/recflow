@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AMQP } from '../../infra/infra.module.js';
-import { Amqp } from '../../infra/amqp/interface.js';
+import { Amqp } from '../../infra/amqp/amqp.interface.js';
 import { ExitCmd, ExitMessage } from './event.schema.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';

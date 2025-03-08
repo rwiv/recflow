@@ -3,7 +3,7 @@ import { AmqpConfig } from '../../common/config/config.types.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { Amqp } from './interface.js';
+import { Amqp } from './amqp.interface.js';
 import { UninitializedError } from '../../utils/errors/errors/UninitializedError.js';
 
 @Injectable()

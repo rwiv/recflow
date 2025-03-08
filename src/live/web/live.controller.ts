@@ -45,11 +45,6 @@ export class LiveController {
     return this.liveFinder.findAll(opt);
   }
 
-  @Delete('/purge')
-  async purge(): Promise<LiveDto[]> {
-    return this.liveService.purgeAll();
-  }
-
   @Post('/')
   async add(@Body() req: LiveAppendRequest) {
     const append = liveAppendRequest.parse(req);

@@ -3,6 +3,8 @@ import { ENV } from '../common/config/config.module.js';
 import { AmqpImpl } from './amqp/amqp.impl.js';
 import { Env } from '../common/config/env.js';
 import { AmqpMock } from './amqp/amqp.mock.js';
+import { AmqpHttpImpl } from './amqp/amqp-http.impl.js';
+import { AmqpHttpMock } from './amqp/amqp-http.mock.js';
 
 @Injectable()
 export class InfraFactory {
@@ -15,6 +17,14 @@ export class InfraFactory {
       return amqp;
     } else {
       return new AmqpMock();
+    }
+  }
+
+  createAmqpHttp() {
+    if (this.env.nodeEnv === 'prod') {
+      return new AmqpHttpImpl(this.env);
+    } else {
+      return new AmqpHttpMock();
     }
   }
 }

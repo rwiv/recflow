@@ -11,7 +11,8 @@ import { AuthedImpl } from './authed/authed.impl.js';
 export const STDL = 'Stdl';
 export const AUTHED = 'Authed';
 export const NOTIFIER = 'Notifier';
-export const AMQP = 'AMQP';
+export const AMQP = 'Amqp';
+export const AMQP_HTTP = 'AmqpHttp';
 
 @Module({
   imports: [ConfigModule],
@@ -36,7 +37,14 @@ export const AMQP = 'AMQP';
       },
       inject: [InfraFactory],
     },
+    {
+      provide: AMQP_HTTP,
+      useFactory: (factory: InfraFactory) => {
+        return factory.createAmqpHttp();
+      },
+      inject: [InfraFactory],
+    },
   ],
-  exports: [STDL, AUTHED, NOTIFIER, AMQP],
+  exports: [STDL, AUTHED, NOTIFIER, AMQP, AMQP_HTTP],
 })
 export class InfraModule {}

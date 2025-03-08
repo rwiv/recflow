@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import amqplib, { Channel } from 'amqplib';
-import { Amqp } from './interface.js';
+import { Amqp } from './amqp.interface.js';
 
 @Injectable()
 export class AmqpMock implements Amqp {

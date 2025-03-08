@@ -89,10 +89,4 @@ export class LiveRegistrar {
 
     return live;
   }
-
-  async purgeAll() {
-    const lives = await this.liveFinder.findAllDeleted();
-    const promises = lives.map((record) => this.remove(record.id, { isPurge: true }));
-    return Promise.all(promises);
-  }
 }

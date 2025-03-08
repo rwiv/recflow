@@ -1,14 +1,20 @@
 import { z } from 'zod';
 import { AmqpConfig } from '../../common/config/config.types.js';
+import { queueState } from './amqp.schema.js';
+import { AmqpHttp } from './amqp.interface.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 
-const queueState = z.object({
-  name: z.string(),
-  state: z.string(),
-});
 const queueStates = z.array(queueState);
 
-export class AmqpHttp {
-  constructor(private readonly conf: AmqpConfig) {}
+@Injectable()
+export class AmqpHttpImpl implements AmqpHttp {
+  private readonly conf: AmqpConfig;
+
+  constructor(@Inject(ENV) private readonly env: Env) {
+    this.conf = this.env.amqp;
+  }
 
   async fetchByPattern(pattern: string) {
     const queues = await this.fetchAllQueues();

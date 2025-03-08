@@ -3,6 +3,8 @@ import { LiveRepository } from '../storage/live.repository.js';
 import { LiveMapOpt, LiveMapper } from './live.mapper.js';
 import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
 
 export interface FindOptions {
   withDisabled?: boolean;
@@ -37,15 +39,15 @@ export class LiveFinder {
     return this.mapper.map(ent);
   }
 
-  async findAll(opt: LiveMapOpt = {}) {
-    return this.mapper.mapAll(await this.liveRepo.findAll(), opt);
+  async findAll(opt: LiveMapOpt = {}, tx: Tx = db) {
+    return this.mapper.mapAll(await this.liveRepo.findAll(), tx, opt);
   }
 
-  async findAllActives(opt: LiveMapOpt = {}) {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(false), opt);
+  async findAllActives(opt: LiveMapOpt = {}, tx: Tx = db) {
+    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(false), tx, opt);
   }
 
-  async findAllDeleted(opt: LiveMapOpt = {}) {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), opt);
+  async findAllDeleted(opt: LiveMapOpt = {}, tx: Tx = db) {
+    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), tx, opt);
   }
 }

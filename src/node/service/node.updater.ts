@@ -15,8 +15,12 @@ export class NodeUpdater {
     private readonly stateRepo: NodeStateRepository,
   ) {}
 
-  async update(id: string, req: NodeUpdate) {
-    await this.nodeRepo.update(id, req);
+  async update(id: string, req: NodeUpdate, tx: Tx = db) {
+    await this.nodeRepo.update(id, req, tx);
+  }
+
+  async setLastAssignedAtNow(id: string, tx: Tx = db) {
+    await this.nodeRepo.setLastAssignedAtNow(id, tx);
   }
 
   async updateCapacity(nodeId: string, platformId: string, capacity: number, tx: Tx = db) {

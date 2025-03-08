@@ -5,6 +5,8 @@ import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -21,14 +23,14 @@ export class ChannelFinder {
     return this.chMapper.loadRelations(channels, withTags);
   }
 
-  async findById(channelId: string, withTags: boolean = false) {
-    const ent = await this.chQuery.findById(channelId);
-    const channel = await this.chMapper.mapNullable(ent);
+  async findById(channelId: string, withTags: boolean = false, tx: Tx = db) {
+    const ent = await this.chQuery.findById(channelId, tx);
+    const channel = await this.chMapper.mapNullable(ent, tx);
     if (!channel) return undefined;
     if (!withTags) return channel;
     return {
       ...channel,
-      tags: await this.tagQuery.findTagsByChannelId(channelId),
+      tags: await this.tagQuery.findTagsByChannelId(channelId, tx),
     };
   }
 
@@ -46,23 +48,28 @@ export class ChannelFinder {
     return this.chMapper.loadRelations(channels, withTags);
   }
 
-  async findByPidAndPlatform(pid: string, platformName: PlatformName, withTags: boolean = false) {
-    const platform = await this.pfFinder.findByNameNotNull(platformName);
-    const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id);
-    const channels = await this.chMapper.mapAll(entities);
+  async findByPidAndPlatform(
+    pid: string,
+    platformName: PlatformName,
+    withTags: boolean = false,
+    tx: Tx = db,
+  ) {
+    const platform = await this.pfFinder.findByNameNotNull(platformName, tx);
+    const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id, tx);
+    const channels = await this.chMapper.mapAll(entities, tx);
     if (channels.length === 0) return undefined;
     if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
-    return this.chMapper.loadRelation(channels[0], withTags);
+    return this.chMapper.loadRelation(channels[0], withTags, tx);
   }
 
-  async findByUsernameLike(username: string, withTags: boolean = false) {
-    const entities = await this.chQuery.findByUsernameLike(username);
-    const channels = await this.chMapper.mapAll(entities);
-    return this.chMapper.loadRelations(channels, withTags);
+  async findByUsernameLike(username: string, withTags: boolean = false, tx: Tx = db) {
+    const entities = await this.chQuery.findByUsernameLike(username, tx);
+    const channels = await this.chMapper.mapAll(entities, tx);
+    return this.chMapper.loadRelations(channels, withTags, tx);
   }
 
-  async findFollowedChannels(platform: PlatformName) {
-    const entities = await this.chQuery.findByFollowedFlag(true, platform);
-    return this.chMapper.mapAll(entities);
+  async findFollowedChannels(platform: PlatformName, tx: Tx = db) {
+    const entities = await this.chQuery.findByFollowedFlag(true, platform, tx);
+    return this.chMapper.mapAll(entities, tx);
   }
 }

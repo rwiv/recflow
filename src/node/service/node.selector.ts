@@ -4,6 +4,8 @@ import { NodeFinder } from './node.finder.js';
 import { NodeDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
 
 const LIMIT_COUNT = 100;
 
@@ -11,7 +13,7 @@ const LIMIT_COUNT = 100;
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(channel: ChannelDto): Promise<NodeDto | undefined> {
+  async match(channel: ChannelDto, tx: Tx = db): Promise<NodeDto | undefined> {
     const pfId = channel.platform.id;
 
     // search for available nodes
@@ -22,7 +24,7 @@ export class NodeSelector {
         throw new FatalError('Node search limit exceeded');
       }
       // find nodes in the current tier without cordon
-      const raw = (await this.nodeFinder.findByNodeTier(curTier)).filter((node) => !node.isCordoned);
+      const raw = (await this.nodeFinder.findByNodeTier(curTier, tx)).filter((node) => !node.isCordoned);
       if (raw.length === 0) {
         return undefined;
       }

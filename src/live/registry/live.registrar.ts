@@ -15,6 +15,9 @@ import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
 import { log } from 'jslog';
+import { NodeUpdater } from '../../node/service/node.updater.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -26,6 +29,7 @@ export class LiveRegistrar {
   constructor(
     private readonly listener: LiveEventListener,
     private readonly nodeSelector: NodeSelector,
+    private readonly nodeUpdater: NodeUpdater,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly priService: PriorityService,
@@ -33,7 +37,7 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
   ) {}
 
-  async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto) {
+  async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto, tx: Tx = db) {
     const exists = await this.liveFinder.findByPid(liveInfo.pid);
     if (exists && !exists.isDisabled) {
       throw new ConflictError(`Already exists: ${liveInfo.pid}`);
@@ -52,15 +56,17 @@ export class LiveRegistrar {
       throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
     }
     const nodeState = node.states?.find((s) => s.platform.id === channel.platform.id);
-    const created = await this.liveWriter.createByLive(liveInfo, node.id);
-    await this.listener.onCreate(node.endpoint, created, cr);
-    log.info('New Live', {
-      channelName: created.channel.username,
-      title: created.liveTitle,
-      node: node.name,
-      assigned: nodeState?.assigned,
+    return tx.transaction(async (txx) => {
+      const created = await this.liveWriter.createByLive(liveInfo, node.id, txx);
+      await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
+      await this.listener.onCreate(node.endpoint, created, cr);
+      log.info('New Live', {
+        channelName: created.channel.username,
+        title: created.liveTitle,
+        node: node.name,
+        assigned: nodeState?.assigned,
+      });
     });
-    return created;
   }
 
   async remove(recordId: string, opts: DeleteOptions = {}) {

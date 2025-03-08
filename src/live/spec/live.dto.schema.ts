@@ -7,7 +7,7 @@ import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js'
 export const liveDto = liveEnt.omit({ platformId: true, channelId: true }).extend({
   platform: platformDto,
   channel: channelDto,
-  node: nodeDto.optional(),
+  node: nodeDto.nullable().optional(),
 });
 export type LiveDto = z.infer<typeof liveDto>;
 

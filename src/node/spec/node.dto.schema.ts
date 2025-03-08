@@ -12,7 +12,9 @@ import { platformNameEnum } from '../../platform/spec/storage/platform.enum.sche
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
 
-export const nodeStateDto = nodeStateEnt.omit({ platformId: true }).extend({ platform: platformDto });
+export const nodeStateDto = nodeStateEnt
+  .omit({ platformId: true })
+  .extend({ platform: platformDto, assigned: z.number().int().nonnegative() });
 export type NodeStateDto = z.infer<typeof nodeStateDto>;
 
 export const nodeTypeDto = nodeTypeEnt;

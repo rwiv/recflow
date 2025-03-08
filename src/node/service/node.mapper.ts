@@ -8,6 +8,8 @@ import { NodeStateRepository } from '../storage/node-state.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { LiveRepository } from '../../live/storage/live.repository.js';
+import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
 @Injectable()
 export class NodeMapper {
@@ -15,6 +17,7 @@ export class NodeMapper {
     private readonly groupRepo: NodeGroupRepository,
     private readonly typeRepo: NodeTypeRepository,
     private readonly stateRepo: NodeStateRepository,
+    private readonly liveRepo: LiveRepository,
     private readonly pfFinder: PlatformFinder,
   ) {}
 
@@ -44,8 +47,11 @@ export class NodeMapper {
     return result;
   }
 
-  async mapState(ent: NodeStateEnt, tx: Tx = db): Promise<NodeStateDto> {
-    const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
-    return { ...ent, platform };
+  async mapState(ent: NodeStateEnt, tx: Tx = db, exPlatform?: PlatformDto): Promise<NodeStateDto> {
+    const platform = exPlatform ?? (await this.pfFinder.findByIdNotNull(ent.platformId, tx));
+    const lives = (await this.liveRepo.findByNodeId(ent.nodeId, tx)).filter(
+      (live) => live.platformId === platform.id,
+    );
+    return { ...ent, assigned: lives.length, platform };
   }
 }

@@ -5,7 +5,7 @@ export const liveEnt = z.object({
   id: uuid,
   channelId: uuid,
   platformId: uuid,
-  nodeId: uuid,
+  nodeId: uuid.nullable(),
   liveTitle: z.string().min(1),
   viewCnt: z.number().int().nonnegative(),
   isAdult: z.boolean(),

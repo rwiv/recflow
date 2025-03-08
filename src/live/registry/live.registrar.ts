@@ -9,12 +9,12 @@ import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js'
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeUpdater } from '../../node/service/node.updater.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { LiveFinder } from '../access/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
+import { log } from 'jslog';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -25,7 +25,6 @@ export interface DeleteOptions {
 export class LiveRegistrar {
   constructor(
     private readonly listener: LiveEventListener,
-    private readonly nodeUpdater: NodeUpdater,
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
@@ -52,9 +51,15 @@ export class LiveRegistrar {
     if (!node) {
       throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
     }
+    const nodeState = node.states?.find((s) => s.platform.id === channel.platform.id);
     const created = await this.liveWriter.createByLive(liveInfo, node.id);
-    await this.nodeUpdater.incrementAssignedCnt(node.id, channel.platform.id);
     await this.listener.onCreate(node.endpoint, created, cr);
+    log.info('New Live', {
+      channelName: created.channel.username,
+      title: created.liveTitle,
+      node: node.name,
+      assigned: nodeState?.assigned,
+    });
     return created;
   }
 
@@ -74,14 +79,10 @@ export class LiveRegistrar {
     if (!isPurge) {
       // soft delete
       if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
-      await this.liveWriter.update(live.id, { isDisabled: true, deletedAt: new Date() });
-      await this.nodeUpdater.decrementAssignedCnt(live.nodeId, live.platform.id);
+      await this.liveWriter.update(live.id, { nodeId: null, isDisabled: true, deletedAt: new Date() });
     } else {
       // hard delete
       await this.liveWriter.delete(recordId);
-      if (!live.isDisabled) {
-        await this.nodeUpdater.decrementAssignedCnt(live.nodeId, live.platform.id);
-      }
     }
 
     await this.listener.onDelete(live, exitCmd);

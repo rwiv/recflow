@@ -66,7 +66,7 @@ const nodeColumn: ColumnDef<LiveDto> = {
     const live = row.original;
     return (
       <div className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
-        {`${live.node?.name} (${live.node?.group?.name})`}
+        {live.node ? `${live.node.name} (${live.node.group?.name})` : '-'}
       </div>
     );
   },

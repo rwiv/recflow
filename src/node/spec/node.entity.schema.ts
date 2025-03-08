@@ -83,7 +83,6 @@ export const nodeStateEnt = z.object({
   nodeId: uuid,
   platformId: uuid,
   capacity: z.number().int().nonnegative(),
-  assigned: z.number().int().nonnegative(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });

@@ -42,10 +42,9 @@ export class NodeWriter {
           nodeId: nodeEnt.id,
           platformId: platform.id,
           capacity,
-          assigned: 0,
         };
         const stateEnt = await this.stateRepo.create(stateEntAppend, tx);
-        states.push({ ...stateEnt, platform });
+        states.push(await this.mapper.mapState(stateEnt, tx, platform));
       }
       const record = await this.mapper.map(nodeEnt, withGroup, false, tx);
       return { ...record, states };

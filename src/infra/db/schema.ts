@@ -165,7 +165,6 @@ export const nodeStateTable = pgTable('node_state', {
     .notNull()
     .references(() => platformTable.id),
   capacity: integer().notNull(),
-  assigned: integer().notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
 });
@@ -178,9 +177,7 @@ export const liveTable = pgTable('live', {
   platformId: uuid('platform_id')
     .notNull()
     .references(() => platformTable.id),
-  nodeId: uuid('node_id')
-    .notNull()
-    .references(() => nodeTable.id),
+  nodeId: uuid('node_id').references(() => nodeTable.id),
   liveTitle: text('live_title').notNull(),
   viewCnt: integer('view_cnt').notNull(),
   isAdult: boolean('is_adult').notNull(),

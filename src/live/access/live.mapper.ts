@@ -39,9 +39,13 @@ export class LiveMapper {
     let result: LiveDto = { ...liveEnt, channel, platform };
 
     if (withNode) {
-      const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates);
-      if (!node) throw NotFoundError.from('Node', 'id', liveEnt.nodeId);
-      result = { ...result, node };
+      if (liveEnt.nodeId) {
+        const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates);
+        if (!node) throw NotFoundError.from('Node', 'id', liveEnt.nodeId);
+        result = { ...result, node };
+      } else {
+        result = { ...result, node: null };
+      }
     }
     return result;
   }

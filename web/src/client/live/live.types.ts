@@ -6,7 +6,7 @@ export interface LiveDto {
   id: string;
   platform: PlatformDto;
   channel: ChannelDto;
-  nodeId: string;
+  nodeId: string | null;
   liveTitle: string;
   viewCnt: number;
   isAdult: boolean;
@@ -14,5 +14,5 @@ export interface LiveDto {
   createdAt: string;
   updatedAt: string | undefined;
   deletedAt: string | undefined;
-  node?: NodeDto;
+  node?: NodeDto | null;
 }

@@ -26,8 +26,8 @@ export class NodeFinder {
     return this.mapper.map(ent, withGroup, withStates, tx);
   }
 
-  async findByNodeTier(tier: number, tx: Tx = db): Promise<NodeDto[]> {
-    const queryResult = await this.nodeRepo.findByNodeTier(tier, tx);
+  async findByNodeGteTier(tier: number, tx: Tx = db): Promise<NodeDto[]> {
+    const queryResult = await this.nodeRepo.findByNodeGteTier(tier, tx);
     const promises = queryResult.map(async ([node, group]) => {
       const withOutGroup = await this.mapper.map(node, false, true, tx);
       return { ...withOutGroup, group };

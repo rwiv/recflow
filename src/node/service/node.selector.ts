@@ -3,11 +3,9 @@ import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeDto } from '../spec/node.dto.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { FatalError } from '../../utils/errors/errors/FatalError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-
-const LIMIT_COUNT = 100;
+import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 
 @Injectable()
 export class NodeSelector {
@@ -17,57 +15,64 @@ export class NodeSelector {
     const pfId = channel.platform.id;
 
     // search for available nodes
-    let nodes: NodeDto[] = [];
-    let curTier = channel.priority.tier;
-    while (true) {
-      if (curTier > LIMIT_COUNT) {
-        throw new FatalError('Node search limit exceeded');
-      }
-      // find nodes in the current tier without cordon
-      const raw = (await this.nodeFinder.findByNodeTier(curTier, tx)).filter((node) => !node.isCordoned);
-      if (raw.length === 0) {
-        return undefined;
-      }
-      // filter nodes that have available capacity
-      nodes = raw.filter((node) => {
-        const state = this.findState(node, pfId);
+    let nodes = (await this.nodeFinder.findByNodeGteTier(channel.priority.tier, tx))
+      .filter((node) => !node.isCordoned)
+      .filter((node) => {
+        const state = findState(node, pfId);
         if (state) return state.assigned < state.capacity;
         else return false;
       });
-      if (nodes.length > 0) {
-        break;
+    if (nodes.length === 0) return undefined;
+
+    // find minimum tier
+    let minTier = getNodeTier(nodes[0]);
+    for (let i = 0; i < nodes.length; i++) {
+      const curTier = getNodeTier(nodes[i]);
+      if (curTier < minTier) {
+        minTier = curTier;
       }
-      curTier++;
     }
+    nodes = nodes.filter((node) => getNodeTier(node) === minTier);
+    if (nodes.length === 0) return undefined;
 
     // find minimum weight
     let minWeight = nodes[0].weight;
-    for (let i = 1; i < nodes.length; i++) {
+    for (let i = 0; i < nodes.length; i++) {
       if (nodes[i].weight < minWeight) {
         minWeight = nodes[i].weight;
       }
     }
 
     // select the node with the minimum assigned count
-    const candidates = sortedByEarliestAssigned(nodes.filter((node) => node.weight === minWeight));
-    let minNode = candidates[0];
-    for (let i = 1; i < candidates.length; i++) {
-      const curState = this.findState(candidates[i], pfId);
-      const minState = this.findState(minNode, pfId);
+    nodes = sortedByEarliestAssigned(nodes.filter((node) => node.weight === minWeight));
+    if (nodes.length === 0) return undefined;
+
+    let minNode = nodes[0];
+    for (let i = 0; i < nodes.length; i++) {
+      const curState = findState(nodes[i], pfId);
+      const minState = findState(minNode, pfId);
       if (curState.assigned < minState.assigned) {
-        minNode = candidates[i];
+        minNode = nodes[i];
       }
     }
     return minNode;
   }
+}
 
-  private findState(node: NodeDto, platformId: string) {
-    const target = node.states?.find((state) => state.platform.id === platformId);
-    if (!target) {
-      throw NotFoundError.from('NodeState', 'platformId', platformId);
-    }
-    return target;
+function findState(node: NodeDto, platformId: string) {
+  const target = node.states?.find((state) => state.platform.id === platformId);
+  if (!target) {
+    throw NotFoundError.from('NodeState', 'platformId', platformId);
   }
+  return target;
+}
+
+function getNodeTier(node: NodeDto) {
+  const tier = node.group?.tier;
+  if (!tier) {
+    throw new MissingValueError('tier is missing');
+  }
+  return tier;
 }
 
 export function sortedByEarliestAssigned(nodes: NodeDto[]) {

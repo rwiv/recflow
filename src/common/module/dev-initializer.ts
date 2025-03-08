@@ -61,6 +61,7 @@ export class DevInitializer {
   private async addNodeGroups() {
     await this.ngRepo.create({ name: 'main', tier: 1 });
     await this.ngRepo.create({ name: 'sub', tier: 2 });
+    await this.ngRepo.create({ name: 'extra', tier: 3 });
   }
 
   private async addCriterionRules() {

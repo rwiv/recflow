@@ -6,7 +6,7 @@ import { nodeGroupTable, nodeTable } from '../../infra/db/schema.js';
 import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate, NodeGroupEnt } from '../spec/node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { eq } from 'drizzle-orm';
+import { eq, gte } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true, lastAssignedAt: true });
@@ -25,12 +25,12 @@ export class NodeRepository {
     return oneNotNull(ent);
   }
 
-  async findByNodeTier(tier: number, tx: Tx = db): Promise<[NodeEnt, NodeGroupEnt][]> {
+  async findByNodeGteTier(tier: number, tx: Tx = db): Promise<[NodeEnt, NodeGroupEnt][]> {
     const records = await tx
       .select()
       .from(nodeTable)
       .innerJoin(nodeGroupTable, eq(nodeTable.groupId, nodeGroupTable.id))
-      .where(eq(nodeGroupTable.tier, tier));
+      .where(gte(nodeGroupTable.tier, tier));
     return records.map((row) => [row.node, row.node_group]);
   }
 

@@ -8,6 +8,6 @@ export class LiveRefreshTask implements Task {
   constructor(private readonly liveRefresher: LiveRefresher) {}
 
   async run(): Promise<void> {
-    await this.liveRefresher.refreshAllLives();
+    await this.liveRefresher.refreshEarliestOne();
   }
 }

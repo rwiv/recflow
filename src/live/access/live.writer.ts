@@ -52,11 +52,17 @@ export class LiveWriter {
   }
 
   async updateByLive(id: string, live: LiveInfo, tx: Tx = db) {
-    const ent = await this.liveRepo.update(id, { ...live }, tx);
-    return this.mapper.map(ent, tx);
+    const update: LiveUpdate = { ...live };
+    return this.update(id, update, tx);
   }
 
-  async update(id: string, update: LiveUpdate, tx: Tx = db) {
-    return this.mapper.map(await this.liveRepo.update(id, update, tx), tx);
+  disable(id: string, tx: Tx = db) {
+    const update: LiveUpdate = { nodeId: null, isDisabled: true, deletedAt: new Date() };
+    return this.update(id, update, tx);
+  }
+
+  private async update(id: string, update: LiveUpdate, tx: Tx = db) {
+    const updated = await this.liveRepo.update(id, update, tx);
+    return this.mapper.map(updated, tx);
   }
 }

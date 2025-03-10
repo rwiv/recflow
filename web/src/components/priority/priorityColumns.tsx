@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { createSelectColumn, dateColumnDef } from '@/components/common/table/column_utils.tsx';
-import { NotifyBadge } from '@/components/priority/units/NotifyBadge.tsx';
+import { NotifyOnlyBadge } from '@/components/priority/units/NotifyOnlyBadge.tsx';
 import { PriorityFieldUpdateForm } from '@/components/priority/units/PriorityFieldUpdateForm.tsx';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
@@ -37,7 +37,7 @@ const seqColumn: ColumnDef<PriorityDto> = {
 const notifyOnlyColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'notifyOnly',
   header: () => <div className="justify-self-center">Notify Only</div>,
-  cell: ({ row }) => <NotifyBadge priority={row.original} />,
+  cell: ({ row }) => <NotifyOnlyBadge priority={row.original} />,
   meta: { header: { width: DEFAULT_WIDTH } },
 };
 

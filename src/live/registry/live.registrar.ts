@@ -117,7 +117,7 @@ export class LiveRegistrar {
     if (!isPurge) {
       // soft delete
       if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
-      await this.liveWriter.update(live.id, { nodeId: null, isDisabled: true, deletedAt: new Date() });
+      await this.liveWriter.disable(live.id);
     } else {
       // hard delete
       await this.liveWriter.delete(recordId);

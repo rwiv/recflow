@@ -6,7 +6,7 @@ import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelTable, liveTable } from '../../infra/db/schema.js';
 import { uuid } from '../../utils/uuid.js';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const liveEntAppendReq = liveEnt.partial({ updatedAt: true, deletedAt: true, nodeId: true });
@@ -70,5 +70,13 @@ export class LiveRepository {
     };
     const ent = await tx.update(liveTable).set(liveEnt.parse(entReq)).where(eq(liveTable.id, id)).returning();
     return oneNotNull(ent);
+  }
+
+  async findEarliestUpdated(limit: number, tx: Tx = db): Promise<LiveEnt[]> {
+    return tx
+      .select()
+      .from(liveTable)
+      .orderBy(sql`${liveTable.updatedAt} ASC NULLS FIRST`)
+      .limit(limit);
   }
 }

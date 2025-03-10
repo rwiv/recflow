@@ -5,6 +5,8 @@ import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { LiveDto } from '../spec/live.dto.schema.js';
 
 export interface FindOptions {
   withDisabled?: boolean;
@@ -49,5 +51,16 @@ export class LiveFinder {
 
   async findAllDeleted(opt: LiveMapOpt = {}, tx: Tx = db) {
     return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), tx, opt);
+  }
+
+  async findEarliestUpdatedOne(): Promise<LiveDto | undefined> {
+    const entities = await this.liveRepo.findEarliestUpdated(1);
+    if (entities.length === 0) {
+      return undefined;
+    }
+    if (entities.length !== 1) {
+      throw new ConflictError(`Invalid live entities: length=${entities.length}`);
+    }
+    return this.mapper.map(entities[0]);
   }
 }

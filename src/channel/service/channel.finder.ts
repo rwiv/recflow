@@ -7,6 +7,7 @@ import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.j
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { ChannelDto } from '../spec/channel.dto.schema.js';
 
 @Injectable()
 export class ChannelFinder {
@@ -34,10 +35,13 @@ export class ChannelFinder {
     };
   }
 
-  async findEarliestRefreshedOne(withTags: boolean = false) {
+  async findEarliestRefreshedOne(withTags: boolean = false): Promise<ChannelDto | undefined> {
     const entities = await this.chQuery.findEarliestRefreshed(1);
+    if (entities.length === 0) {
+      return undefined;
+    }
     if (entities.length !== 1) {
-      throw new ConflictError('No channel found');
+      throw new ConflictError(`Invalid channel entities: length=${entities.length}`);
     }
     return this.chMapper.loadRelation(await this.chMapper.map(entities[0]), withTags);
   }

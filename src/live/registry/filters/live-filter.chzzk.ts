@@ -36,8 +36,10 @@ export class ChzzkLiveFilter {
     // by channel
     const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
     if (channel) {
-      const node = await this.nodeSelector.match(channel);
-      if (node) {
+      if (channel.priority.notifyOnly) {
+        return liveInfo;
+      }
+      if (await this.nodeSelector.match(channel)) {
         return liveInfo;
       } else {
         return null;

@@ -50,7 +50,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       name: '',
       description: '',
-      shouldNotify: false,
+      notifyOnly: false,
       tier: '',
       seq: '',
     },
@@ -72,7 +72,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" />
         <TextFormField form={form} name="description" />
-        <CheckFormField form={form} name="shouldNotify" label="Notify" />
+        <CheckFormField form={form} name="notifyOnly" label="Notify Only" />
         <TextFormField form={form} name="tier" />
         <TextFormField form={form} name="seq" />
         <FormSubmitButton />

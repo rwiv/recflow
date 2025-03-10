@@ -37,7 +37,7 @@ export const channelPriorityTable = pgTable(
     description: text(),
     tier: integer().notNull(),
     seq: integer().notNull(),
-    shouldNotify: boolean('should_notify').notNull(),
+    notifyOnly: boolean('notify_only').notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },

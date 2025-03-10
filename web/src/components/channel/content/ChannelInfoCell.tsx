@@ -22,7 +22,7 @@ export function ChannelInfoCell({ channel, className, css }: ChannelInfoCellProp
           </AvatarFallback>
         </Avatar>
       </a>
-      <div className="center ml-5 mr-1 font-medium">
+      <div className={cn('center ml-5 mr-1 font-medium', channel.isFollowed ? 'underline' : undefined)}>
         <a href={getChannelUrl(channel.platform.name, channel.pid)}>{channel.username}</a>
       </div>
       <div>

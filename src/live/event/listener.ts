@@ -28,12 +28,7 @@ export class LiveEventListener {
     await this.requestStdl(nodeEndpoint, created, cr);
 
     // ntfy
-    await this.notifier.sendLiveInfo(
-      this.env.ntfyTopic,
-      created.channel.username,
-      created.viewCnt,
-      created.liveTitle,
-    );
+    await this.notifier.sendLiveInfo(this.env.ntfyTopic, created);
     return created;
   }
 

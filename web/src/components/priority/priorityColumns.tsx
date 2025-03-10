@@ -34,9 +34,9 @@ const seqColumn: ColumnDef<PriorityDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-const notifyColumn: ColumnDef<PriorityDto> = {
-  accessorKey: 'shouldNotify',
-  header: () => <div className="justify-self-center">Notify</div>,
+const notifyOnlyColumn: ColumnDef<PriorityDto> = {
+  accessorKey: 'notifyOnly',
+  header: () => <div className="justify-self-center">Notify Only</div>,
   cell: ({ row }) => <NotifyBadge priority={row.original} />,
   meta: { header: { width: DEFAULT_WIDTH } },
 };
@@ -54,5 +54,5 @@ export const priorityColumns: ColumnDef<PriorityDto>[] = [
     (elem) => (elem.updatedAt ? new Date(elem.updatedAt) : undefined),
     DEFAULT_WIDTH,
   ),
-  notifyColumn,
+  notifyOnlyColumn,
 ];

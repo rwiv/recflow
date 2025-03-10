@@ -6,10 +6,11 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend } from '../spec/live.entity.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveMapper } from './live.mapper.js';
-import { LiveUpdate } from '../spec/live.dto.schema.js';
+import { LiveDto, LiveUpdate } from '../spec/live.dto.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
 
 @Injectable()
 export class LiveWriter {
@@ -21,17 +22,26 @@ export class LiveWriter {
     private readonly mapper: LiveMapper,
   ) {}
 
-  async createByLive(live: LiveInfo, nodeId: string, tx: Tx = db) {
+  async createByLive(
+    live: LiveInfo,
+    nodeId: string | null,
+    isDisabled: boolean,
+    tx: Tx = db,
+  ): Promise<LiveDto> {
     const platform = await this.pfFinder.findByNameNotNull(live.type, tx);
     const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, false, tx);
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
-    const node = await this.nodeFinder.findById(nodeId, false, false, tx);
-    if (!node) throw NotFoundError.from('Node', 'id', nodeId);
+    let node: NodeDto | null | undefined = null;
+    if (nodeId) {
+      node = await this.nodeFinder.findById(nodeId, false, false, tx);
+      if (!node) throw NotFoundError.from('Node', 'id', nodeId);
+    }
     const req: LiveEntAppend = {
       ...live,
       platformId: platform.id,
       channelId: channel.id,
-      nodeId: node.id,
+      nodeId: nodeId,
+      isDisabled,
     };
     const ent = await this.liveRepo.create(req, tx);
     return { ...ent, channel, platform, node };

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/event.schema.js';
@@ -18,10 +18,24 @@ import { log } from 'jslog';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { NOTIFIER } from '../../infra/infra.module.js';
+import { Notifier } from '../../infra/notify/notifier.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { LiveDto } from '../spec/live.dto.schema.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
   exitCmd?: ExitCmd;
+}
+
+interface CreatedLiveLogAttr {
+  platform: string;
+  channel: string;
+  title: string;
+  node?: string;
+  assigned?: number;
 }
 
 @Injectable()
@@ -35,6 +49,8 @@ export class LiveRegistrar {
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
+    @Inject(ENV) private readonly env: Env,
+    @Inject(NOTIFIER) private readonly notifier: Notifier,
   ) {}
 
   async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto, tx: Tx = db) {
@@ -51,22 +67,38 @@ export class LiveRegistrar {
       };
       channel = await this.chWriter.createWithInfo(append, channelInfo, tx);
     }
-    const node = await this.nodeSelector.match(channel, tx);
-    if (!node) {
-      throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
+
+    if (channel.priority.notifyOnly) {
+      const created = await this.liveWriter.createByLive(liveInfo, null, true);
+      await this.notifier.sendLiveInfo(this.env.ntfyTopic, created);
+      this.logCreatedLive(created);
+      return created;
     }
+
     return tx.transaction(async (txx) => {
-      const created = await this.liveWriter.createByLive(liveInfo, node.id, txx);
+      const node = await this.nodeSelector.match(channel, txx);
+      if (!node) {
+        throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
+      }
+      const created = await this.liveWriter.createByLive(liveInfo, node.id, false, txx);
       await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
       await this.listener.onCreate(node.endpoint, created, cr);
-      log.info('New Live', {
-        platform: created.platform.name,
-        channel: created.channel.username,
-        title: created.liveTitle,
-        node: node.name,
-        assigned: node.states?.find((s) => s.platform.id === channel.platform.id)?.assigned,
-      });
+      this.logCreatedLive(created, node);
+      return created;
     });
+  }
+
+  private logCreatedLive(live: LiveDto, node: NodeDto | null = null) {
+    const attr: CreatedLiveLogAttr = {
+      platform: live.platform.name,
+      channel: live.channel.username,
+      title: live.liveTitle,
+    };
+    if (node) {
+      attr.node = node.name;
+      attr.assigned = node.states?.find((s) => s.platform.id === live.platform.id)?.assigned;
+    }
+    log.info('New Live', attr);
   }
 
   async remove(recordId: string, opts: DeleteOptions = {}) {

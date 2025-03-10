@@ -11,7 +11,7 @@ import { MissingValueError } from '../../utils/errors/errors/MissingValueError.j
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(channel: ChannelDto, tx: Tx = db): Promise<NodeDto | undefined> {
+  async match(channel: ChannelDto, tx: Tx = db): Promise<NodeDto | null> {
     const pfId = channel.platform.id;
 
     // search for available nodes
@@ -22,7 +22,7 @@ export class NodeSelector {
         if (state) return state.assigned < state.capacity;
         else return false;
       });
-    if (nodes.length === 0) return undefined;
+    if (nodes.length === 0) return null;
 
     // find minimum tier
     let minTier = getNodeTier(nodes[0]);
@@ -33,7 +33,7 @@ export class NodeSelector {
       }
     }
     nodes = nodes.filter((node) => getNodeTier(node) === minTier);
-    if (nodes.length === 0) return undefined;
+    if (nodes.length === 0) return null;
 
     // find minimum weight
     let minWeight = nodes[0].weight;
@@ -45,7 +45,7 @@ export class NodeSelector {
 
     // select the node with the minimum assigned count
     nodes = sortedByEarliestAssigned(nodes.filter((node) => node.weight === minWeight));
-    if (nodes.length === 0) return undefined;
+    if (nodes.length === 0) return null;
 
     let minNode = nodes[0];
     for (let i = 0; i < nodes.length; i++) {

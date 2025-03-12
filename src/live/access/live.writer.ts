@@ -40,7 +40,7 @@ export class LiveWriter {
       ...live,
       platformId: platform.id,
       channelId: channel.id,
-      nodeId: nodeId,
+      nodeId,
       isDisabled,
     };
     const ent = await this.liveRepo.create(req, tx);

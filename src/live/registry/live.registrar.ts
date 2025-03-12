@@ -70,8 +70,7 @@ export class LiveRegistrar {
 
     return tx.transaction(async (txx) => {
       const node = await this.nodeSelector.match(channel, txx);
-      const nodeId = node?.id ?? null;
-      const created = await this.liveWriter.createByLive(liveInfo, nodeId, node === null, txx);
+      const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
         await this.listener.onCreate(node.endpoint, created, cr);

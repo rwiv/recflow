@@ -9,3 +9,11 @@ export const pageQuery = z.object({
   size: z.number().int().nonnegative(),
 });
 export type PageQuery = z.infer<typeof pageQuery>;
+
+export const errorResponse = z.object({
+  statusCode: z.number(),
+  message: z.string(),
+  timestamp: z.string(),
+  code: z.string().optional(),
+});
+export type ErrorResponse = z.infer<typeof errorResponse>;

@@ -13,8 +13,8 @@ export class AuthedImpl implements Authed {
   private readonly enckey: string;
 
   constructor(@Inject(ENV) private readonly env: Env) {
-    this.authUrl = this.env.authedUrl;
-    this.enckey = this.env.authedEncKey;
+    this.authUrl = this.env.authed.url;
+    this.enckey = this.env.authed.encKey;
     if (this.enckey.length !== 32) {
       throw new ValidationError('enckey must be 32 bytes');
     }

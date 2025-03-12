@@ -13,8 +13,8 @@ export class SoopFetcher {
   private readonly size: number;
 
   constructor(@Inject(ENV) private readonly env: Env) {
-    this.url = this.env.streamqUrl;
-    this.size = this.env.streamqQsize;
+    this.url = this.env.streamq.url;
+    this.size = this.env.streamq.qsize;
   }
 
   async fetchLives(cr: SoopCriterionDto): Promise<LiveInfo[]> {

@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.4.8
+  tag: 0.5.1
   pullSecret: image-pull-secret
 
 affinity: {}
@@ -50,6 +50,8 @@ externals:
     url: http://authed-server.media.svc.cluster.local
     secretName: authed-app
     enckeyKey: enckey
-  ntfy:
-    endpoint: http://ntfy.common.svc.cluster.local
+  untf:
+    endpoint: http://untf.common.svc.cluster.local
+    secretName: untf-client
+    authKeyKey: auth-key
     topic: stmgr

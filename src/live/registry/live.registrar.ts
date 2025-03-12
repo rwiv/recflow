@@ -77,7 +77,7 @@ export class LiveRegistrar {
         await this.listener.onCreate(node.endpoint, created, cr);
       }
       if (channel.priority.shouldNotify) {
-        await this.notifier.sendLiveInfo(this.env.ntfyTopic, created);
+        await this.notifier.sendLiveInfo(this.env.untf.topic, created);
       }
       this.logCreatedLive(created, node);
       return created;

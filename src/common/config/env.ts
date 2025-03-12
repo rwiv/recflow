@@ -1,5 +1,5 @@
-import { DEFAULT_NTFY_TOPIC } from '../data/constants.js';
-import { AmqpConfig, PostgresConfig } from './config.types.js';
+import { DEFAULT_UNTF_TOPIC } from '../data/constants.js';
+import { AmqpConfig, AuthedConfig, UntfConfig, PostgresConfig, StreamqConfig } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
@@ -9,12 +9,9 @@ import { readAmqpConfig, readPgConfig } from './env.utils.js';
 export interface Env {
   nodeEnv: string;
   appPort: number;
-  streamqUrl: string;
-  streamqQsize: number;
-  authedUrl: string;
-  authedEncKey: string;
-  ntfyEndpoint: string;
-  ntfyTopic: string;
+  streamq: StreamqConfig;
+  authed: AuthedConfig;
+  untf: UntfConfig;
   amqp: AmqpConfig;
   pg: PostgresConfig;
   liveRecoveryWaitTimeMs: number;
@@ -39,17 +36,23 @@ export function readEnv(): Env {
   const streamqUrl = process.env.STREAMQ_URL;
   if (streamqUrl === undefined) throw Error('streamq data is undefined');
   const streamqQsize = parseInteger(process.env.STREAMQ_QSIZE, 'streamqQsize');
+  const streamq: StreamqConfig = { url: streamqUrl, qsize: streamqQsize };
 
   // authed
   const authedUrl = process.env.AUTHED_URL;
   const authedEncKey = process.env.AUTHED_ENCKEY;
   if (authedUrl === undefined || authedEncKey === undefined) throw Error('authed data is undefined');
   if (authedEncKey.length !== 32) throw new Error('Key must be 32 bytes');
+  const authed: AuthedConfig = { url: authedUrl, encKey: authedEncKey };
 
-  // ntfy
-  const ntfyEndpoint = process.env.NTFY_ENDPOINT;
-  const ntfyTopic = process.env.NTFY_TOPIC ?? DEFAULT_NTFY_TOPIC;
-  if (ntfyEndpoint === undefined || ntfyTopic === undefined) throw Error('ntfy data is undefined');
+  // untf
+  const untfEndpoint = process.env.UNTF_ENDPOINT;
+  const untfTopic = process.env.UNTF_TOPIC ?? DEFAULT_UNTF_TOPIC;
+  const untfAuthKey = process.env.UNTF_AUTH_KEY;
+  if (untfEndpoint === undefined || untfTopic === undefined || untfAuthKey === undefined) {
+    throw Error('untf configs are undefined');
+  }
+  const untf: UntfConfig = { endpoint: untfEndpoint, authKey: untfAuthKey, topic: untfTopic };
 
   const liveRecoveryWaitTimeMs = parseInteger(
     process.env.LIVE_RECOVERY_WAIT_TIME_MS,
@@ -59,12 +62,9 @@ export function readEnv(): Env {
   return {
     nodeEnv,
     appPort,
-    streamqUrl,
-    streamqQsize,
-    authedUrl,
-    authedEncKey,
-    ntfyEndpoint,
-    ntfyTopic,
+    streamq,
+    authed,
+    untf,
     amqp: readAmqpConfig(),
     pg: readPgConfig(),
     liveRecoveryWaitTimeMs,

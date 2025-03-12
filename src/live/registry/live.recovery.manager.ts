@@ -6,7 +6,6 @@ import { LiveFinder } from '../access/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { ENV } from '../../common/config/config.module.js';
@@ -39,7 +38,9 @@ export class LiveRecoveryManager {
         await this.liveWriter.delete(invalidLive.id, txx);
         const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true);
         if (!channelInfo?.liveInfo) {
-          throw NotFoundError.from('channel.liveInfo', 'pid', channelInfo.pid);
+          // Uncleaned live
+          log.debug(`Uncleaned live`, { platform: platform.name, channel: channel.username });
+          return;
         }
         log.info(`Recovery live`, {
           platform: platform.name,

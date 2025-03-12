@@ -32,10 +32,15 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.externals.authed.secretName }}
                   key: {{ .Values.externals.authed.enckeyKey }}
-            - name: NTFY_ENDPOINT
-              value: {{ .Values.externals.ntfy.endpoint }}
-            - name: NTFY_TOPIC
-              value: {{ .Values.externals.ntfy.topic }}
+            - name: UNTF_ENDPOINT
+              value: {{ .Values.externals.untf.endpoint }}
+            - name: UNTF_AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externals.untf.secretName }}
+                  key: {{ .Values.externals.untf.authKeyKey }}
+            - name: UNTF_TOPIC
+              value: {{ .Values.externals.untf.topic }}
             - name: REDIS_HOST
               value: {{ .Values.app.redis.host }}
             - name: REDIS_PORT

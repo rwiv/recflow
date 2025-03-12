@@ -3,13 +3,7 @@ import { Response } from 'express';
 import { HttpErrorResolver } from '../../utils/errors/resolver.http.js';
 import { log } from 'jslog';
 import { stackTrace } from '../../utils/errors/utils.js';
-
-export interface ErrorResponse {
-  statusCode: number;
-  message: string;
-  timestamp: string;
-  code?: string;
-}
+import { ErrorResponse } from '../data/common.schema.js';
 
 @Catch(Error)
 export class HttpErrorFilter implements ExceptionFilter {

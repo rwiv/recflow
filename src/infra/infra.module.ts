@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../common/config/config.module.js';
 import { InfraFactory } from './infra.factory.js';
-import { NtfyNotifier } from './notify/notifier.ntfy.js';
+import { UntfNotifier } from './notify/notifier.untf.js';
 import { MockNotifier } from './notify/notifier.mock.js';
 import { StdlMock } from './stdl/stdl.mock.js';
 import { StdlImpl } from './stdl/stdl.impl.js';
@@ -28,7 +28,7 @@ export const AMQP_HTTP = 'AmqpHttp';
     },
     {
       provide: NOTIFIER,
-      useClass: process.env.NODE_ENV === 'prod' ? NtfyNotifier : MockNotifier,
+      useClass: process.env.NODE_ENV === 'prod' ? UntfNotifier : MockNotifier,
     },
     {
       provide: AMQP,

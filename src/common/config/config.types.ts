@@ -21,11 +21,18 @@ export interface PostgresConfig {
   url: string;
 }
 
-export type ChannelPriorityShift = 'promote' | 'demote';
+export interface StreamqConfig {
+  url: string;
+  qsize: number;
+}
 
-export interface ChannelPriorityConfig {
-  noneRank: number;
-  should?: ChannelPriorityShift;
-  may?: ChannelPriorityShift;
-  review?: ChannelPriorityShift;
+export interface AuthedConfig {
+  url: string;
+  encKey: string;
+}
+
+export interface UntfConfig {
+  endpoint: string;
+  authKey: string;
+  topic: string;
 }

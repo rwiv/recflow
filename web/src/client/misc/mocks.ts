@@ -49,7 +49,7 @@ export function mockChannel(): ChannelDto {
       description: faker.lorem.sentence(),
       tier: faker.number.int({ min: 1, max: 3 }),
       seq: faker.number.int({ min: 1, max: 8 }),
-      notifyOnly: randomElem([true, false]),
+      shouldNotify: randomElem([true, false]),
       createdAt: faker.date.anytime(),
       updatedAt: faker.date.anytime(),
     },

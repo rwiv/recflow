@@ -7,10 +7,10 @@ import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 export function NotifyOnlyBadge({ priority }: { priority: PriorityDto }) {
   const queryClient = useQueryClient();
-  const content = priority.notifyOnly ? 'ON' : 'OFF';
+  const content = priority.shouldNotify ? 'ON' : 'OFF';
 
   const onClick = async () => {
-    await updatePriorityShouldNotify(priority.id, !priority.notifyOnly);
+    await updatePriorityShouldNotify(priority.id, !priority.shouldNotify);
     await queryClient.invalidateQueries({ queryKey: [PRIORITIES_QUERY_KEY] });
   };
 
@@ -18,7 +18,7 @@ export function NotifyOnlyBadge({ priority }: { priority: PriorityDto }) {
     <DefaultAlertDialog onAction={onClick}>
       <div className="justify-self-center">
         <button className="uppercase">
-          <Badge variant={priority.notifyOnly ? 'default' : 'outline'}>{content}</Badge>
+          <Badge variant={priority.shouldNotify ? 'default' : 'outline'}>{content}</Badge>
         </button>
       </div>
     </DefaultAlertDialog>

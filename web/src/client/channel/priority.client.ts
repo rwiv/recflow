@@ -37,8 +37,8 @@ export function updatePrioritySeq(id: string, seq: number) {
   return updatePriority(id, undefined, undefined, undefined, seq, undefined);
 }
 
-export function updatePriorityShouldNotify(id: string, notifyOnly: boolean) {
-  return updatePriority(id, undefined, undefined, undefined, undefined, notifyOnly);
+export function updatePriorityShouldNotify(id: string, shouldNotify: boolean) {
+  return updatePriority(id, undefined, undefined, undefined, undefined, shouldNotify);
 }
 
 async function updatePriority(
@@ -47,10 +47,10 @@ async function updatePriority(
   description?: string | null,
   tier?: number,
   seq?: number,
-  notifyOnly?: boolean,
+  shouldNotify?: boolean,
 ) {
   const url = `${configs.endpoint}/api/channels/priorities/${id}`;
-  const req: PriorityUpdate = { name, description, tier, seq, notifyOnly };
+  const req: PriorityUpdate = { name, description, tier, seq, shouldNotify };
   const { method, headers, body } = getIngredients('PUT', req);
   await request(url, { method, headers, body });
 }

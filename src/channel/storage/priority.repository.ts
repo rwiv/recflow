@@ -20,7 +20,7 @@ export class PriorityRepository {
     const reqEnt: PriorityEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
-      notifyOnly: append.notifyOnly ?? false,
+      shouldNotify: append.shouldNotify ?? false,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? null,
     };

@@ -16,19 +16,13 @@ import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 @Injectable()
 export class LiveEventListener {
   constructor(
-    @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(AUTHED) private readonly authClient: Authed,
-    @Inject(NOTIFIER) private readonly notifier: Notifier,
     private readonly dispatcher: Dispatcher,
   ) {}
 
   async onCreate(nodeEndpoint: string, created: LiveDto, cr?: CriterionDto) {
-    // stdl
     await this.requestStdl(nodeEndpoint, created, cr);
-
-    // ntfy
-    await this.notifier.sendLiveInfo(this.env.ntfyTopic, created);
     return created;
   }
 

@@ -40,7 +40,7 @@ const priorityColumn: ColumnDef<LiveDto> = {
   filterFn: (rows, _, filterValue) => {
     return rows.original.channel.priority.name.includes(filterValue);
   },
-  meta: { header: { width: '8rem' } },
+  meta: { header: { width: '9rem' } },
 };
 
 const titleColumn: ColumnDef<LiveDto> = {

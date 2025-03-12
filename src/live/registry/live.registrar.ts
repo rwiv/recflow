@@ -68,21 +68,17 @@ export class LiveRegistrar {
       channel = await this.chWriter.createWithInfo(append, channelInfo, tx);
     }
 
-    if (channel.priority.notifyOnly) {
-      const created = await this.liveWriter.createByLive(liveInfo, null, true);
-      await this.notifier.sendLiveInfo(this.env.ntfyTopic, created);
-      this.logCreatedLive(created);
-      return created;
-    }
-
     return tx.transaction(async (txx) => {
       const node = await this.nodeSelector.match(channel, txx);
-      if (!node) {
-        throw new NotFoundError(`No available nodes: channelName="${channel.username}"`);
+      const nodeId = node?.id ?? null;
+      const created = await this.liveWriter.createByLive(liveInfo, nodeId, node === null, txx);
+      if (node) {
+        await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
+        await this.listener.onCreate(node.endpoint, created, cr);
       }
-      const created = await this.liveWriter.createByLive(liveInfo, node.id, false, txx);
-      await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
-      await this.listener.onCreate(node.endpoint, created, cr);
+      if (channel.priority.shouldNotify) {
+        await this.notifier.sendLiveInfo(this.env.ntfyTopic, created);
+      }
       this.logCreatedLive(created, node);
       return created;
     });

@@ -7,7 +7,7 @@ export const priorityDto = z.object({
   description: z.string().nonempty().nullable(),
   tier: z.number().int().positive(),
   seq: z.number().int().nonnegative(),
-  notifyOnly: z.boolean(),
+  shouldNotify: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
@@ -16,7 +16,7 @@ export type PriorityDto = z.infer<typeof priorityDto>;
 export const priorityAppend = priorityDto.partial({
   id: true,
   description: true,
-  notifyOnly: true,
+  shouldNotify: true,
   createdAt: true,
   updatedAt: true,
 });

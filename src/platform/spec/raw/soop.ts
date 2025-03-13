@@ -1,19 +1,20 @@
 import { z } from 'zod';
+import { nnint, nonempty } from '../../../common/data/common.schema.js';
 
 export const soopLiveInfo = z.object({
-  userId: z.string(),
-  userNick: z.string(),
-  stationName: z.string().nullable(),
-  broadStart: z.string(),
-  broadNo: z.number(),
-  broadTitle: z.string(),
+  userId: nonempty,
+  userNick: nonempty,
+  stationName: nonempty.nullable(),
+  broadStart: nonempty,
+  broadNo: nnint,
+  broadTitle: nonempty,
   broadThumb: z.string().url().nullable(),
-  broadBps: z.string().nullable(),
-  broadResolution: z.string().nullable(),
-  broadCateNo: z.string().nullable(),
-  viewCnt: z.number(),
-  categoryTags: z.array(z.string()).nullable(),
-  hashTags: z.array(z.string()).nullable(),
+  broadBps: nonempty.nullable(),
+  broadResolution: nonempty.nullable(),
+  broadCateNo: nonempty.nullable(),
+  viewCnt: nnint,
+  categoryTags: z.array(nonempty).nullable(),
+  hashTags: z.array(nonempty).nullable(),
   adult: z.boolean(),
   locked: z.boolean(),
 });
@@ -22,18 +23,18 @@ export const soopLiveInfoResponse = z.array(soopLiveInfo);
 export type SoopLiveInfoResponse = z.infer<typeof soopLiveInfoResponse>;
 
 export const soopChannelInfo = z.object({
-  userId: z.string(),
-  userNick: z.string(),
+  userId: nonempty,
+  userNick: nonempty,
   profileImageUrl: z.string().url(),
-  profileText: z.string(),
-  stationName: z.string(),
+  profileText: nonempty,
+  stationName: nonempty,
 
-  fanCnt: z.number(),
-  subscriptionCnt: z.number(),
+  fanCnt: nnint,
+  subscriptionCnt: nnint,
   isBestBj: z.boolean(),
   isPartnerBj: z.boolean(),
 
-  broadStart: z.string(),
+  broadStart: nonempty,
   openLive: z.boolean(),
 
   liveInfo: soopLiveInfo.nullable(),

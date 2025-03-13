@@ -5,16 +5,18 @@ import { Env } from './common/config/env.js';
 import { DevInitializer } from './common/module/dev-initializer.js';
 import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
+import { ProdInitializer } from './common/module/prod-initializer.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const env = app.get<Env>(ENV);
-  const init = app.get(DevInitializer);
 
-  if (env.nodeEnv !== 'prod') {
+  if (env.nodeEnv === 'prod') {
+    await app.get(ProdInitializer).check();
+  } else {
     app.enableCors();
-    await init.initDev();
+    await app.get(DevInitializer).initDev();
   }
 
   app.get(LiveTaskInitializer).init();

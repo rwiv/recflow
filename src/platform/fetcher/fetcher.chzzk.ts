@@ -1,6 +1,6 @@
 import { channelFromChzzk, ChannelInfo } from '../spec/wapper/channel.js';
 import { liveFromChzzk, LiveInfo } from '../spec/wapper/live.js';
-import { ChzzkChannelInfo, ChzzkLiveInfo } from '../spec/raw/chzzk.js';
+import { chzzkChannelInfo, ChzzkLiveInfo, chzzkLiveInfoResponse } from '../spec/raw/chzzk.js';
 import { Env } from '../../common/config/env.js';
 import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { Inject, Injectable } from '@nestjs/common';
@@ -21,15 +21,15 @@ export class ChzzkFetcher {
   async fetchLives(cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, ChzzkLiveInfo>();
     for (const tag of cr.positiveTags) {
-      const res = await this.getChzzkLiveByTag(tag);
+      const res = await this.fetchLivesByTag(tag);
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     for (const keyword of cr.positiveKeywords) {
-      const res = await this.getChzzkLiveByKeyword(keyword);
+      const res = await this.fetchLivesByKeyword(keyword);
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     for (const watchPartyNo of cr.positiveWps) {
-      const res = await this.getChzzkLiveByWatchParty(nnint.parse(watchPartyNo));
+      const res = await this.fetchLivesByWatchParty(nnint.parse(watchPartyNo));
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));
@@ -42,27 +42,31 @@ export class ChzzkFetcher {
     }
     const res = await fetch(url, { method: 'GET' });
     await checkChannelResponse(res, pid);
-    return channelFromChzzk((await res.json()) as ChzzkChannelInfo);
+    return channelFromChzzk(chzzkChannelInfo.parse(await res.json()));
   }
 
-  private async getChzzkLiveByTag(tag: string) {
-    const url = `${this.baseUrl}/lives/v1/tag?size=${this.size}&tag=${encodeURIComponent(tag)}`;
-    const res = await fetch(url, { method: 'GET' });
-    await checkResponse(res);
-    return (await res.json()) as ChzzkLiveInfo[];
+  private async fetchLivesByTag(tag: string) {
+    const url = `${this.baseUrl}/lives/v1/tag?${this.getQs('tag', tag)}`;
+    return this.requestLives(url);
   }
 
-  private async getChzzkLiveByKeyword(keyword: string) {
-    const url = `${this.baseUrl}/lives/v1/keyword?size=${this.size}&keyword=${encodeURIComponent(keyword)}`;
-    const res = await fetch(url, { method: 'GET' });
-    await checkResponse(res);
-    return (await res.json()) as ChzzkLiveInfo[];
+  private async fetchLivesByKeyword(keyword: string) {
+    const url = `${this.baseUrl}/lives/v1/keyword?${this.getQs('keyword', keyword)}`;
+    return this.requestLives(url);
   }
 
-  private async getChzzkLiveByWatchParty(watchPartyNo: number) {
-    const url = `${this.baseUrl}/lives/v1/watchparty?size=${this.size}&watchPartyNo=${watchPartyNo}`;
+  private async fetchLivesByWatchParty(watchPartyNo: number) {
+    const url = `${this.baseUrl}/lives/v1/watchparty?${this.getQs('watchPartyNo', watchPartyNo.toString())}`;
+    return this.requestLives(url);
+  }
+
+  private getQs(key: string, value: string) {
+    return `${key}=${encodeURIComponent(value)}&size=${this.size}`;
+  }
+
+  private async requestLives(url: string) {
     const res = await fetch(url, { method: 'GET' });
     await checkResponse(res);
-    return (await res.json()) as ChzzkLiveInfo[];
+    return chzzkLiveInfoResponse.parse(await res.json());
   }
 }

@@ -17,11 +17,21 @@ import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 
 interface Unit {
-  name: 'positiveCates' | 'negativeCates';
+  name:
+    | 'positiveTags'
+    | 'negativeTags'
+    | 'positiveKeywords'
+    | 'negativeKeywords'
+    | 'positiveCates'
+    | 'negativeCates';
   label: string;
 }
 
 const unitReqs: Unit[] = [
+  { name: 'positiveTags', label: 'Positive Tags' },
+  { name: 'negativeTags', label: 'Negative Tags' },
+  { name: 'positiveKeywords', label: 'Positive Keywords' },
+  { name: 'negativeKeywords', label: 'Negative Keywords' },
   { name: 'positiveCates', label: 'Positive Cates' },
   { name: 'negativeCates', label: 'Negative Cates' },
 ];
@@ -60,6 +70,10 @@ export function CreateForm({ cb }: { cb: () => void }) {
       isDeactivated: true,
       minUserCnt: '',
       minFollowCnt: '',
+      positiveTags: [],
+      negativeTags: [],
+      positiveKeywords: [],
+      negativeKeywords: [],
       positiveCates: [],
       negativeCates: [],
     },

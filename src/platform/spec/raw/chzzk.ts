@@ -19,33 +19,18 @@ export const chzzkLiveInfo = z.object({
   watchPartyTag: z.string().nullable(),
 });
 export type ChzzkLiveInfo = z.infer<typeof chzzkLiveInfo>;
-// export interface ChzzkLiveInfo {
-//   channelId: string;
-//   channelName: string;
-//   channelImageUrl: string;
-//   liveId: number;
-//   liveTitle: string;
-//   liveImageUrl: string;
-//   concurrentUserCount: number;
-//   accumulateCount: number;
-//   openDate: string;
-//   adult: boolean;
-//   tags: string[];
-//   categoryType?: string | null;
-//   liveCategory?: string | null;
-//   liveCategoryValue: string | null;
-//   watchPartyNo: number | null;
-//   watchPartyTag: string | null;
-// }
+export const chzzkLiveInfoResponse = z.array(chzzkLiveInfo);
+export type ChzzkLiveInfoResponse = z.infer<typeof chzzkLiveInfoResponse>;
 
-export interface ChzzkChannelInfo {
-  channelId: string;
-  channelName: string;
-  channelImageUrl: string;
+export const chzzkChannelInfo = z.object({
+  channelId: z.string(),
+  channelName: z.string(),
+  channelImageUrl: z.string().url(),
 
-  channelDescription: string;
-  followerCount: number;
-  openLive: boolean;
+  channelDescription: z.string(),
+  followerCount: z.number(),
+  openLive: z.boolean(),
 
-  liveInfo: ChzzkLiveInfo | null;
-}
+  liveInfo: chzzkLiveInfo.nullable(),
+});
+export type ChzzkChannelInfo = z.infer<typeof chzzkChannelInfo>;

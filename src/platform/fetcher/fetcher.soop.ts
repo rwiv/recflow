@@ -1,7 +1,7 @@
 import { channelFromSoop, ChannelInfo } from '../spec/wapper/channel.js';
 import { liveFromSoop, LiveInfo } from '../spec/wapper/live.js';
 import { Env } from '../../common/config/env.js';
-import { SoopChannelInfo, SoopLiveInfo } from '../spec/raw/soop.js';
+import { soopChannelInfo, SoopLiveInfo, soopLiveInfoResponse } from '../spec/raw/soop.js';
 import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
@@ -19,12 +19,20 @@ export class SoopFetcher {
 
   async fetchLives(cr: SoopCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, SoopLiveInfo>();
+    let withCred = false;
+    if (cr.enforceCreds) {
+      withCred = true;
+    }
+    for (const tag of cr.positiveTags) {
+      const res = await this.fetchLivesByTag(tag);
+      res.forEach((info) => infoMap.set(info.userId, info));
+    }
+    for (const keyword of cr.positiveKeywords) {
+      const res = await this.fetchLivesByKeyword(keyword);
+      res.forEach((info) => infoMap.set(info.userId, info));
+    }
     for (const cateNo of cr.positiveCates) {
-      let withCred = false;
-      if (cr.enforceCreds) {
-        withCred = true;
-      }
-      const res = await this.getSoopLiveByCategory(cateNo, withCred);
+      const res = await this.fetchLivesByCategory(cateNo, withCred);
       res.forEach((info) => infoMap.set(info.userId, info));
     }
     return Array.from(infoMap.values()).map((info) => liveFromSoop(info));
@@ -37,14 +45,31 @@ export class SoopFetcher {
     }
     const res = await fetch(url, { method: 'GET' });
     await checkChannelResponse(res, pid);
-    return channelFromSoop((await res.json()) as SoopChannelInfo);
+    return channelFromSoop(soopChannelInfo.parse(await res.json()));
   }
 
-  private async getSoopLiveByCategory(cateNo: string, withCred: boolean = false) {
-    const qs = `cateNo=${encodeURIComponent(cateNo)}&size=${this.size}&withCred=${withCred}`;
-    const url = `${this.baseUrl}/lives/v1/category?${qs}`;
+  private async fetchLivesByTag(tag: string, withCred: boolean = false) {
+    const qs = this.getQs('tag', tag, withCred);
+    return this.requestLives(`${this.baseUrl}/lives/v1/tag?${qs}`);
+  }
+
+  private async fetchLivesByKeyword(keyword: string, withCred: boolean = false) {
+    const qs = this.getQs('keyword', keyword, withCred);
+    return this.requestLives(`${this.baseUrl}/lives/v1/keyword?${qs}`);
+  }
+
+  private async fetchLivesByCategory(cateNo: string, withCred: boolean = false) {
+    const qs = this.getQs('cateNo', cateNo, withCred);
+    return this.requestLives(`${this.baseUrl}/lives/v1/category?${qs}`);
+  }
+
+  private getQs(key: string, value: string, withCred: boolean) {
+    return `${key}=${encodeURIComponent(value)}&size=${this.size}&withCred=${withCred}`;
+  }
+
+  private async requestLives(url: string) {
     const res = await fetch(url, { method: 'GET' });
     await checkResponse(res);
-    return (await res.json()) as SoopLiveInfo[];
+    return soopLiveInfoResponse.parse(await res.json());
   }
 }

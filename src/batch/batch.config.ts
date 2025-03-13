@@ -21,6 +21,10 @@ const chzzkCriterionBatchInsert = criterionBatchInsert.extend({
 });
 export type ChzzkCriterionBatchInsert = z.infer<typeof chzzkCriterionBatchInsert>;
 const soopCriterionBatchInsert = criterionBatchInsert.extend({
+  positiveTags: z.array(nonempty),
+  negativeTags: z.array(nonempty),
+  positiveKeywords: z.array(nonempty),
+  negativeKeywords: z.array(nonempty),
   positiveCates: z.array(nonempty),
   negativeCates: z.array(nonempty),
 });

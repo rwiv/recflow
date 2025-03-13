@@ -9,6 +9,7 @@ import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
 import { CriterionStorageModule } from '../../criterion/storage/criterion.storage.module.js';
 import { CriterionServiceModule } from '../../criterion/service/criterion.service.module.js';
 import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
+import { ProdInitializer } from './prod-initializer.js';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
     CriterionStorageModule,
     CriterionServiceModule,
   ],
-  providers: [DevInitializer, DevInitInjector, NodeBatchInserter, CriterionBatchInserter],
-  exports: [DevInitializer],
+  providers: [DevInitializer, ProdInitializer, DevInitInjector, NodeBatchInserter, CriterionBatchInserter],
+  exports: [DevInitializer, ProdInitializer],
 })
 export class CommonModule {}

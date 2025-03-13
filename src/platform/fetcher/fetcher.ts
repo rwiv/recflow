@@ -35,11 +35,6 @@ export class PlatformFetcher {
     }
   }
 
-  // TODO: implement using zod
-  fetchChannelWithLiveInfo(platform: PlatformName, pid: string) {
-    throw new BaseError('Not implemented');
-  }
-
   fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
     if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);

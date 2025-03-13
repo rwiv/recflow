@@ -5,6 +5,7 @@ import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
 import { NodeSelector } from '../../../node/service/node.selector.js';
+import { SoopLiveInfo } from '../../../platform/spec/raw/soop.js';
 
 @Injectable()
 export class SoopLiveFilter {
@@ -22,6 +23,14 @@ export class SoopLiveFilter {
   async filter(liveInfo: LiveInfo, cr: SoopCriterionDto): Promise<LiveInfo | null> {
     if (liveInfo.type !== 'soop') {
       throw new EnumCheckError('Invalid live type');
+    }
+    // ignore
+    const content = liveInfo.content as SoopLiveInfo;
+    for (const ignoredTag of cr.negativeTags) {
+      if (content.hashTags && content.hashTags.includes(ignoredTag)) return null;
+    }
+    for (const ignoredKeyword of cr.negativeKeywords) {
+      if (content.broadTitle.includes(ignoredKeyword)) return null;
     }
 
     // by channel

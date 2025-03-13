@@ -44,7 +44,7 @@ const minFollowCntColumn: ColumnDef<ChzzkCriterionDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-type ChzzkKey =
+type RuleKey =
   | 'positiveTags'
   | 'negativeTags'
   | 'positiveKeywords'
@@ -52,7 +52,7 @@ type ChzzkKey =
   | 'positiveWps'
   | 'negativeWps';
 
-function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<ChzzkCriterionDto> {
+function createUnitColumn(key: RuleKey, header: string): ColumnDef<ChzzkCriterionDto> {
   return {
     accessorKey: key,
     header: () => <div className="justify-self-center">{header}</div>,

@@ -69,21 +69,37 @@ export class CriterionWriter {
 
   async createSoopCriterion(append: SoopCriterionAppend): Promise<SoopCriterionDto> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
-    const { cateRule } = await this.ruleFinder.findSoopRules();
+    const { tagRule, keywordRule: kwRule, cateRule } = await this.ruleFinder.findSoopRules();
 
     return db.transaction(async (tx) => {
-      const criterion = await this.criterionRepo.create(append, tx);
+      const ent = await this.criterionRepo.create(append, tx);
       const promises: Promise<CriterionUnitEnt>[] = [];
+      for (const tagName of append.positiveTags) {
+        promises.push(this.unitRepo.create(unitAppend(ent, tagRule, tagName, true), tx));
+      }
+      for (const tagName of append.negativeTags) {
+        promises.push(this.unitRepo.create(unitAppend(ent, tagRule, tagName, false), tx));
+      }
+      for (const kwName of append.positiveKeywords) {
+        promises.push(this.unitRepo.create(unitAppend(ent, kwRule, kwName, true), tx));
+      }
+      for (const kwName of append.negativeKeywords) {
+        promises.push(this.unitRepo.create(unitAppend(ent, kwRule, kwName, false), tx));
+      }
       for (const cateNo of append.positiveCates) {
-        promises.push(this.unitRepo.create(unitAppend(criterion, cateRule, cateNo, true), tx));
+        promises.push(this.unitRepo.create(unitAppend(ent, cateRule, cateNo, true), tx));
       }
       for (const cateNo of append.negativeCates) {
-        promises.push(this.unitRepo.create(unitAppend(criterion, cateRule, cateNo, false), tx));
+        promises.push(this.unitRepo.create(unitAppend(ent, cateRule, cateNo, false), tx));
       }
       const unitEntities = await Promise.all(promises);
       return {
-        ...criterion,
+        ...ent,
         platform,
+        positiveTags: find(unitEntities, tagRule, true),
+        negativeTags: find(unitEntities, tagRule, false),
+        positiveKeywords: find(unitEntities, kwRule, true),
+        negativeKeywords: find(unitEntities, kwRule, false),
         positiveCates: find(unitEntities, cateRule, true),
         negativeCates: find(unitEntities, cateRule, false),
       };

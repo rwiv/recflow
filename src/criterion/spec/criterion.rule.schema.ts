@@ -7,7 +7,7 @@ export const chzzkCriterionRuleNameEnum = z.enum([
 ]);
 export type ChzzkCriterionRuleName = z.infer<typeof chzzkCriterionRuleNameEnum>;
 
-export const soopCriterionRuleNameEnum = z.enum(['soop_cate_no']);
+export const soopCriterionRuleNameEnum = z.enum(['soop_tag_name', 'soop_keyword_name', 'soop_cate_no']);
 export type SoopCriterionRuleName = z.infer<typeof soopCriterionRuleNameEnum>;
 
 export const criterionRuleNameUnion = z.union([chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum]);

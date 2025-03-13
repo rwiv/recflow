@@ -39,10 +39,16 @@ export class CriterionMapper {
       throw new ValidationError('Criterion is not a SOOP platform');
     }
     const units = await this.unitRepo.findByCriterionId(criterion.id, tx);
-    const { cateRule } = await this.ruleFinder.findSoopRules(tx);
+    const { tagRule, keywordRule, cateRule } = await this.ruleFinder.findSoopRules(tx);
+    const tags = this.findUnitsValues(units, tagRule.id);
+    const keywords = this.findUnitsValues(units, keywordRule.id);
     const cates = this.findUnitsValues(units, cateRule.id);
     return {
       ...criterion,
+      positiveTags: tags.positive,
+      negativeTags: tags.negative,
+      positiveKeywords: keywords.positive,
+      negativeKeywords: keywords.negative,
       positiveCates: cates.positive,
       negativeCates: cates.negative,
     };

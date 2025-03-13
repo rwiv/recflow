@@ -44,9 +44,15 @@ const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-type ChzzkKey = 'positiveCates' | 'negativeCates';
+type RuleKey =
+  | 'positiveTags'
+  | 'negativeTags'
+  | 'positiveKeywords'
+  | 'negativeKeywords'
+  | 'positiveCates'
+  | 'negativeCates';
 
-function createUnitColumn(key: ChzzkKey, header: string): ColumnDef<SoopCriterionDto> {
+function createUnitColumn(key: RuleKey, header: string): ColumnDef<SoopCriterionDto> {
   return {
     accessorKey: key,
     header: () => <div className="justify-self-center">{header}</div>,
@@ -69,6 +75,10 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   enforceCredsColumn,
   minUserCntColumn,
   minFollowCntColumn,
+  createUnitColumn('positiveTags', 'p_tags'),
+  createUnitColumn('negativeTags', 'n_tags'),
+  createUnitColumn('positiveKeywords', 'p_keywords'),
+  createUnitColumn('negativeKeywords', 'n_keywords'),
   createUnitColumn('positiveCates', 'p_cates'),
   createUnitColumn('negativeCates', 'n_cates'),
 ];

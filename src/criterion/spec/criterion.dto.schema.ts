@@ -28,6 +28,10 @@ export const chzzkCriterionAppend = chzzkCriterionDto
 export type ChzzkCriterionAppend = z.infer<typeof chzzkCriterionAppend>;
 
 export const soopCriterionDto = criterionDto.extend({
+  positiveTags: z.array(nonempty),
+  negativeTags: z.array(nonempty),
+  positiveKeywords: z.array(nonempty),
+  negativeKeywords: z.array(nonempty),
   positiveCates: z.array(nonempty),
   negativeCates: z.array(nonempty),
 });

@@ -24,8 +24,8 @@ export class ChzzkLiveFilter {
     if (liveInfo.type !== 'chzzk') {
       throw new EnumCheckError('Invalid live type');
     }
-    const content = liveInfo.content as ChzzkLiveInfo;
     // ignore
+    const content = liveInfo.content as ChzzkLiveInfo;
     for (const ignoredTag of cr.negativeTags) {
       if (content.tags.includes(ignoredTag)) return null;
     }

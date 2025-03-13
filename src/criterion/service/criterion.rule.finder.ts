@@ -20,8 +20,13 @@ export class CriterionRuleFinder {
   }
 
   async findSoopRules(tx: Tx = db) {
-    const cateRuleName = soopCriterionRuleNameEnum.Values.soop_cate_no;
+    const values = soopCriterionRuleNameEnum.Values;
+    const tagRuleName = values.soop_tag_name;
+    const keywordRuleName = values.soop_keyword_name;
+    const cateRuleName = values.soop_cate_no;
+    const tagRule = await this.ruleRepo.findByNameNotNull(tagRuleName, tx);
+    const keywordRule = await this.ruleRepo.findByNameNotNull(keywordRuleName, tx);
     const cateRule = await this.ruleRepo.findByNameNotNull(cateRuleName, tx);
-    return { cateRule };
+    return { tagRule, keywordRule, cateRule };
   }
 }

@@ -12,6 +12,9 @@ spec:
     metadata:
       labels:
         app: {{ .Values.global.name }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       containers:
         - name: {{ .Values.global.name }}

@@ -7,10 +7,10 @@ image:
   tag: 0.5.3
   pullSecret: image-pull-secret
 
-affinity: {}
-tolerations:
-  - key: cpu
-    operator: Exists
+affinity: ~
+tolerations: ~
+podLabels:
+  sidecar.istio.io/inject: "true"
 
 service:
   type: NodePort

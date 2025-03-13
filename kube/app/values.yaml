@@ -47,7 +47,7 @@ externals:
     url: http://streamq.media.svc.cluster.local
     qsize: 1000
   authed:
-    url: http://authed-server.media.svc.cluster.local
+    url: http://authed.common.svc.cluster.local
     secretName: authed-app
     apiKeyKey: api-key
   untf:

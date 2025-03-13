@@ -28,7 +28,7 @@ export interface StreamqConfig {
 
 export interface AuthedConfig {
   url: string;
-  encKey: string;
+  apiKey: string;
 }
 
 export interface UntfConfig {

@@ -4,6 +4,8 @@ import { Env } from '../../common/config/env.js';
 import { Notifier } from './notifier.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { errorResponse } from '../../common/data/common.schema.js';
+import { log } from 'jslog';
+import { stackTrace } from '../../utils/errors/utils.js';
 
 interface UntfSendRequest {
   topic: string;
@@ -21,7 +23,13 @@ export class UntfNotifier extends Notifier {
     this.authKey = this.env.untf.authKey;
   }
 
-  async notify(topic: string, message: string): Promise<void> {
+  notify(topic: string, message: string): void {
+    this._notify(topic, message).catch((err) => {
+      log.error('Notification failure', { stack: stackTrace(err) });
+    });
+  }
+
+  private async _notify(topic: string, message: string): Promise<void> {
     const url = `${this.endpoint}/api/send/v1`;
     const body: UntfSendRequest = { topic, message };
     const res = await fetch(url, {

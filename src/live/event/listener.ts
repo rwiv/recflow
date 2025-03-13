@@ -1,11 +1,8 @@
 import type { Stdl } from '../../infra/stdl/types.js';
-import { Authed, SoopCredential } from '../../infra/authed/authed.js';
-import { Notifier } from '../../infra/notify/notifier.js';
+import { Authed, SoopAccount } from '../../infra/authed/authed.js';
 import { log } from 'jslog';
 import { Inject, Injectable } from '@nestjs/common';
-import { AUTHED, NOTIFIER, STDL } from '../../infra/infra.module.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
+import { AUTHED, STDL } from '../../infra/infra.module.js';
 import { Cookie } from '../../infra/authed/types.js';
 import { Dispatcher } from './dispatcher.js';
 import { ExitCmd } from './event.schema.js';
@@ -46,9 +43,9 @@ export class LiveEventListener {
       }
       await this.stdl.requestChzzkLive(nodeEndpoint, live.channel.pid, cookies);
     } else if (live.platform.name === 'soop') {
-      let cred: SoopCredential | undefined = undefined;
+      let cred: SoopAccount | undefined = undefined;
       if (enforceCreds || live.isAdult) {
-        cred = await this.authClient.requestSoopCred();
+        cred = await this.authClient.requestSoopAccount();
       }
       await this.stdl.requestSoopLive(nodeEndpoint, live.channel.pid, cred);
     } else {

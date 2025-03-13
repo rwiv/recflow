@@ -9,6 +9,6 @@ it('test', async () => {
   const cookies = await client.requestChzzkCookies();
   console.log(JSON.stringify(cookies));
 
-  const soopCred = await client.requestSoopCred();
+  const soopCred = await client.requestSoopAccount();
   console.log(soopCred);
 });

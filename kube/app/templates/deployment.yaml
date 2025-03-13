@@ -27,11 +27,11 @@ spec:
               value: "{{ .Values.externals.streamq.qsize }}"
             - name: AUTHED_URL
               value: {{ .Values.externals.authed.url }}
-            - name: AUTHED_ENCKEY
+            - name: AUTHED_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.externals.authed.secretName }}
-                  key: {{ .Values.externals.authed.enckeyKey }}
+                  key: {{ .Values.externals.authed.apiKeyKey }}
             - name: UNTF_ENDPOINT
               value: {{ .Values.externals.untf.endpoint }}
             - name: UNTF_AUTH_KEY

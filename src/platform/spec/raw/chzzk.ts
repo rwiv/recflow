@@ -25,9 +25,9 @@ export type ChzzkLiveInfoResponse = z.infer<typeof chzzkLiveInfoResponse>;
 export const chzzkChannelInfo = z.object({
   channelId: z.string(),
   channelName: z.string(),
-  channelImageUrl: z.string().url(),
+  channelImageUrl: z.string().url().nullable(),
 
-  channelDescription: z.string(),
+  channelDescription: z.string().nullable(),
   followerCount: z.number(),
   openLive: z.boolean(),
 

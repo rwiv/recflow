@@ -17,6 +17,8 @@ export function mockChzzkLiveInfo(n: number, pid: string): ChzzkLiveInfo {
     liveCategoryValue: 'category1',
     watchPartyNo: 1,
     watchPartyTag: 'tag1',
+    liveCategory: null,
+    categoryType: null,
   };
 }
 

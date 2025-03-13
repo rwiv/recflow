@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.5.4
+  tag: 0.5.5
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -45,7 +45,7 @@ app:
 externals:
   streamq:
     url: http://streamq.media.svc.cluster.local
-    qsize: 1000
+    qsize: 100
   authed:
     url: http://authed.common.svc.cluster.local
     secretName: authed-app

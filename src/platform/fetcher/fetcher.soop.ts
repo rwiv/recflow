@@ -9,25 +9,29 @@ import { SoopCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class SoopFetcher {
-  private readonly url: string;
+  private readonly baseUrl: string;
   private readonly size: number;
 
   constructor(@Inject(ENV) private readonly env: Env) {
-    this.url = this.env.streamq.url;
+    this.baseUrl = `${this.env.streamq.url}/api/soop`;
     this.size = this.env.streamq.qsize;
   }
 
   async fetchLives(cr: SoopCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, SoopLiveInfo>();
     for (const cateNo of cr.positiveCates) {
-      const res = await this.getSoopLiveByCategory(cateNo);
+      let withCred = false;
+      if (cr.enforceCreds) {
+        withCred = true;
+      }
+      const res = await this.getSoopLiveByCategory(cateNo, withCred);
       res.forEach((info) => infoMap.set(info.userId, info));
     }
     return Array.from(infoMap.values()).map((info) => liveFromSoop(info));
   }
 
   async fetchChannel(pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
-    let url = `${this.url}/soop/channel/v1/${pid}`;
+    let url = `${this.baseUrl}/channels/v1/${pid}`;
     if (hasLiveInfo) {
       url += '?hasLiveInfo=true';
     }
@@ -36,8 +40,9 @@ export class SoopFetcher {
     return channelFromSoop((await res.json()) as SoopChannelInfo);
   }
 
-  private async getSoopLiveByCategory(cateNo: string) {
-    const url = `${this.url}/soop/live/v1/category?size=${this.size}&cateNo=${encodeURIComponent(cateNo)}`;
+  private async getSoopLiveByCategory(cateNo: string, withCred: boolean = false) {
+    const qs = `cateNo=${encodeURIComponent(cateNo)}&size=${this.size}&withCred=${withCred}`;
+    const url = `${this.baseUrl}/lives/v1/category?${qs}`;
     const res = await fetch(url, { method: 'GET' });
     await checkResponse(res);
     return (await res.json()) as SoopLiveInfo[];

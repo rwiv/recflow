@@ -10,11 +10,11 @@ import { nnint } from '../../common/data/common.schema.js';
 
 @Injectable()
 export class ChzzkFetcher {
-  private readonly url: string;
+  private readonly baseUrl: string;
   private readonly size: number;
 
   constructor(@Inject(ENV) private readonly env: Env) {
-    this.url = this.env.streamq.url;
+    this.baseUrl = `${this.env.streamq.url}/api/chzzk`;
     this.size = this.env.streamq.qsize;
   }
 
@@ -36,7 +36,7 @@ export class ChzzkFetcher {
   }
 
   async fetchChannel(pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
-    let url = `${this.url}/chzzk/channel/v1/${pid}`;
+    let url = `${this.baseUrl}/channels/v1/${pid}`;
     if (hasLiveInfo) {
       url += '?hasLiveInfo=true';
     }
@@ -46,21 +46,21 @@ export class ChzzkFetcher {
   }
 
   private async getChzzkLiveByTag(tag: string) {
-    const url = `${this.url}/chzzk/live/v1/tag?size=${this.size}&tag=${encodeURIComponent(tag)}`;
+    const url = `${this.baseUrl}/lives/v1/tag?size=${this.size}&tag=${encodeURIComponent(tag)}`;
     const res = await fetch(url, { method: 'GET' });
     await checkResponse(res);
     return (await res.json()) as ChzzkLiveInfo[];
   }
 
   private async getChzzkLiveByKeyword(keyword: string) {
-    const url = `${this.url}/chzzk/live/v1/keyword?size=${this.size}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `${this.baseUrl}/lives/v1/keyword?size=${this.size}&keyword=${encodeURIComponent(keyword)}`;
     const res = await fetch(url, { method: 'GET' });
     await checkResponse(res);
     return (await res.json()) as ChzzkLiveInfo[];
   }
 
   private async getChzzkLiveByWatchParty(watchPartyNo: number) {
-    const url = `${this.url}/chzzk/live/v1/watchparty?size=${this.size}&watchPartyNo=${watchPartyNo}`;
+    const url = `${this.baseUrl}/lives/v1/watchparty?size=${this.size}&watchPartyNo=${watchPartyNo}`;
     const res = await fetch(url, { method: 'GET' });
     await checkResponse(res);
     return (await res.json()) as ChzzkLiveInfo[];

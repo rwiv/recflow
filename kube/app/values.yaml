@@ -40,7 +40,9 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    liveRecoveryWaitTimeMs: 120000
+    liveRecoveryWaitTimeMs: 40000
+    nodeFailureThreshold: 2
+    nodeResetCycleSec: 21600
 
 externals:
   streamq:

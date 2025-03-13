@@ -19,7 +19,10 @@ services:
       AMQP_PORT: "${AMQP_PORT}"
       AMQP_USERNAME: "${AMQP_USERNAME}"
       AMQP_PASSWORD: "${AMQP_USERNAME}"
+      LIVE_RECOVERY_WAIT_TIME_MS: "${LIVE_RECOVERY_WAIT_TIME_MS}"
+      NODE_FAILURE_THRESHOLD: "${NODE_FAILURE_THRESHOLD}"
+      NODE_RESET_CYCLE_SEC: "${NODE_RESET_CYCLE_SEC}"
     ports:
-      - 3000:3000
+      - "${APP_PORT}:${APP_PORT}"
     volumes:
       - ../kube/app/conf.yaml:/app/conf.yaml

@@ -6,14 +6,14 @@ import { NodeDto } from '@/client/node/node.schema.ts';
 import {
   updateNodeCapacity,
   updateNodeEndpoint,
+  updateNodeFailureCnt,
   updateNodeName,
-  updateNodeTotalCapacity,
   updateNodeWeight,
 } from '@/client/node/node.client.ts';
 import { fetchPlatforms } from '@/client/common/platform.client.ts';
 import { PlatformDto } from '@/client/common/platform.schema.ts';
 
-type Type = 'name' | 'endpoint' | 'weight' | 'totalCapacity' | 'chzzkCapacity' | 'soopCapacity';
+type Type = 'name' | 'endpoint' | 'weight' | 'chzzkCapacity' | 'soopCapacity' | 'failureCnt';
 
 interface NodeFieldUpdateForm {
   type: Type;
@@ -42,8 +42,8 @@ export function NodeFieldUpdateForm({ type, node }: NodeFieldUpdateForm) {
         await updateNodeEndpoint(node.id, stringSchema.parse(value));
       } else if (type === 'weight') {
         await updateNodeWeight(node.id, numSchema.parse(value));
-      } else if (type === 'totalCapacity') {
-        await updateNodeTotalCapacity(node.id, numSchema.parse(value));
+      } else if (type === 'failureCnt') {
+        await updateNodeFailureCnt(node.id, numSchema.parse(value));
       } else if (type === 'chzzkCapacity') {
         const platform = findPlatform('chzzk', platforms);
         await updateNodeCapacity(node.id, { platformId: platform.id, capacity: numSchema.parse(value) });
@@ -70,7 +70,7 @@ function getValidate(type: Type) {
     case 'endpoint':
       return stringSchema.parse;
     case 'weight':
-    case 'totalCapacity':
+    case 'failureCnt':
     case 'chzzkCapacity':
     case 'soopCapacity':
       return numSchema.parse;
@@ -87,8 +87,8 @@ function getDefaultValue(type: Type, node: NodeDto) {
       return node.endpoint;
     case 'weight':
       return node.weight.toString();
-    case 'totalCapacity':
-      return node.totalCapacity.toString();
+    case 'failureCnt':
+      return node.failureCnt.toString();
     case 'chzzkCapacity': {
       return findState('chzzk', node).capacity.toString();
     }

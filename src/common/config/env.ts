@@ -3,8 +3,8 @@ import { AmqpConfig, AuthedConfig, UntfConfig, PostgresConfig, StreamqConfig } f
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
-import { parseInteger } from '../../utils/number.js';
 import { readAmqpConfig, readPgConfig } from './env.utils.js';
+import { z } from 'zod';
 
 export interface Env {
   nodeEnv: string;
@@ -15,7 +15,11 @@ export interface Env {
   amqp: AmqpConfig;
   pg: PostgresConfig;
   liveRecoveryWaitTimeMs: number;
+  nodeFailureThreshold: number;
+  nodeResetCycleSec: number;
 }
+
+const nnint = z.coerce.number().int().nonnegative();
 
 export function readEnv(): Env {
   // NODE_ENV
@@ -30,12 +34,12 @@ export function readEnv(): Env {
   }
 
   // APP_PORT
-  const appPort = parseInteger(process.env.APP_PORT, 'appPort');
+  const appPort = nnint.parse(process.env.APP_PORT);
 
   // streamq
   const streamqUrl = process.env.STREAMQ_URL;
   if (streamqUrl === undefined) throw Error('streamq data is undefined');
-  const streamqQsize = parseInteger(process.env.STREAMQ_QSIZE, 'streamqQsize');
+  const streamqQsize = nnint.parse(process.env.STREAMQ_QSIZE);
   const streamq: StreamqConfig = { url: streamqUrl, qsize: streamqQsize };
 
   // authed
@@ -53,10 +57,9 @@ export function readEnv(): Env {
   }
   const untf: UntfConfig = { endpoint: untfEndpoint, authKey: untfApiKey, topic: untfTopic };
 
-  const liveRecoveryWaitTimeMs = parseInteger(
-    process.env.LIVE_RECOVERY_WAIT_TIME_MS,
-    'liveRecoveryWaitTimeMs',
-  );
+  const liveRecoveryWaitTimeMs = nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS);
+  const nodeFailureThreshold = nnint.parse(process.env.NODE_FAILURE_THRESHOLD);
+  const nodeResetCycleSec = nnint.parse(process.env.NODE_RESET_CYCLE_SEC);
 
   return {
     nodeEnv,
@@ -67,5 +70,7 @@ export function readEnv(): Env {
     amqp: readAmqpConfig(),
     pg: readPgConfig(),
     liveRecoveryWaitTimeMs,
+    nodeFailureThreshold,
+    nodeResetCycleSec,
   };
 }

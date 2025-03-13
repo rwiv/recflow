@@ -23,10 +23,10 @@ const cordonedColumn: ColumnDef<NodeDto> = {
   meta: { header: { width: SWITCH_SIDTH } },
 };
 
-const totalCapacityColumn: ColumnDef<NodeDto> = {
+const failureCntColumn: ColumnDef<NodeDto> = {
   accessorKey: 'totalCapacity',
-  header: () => <div className="justify-self-center">Total Capacity</div>,
-  cell: ({ row }) => <NodeFieldUpdateForm type="totalCapacity" node={row.original} />,
+  header: () => <div className="justify-self-center">Failure</div>,
+  cell: ({ row }) => <NodeFieldUpdateForm type="failureCnt" node={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
@@ -86,7 +86,7 @@ export const nodeColumns: ColumnDef<NodeDto>[] = [
   groupColumn,
   nodeTypeColumn,
   weightColumn,
-  totalCapacityColumn,
+  failureCntColumn,
   chzzkColumn,
   soopColumn,
   endpointColumn,

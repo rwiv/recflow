@@ -34,12 +34,22 @@ export class LiveRecoveryManager {
         if (!invalidLive.nodeId) {
           throw new MissingValueError(`nodeId is missing: ${invalidLive.id}`);
         }
+        const node = invalidLive.node;
+        if (!node) {
+          throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
+        }
+
         const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true);
         if (!channelInfo?.liveInfo) {
           log.debug(`Uncleaned live`, { platform: platform.name, channel: channel.username });
           return;
         }
-        await this.nodeUpdater.update(invalidLive.nodeId, { isCordoned: true }, txx);
+
+        if (node.failureCnt >= this.env.nodeFailureThreshold) {
+          await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, txx);
+        } else {
+          await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, txx);
+        }
         await this.liveWriter.delete(invalidLive.id, txx);
         log.info(`Recovery live`, {
           platform: platform.name,

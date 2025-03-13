@@ -11,6 +11,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { LiveRepository } from '../../live/storage/live.repository.js';
+import { Tx } from '../../infra/db/types.js';
 
 @Injectable()
 export class NodeWriter {
@@ -60,6 +61,17 @@ export class NodeWriter {
     return db.transaction(async (tx) => {
       await Promise.all(states.map((state) => this.stateRepo.delete(state.id, tx)));
       await this.nodeRepo.delete(id, tx);
+    });
+  }
+
+  async resetFailureCntAll(tx: Tx = db) {
+    return tx.transaction(async (txx) => {
+      const nodes = await this.nodeRepo.findAllForUpdate(txx);
+      const promises = [];
+      for (const node of nodes) {
+        promises.push(this.nodeRepo.update(node.id, { failureCnt: 0 }, txx));
+      }
+      return Promise.all(promises);
     });
   }
 }

@@ -1,10 +1,12 @@
 import { AmqpConfig, PostgresConfig, RedisConfig } from './config.types.js';
-import { parseInteger } from '../../utils/number.js';
+import { z } from 'zod';
+
+const nnint = z.coerce.number().int().nonnegative();
 
 export function readRedisConfig(): RedisConfig {
   const redisHost = process.env.REDIS_HOST;
   const redisPassword = process.env.REDIS_PASSWORD;
-  const redisPort = parseInteger(process.env.REDIS_PORT, 'redisPort');
+  const redisPort = nnint.parse(process.env.REDIS_PORT);
   if (redisHost === undefined || redisPassword === undefined) {
     throw Error('redis data is undefined');
   }
@@ -22,8 +24,8 @@ export function readAmqpConfig(): AmqpConfig {
   if (amqpHost === undefined || amqpUsername === undefined || amqpPassword === undefined) {
     throw Error('amqp data is undefined');
   }
-  const amqpPort = parseInteger(process.env.AMQP_PORT, 'amqpPort');
-  const amqpHttpPort = parseInteger(process.env.AMQP_HTTP_PORT, 'amqpHttpPort');
+  const amqpPort = nnint.parse(process.env.AMQP_PORT);
+  const amqpHttpPort = nnint.parse(process.env.AMQP_HTTP_PORT);
   return {
     host: amqpHost,
     port: amqpPort,
@@ -51,7 +53,7 @@ export function readPgConfig(): PostgresConfig {
   ) {
     throw Error('pg data is undefined');
   }
-  const pgPort = parseInteger(pgPortStr, 'pgPort');
+  const pgPort = nnint.parse(pgPortStr);
   const url = `postgres://${pgUsername}:${pgPassword}@${pgHost}:${pgPort}/${pgDatabase}`;
   return {
     host: pgHost,

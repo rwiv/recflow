@@ -6,6 +6,7 @@ import { DevInitializer } from './common/module/dev-initializer.js';
 import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
 import { ProdInitializer } from './common/module/prod-initializer.js';
+import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,7 @@ async function bootstrap() {
 
   app.get(LiveTaskInitializer).init();
   app.get(ChannelTaskInitializer).init();
+  app.get(NodeTaskInitializer).init();
 
   await app.listen(env.appPort);
 }

@@ -19,6 +19,7 @@ export class NodeRepository {
       ...append,
       id: append.id ?? uuid(),
       isCordoned: append.isCordoned ?? false,
+      failureCnt: append.failureCnt ?? 0,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(nodeTable).values(nodeEntAppendReq.parse(req)).returning();
@@ -44,6 +45,10 @@ export class NodeRepository {
 
   async findAll(tx: Tx = db) {
     return tx.select().from(nodeTable);
+  }
+
+  async findAllForUpdate(tx: Tx = db) {
+    return tx.select().from(nodeTable).for('update');
   }
 
   async setUpdatedAtNow(id: string, tx: Tx = db) {

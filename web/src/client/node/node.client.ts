@@ -31,8 +31,8 @@ export function updateNodeWeight(id: string, weight: number) {
   return updateNode(id, undefined, undefined, weight, undefined, undefined, undefined, undefined);
 }
 
-export function updateNodeTotalCapacity(id: string, totalCapacity: number) {
-  return updateNode(id, undefined, undefined, undefined, totalCapacity, undefined, undefined, undefined);
+export function updateNodeFailureCnt(id: string, failureCnt: number) {
+  return updateNode(id, undefined, undefined, undefined, failureCnt, undefined, undefined, undefined);
 }
 
 export function updateNodeCapacity(id: string, capacity: NodeCapacity) {
@@ -48,13 +48,13 @@ async function updateNode(
   name?: string,
   endpoint?: string,
   weight?: number,
-  totalCapacity?: number,
+  failureCnt?: number,
   isCordoned?: boolean,
   groupId?: string,
   capacity?: NodeCapacity,
 ) {
   const url = `${configs.endpoint}/api/nodes/${id}`;
-  const req: NodeUpdate = { name, endpoint, weight, totalCapacity, isCordoned, groupId, capacity };
+  const req: NodeUpdate = { name, endpoint, weight, isCordoned, failureCnt, groupId, capacity };
   const { method, headers, body } = getIngredients('PUT', req);
   await request(url, { method, headers, body });
 }

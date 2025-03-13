@@ -145,6 +145,7 @@ export const nodeTable = pgTable(
     groupId: uuid('group_id')
       .notNull()
       .references(() => nodeGroupTable.id),
+    failureCnt: integer('failure_cnt').notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
     lastAssignedAt: timestamp('last_assigned_at'),

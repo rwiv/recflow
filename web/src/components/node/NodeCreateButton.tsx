@@ -70,10 +70,12 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       totalCapacity: '',
       chzzkCapacity: '',
       soopCapacity: '',
+      failureCnt: 0,
     },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log(data);
     const middleData = parse(middleSchema, data, form);
     if (!middleData) return;
     const capacities: NodeCapacities = [

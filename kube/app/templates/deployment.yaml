@@ -37,11 +37,11 @@ spec:
                   key: {{ .Values.externals.authed.apiKeyKey }}
             - name: UNTF_ENDPOINT
               value: {{ .Values.externals.untf.endpoint }}
-            - name: UNTF_AUTH_KEY
+            - name: UNTF_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.externals.untf.secretName }}
-                  key: {{ .Values.externals.untf.authKeyKey }}
+                  key: {{ .Values.externals.untf.apiKeySecretKey }}
             - name: UNTF_TOPIC
               value: {{ .Values.externals.untf.topic }}
             - name: REDIS_HOST

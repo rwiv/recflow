@@ -47,11 +47,11 @@ export function readEnv(): Env {
   // untf
   const untfEndpoint = process.env.UNTF_ENDPOINT;
   const untfTopic = process.env.UNTF_TOPIC ?? DEFAULT_UNTF_TOPIC;
-  const untfAuthKey = process.env.UNTF_AUTH_KEY;
-  if (untfEndpoint === undefined || untfTopic === undefined || untfAuthKey === undefined) {
+  const untfApiKey = process.env.UNTF_API_KEY;
+  if (untfEndpoint === undefined || untfTopic === undefined || untfApiKey === undefined) {
     throw Error('untf configs are undefined');
   }
-  const untf: UntfConfig = { endpoint: untfEndpoint, authKey: untfAuthKey, topic: untfTopic };
+  const untf: UntfConfig = { endpoint: untfEndpoint, authKey: untfApiKey, topic: untfTopic };
 
   const liveRecoveryWaitTimeMs = parseInteger(
     process.env.LIVE_RECOVERY_WAIT_TIME_MS,

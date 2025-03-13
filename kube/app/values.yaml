@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.5.3
+  tag: 0.5.4
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -53,5 +53,5 @@ externals:
   untf:
     endpoint: http://untf.common.svc.cluster.local
     secretName: untf-client
-    authKeyKey: auth-key
+    apiKeySecretKey: api-key
     topic: stmgr

@@ -41,7 +41,6 @@ const nodeBatchInsert = z.object({
   groupName: z.string().nonempty(),
   typeName: nodeTypeNameEnum,
   weight: z.number().int().nonnegative(),
-  totalCapacity: z.number().nonnegative(),
   capacities: z.object({
     chzzk: z.number().int().nonnegative(),
     soop: z.number().int().nonnegative(),

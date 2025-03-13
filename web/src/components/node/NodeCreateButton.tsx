@@ -42,7 +42,6 @@ export function NodeCreateButton() {
 const formSchema = nodeAppend.omit({ capacities: true }).extend({
   typeName: nonempty,
   weight: nonempty,
-  totalCapacity: nonempty,
   chzzkCapacity: nonempty,
   soopCapacity: nonempty,
 });
@@ -50,7 +49,6 @@ const formSchema = nodeAppend.omit({ capacities: true }).extend({
 const middleSchema = formSchema.extend({
   typeName: nodeTypeNameEnum,
   weight: z.coerce.number().positive(),
-  totalCapacity: z.coerce.number().nonnegative(),
   chzzkCapacity: z.coerce.number().nonnegative(),
   soopCapacity: z.coerce.number().nonnegative(),
 });
@@ -67,7 +65,6 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       isCordoned: false,
       groupId: '',
       typeName: '',
-      totalCapacity: '',
       chzzkCapacity: '',
       soopCapacity: '',
       failureCnt: 0,
@@ -108,7 +105,6 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
           ))}
         </SelectFormField>
         <TextFormField form={form} name="weight" placeholder="1" />
-        <TextFormField form={form} name="totalCapacity" label="Total Capacity" placeholder="10" />
         <TextFormField form={form} name="chzzkCapacity" label="Chzzk Capacity" placeholder="0" />
         <TextFormField form={form} name="soopCapacity" label="Soop Capacity" placeholder="0" />
         <FormSubmitButton />

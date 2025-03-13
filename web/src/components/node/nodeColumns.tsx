@@ -24,7 +24,7 @@ const cordonedColumn: ColumnDef<NodeDto> = {
 };
 
 const failureCntColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'totalCapacity',
+  accessorKey: 'failureCnt',
   header: () => <div className="justify-self-center">Failure</div>,
   cell: ({ row }) => <NodeFieldUpdateForm type="failureCnt" node={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },

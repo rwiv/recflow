@@ -14,6 +14,7 @@ import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { log } from 'jslog';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()
 export class LiveRecoveryManager {
@@ -37,6 +38,11 @@ export class LiveRecoveryManager {
         const node = invalidLive.node;
         if (!node) {
           throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
+        }
+
+        // TODO: update
+        if (invalidLive.platform.name === platformNameEnum.Values.soop) {
+          return;
         }
 
         const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true);

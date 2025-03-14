@@ -9,8 +9,6 @@ export const soopLiveInfo = z.object({
   broadNo: nnint,
   broadTitle: nonempty,
   broadThumb: z.string().url().nullable(),
-  broadBps: nonempty.nullable(),
-  broadResolution: nonempty.nullable(),
   broadCateNo: nonempty.nullable(),
   viewCnt: nnint,
   categoryTags: z.array(nonempty).nullable(),

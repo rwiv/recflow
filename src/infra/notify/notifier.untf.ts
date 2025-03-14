@@ -15,12 +15,12 @@ interface UntfSendRequest {
 @Injectable()
 export class UntfNotifier extends Notifier {
   private readonly endpoint: string;
-  private readonly authKey: string;
+  private readonly apiKey: string;
 
   constructor(@Inject(ENV) private readonly env: Env) {
     super();
     this.endpoint = this.env.untf.endpoint;
-    this.authKey = this.env.untf.authKey;
+    this.apiKey = this.env.untf.apiKey;
   }
 
   notify(topic: string, message: string): void {
@@ -36,7 +36,7 @@ export class UntfNotifier extends Notifier {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.authKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify(body),
     });

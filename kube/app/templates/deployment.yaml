@@ -82,12 +82,16 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.postgres.secretName }}
                   key: {{ .Values.app.postgres.passwordKey }}
-            - name: LIVE_RECOVERY_WAIT_TIME_MS
-              value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
             - name: NODE_FAILURE_THRESHOLD
               value: "{{ .Values.app.configs.nodeFailureThreshold }}"
             - name: NODE_RESET_CYCLE_SEC
               value: "{{ .Values.app.configs.nodeResetCycleSec }}"
+            - name: LIVE_RECOVERY_WAIT_TIME_MS
+              value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
+            - name: CHZZK_RECOVERY_EXTRA_WAIT_TIME_MS
+              value: "{{ .Values.app.configs.chzzkRecoveryExtraWaitTimeMs }}"
+            - name: SOOP_RECOVERY_EXTRA_WAIT_TIME_MS
+              value: "{{ .Values.app.configs.soopRecoveryExtraWaitTimeMs }}"
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- with .Values.affinity }}

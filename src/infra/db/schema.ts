@@ -185,7 +185,7 @@ export const liveTable = pgTable('live', {
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),
-  // disconnectedAt: timestamp('disconnected_at'),
+  disconnectedAt: timestamp('disconnected_at'),
 });
 
 export const liveCriterionTable = pgTable(

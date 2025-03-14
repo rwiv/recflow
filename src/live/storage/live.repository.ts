@@ -9,7 +9,12 @@ import { uuid } from '../../utils/uuid.js';
 import { asc, eq, sql } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
-const liveEntAppendReq = liveEnt.partial({ updatedAt: true, deletedAt: true, nodeId: true });
+const liveEntAppendReq = liveEnt.partial({
+  nodeId: true,
+  updatedAt: true,
+  deletedAt: true,
+  disconnectedAt: true,
+});
 type LiveEntAppendRequest = z.infer<typeof liveEntAppendReq>;
 
 @Injectable()

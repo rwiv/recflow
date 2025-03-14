@@ -15,6 +15,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { log } from 'jslog';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
 
 @Injectable()
 export class LiveRecoveryManager {
@@ -40,14 +41,19 @@ export class LiveRecoveryManager {
           throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
         }
 
-        // TODO: update
-        if (invalidLive.platform.name === platformNameEnum.Values.soop) {
-          return;
-        }
-
         const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true);
         if (!channelInfo?.liveInfo) {
           log.debug(`Uncleaned live`, { platform: platform.name, channel: channel.username });
+          return;
+        }
+
+        if (invalidLive.disconnectedAt === null) {
+          await this.liveWriter.update(invalidLive.id, { disconnectedAt: new Date() }, txx);
+          return;
+        }
+
+        const threshold = new Date(Date.now() - this.getExtraWaitTimeMs(invalidLive));
+        if (invalidLive.disconnectedAt > threshold) {
           return;
         }
 
@@ -56,15 +62,30 @@ export class LiveRecoveryManager {
         } else {
           await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, txx);
         }
+
         await this.liveWriter.delete(invalidLive.id, txx);
+
         log.info(`Recovery live`, {
           platform: platform.name,
           channel: channel.username,
           node: invalidLive.node?.name,
         });
+
         await this.liveRegistrar.add(channelInfo.liveInfo, channelInfo, undefined, txx);
       });
     }
+  }
+
+  private getExtraWaitTimeMs(invalidLive: LiveDto) {
+    let waitTimeMs = 0;
+    if (invalidLive.platform.name === platformNameEnum.Values.chzzk) {
+      waitTimeMs = this.env.chzzkRecoveryExtraWaitTimeMs;
+    } else if (invalidLive.platform.name === platformNameEnum.Values.soop) {
+      waitTimeMs = this.env.soopRecoveryExtraWaitTimeMs;
+    } else {
+      throw new EnumCheckError(`Unsupported platform: ${invalidLive.platform.name}`);
+    }
+    return waitTimeMs;
   }
 
   private async findInvalidLives() {

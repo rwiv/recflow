@@ -61,7 +61,7 @@ export class LiveWriter {
     return this.update(id, update, tx);
   }
 
-  private async update(id: string, update: LiveUpdate, tx: Tx = db) {
+  async update(id: string, update: LiveUpdate, tx: Tx = db) {
     const updated = await this.liveRepo.update(id, update, tx);
     return this.mapper.map(updated, tx);
   }

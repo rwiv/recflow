@@ -33,6 +33,6 @@ export interface AuthedConfig {
 
 export interface UntfConfig {
   endpoint: string;
-  authKey: string;
+  apiKey: string;
   topic: string;
 }

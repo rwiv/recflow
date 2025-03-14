@@ -1,5 +1,13 @@
-import { AmqpConfig, PostgresConfig, RedisConfig } from './config.types.js';
+import {
+  AmqpConfig,
+  AuthedConfig,
+  PostgresConfig,
+  RedisConfig,
+  StreamqConfig,
+  UntfConfig,
+} from './config.types.js';
 import { z } from 'zod';
+import { DEFAULT_UNTF_TOPIC } from '../data/constants.js';
 
 const nnint = z.coerce.number().int().nonnegative();
 
@@ -63,4 +71,28 @@ export function readPgConfig(): PostgresConfig {
     password: pgPassword,
     url,
   };
+}
+
+export function readStreamqConfig(): StreamqConfig {
+  const url = process.env.STREAMQ_URL;
+  if (url === undefined) throw Error('streamq data is undefined');
+  const qsize = nnint.parse(process.env.STREAMQ_QSIZE);
+  return { url, qsize };
+}
+
+export function readAuthedConfig(): AuthedConfig {
+  const url = process.env.AUTHED_URL;
+  const apiKey = process.env.AUTHED_API_KEY;
+  if (url === undefined || apiKey === undefined) throw Error('authed data is undefined');
+  return { url, apiKey };
+}
+
+export function readUntfConfig(): UntfConfig {
+  const endpoint = process.env.UNTF_ENDPOINT;
+  const topic = process.env.UNTF_TOPIC ?? DEFAULT_UNTF_TOPIC;
+  const apiKey = process.env.UNTF_API_KEY;
+  if (endpoint === undefined || topic === undefined || apiKey === undefined) {
+    throw Error('untf configs are undefined');
+  }
+  return { endpoint, apiKey, topic };
 }

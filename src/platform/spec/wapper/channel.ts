@@ -24,15 +24,11 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
   if (info.liveInfo) {
     liveInfo = liveFromChzzk(info.liveInfo);
   }
-  let profileImgUrl: string | null = info.channelImageUrl;
-  if (profileImgUrl === '') {
-    profileImgUrl = null;
-  }
   return {
     platform: 'chzzk',
     pid: info.channelId,
     username: info.channelName,
-    profileImgUrl,
+    profileImgUrl: info.channelImageUrl,
     followerCnt: info.followerCount,
     openLive: info.openLive,
     content: info,
@@ -45,15 +41,11 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
   if (info.liveInfo) {
     liveInfo = liveFromSoop(info.liveInfo);
   }
-  let profileImgUrl: string | null = info.profileImageUrl;
-  if (profileImgUrl === '') {
-    profileImgUrl = null;
-  }
   return {
     platform: 'soop',
     pid: info.userId,
     username: info.userNick,
-    profileImgUrl,
+    profileImgUrl: info.profileImageUrl,
     followerCnt: info.fanCnt,
     openLive: info.openLive,
     content: info,

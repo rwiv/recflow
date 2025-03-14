@@ -25,8 +25,8 @@ export type SoopLiveInfoResponse = z.infer<typeof soopLiveInfoResponse>;
 export const soopChannelInfo = z.object({
   userId: nonempty,
   userNick: nonempty,
-  profileImageUrl: z.string().url(),
-  profileText: nonempty,
+  profileImageUrl: z.string().url().nullable(),
+  profileText: nonempty.nullable(),
   stationName: nonempty,
 
   fanCnt: nnint,

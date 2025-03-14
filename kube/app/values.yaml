@@ -40,11 +40,11 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    nodeFailureThreshold: 5
+    nodeFailureThreshold: 10
     nodeResetCycleSec: 21600
     liveRecoveryWaitTimeMs: 40000
     chzzkRecoveryExtraWaitTimeMs: 0
-    soopRecoveryExtraWaitTimeMs: 180000
+    soopRecoveryExtraWaitTimeMs: 120000
 
 externals:
   streamq:

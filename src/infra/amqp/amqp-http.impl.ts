@@ -5,6 +5,8 @@ import { AmqpHttp } from './amqp.interface.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+import { log } from 'jslog';
 
 const queueStates = z.array(queueState);
 
@@ -29,6 +31,10 @@ export class AmqpHttpImpl implements AmqpHttp {
         Authorization: `Basic ${Buffer.from(`${this.conf.username}:${this.conf.password}`).toString('base64')}`,
       },
     });
+    if (res.status >= 400) {
+      log.error(await res.text());
+      throw new HttpRequestError('Failed to fetch queues', res.status);
+    }
     return queueStates.parse(await res.json());
   }
 }

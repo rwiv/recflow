@@ -4,10 +4,10 @@ import { nnint, nonempty } from '../../../common/data/common.schema.js';
 export const chzzkLiveInfo = z.object({
   channelId: nonempty,
   channelName: nonempty,
-  channelImageUrl: z.string().url(),
+  channelImageUrl: z.string().url().nullable(),
   liveId: nnint,
   liveTitle: nonempty,
-  liveImageUrl: z.string().url(),
+  liveImageUrl: z.string().url().nullable(),
   concurrentUserCount: nnint,
   accumulateCount: nnint,
   openDate: nonempty,

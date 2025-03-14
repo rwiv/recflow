@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.6.1
+  tag: 0.6.2
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -40,11 +40,11 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    nodeFailureThreshold: 2
+    nodeFailureThreshold: 5
     nodeResetCycleSec: 21600
     liveRecoveryWaitTimeMs: 40000
     chzzkRecoveryExtraWaitTimeMs: 0
-    soopRecoveryExtraWaitTimeMs: 300000
+    soopRecoveryExtraWaitTimeMs: 180000
 
 externals:
   streamq:

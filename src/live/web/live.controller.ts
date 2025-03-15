@@ -13,6 +13,7 @@ import {
   liveDeleteRequest,
   LiveDeleteRequest,
 } from './live.web.schema.js';
+import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -48,11 +49,10 @@ export class LiveController {
   @Post('/')
   async add(@Body() req: LiveAppendRequest) {
     const append = liveAppendRequest.parse(req);
-    const channel = await this.fetcher.fetchChannelNotNull(append.platformName, append.pid, true);
-    if (!channel?.liveInfo) {
-      throw NotFoundError.from('channel.liveInfo', 'pid', append.pid);
-    }
-    return this.liveService.add(channel.liveInfo, channel);
+    const channel = channelLiveInfo.parse(
+      await this.fetcher.fetchChannelNotNull(append.platformName, append.pid, true),
+    );
+    return this.liveService.add(channel);
   }
 
   @Delete('/')

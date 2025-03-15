@@ -16,6 +16,7 @@ import { LiveWriter } from '../access/live.writer.js';
 import { log } from 'jslog';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
+import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 
 @Injectable()
 export class LiveRecoveryManager {
@@ -41,8 +42,10 @@ export class LiveRecoveryManager {
           throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
         }
 
-        const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true, true);
-        if (!channelInfo?.liveInfo) {
+        const channelInfo = channelLiveInfo.parse(
+          await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true, true),
+        );
+        if (!channelInfo.liveInfo) {
           log.debug(`Uncleaned live`, { platform: platform.name, channel: channel.username });
           return;
         }
@@ -71,7 +74,7 @@ export class LiveRecoveryManager {
           node: invalidLive.node?.name,
         });
 
-        await this.liveRegistrar.add(channelInfo.liveInfo, channelInfo, undefined, [node.id], txx);
+        await this.liveRegistrar.add(channelInfo, undefined, [node.id], txx);
       });
     }
   }

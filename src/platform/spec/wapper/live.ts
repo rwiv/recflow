@@ -1,20 +1,20 @@
-import { ChzzkLiveInfo } from '../raw/chzzk.js';
-import { SoopLiveInfo } from '../raw/soop.js';
-import { PlatformName } from '../storage/platform.enum.schema.js';
+import { chzzkLiveInfo, ChzzkLiveInfo } from '../raw/chzzk.js';
+import { soopLiveInfo, SoopLiveInfo } from '../raw/soop.js';
+import { platformNameEnum } from '../storage/platform.enum.schema.js';
+import { z } from 'zod';
 
-export type PlatformLiveInfo = ChzzkLiveInfo | SoopLiveInfo;
-
-export interface LiveInfo {
-  type: PlatformName;
-  pid: string;
-  channelName: string;
-  liveId: number;
-  liveTitle: string;
-  viewCnt: number;
-  isAdult: boolean;
-  openDate: string;
-  content: PlatformLiveInfo;
-}
+export const liveInfo = z.object({
+  type: platformNameEnum,
+  pid: z.string(),
+  channelName: z.string(),
+  liveId: z.number(),
+  liveTitle: z.string(),
+  viewCnt: z.number(),
+  isAdult: z.boolean(),
+  openDate: z.string(),
+  content: z.union([chzzkLiveInfo, soopLiveInfo]),
+});
+export type LiveInfo = z.infer<typeof liveInfo>;
 
 export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
   return {

@@ -1,23 +1,25 @@
-import { ChzzkChannelInfo } from '../raw/chzzk.js';
-import { SoopChannelInfo } from '../raw/soop.js';
-import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
-import { PlatformName } from '../storage/platform.enum.schema.js';
+import { chzzkChannelInfo, ChzzkChannelInfo } from '../raw/chzzk.js';
+import { soopChannelInfo, SoopChannelInfo } from '../raw/soop.js';
+import { liveFromChzzk, liveFromSoop, liveInfo, LiveInfo } from './live.js';
+import { z } from 'zod';
+import { platformNameEnum } from '../storage/platform.enum.schema.js';
 
-export interface ChannelBase {
-  pid: string;
-  username: string;
-  profileImgUrl: string | null;
-  followerCnt: number;
-  platform: PlatformName;
-}
+export const channelInfo = z.object({
+  pid: z.string(),
+  username: z.string(),
+  profileImgUrl: z.string().nullable(),
+  followerCnt: z.number(),
+  platform: platformNameEnum,
+  openLive: z.boolean(),
+  content: z.union([chzzkChannelInfo, soopChannelInfo]),
+  liveInfo: liveInfo.nullable(),
+});
+export type ChannelInfo = z.infer<typeof channelInfo>;
 
-export type PlatformChannelInfo = ChzzkChannelInfo | SoopChannelInfo;
-
-export interface ChannelInfo extends ChannelBase {
-  openLive: boolean;
-  content: PlatformChannelInfo;
-  liveInfo: LiveInfo | null;
-}
+export const channelLiveInfo = channelInfo.extend({
+  liveInfo: liveInfo,
+});
+export type ChannelLiveInfo = z.infer<typeof channelLiveInfo>;
 
 export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
   let liveInfo = null;

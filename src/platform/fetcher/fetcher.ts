@@ -27,9 +27,9 @@ export class PlatformFetcher {
     }
   }
 
-  fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
+  fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean, checkStream: boolean = false) {
     try {
-      return this.fetchChannelNotNull(platform, pid, hasLiveInfo);
+      return this.fetchChannelNotNull(platform, pid, hasLiveInfo, checkStream);
     } catch (e) {
       return null;
     }

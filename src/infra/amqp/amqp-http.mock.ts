@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
 
-const FILTER_NODE_GROUP_NAME = 'main';
+// const FILTER_NODE_GROUP_NAME = 'main';
+const FILTER_NODE_GROUP_NAME = '';
 
 @Injectable()
 export class AmqpHttpMock implements AmqpHttp {

@@ -4,13 +4,14 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveFinder } from '../access/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { PlatformLiveFilter } from './live.filter.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
+import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 
 @Injectable()
 export class LiveCoordinator {
@@ -24,7 +25,9 @@ export class LiveCoordinator {
 
   async registerQueriedLives(cr: PlatformCriterionDto) {
     const followedChannels = await this.channelFinder.findFollowedChannels(cr.platform.name);
-    await Promise.all(followedChannels.map((ch) => this.registerFollowedLive(ch, cr)));
+    for (const channel of followedChannels) {
+      await this.registerFollowedLive(channel, cr);
+    }
 
     const queriedLives = await this.fetcher.fetchLives(cr);
     const filtered = await this.filter.getFiltered(cr, queriedLives);
@@ -39,25 +42,27 @@ export class LiveCoordinator {
   }
 
   private async registerFollowedLive(ch: ChannelDto, cr: PlatformCriterionDto, tx: Tx = db) {
-    if (await this.liveFinder.findByPid(ch.pid, tx, { withDisabled: true })) return null;
-    const chanInfo = await this.fetcher.fetchChannel(ch.platform.name, ch.pid, false);
-    if (!chanInfo || !chanInfo.openLive) return null;
-
-    const chanWithLive = await this.fetcher.fetchChannel(ch.platform.name, ch.pid, true);
-    if (!chanWithLive?.liveInfo) throw NotFoundError.from('channel.liveInfo', 'pid', ch.pid);
-    await this.liveRegistrar.add(chanWithLive.liveInfo, chanWithLive, cr);
+    const clInfo = await this.fetchInfo(ch.platform.name, ch.pid, tx);
+    if (!clInfo) return;
+    await this.liveRegistrar.add(clInfo, cr);
   }
 
-  /**
-   * 스트리머가 방송을 종료해도 query 결과에는 노출될 수 있다.
-   * 이렇게되면 리스트에서 삭제되자마자 다시 리스트에 포함되어 스트리머가 방송을 안함에도 불구하고 리스트에 포함되는 문제가 생길 수 있다.
-   * 따라서 queried LiveInfo만이 아니라 ChannelInfo.openLive를 같이 확인하여 방송중인지 확인한 뒤 live 목록에 추가한다.
-   */
   private async registerQueriedLive(newInfo: LiveInfo, cr: PlatformCriterionDto, tx: Tx = db) {
-    if (await this.liveFinder.findByPid(newInfo.pid, tx, { withDisabled: true })) return null;
-    const channel = await this.fetcher.fetchChannel(newInfo.type, newInfo.pid, false);
-    if (!channel?.openLive) return null;
-    await this.liveRegistrar.add(newInfo, channel, cr);
+    const clInfo = await this.fetchInfo(newInfo.type, newInfo.pid, tx);
+    if (!clInfo) return;
+    await this.liveRegistrar.add(clInfo, cr);
+  }
+
+  private async fetchInfo(pfName: PlatformName, pid: string, tx: Tx = db): Promise<ChannelLiveInfo | null> {
+    if (await this.liveFinder.findByPid(pid, tx, { withDisabled: true })) return null;
+
+    const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false, false);
+    if (!chanInfo?.openLive) return null;
+
+    const chanWithLive = await this.fetcher.fetchChannel(pfName, pid, true, false);
+    if (!chanWithLive?.liveInfo) return null;
+
+    return channelLiveInfo.parse(chanWithLive);
   }
 
   private async deregisterLive(liveDto: LiveDto) {

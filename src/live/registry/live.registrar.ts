@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
-import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -22,11 +21,11 @@ import { AMQP_HTTP, NOTIFIER } from '../../infra/infra.module.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { AmqpHttp } from '../../infra/amqp/amqp.interface.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
+import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -53,18 +52,19 @@ export class LiveRegistrar {
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
+    private readonly fetcher: PlatformFetcher,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
   ) {}
 
   async add(
-    liveInfo: LiveInfo,
-    channelInfo: ChannelInfo,
-    cr?: CriterionDto,
+    channelInfo: ChannelLiveInfo,
+    cr: CriterionDto | undefined = undefined,
     ignoreNodeIds: string[] = [],
     tx: Tx = db,
   ): Promise<LiveDto | null> {
+    const liveInfo = channelInfo.liveInfo;
     const existingLive = await this.liveFinder.findByPid(liveInfo.pid, tx);
     if (existingLive && !existingLive.isDisabled) {
       throw new ConflictError(`Already exists live: pid=${liveInfo.pid}`);
@@ -81,18 +81,36 @@ export class LiveRegistrar {
 
     const node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
 
+    // If there is no available node, notify and create a disabled live
     const topic = this.env.untf.topic;
     const groups = await this.ngRepo.findByTier(channel.priority.tier, tx);
     if (groups.length > 0 && !node) {
-      this.notifier.notify(topic, `No available nodes for assignment: ${liveInfo.channelName}`);
-      // since the notifications shouldn't keep ringing, the live creation process will continue
-    }
-    const pfName = channel.platform.name;
-    if (await this.amqpHttp.existsQueue(`${AMQP_EXIT_QUEUE_PREFIX}.${pfName}.${channel.pid}`)) {
-      log.warn('This live is already being recorded', { platform: pfName, channel: channel.username });
-      return null;
+      const headMessage = 'No available nodes for assignment';
+      const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
+      this.notifier.notify(topic, `${headMessage}: ${messageFields}`);
+
+      const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
+      this.printCreatedLiveLog(headMessage, created);
+      return created;
     }
 
+    // If the live is already being recorded, create a disabled live
+    const pfName = channel.platform.name;
+    if (await this.amqpHttp.existsQueue(`${AMQP_EXIT_QUEUE_PREFIX}.${pfName}.${channel.pid}`)) {
+      const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
+      this.printCreatedLiveLog('This live is already being recorded', created);
+      return created;
+    }
+
+    // If the live is inaccessible, create a disabled live
+    const fetched = await this.fetcher.fetchChannelNotNull(pfName, channel.pid, true, true);
+    if (!fetched?.liveInfo) {
+      const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
+      this.printCreatedLiveLog('This live is inaccessible', created);
+      return created;
+    }
+
+    // Create a live
     return tx.transaction(async (txx) => {
       const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
       if (node) {
@@ -104,22 +122,22 @@ export class LiveRegistrar {
         this.notifier.sendLiveInfo(topic, created);
       }
 
-      this.printLiveCreatedLog(created, node);
+      this.printCreatedLiveLog('New Live', created);
       return created;
     });
   }
 
-  private printLiveCreatedLog(live: LiveDto, node: NodeDto | null = null) {
+  private printCreatedLiveLog(message: string, live: LiveDto) {
     const attr: CreatedLiveLogAttr = {
       platform: live.platform.name,
       channel: live.channel.username,
       title: live.liveTitle,
     };
-    if (node) {
-      attr.node = node.name;
-      attr.assigned = node.states?.find((s) => s.platform.id === live.platform.id)?.assigned;
+    if (live.node) {
+      attr.node = live.node.name;
+      attr.assigned = live.node.states?.find((s) => s.platform.id === live.platform.id)?.assigned;
     }
-    log.info('New Live', attr);
+    log.info(message, attr);
   }
 
   async remove(recordId: string, opts: DeleteOptions = {}) {

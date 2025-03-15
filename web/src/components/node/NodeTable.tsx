@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button.tsx';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
   const queryClient = useQueryClient();
-  const table = useTable(data, nodeColumns);
+  const table = useTable(data, nodeColumns, 20);
 
   const onDelete = async () => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);

@@ -11,7 +11,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table';
 
-export function useTable<T>(data: T[], columns: ColumnDef<T>[], pageSize: number = 10) {
+export function useTable<T>(data: T[], columns: ColumnDef<T>[], pageSize: number = 12) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

@@ -41,7 +41,7 @@ export class LiveRecoveryManager {
           throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
         }
 
-        const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true);
+        const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true, true);
         if (!channelInfo?.liveInfo) {
           log.debug(`Uncleaned live`, { platform: platform.name, channel: channel.username });
           return;
@@ -71,7 +71,7 @@ export class LiveRecoveryManager {
           node: invalidLive.node?.name,
         });
 
-        await this.liveRegistrar.add(channelInfo.liveInfo, channelInfo, undefined, txx);
+        await this.liveRegistrar.add(channelInfo.liveInfo, channelInfo, undefined, [node.id], txx);
       });
     }
   }

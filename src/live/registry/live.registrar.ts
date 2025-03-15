@@ -53,7 +53,13 @@ export class LiveRegistrar {
     @Inject(NOTIFIER) private readonly notifier: Notifier,
   ) {}
 
-  async add(liveInfo: LiveInfo, channelInfo: ChannelInfo, cr?: CriterionDto, tx: Tx = db) {
+  async add(
+    liveInfo: LiveInfo,
+    channelInfo: ChannelInfo,
+    cr?: CriterionDto,
+    ignoreNodeIds: string[] = [],
+    tx: Tx = db,
+  ) {
     const exists = await this.liveFinder.findByPid(liveInfo.pid, tx);
     if (exists && !exists.isDisabled) {
       throw new ConflictError(`Already exists: ${liveInfo.pid}`);
@@ -69,7 +75,7 @@ export class LiveRegistrar {
     }
 
     return tx.transaction(async (txx) => {
-      const node = await this.nodeSelector.match(channel, txx);
+      const node = await this.nodeSelector.match(channel, ignoreNodeIds, txx);
       const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);

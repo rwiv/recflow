@@ -11,12 +11,13 @@ import { MissingValueError } from '../../utils/errors/errors/MissingValueError.j
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(channel: ChannelDto, tx: Tx = db): Promise<NodeDto | null> {
+  async match(channel: ChannelDto, ignoreNodeIds: string[] = [], tx: Tx = db): Promise<NodeDto | null> {
     const pfId = channel.platform.id;
 
     // search for available nodes
     let nodes = (await this.nodeFinder.findByNodeGteTier(channel.priority.tier, tx))
       .filter((node) => !node.isCordoned)
+      .filter((node) => !ignoreNodeIds.includes(node.id))
       .filter((node) => {
         const state = findState(node, pfId);
         if (state) return state.assigned < state.capacity;

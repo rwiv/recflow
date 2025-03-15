@@ -34,7 +34,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.externals.authed.secretName }}
-                  key: {{ .Values.externals.authed.apiKeyKey }}
+                  key: {{ .Values.externals.authed.apiKeySecretKey }}
             - name: UNTF_ENDPOINT
               value: {{ .Values.externals.untf.endpoint }}
             - name: UNTF_API_KEY

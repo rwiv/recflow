@@ -35,11 +35,16 @@ export class PlatformFetcher {
     }
   }
 
-  fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
+  fetchChannelNotNull(
+    platform: PlatformName,
+    pid: string,
+    hasLiveInfo: boolean,
+    checkStream: boolean = false,
+  ) {
     if (platform === 'chzzk') {
-      return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);
+      return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo, checkStream);
     } else if (platform === 'soop') {
-      return this.soopFetcher.fetchChannel(pid, hasLiveInfo);
+      return this.soopFetcher.fetchChannel(pid, hasLiveInfo, checkStream);
     } else {
       throw new BaseError(`Invalid PlatformType: ${platform}`);
     }

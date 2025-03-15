@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.6.2
+  tag: 0.6.3
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -40,11 +40,11 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    nodeFailureThreshold: 10
+    nodeFailureThreshold: 3
     nodeResetCycleSec: 21600
     liveRecoveryWaitTimeMs: 40000
     chzzkRecoveryExtraWaitTimeMs: 0
-    soopRecoveryExtraWaitTimeMs: 120000
+    soopRecoveryExtraWaitTimeMs: 10000
 
 externals:
   streamq:
@@ -53,7 +53,7 @@ externals:
   authed:
     url: http://authed.common.svc.cluster.local
     secretName: authed-app
-    apiKeyKey: api-key
+    apiKeySecretKey: api-key
   untf:
     endpoint: http://untf.common.svc.cluster.local
     secretName: untf-client

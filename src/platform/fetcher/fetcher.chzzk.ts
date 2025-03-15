@@ -35,10 +35,13 @@ export class ChzzkFetcher {
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));
   }
 
-  async fetchChannel(pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
+  async fetchChannel(pid: string, hasLiveInfo: boolean, checkStream: boolean): Promise<ChannelInfo> {
     let url = `${this.baseUrl}/channels/v1/${pid}`;
     if (hasLiveInfo) {
       url += '?hasLiveInfo=true';
+    }
+    if (checkStream) {
+      url += hasLiveInfo ? '&checkStream=true' : '?checkStream=true';
     }
     const res = await fetch(url, { method: 'GET' });
     await checkChannelResponse(res, pid);

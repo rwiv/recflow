@@ -9,7 +9,7 @@ import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.j
 export class Dispatcher {
   constructor(@Inject(AMQP) private readonly amqp: Amqp) {}
 
-  async exit(cmd: ExitCmd, platform: PlatformName, pid: string) {
+  async sendExitMessage(cmd: ExitCmd, platform: PlatformName, pid: string) {
     const queue = `${AMQP_EXIT_QUEUE_PREFIX}.${platform}.${pid}`;
     if (!(await this.amqp.checkQueue(queue))) {
       throw new Error(`Not found queue: ${queue}`);

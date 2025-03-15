@@ -10,10 +10,10 @@ const pid = '';
 
 it('test cancel', async () => {
   await amqp.init();
-  await dispatcher.exit('cancel', 'chzzk', pid);
+  await dispatcher.sendExitMessage('cancel', 'chzzk', pid);
 });
 
 it('test finish', async () => {
   await amqp.init();
-  await dispatcher.exit('finish', 'chzzk', pid);
+  await dispatcher.sendExitMessage('finish', 'chzzk', pid);
 });

@@ -24,6 +24,7 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
+import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -44,6 +45,7 @@ export class LiveRegistrar {
     private readonly listener: LiveEventListener,
     private readonly nodeSelector: NodeSelector,
     private readonly nodeUpdater: NodeUpdater,
+    private readonly ngRepo: NodeGroupRepository,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly priService: PriorityService,
@@ -76,6 +78,10 @@ export class LiveRegistrar {
 
     return tx.transaction(async (txx) => {
       const node = await this.nodeSelector.match(channel, ignoreNodeIds, txx);
+      const groups = await this.ngRepo.findByTier(channel.priority.tier, txx);
+      if (groups.length > 0 && !node) {
+        throw new NotFoundError('There are no available nodes for assignment');
+      }
       const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
@@ -84,12 +90,12 @@ export class LiveRegistrar {
       if (channel.priority.shouldNotify) {
         this.notifier.sendLiveInfo(this.env.untf.topic, created);
       }
-      this.logCreatedLive(created, node);
+      this.printLiveCreatedLog(created, node);
       return created;
     });
   }
 
-  private logCreatedLive(live: LiveDto, node: NodeDto | null = null) {
+  private printLiveCreatedLog(live: LiveDto, node: NodeDto | null = null) {
     const attr: CreatedLiveLogAttr = {
       platform: live.platform.name,
       channel: live.channel.username,

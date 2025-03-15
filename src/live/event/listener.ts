@@ -20,15 +20,13 @@ export class LiveEventListener {
 
   async onCreate(nodeEndpoint: string, created: LiveDto, cr?: CriterionDto) {
     await this.requestStdl(nodeEndpoint, created, cr);
-    return created;
   }
 
   async onDelete(deleted: LiveDto, cmd: ExitCmd) {
     if (cmd !== 'delete') {
-      await this.dispatcher.exit(cmd, deleted.platform.name, deleted.channel.pid);
+      await this.dispatcher.sendExitMessage(cmd, deleted.platform.name, deleted.channel.pid);
     }
     log.info(`Delete: ${deleted.channel.username}`);
-    return deleted;
   }
 
   private async requestStdl(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto) {

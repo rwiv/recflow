@@ -40,11 +40,15 @@ export class SoopFetcher {
 
   async fetchChannel(pid: string, hasLiveInfo: boolean, checkStream: boolean): Promise<ChannelInfo> {
     let url = `${this.baseUrl}/channels/v1/${pid}`;
+    const params = new URLSearchParams();
     if (hasLiveInfo) {
-      url += '?hasLiveInfo=true';
+      params.set('hasLiveInfo', 'true');
     }
     if (checkStream) {
-      url += hasLiveInfo ? '&checkStream=true' : '?checkStream=true';
+      params.set('checkStream', 'true');
+    }
+    if (params.toString().length > 0) {
+      url += `?${params.toString()}`;
     }
     const res = await fetch(url, { method: 'GET' });
     await checkChannelResponse(res, pid);
@@ -52,22 +56,26 @@ export class SoopFetcher {
   }
 
   private async fetchLivesByTag(tag: string, withCred: boolean = false) {
-    const qs = this.getQs('tag', tag, withCred);
+    const qs = this.liveQs('tag', tag, withCred);
     return this.requestLives(`${this.baseUrl}/lives/v1/tag?${qs}`);
   }
 
   private async fetchLivesByKeyword(keyword: string, withCred: boolean = false) {
-    const qs = this.getQs('keyword', keyword, withCred);
+    const qs = this.liveQs('keyword', keyword, withCred);
     return this.requestLives(`${this.baseUrl}/lives/v1/keyword?${qs}`);
   }
 
   private async fetchLivesByCategory(cateNo: string, withCred: boolean = false) {
-    const qs = this.getQs('cateNo', cateNo, withCred);
+    const qs = this.liveQs('cateNo', cateNo, withCred);
     return this.requestLives(`${this.baseUrl}/lives/v1/category?${qs}`);
   }
 
-  private getQs(key: string, value: string, withCred: boolean) {
-    return `${key}=${encodeURIComponent(value)}&size=${this.size}&withCred=${withCred}`;
+  private liveQs(key: string, value: string, withCred: boolean) {
+    const params = new URLSearchParams({ [key]: value, size: this.size.toString() });
+    if (withCred) {
+      params.set('withCred', 'true');
+    }
+    return params.toString();
   }
 
   private async requestLives(url: string) {

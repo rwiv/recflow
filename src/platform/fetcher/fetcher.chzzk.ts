@@ -37,11 +37,15 @@ export class ChzzkFetcher {
 
   async fetchChannel(pid: string, hasLiveInfo: boolean, checkStream: boolean): Promise<ChannelInfo> {
     let url = `${this.baseUrl}/channels/v1/${pid}`;
+    const params = new URLSearchParams();
     if (hasLiveInfo) {
-      url += '?hasLiveInfo=true';
+      params.set('hasLiveInfo', 'true');
     }
     if (checkStream) {
-      url += hasLiveInfo ? '&checkStream=true' : '?checkStream=true';
+      params.set('checkStream', 'true');
+    }
+    if (params.toString().length > 0) {
+      url += `?${params.toString()}`;
     }
     const res = await fetch(url, { method: 'GET' });
     await checkChannelResponse(res, pid);
@@ -49,22 +53,22 @@ export class ChzzkFetcher {
   }
 
   private async fetchLivesByTag(tag: string) {
-    const url = `${this.baseUrl}/lives/v1/tag?${this.getQs('tag', tag)}`;
+    const url = `${this.baseUrl}/lives/v1/tag?${this.liveQs('tag', tag)}`;
     return this.requestLives(url);
   }
 
   private async fetchLivesByKeyword(keyword: string) {
-    const url = `${this.baseUrl}/lives/v1/keyword?${this.getQs('keyword', keyword)}`;
+    const url = `${this.baseUrl}/lives/v1/keyword?${this.liveQs('keyword', keyword)}`;
     return this.requestLives(url);
   }
 
   private async fetchLivesByWatchParty(watchPartyNo: number) {
-    const url = `${this.baseUrl}/lives/v1/watchparty?${this.getQs('watchPartyNo', watchPartyNo.toString())}`;
+    const url = `${this.baseUrl}/lives/v1/watchparty?${this.liveQs('watchPartyNo', watchPartyNo.toString())}`;
     return this.requestLives(url);
   }
 
-  private getQs(key: string, value: string) {
-    return `${key}=${encodeURIComponent(value)}&size=${this.size}`;
+  private liveQs(key: string, value: string) {
+    return new URLSearchParams({ [key]: value, size: this.size.toString() }).toString();
   }
 
   private async requestLives(url: string) {

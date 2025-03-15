@@ -44,4 +44,9 @@ export class AmqpHttpImpl implements AmqpHttp {
       throw e;
     }
   }
+
+  async existsQueue(queue: string) {
+    const queues = await this.fetchAllQueues();
+    return !!queues.find((q) => q.name === queue);
+  }
 }

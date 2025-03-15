@@ -87,7 +87,9 @@ export class LiveRegistrar {
       this.notifier.notify(topic, `No available nodes for assignment: ${liveInfo.channelName}`);
       // since the notifications shouldn't keep ringing, the live creation process will continue
     }
-    if (await this.existsQueue(channel)) {
+    const pfName = channel.platform.name;
+    if (await this.amqpHttp.existsQueue(`${AMQP_EXIT_QUEUE_PREFIX}.${pfName}.${channel.pid}`)) {
+      log.warn('This live is already being recorded', { platform: pfName, channel: channel.username });
       return null;
     }
 
@@ -105,18 +107,6 @@ export class LiveRegistrar {
       this.printLiveCreatedLog(created, node);
       return created;
     });
-  }
-
-  private async existsQueue(channel: ChannelDto): Promise<boolean> {
-    const prefix = AMQP_EXIT_QUEUE_PREFIX;
-    const pfName = channel.platform.name;
-    const queues = await this.amqpHttp.fetchByPattern(`${prefix}.*`);
-    const existingQueue = queues.find((q) => q.name === `${prefix}.${pfName}.${channel.pid}`);
-    if (existingQueue) {
-      log.warn('This live is already being recorded', { platform: pfName, channel: channel.username });
-      return true;
-    }
-    return false;
   }
 
   private printLiveCreatedLog(live: LiveDto, node: NodeDto | null = null) {

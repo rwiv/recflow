@@ -46,13 +46,3 @@ it('test publish', async () => {
     }, 3500);
   });
 });
-
-it('test existQueue', async () => {
-  const queue = 'tasks';
-  const amqp = new AmqpImpl(readEnv());
-  await amqp.init();
-
-  // await amqp.assertQueue(queue);
-  const res = await amqp.checkQueue(queue);
-  console.log(res);
-});

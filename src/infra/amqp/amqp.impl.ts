@@ -29,18 +29,6 @@ export class AmqpImpl implements Amqp {
     return this.conn.createChannel();
   }
 
-  async checkQueue(queue: string): Promise<boolean> {
-    if (this.ch === undefined) {
-      throw new UninitializedError('Channel is not initialized');
-    }
-    try {
-      await this.ch.checkQueue(queue);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   async assertQueue(queue: string) {
     if (this.ch === undefined) {
       throw new UninitializedError('Channel is not initialized');

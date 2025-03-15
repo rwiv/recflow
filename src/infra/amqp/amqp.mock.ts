@@ -15,10 +15,6 @@ export class AmqpMock implements Amqp {
     return Promise.resolve({} as Channel);
   }
 
-  checkQueue(queue: string): Promise<boolean> {
-    return Promise.resolve(true);
-  }
-
   async assertQueue(queue: string) {
     log.info(`AmqpMock.assertQueue(${queue})`);
     return {} as amqplib.Replies.AssertQueue;

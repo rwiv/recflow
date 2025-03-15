@@ -7,6 +7,7 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { log } from 'jslog';
+import { stackTrace } from '../../utils/errors/utils.js';
 
 const queueStates = z.array(queueState);
 
@@ -26,15 +27,21 @@ export class AmqpHttpImpl implements AmqpHttp {
 
   async fetchAllQueues() {
     const url = `http://${this.conf.host}:${this.conf.httpPort}/api/queues`;
+    const token = Buffer.from(`${this.conf.username}:${this.conf.password}`).toString('base64');
     const res = await fetch(url, {
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${this.conf.username}:${this.conf.password}`).toString('base64')}`,
-      },
+      headers: { Authorization: `Basic ${token}` },
     });
     if (res.status >= 400) {
-      log.error(await res.text());
+      log.error('Failed to fetch queues', { status: res.status, body: await res.text() });
       throw new HttpRequestError('Failed to fetch queues', res.status);
     }
-    return queueStates.parse(await res.json());
+
+    const text = await res.text();
+    try {
+      return queueStates.parse(JSON.parse(text));
+    } catch (e) {
+      log.error('Failed to parse', { source: text, stack: stackTrace(e) });
+      throw e;
+    }
   }
 }

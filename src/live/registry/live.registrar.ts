@@ -5,7 +5,7 @@ import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -18,13 +18,15 @@ import { log } from 'jslog';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NOTIFIER } from '../../infra/infra.module.js';
+import { AMQP_HTTP, NOTIFIER } from '../../infra/infra.module.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
+import { AmqpHttp } from '../../infra/amqp/amqp.interface.js';
+import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -53,6 +55,7 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
+    @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
   ) {}
 
   async add(
@@ -61,10 +64,10 @@ export class LiveRegistrar {
     cr?: CriterionDto,
     ignoreNodeIds: string[] = [],
     tx: Tx = db,
-  ) {
-    const exists = await this.liveFinder.findByPid(liveInfo.pid, tx);
-    if (exists && !exists.isDisabled) {
-      throw new ConflictError(`Already exists: ${liveInfo.pid}`);
+  ): Promise<LiveDto | null> {
+    const existingLive = await this.liveFinder.findByPid(liveInfo.pid, tx);
+    if (existingLive && !existingLive.isDisabled) {
+      throw new ConflictError(`Already exists live: pid=${liveInfo.pid}`);
     }
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false, tx);
     if (!channel) {
@@ -76,23 +79,44 @@ export class LiveRegistrar {
       channel = await this.chWriter.createWithInfo(append, channelInfo, tx);
     }
 
+    const node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
+
+    const topic = this.env.untf.topic;
+    const groups = await this.ngRepo.findByTier(channel.priority.tier, tx);
+    if (groups.length > 0 && !node) {
+      this.notifier.notify(topic, `No available nodes for assignment: ${liveInfo.channelName}`);
+      // since the notifications shouldn't keep ringing, the live creation process will continue
+    }
+    if (await this.existsQueue(channel)) {
+      return null;
+    }
+
     return tx.transaction(async (txx) => {
-      const node = await this.nodeSelector.match(channel, ignoreNodeIds, txx);
-      const groups = await this.ngRepo.findByTier(channel.priority.tier, txx);
-      if (groups.length > 0 && !node) {
-        throw new NotFoundError('There are no available nodes for assignment');
-      }
       const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
         await this.listener.onCreate(node.endpoint, created, cr);
       }
+
       if (channel.priority.shouldNotify) {
-        this.notifier.sendLiveInfo(this.env.untf.topic, created);
+        this.notifier.sendLiveInfo(topic, created);
       }
+
       this.printLiveCreatedLog(created, node);
       return created;
     });
+  }
+
+  private async existsQueue(channel: ChannelDto): Promise<boolean> {
+    const prefix = AMQP_EXIT_QUEUE_PREFIX;
+    const pfName = channel.platform.name;
+    const queues = await this.amqpHttp.fetchByPattern(`${prefix}.*`);
+    const existingQueue = queues.find((q) => q.name === `${prefix}.${pfName}.${channel.pid}`);
+    if (existingQueue) {
+      log.warn('This live is already being recorded', { platform: pfName, channel: channel.username });
+      return true;
+    }
+    return false;
   }
 
   private printLiveCreatedLog(live: LiveDto, node: NodeDto | null = null) {

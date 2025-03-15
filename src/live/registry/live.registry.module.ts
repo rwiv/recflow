@@ -12,12 +12,14 @@ import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveCoordinator } from './live.coordinator.js';
 import { LiveRecoveryManager } from './live.recovery.manager.js';
 import { InfraModule } from '../../infra/infra.module.js';
+import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 
 @Module({
   imports: [
     ConfigModule,
     LiveAccessModule,
     ChannelServiceModule,
+    NodeStorageModule,
     NodeServiceModule,
     PlatformModule,
     LiveEventModule,

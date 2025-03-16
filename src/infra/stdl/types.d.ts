@@ -7,15 +7,10 @@ export interface ChzzkLiveRequest {
 
 export interface SoopLiveRequest {
   userId: string;
-  cred?: SoopCred;
-}
-
-export interface SoopCred {
-  username: string;
-  password: string;
+  cookies?: string;
 }
 
 export interface Stdl {
   requestChzzkLive(url: string, uid: string, cookies: Cookie[] | undefined): Promise<void>;
-  requestSoopLive(url: string, userId: string, cred: SoopCred | undefined): Promise<void>;
+  requestSoopLive(url: string, userId: string, cookies: Cookie[] | undefined): Promise<void>;
 }

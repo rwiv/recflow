@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cookie } from '../authed/types.js';
 import { log } from 'jslog';
-import { SoopCred, Stdl } from './types.js';
+import { Stdl } from './types.js';
 
 @Injectable()
 export class StdlMock implements Stdl {
@@ -9,7 +9,7 @@ export class StdlMock implements Stdl {
     log.info(`MockStdlClient.requestChzzkLive(...)`, { url, uid, cookies });
   }
 
-  async requestSoopLive(url: string, uid: string, cred: SoopCred | undefined = undefined): Promise<void> {
-    log.info(`MockStdlClient.requestSoopLive(...)`, { url, uid, cred });
+  async requestSoopLive(url: string, uid: string, cookies: Cookie[] | undefined = undefined): Promise<void> {
+    log.info(`MockStdlClient.requestSoopLive(...)`, { url, uid, cookies });
   }
 }

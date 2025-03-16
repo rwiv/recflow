@@ -1,5 +1,5 @@
 import type { Stdl } from '../../infra/stdl/types.js';
-import { Authed, SoopAccount } from '../../infra/authed/authed.js';
+import { Authed } from '../../infra/authed/authed.js';
 import { log } from 'jslog';
 import { Inject, Injectable } from '@nestjs/common';
 import { AUTHED, STDL } from '../../infra/infra.module.js';
@@ -41,11 +41,11 @@ export class LiveEventListener {
       }
       await this.stdl.requestChzzkLive(nodeEndpoint, live.channel.pid, cookies);
     } else if (live.platform.name === 'soop') {
-      let cred: SoopAccount | undefined = undefined;
+      let cookies: Cookie[] | undefined = undefined;
       if (enforceCreds || live.isAdult) {
-        cred = await this.authClient.requestSoopAccount();
+        cookies = await this.authClient.requestSoopCookies();
       }
-      await this.stdl.requestSoopLive(nodeEndpoint, live.channel.pid, cred);
+      await this.stdl.requestSoopLive(nodeEndpoint, live.channel.pid, cookies);
     } else {
       throw new EnumCheckError('Invalid live type');
     }

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { Cookie } from './types.js';
-import { Authed, cookiesResponse, soopAccount, SoopAccount } from './authed.js';
+import { Authed, cookiesResponse } from './authed.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 
 @Injectable()
@@ -30,14 +30,18 @@ export class AuthedImpl implements Authed {
     });
   }
 
-  async requestSoopAccount(): Promise<SoopAccount> {
-    const res = await fetch(`${this.authUrl}/api/soop/accounts/v1`, {
+  async requestSoopCookies(): Promise<Cookie[]> {
+    const res = await fetch(`${this.authUrl}/api/soop/cookies/v1`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${this.apiKey}` },
     });
     if (!res.ok) {
-      throw new HttpRequestError('Failed to request soop account', res.status);
+      throw new HttpRequestError('Failed to request soop cookies', res.status);
     }
-    return soopAccount.parse(await res.json());
+    const cookieString = cookiesResponse.parse(await res.json()).cookies;
+    return cookieString.split(';').map((cookie) => {
+      const [name, value] = cookie.trim().split('=');
+      return { name, value };
+    });
   }
 }

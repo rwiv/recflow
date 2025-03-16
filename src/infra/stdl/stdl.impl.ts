@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cookie } from '../authed/types.js';
-import { ChzzkLiveRequest, SoopCred, SoopLiveRequest, Stdl } from './types.js';
+import { ChzzkLiveRequest, SoopLiveRequest, Stdl } from './types.js';
 
 @Injectable()
 export class StdlImpl implements Stdl {
@@ -18,10 +18,14 @@ export class StdlImpl implements Stdl {
     });
   }
 
-  async requestSoopLive(url: string, userId: string, cred: SoopCred | undefined = undefined): Promise<void> {
+  async requestSoopLive(
+    url: string,
+    userId: string,
+    cookies: Cookie[] | undefined = undefined,
+  ): Promise<void> {
     let soopLive: SoopLiveRequest = { userId };
-    if (cred) {
-      soopLive = { ...soopLive, cred };
+    if (cookies) {
+      soopLive = { ...soopLive, cookies: JSON.stringify(cookies) };
     }
 
     const body = JSON.stringify({ reqType: 'soop_live', soopLive });

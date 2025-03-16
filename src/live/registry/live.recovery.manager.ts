@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AMQP_HTTP } from '../../infra/infra.module.js';
+import { AMQP_HTTP } from '../../infra/infra.tokens.js';
 import { AmqpHttp } from '../../infra/amqp/amqp.interface.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
 import { LiveFinder } from '../access/live.finder.js';
@@ -32,53 +32,66 @@ export class LiveRecoveryManager {
 
   async check(tx: Tx = db) {
     for (const invalidLive of await this.findInvalidLives()) {
-      const { platform, channel } = invalidLive;
-      await tx.transaction(async (txx) => {
-        if (!invalidLive.nodeId) {
-          throw new MissingValueError(`nodeId is missing: ${invalidLive.id}`);
-        }
-        const node = invalidLive.node;
-        if (!node) {
-          throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
-        }
-
-        const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true, true);
-        if (!channelInfo.liveInfo) {
-          log.info(`Delete uncleaned live`, { platform: platform.name, channel: channel.username });
-          await this.liveWriter.delete(invalidLive.id, txx);
-          return;
-        }
-
-        if (invalidLive.disconnectedAt === null) {
-          await this.liveWriter.update(invalidLive.id, { disconnectedAt: new Date() }, txx);
-          return;
-        }
-
-        const threshold = new Date(Date.now() - this.getExtraWaitTimeMs(invalidLive));
-        if (invalidLive.disconnectedAt > threshold) {
-          return;
-        }
-
-        if (node.failureCnt >= this.env.nodeFailureThreshold) {
-          await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, txx);
-        } else {
-          await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, txx);
-        }
-
-        await this.liveWriter.delete(invalidLive.id, txx);
-
-        log.info(`Recovery live`, {
-          platform: platform.name,
-          channel: channel.username,
-          node: invalidLive.node?.name,
-        });
-
-        await this.liveRegistrar.add(channelLiveInfo.parse(channelInfo), undefined, [node.id], txx);
-      });
+      await this.checkOne(invalidLive, tx);
     }
   }
 
-  private getExtraWaitTimeMs(invalidLive: LiveDto) {
+  private async checkOne(live: LiveDto, tx: Tx = db) {
+    if (!live.nodeId) {
+      throw new MissingValueError(`Live with no node assigned: ${live.id}`);
+    }
+
+    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true, true);
+    if (!chanInfo.liveInfo) {
+      return tx.transaction(async (txx) => {
+        const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
+        if (!queried) return;
+        await this.liveWriter.delete(queried.id, txx);
+        log.info(`Delete uncleaned live`, this.getLiveAttrs(queried));
+      });
+    }
+
+    if (live.disconnectedAt === null) {
+      return tx.transaction(async (txx) => {
+        const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
+        if (!queried) return;
+        await this.liveWriter.update(queried.id, { disconnectedAt: new Date() }, txx);
+      });
+    }
+    if (live.disconnectedAt > this.getWaitThresholdDate(live)) {
+      return;
+    }
+
+    await tx.transaction(async (txx) => {
+      const queried = await this.liveFinder.findById(live.id, { forUpdate: true, withNode: true }, txx);
+      if (!queried) return;
+
+      const node = queried.node;
+      if (!node) {
+        throw new MissingValueError(`live.node is missing: ${live.nodeId}`);
+      }
+
+      if (node.failureCnt >= this.env.nodeFailureThreshold) {
+        await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, txx);
+      } else {
+        await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, txx);
+      }
+
+      await this.liveWriter.delete(queried.id, txx);
+      log.info(`Recovery live`, this.getLiveAttrs(queried));
+      await this.liveRegistrar.add(channelLiveInfo.parse(chanInfo), undefined, [node.id], txx);
+    });
+  }
+
+  private getLiveAttrs(live: LiveDto) {
+    return {
+      platform: live.platform.name,
+      channel: live.channel.username,
+      node: live.node?.name,
+    };
+  }
+
+  private getWaitThresholdDate(invalidLive: LiveDto) {
     let waitTimeMs = 0;
     if (invalidLive.platform.name === platformNameEnum.Values.chzzk) {
       waitTimeMs = this.env.chzzkRecoveryExtraWaitTimeMs;
@@ -87,7 +100,7 @@ export class LiveRecoveryManager {
     } else {
       throw new EnumCheckError(`Unsupported platform: ${invalidLive.platform.name}`);
     }
-    return waitTimeMs;
+    return new Date(Date.now() - waitTimeMs);
   }
 
   private async findInvalidLives() {

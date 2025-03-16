@@ -8,8 +8,9 @@ import { db } from '../../infra/db/db.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 
-export interface FindOptions {
-  withDisabled?: boolean;
+export interface FindOptions extends LiveMapOpt {
+  includeDisabled?: boolean;
+  forUpdate?: boolean;
 }
 
 @Injectable()
@@ -19,9 +20,14 @@ export class LiveFinder {
     private readonly mapper: LiveMapper,
   ) {}
 
-  async findById(id: string, opts: FindOptions = {}) {
-    const ent = await this.liveRepo.findById(id);
-    return this.filterByOpts(ent, opts);
+  async findById(id: string, opts: FindOptions = {}, tx: Tx = db) {
+    if (opts.forUpdate) {
+      const ent = await this.liveRepo.findByIdForUpdate(id, tx);
+      return this.filterByOpts(ent, opts);
+    } else {
+      const ent = await this.liveRepo.findById(id, tx);
+      return this.filterByOpts(ent, opts);
+    }
   }
 
   async findByPid(pid: string, tx: Tx = db, opts: FindOptions = {}) {
@@ -31,14 +37,14 @@ export class LiveFinder {
     return this.filterByOpts(entities[0], opts);
   }
 
-  private async filterByOpts(ent: LiveEnt | undefined, opts: FindOptions = {}) {
-    let withDisabled = opts.withDisabled;
+  private async filterByOpts(ent: LiveEnt | undefined, opts: FindOptions = {}, tx: Tx = db) {
+    let withDisabled = opts.includeDisabled;
     if (withDisabled === undefined) {
       withDisabled = false;
     }
     if (!ent) return undefined;
     if (ent.isDisabled && !withDisabled) return undefined;
-    return this.mapper.map(ent);
+    return this.mapper.map(ent, tx, opts);
   }
 
   async findAll(opt: LiveMapOpt = {}, tx: Tx = db) {
@@ -53,14 +59,14 @@ export class LiveFinder {
     return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), tx, opt);
   }
 
-  async findEarliestUpdatedOne(): Promise<LiveDto | undefined> {
-    const entities = await this.liveRepo.findEarliestUpdated(1);
+  async findEarliestUpdatedOne(tx: Tx = db): Promise<LiveDto | undefined> {
+    const entities = await this.liveRepo.findEarliestUpdated(1, tx);
     if (entities.length === 0) {
       return undefined;
     }
     if (entities.length !== 1) {
       throw new ConflictError(`Invalid live entities: length=${entities.length}`);
     }
-    return this.mapper.map(entities[0]);
+    return this.mapper.map(entities[0], tx);
   }
 }

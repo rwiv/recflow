@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LiveEventListener } from '../event/listener.js';
 import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
@@ -17,7 +16,7 @@ import { log } from 'jslog';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { AMQP_HTTP, NOTIFIER } from '../../infra/infra.module.js';
+import { AMQP_HTTP, NOTIFIER, STDL } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
@@ -26,6 +25,8 @@ import { NodeGroupRepository } from '../../node/storage/node-group.repository.js
 import { AmqpHttp } from '../../infra/amqp/amqp.interface.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
+import type { Stdl } from '../../infra/stdl/types.js';
+import { Dispatcher } from '../event/dispatcher.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -43,7 +44,6 @@ interface CreatedLiveLogAttr {
 @Injectable()
 export class LiveRegistrar {
   constructor(
-    private readonly listener: LiveEventListener,
     private readonly nodeSelector: NodeSelector,
     private readonly nodeUpdater: NodeUpdater,
     private readonly ngRepo: NodeGroupRepository,
@@ -53,9 +53,11 @@ export class LiveRegistrar {
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
     private readonly fetcher: PlatformFetcher,
+    private readonly dispatcher: Dispatcher,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
+    @Inject(STDL) private readonly stdl: Stdl,
   ) {}
 
   async add(
@@ -114,7 +116,7 @@ export class LiveRegistrar {
       const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
-        await this.listener.onCreate(node.endpoint, created, cr);
+        await this.stdl.requestRecording(node.endpoint, created, cr);
       }
 
       if (channel.priority.shouldNotify) {
@@ -149,7 +151,7 @@ export class LiveRegistrar {
       isPurge = false;
     }
 
-    const live = await this.liveFinder.findById(recordId, { withDisabled: true });
+    const live = await this.liveFinder.findById(recordId, { includeDisabled: true });
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!isPurge) {
@@ -161,7 +163,10 @@ export class LiveRegistrar {
       await this.liveWriter.delete(recordId);
     }
 
-    await this.listener.onDelete(live, exitCmd);
+    if (exitCmd !== 'delete') {
+      await this.dispatcher.sendExitMessage(exitCmd, live.platform.name, live.channel.pid);
+    }
+    log.info(`Delete Live: ${live.channel.username}`);
 
     return live;
   }

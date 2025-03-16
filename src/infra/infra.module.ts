@@ -7,24 +7,19 @@ import { StdlMock } from './stdl/stdl.mock.js';
 import { StdlImpl } from './stdl/stdl.impl.js';
 import { AuthedMock } from './authed/authed.mock.js';
 import { AuthedImpl } from './authed/authed.impl.js';
-
-export const STDL = 'Stdl';
-export const AUTHED = 'Authed';
-export const NOTIFIER = 'Notifier';
-export const AMQP = 'Amqp';
-export const AMQP_HTTP = 'AmqpHttp';
+import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL } from './infra.tokens.js';
 
 @Module({
   imports: [ConfigModule],
   providers: [
     InfraFactory,
     {
-      provide: STDL,
-      useClass: process.env.NODE_ENV === 'prod' ? StdlImpl : StdlMock,
-    },
-    {
       provide: AUTHED,
       useClass: process.env.NODE_ENV === 'prod' ? AuthedImpl : AuthedMock,
+    },
+    {
+      provide: STDL,
+      useClass: process.env.NODE_ENV === 'prod' ? StdlImpl : StdlMock,
     },
     {
       provide: NOTIFIER,

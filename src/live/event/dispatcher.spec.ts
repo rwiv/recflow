@@ -2,10 +2,12 @@ import { it } from 'vitest';
 import { AmqpImpl } from '../../infra/amqp/amqp.impl.js';
 import { readEnv } from '../../common/config/env.js';
 import { Dispatcher } from './dispatcher.js';
+import { AmqpHttpImpl } from '../../infra/amqp/amqp-http.impl.js';
 
 const env = readEnv();
 const amqp = new AmqpImpl(env);
-const dispatcher = new Dispatcher(amqp);
+const amqpHttp = new AmqpHttpImpl(env);
+const dispatcher = new Dispatcher(amqp, amqpHttp);
 const pid = '';
 
 it('test cancel', async () => {

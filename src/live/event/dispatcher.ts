@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AMQP, AMQP_HTTP } from '../../infra/infra.module.js';
+import { AMQP, AMQP_HTTP } from '../../infra/infra.tokens.js';
 import { Amqp, AmqpHttp } from '../../infra/amqp/amqp.interface.js';
 import { ExitCmd, ExitMessage } from './event.schema.js';
 import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';

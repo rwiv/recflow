@@ -3,6 +3,11 @@ import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { LiveCoordinator } from '../../live/registry/live.coordinator.js';
 import { LiveRefresher } from '../../live/access/live.refresher.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
+import { LiveCleaner } from '../../live/registry/live.cleaner.js';
+import { LiveRefreshTask } from './tasks/live.refresh-task.js';
+import { LiveRegisterCheckTask } from './tasks/live.register-check.task.js';
+import { LiveRecoveryTask } from './tasks/live-recovery.task.js';
+import { LiveRecoveryManager } from '../../live/registry/live.recovery.manager.js';
 import { LiveCleanupTask } from './tasks/live.cleanup-task.js';
 import {
   DEFAULT_RECOVERY_CYCLE,
@@ -10,16 +15,13 @@ import {
   DEFAULT_REFRESH_CYCLE,
   DEFAULT_REGISTER_CHECK_CYCLE,
 } from './spec/live.task.contants.js';
-import { LiveRefreshTask } from './tasks/live.refresh-task.js';
-import { LiveRegisterCheckTask } from './tasks/live.register-check.task.js';
-import { LiveRecoveryTask } from './tasks/live-recovery.task.js';
-import { LiveRecoveryManager } from '../../live/registry/live.recovery.manager.js';
 
 @Injectable()
 export class LiveTaskInitializer {
   constructor(
     private readonly crFinder: CriterionFinder,
     private readonly liveCoordinator: LiveCoordinator,
+    private readonly liveCleaner: LiveCleaner,
     private readonly liveRefresher: LiveRefresher,
     private readonly liveRecoveryManager: LiveRecoveryManager,
     private readonly scheduler: TaskScheduler,
@@ -29,7 +31,7 @@ export class LiveTaskInitializer {
     const registerCheckTask = new LiveRegisterCheckTask(this.crFinder, this.liveCoordinator, this.scheduler);
     this.scheduler.addPeriodTask(registerCheckTask, DEFAULT_REGISTER_CHECK_CYCLE, true);
 
-    const cleanupTask = new LiveCleanupTask(this.liveCoordinator);
+    const cleanupTask = new LiveCleanupTask(this.liveCleaner);
     this.scheduler.addPeriodTask(cleanupTask, DEFAULT_CLEANUP_CYCLE, true);
 
     const refreshTask = new LiveRefreshTask(this.liveRefresher);

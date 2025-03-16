@@ -1,4 +1,5 @@
-import { Cookie } from '../authed/types.js';
+import { LiveDto } from '../../live/spec/live.dto.schema.js';
+import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 
 export interface ChzzkLiveRequest {
   uid: string;
@@ -11,6 +12,5 @@ export interface SoopLiveRequest {
 }
 
 export interface Stdl {
-  requestChzzkLive(url: string, uid: string, cookies: Cookie[] | undefined): Promise<void>;
-  requestSoopLive(url: string, userId: string, cookies: Cookie[] | undefined): Promise<void>;
+  requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void>;
 }

@@ -11,8 +11,9 @@ import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveCoordinator } from './live.coordinator.js';
 import { LiveRecoveryManager } from './live.recovery.manager.js';
-import { InfraModule } from '../../infra/infra.module.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
+import { LiveCleaner } from './live.cleaner.js';
+import { InfraModule } from '../../infra/infra.module.js';
 
 @Module({
   imports: [
@@ -28,11 +29,12 @@ import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
   providers: [
     LiveRegistrar,
     LiveCoordinator,
+    LiveCleaner,
     PlatformLiveFilter,
     ChzzkLiveFilter,
     SoopLiveFilter,
     LiveRecoveryManager,
   ],
-  exports: [LiveRegistrar, LiveCoordinator, LiveRecoveryManager],
+  exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager],
 })
 export class LiveRegistryModule {}

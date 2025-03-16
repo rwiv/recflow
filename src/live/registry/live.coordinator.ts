@@ -9,6 +9,7 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class LiveCoordinator {
@@ -23,7 +24,7 @@ export class LiveCoordinator {
   async registerQueriedLives(cr: PlatformCriterionDto) {
     const followedChannels = await this.channelFinder.findFollowedChannels(cr.platform.name);
     for (const ch of followedChannels) {
-      const chanInfo = await this.fetchInfo(ch.platform.name, ch.pid);
+      const chanInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
       if (!chanInfo) return;
       await this.liveRegistrar.add(chanInfo, cr);
     }
@@ -31,20 +32,30 @@ export class LiveCoordinator {
     const queriedLives = await this.fetcher.fetchLives(cr);
     const filtered = await this.filter.getFiltered(cr, queriedLives);
     for (const live of filtered) {
-      const chanInfo = await this.fetchInfo(live.type, live.pid);
+      const chanInfo = await this.fetchInfo(live.type, live.pid, false);
       if (!chanInfo) return;
       await this.liveRegistrar.add(chanInfo, cr);
     }
   }
 
-  private async fetchInfo(pfName: PlatformName, pid: string, tx: Tx = db): Promise<ChannelLiveInfo | null> {
+  private async fetchInfo(
+    pfName: PlatformName,
+    pid: string,
+    isFollowed: boolean,
+    tx: Tx = db,
+  ): Promise<ChannelLiveInfo | null> {
     if (await this.liveFinder.findByPid(pid, tx, { includeDisabled: true })) return null;
 
-    const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false, false);
-    if (!chanInfo?.openLive) return null;
+    if (isFollowed) {
+      const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false, false);
+      if (!chanInfo?.openLive) return null;
+    }
 
     const chanWithLive = await this.fetcher.fetchChannel(pfName, pid, true, false);
-    if (!chanWithLive?.liveInfo) return null;
+    if (!chanWithLive?.liveInfo) {
+      log.error('Live info not found', { pfName, pid });
+      return null;
+    }
 
     return channelLiveInfo.parse(chanWithLive);
   }

@@ -9,6 +9,7 @@ import {
   chzzkCriterionDto,
   soopCriterionDto,
 } from '../../criterion/spec/criterion.dto.schema.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class PlatformFetcher {
@@ -41,6 +42,9 @@ export class PlatformFetcher {
     hasLiveInfo: boolean,
     checkStream: boolean = false,
   ) {
+    if (checkStream) {
+      log.info('Fetch with checkStream', { platform, pid });
+    }
     if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo, checkStream);
     } else if (platform === 'soop') {

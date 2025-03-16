@@ -8,8 +8,13 @@ import { Env } from '../../common/config/env.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { log } from 'jslog';
 import { stackTrace } from '../../utils/errors/utils.js';
+import { FatalError } from '../../utils/errors/errors/FatalError.js';
 
 const queueStates = z.array(queueState);
+export type QueueState = z.infer<typeof queueState>;
+
+const MAX_RETRY_CNT = 3;
+const BASE_RETRY_DELAY = 100;
 
 @Injectable()
 export class AmqpHttpImpl implements AmqpHttp {
@@ -25,15 +30,28 @@ export class AmqpHttpImpl implements AmqpHttp {
     return queues.filter((queue) => regex.test(queue.name));
   }
 
-  async fetchAllQueues() {
+  async fetchAllQueues(): Promise<QueueState[]> {
+    for (let retryCnt = 0; retryCnt <= MAX_RETRY_CNT; retryCnt++) {
+      try {
+        return await this._fetchAllQueues();
+      } catch (e) {
+        if (retryCnt === MAX_RETRY_CNT) {
+          throw e;
+        }
+        await new Promise((resolve) => setTimeout(resolve, BASE_RETRY_DELAY * 2 ** retryCnt));
+      }
+    }
+    throw new FatalError('Unreachable');
+  }
+
+  async _fetchAllQueues(): Promise<QueueState[]> {
     const url = `http://${this.conf.host}:${this.conf.httpPort}/api/queues`;
     const token = Buffer.from(`${this.conf.username}:${this.conf.password}`).toString('base64');
     const res = await fetch(url, {
       headers: { Authorization: `Basic ${token}` },
     });
     if (res.status >= 400) {
-      log.error('Failed to fetch queues', { status: res.status, body: await res.text() });
-      throw new HttpRequestError('Failed to fetch queues', res.status);
+      throw new HttpRequestError(await res.text(), res.status);
     }
 
     const text = await res.text();

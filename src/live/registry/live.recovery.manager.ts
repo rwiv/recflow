@@ -41,6 +41,10 @@ export class LiveRecoveryManager {
       throw new MissingValueError(`Live with no node assigned: ${live.id}`);
     }
 
+    if (live.disconnectedAt && live.disconnectedAt > this.getWaitThresholdDate(live)) {
+      return;
+    }
+
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true, true);
     if (!chanInfo.liveInfo) {
       return tx.transaction(async (txx) => {
@@ -57,9 +61,6 @@ export class LiveRecoveryManager {
         if (!queried) return;
         await this.liveWriter.update(queried.id, { disconnectedAt: new Date() }, txx);
       });
-    }
-    if (live.disconnectedAt > this.getWaitThresholdDate(live)) {
-      return;
     }
 
     await tx.transaction(async (txx) => {

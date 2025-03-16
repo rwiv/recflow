@@ -23,13 +23,14 @@ export class AmqpHttpMock implements AmqpHttp {
     for (const live of await this.fetchLives()) {
       const queueName = `${AMQP_EXIT_QUEUE_PREFIX}.${live.platform.name}.${live.channel.pid}`;
       if (queueName === queue) {
-        return true;
+        return live.node?.group?.name !== FILTER_NODE_GROUP_NAME;
       }
     }
     return false;
   }
 
   private async fetchLives() {
-    return (await (await fetch('http://localhost:3000/api/lives')).json()) as LiveDto[];
+    const res = await fetch('http://localhost:3000/api/lives');
+    return (await res.json()) as LiveDto[];
   }
 }

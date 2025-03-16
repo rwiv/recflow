@@ -42,11 +42,10 @@ export class LiveRecoveryManager {
           throw new MissingValueError(`node is missing: ${invalidLive.nodeId}`);
         }
 
-        const channelInfo = channelLiveInfo.parse(
-          await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true, true),
-        );
+        const channelInfo = await this.fetcher.fetchChannelNotNull(platform.name, channel.pid, true, true);
         if (!channelInfo.liveInfo) {
-          log.debug(`Uncleaned live`, { platform: platform.name, channel: channel.username });
+          log.info(`Delete uncleaned live`, { platform: platform.name, channel: channel.username });
+          await this.liveWriter.delete(invalidLive.id, txx);
           return;
         }
 
@@ -74,7 +73,7 @@ export class LiveRecoveryManager {
           node: invalidLive.node?.name,
         });
 
-        await this.liveRegistrar.add(channelInfo, undefined, [node.id], txx);
+        await this.liveRegistrar.add(channelLiveInfo.parse(channelInfo), undefined, [node.id], txx);
       });
     }
   }

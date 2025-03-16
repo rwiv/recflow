@@ -94,12 +94,11 @@ export class LiveRegistrar {
       return created;
     }
 
-    // If the live is already being recorded, create a disabled live
+    // If the live is already being recorded, do nothing
     const pfName = channel.platform.name;
     if (await this.amqpHttp.existsQueue(`${AMQP_EXIT_QUEUE_PREFIX}.${pfName}.${channel.pid}`)) {
-      const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
-      this.printCreatedLiveLog('This live is already being recorded', created);
-      return created;
+      log.info('This live is already being recorded', { platform: pfName, channel: channel.username });
+      return null;
     }
 
     // If the live is inaccessible, create a disabled live

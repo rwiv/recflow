@@ -12,6 +12,7 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { LiveWriter } from '../access/live.writer.js';
 
 @Injectable()
 export class LiveCoordinator {
@@ -19,6 +20,7 @@ export class LiveCoordinator {
     private readonly channelFinder: ChannelFinder,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
+    private readonly liveWriter: LiveWriter,
     private readonly fetcher: PlatformFetcher,
     private readonly filter: PlatformLiveFilter,
   ) {}
@@ -69,6 +71,6 @@ export class LiveCoordinator {
     const pid = liveDto.channel.pid;
     const channel = await this.fetcher.fetchChannel(liveDto.platform.name, pid, false);
     if (channel?.openLive) return null;
-    await this.liveRegistrar.remove(liveDto.id, { isPurge: true });
+    await this.liveWriter.delete(liveDto.id);
   }
 }

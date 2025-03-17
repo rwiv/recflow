@@ -30,7 +30,9 @@ export class LiveCoordinator {
     }
 
     const queriedLives = await this.fetcher.fetchLives(cr);
+    log.info('Queried Live Count', { count: queriedLives.length });
     const filtered = await this.filter.getFiltered(cr, queriedLives);
+    log.info('Filtered Live Count', { count: filtered.length });
     for (const live of filtered) {
       const chanInfo = await this.fetchInfo(live.type, live.pid, false);
       if (!chanInfo) return;

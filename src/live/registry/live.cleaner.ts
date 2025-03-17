@@ -3,7 +3,7 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { log } from 'jslog';
-import { LiveFinder } from '../access/live.finder.js';
+import { FindOptions, LiveFinder } from '../access/live.finder.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveWriter } from '../access/live.writer.js';
 
@@ -26,11 +26,8 @@ export class LiveCleaner {
     if (channelInfo?.openLive) return null;
 
     return tx.transaction(async (txx) => {
-      const queried = await this.liveFinder.findById(
-        live.id,
-        { includeDisabled: true, forUpdate: true },
-        txx,
-      );
+      const opts: FindOptions = { includeDisabled: true, forUpdate: true };
+      const queried = await this.liveFinder.findById(live.id, opts, txx);
       if (!queried) return;
       await this.liveWriter.delete(queried.id, txx);
       log.info(`Delete: ${queried.channel.username}`);

@@ -1,5 +1,5 @@
 cd ..
-set IMG=harbor.rwiv.xyz/private/stmgr:0.7.8
+set IMG=harbor.rwiv.xyz/private/stmgr:0.8.1
 set DOCKERFILE=./docker/Dockerfile
 
 docker rmi %IMG%

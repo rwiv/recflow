@@ -9,7 +9,6 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { log } from 'jslog';
 
 @Injectable()
 export class LiveCoordinator {
@@ -25,18 +24,15 @@ export class LiveCoordinator {
     const followedChannels = await this.channelFinder.findFollowedChannels(cr.platform.name);
     for (const ch of followedChannels) {
       const chanInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
-      if (!chanInfo) return;
+      if (!chanInfo) continue;
       await this.liveRegistrar.add(chanInfo, cr);
     }
 
     const queriedLives = await this.fetcher.fetchLives(cr);
-    log.info('Queried Live Count', { count: queriedLives.length });
     const filtered = await this.filter.getFiltered(cr, queriedLives);
-    log.info('Filtered Live Count', { count: filtered.length });
     for (const live of filtered) {
-      log.info('Register Live', { channel: live.channelName, title: live.liveTitle });
       const chanInfo = await this.fetchInfo(live.type, live.pid, false);
-      if (!chanInfo) return;
+      if (!chanInfo) continue;
       await this.liveRegistrar.add(chanInfo, cr);
     }
   }

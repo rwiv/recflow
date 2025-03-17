@@ -34,6 +34,7 @@ export class LiveCoordinator {
     const filtered = await this.filter.getFiltered(cr, queriedLives);
     log.info('Filtered Live Count', { count: filtered.length });
     for (const live of filtered) {
+      log.info('Register Live', { channel: live.channelName, title: live.liveTitle });
       const chanInfo = await this.fetchInfo(live.type, live.pid, false);
       if (!chanInfo) return;
       await this.liveRegistrar.add(chanInfo, cr);

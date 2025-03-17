@@ -47,11 +47,11 @@ export class LiveCoordinator {
     if (await this.liveFinder.findByPid(pid, tx, { includeDisabled: true })) return null;
 
     if (isFollowed) {
-      const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false, false);
+      const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false);
       if (!chanInfo?.openLive) return null;
     }
 
-    const chanWithLive = await this.fetcher.fetchChannel(pfName, pid, true, false);
+    const chanWithLive = await this.fetcher.fetchChannel(pfName, pid, true);
     if (!chanWithLive?.liveInfo) {
       log.error('Live info not found', { pfName, pid });
       return null;

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../spec/wapper/live.js';
+import { ChannelInfo } from '../spec/wapper/channel.js';
 import { ChzzkFetcher } from './fetcher.chzzk.js';
 import { SoopFetcher } from './fetcher.soop.js';
 import { PlatformName } from '../spec/storage/platform.enum.schema.js';
@@ -28,23 +29,29 @@ export class PlatformFetcher {
     }
   }
 
-  fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean, checkStream: boolean = false) {
+  fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
     try {
-      return this.fetchChannelNotNull(platform, pid, hasLiveInfo, checkStream);
+      return this.fetchChannelNotNull(platform, pid, hasLiveInfo);
     } catch (e) {
       return null;
     }
   }
 
-  fetchChannelNotNull(
+  fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
+    return this._fetchChannelNotNull(platform, pid, hasLiveInfo, false);
+  }
+
+  async fetchChannelWithCheckStream(platform: PlatformName, pid: string): Promise<ChannelInfo> {
+    log.info('Fetch with checkStream', { platform, pid });
+    return await this._fetchChannelNotNull(platform, pid, true, true);
+  }
+
+  private _fetchChannelNotNull(
     platform: PlatformName,
     pid: string,
     hasLiveInfo: boolean,
-    checkStream: boolean = false,
+    checkStream: boolean,
   ) {
-    if (checkStream) {
-      log.info('Fetch with checkStream', { platform, pid });
-    }
     if (platform === 'chzzk') {
       return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo, checkStream);
     } else if (platform === 'soop') {

@@ -45,7 +45,7 @@ export class LiveRecoveryManager {
       return;
     }
 
-    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true, true);
+    const chanInfo = await this.fetcher.fetchChannelWithCheckStream(live.platform.name, live.channel.pid);
     if (!chanInfo.liveInfo) {
       return tx.transaction(async (txx) => {
         const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
@@ -55,11 +55,12 @@ export class LiveRecoveryManager {
       });
     }
 
-    if (live.disconnectedAt === null) {
+    if (live.disconnectedAt === null && this.getWaitTimeMs(live) > 0) {
       return tx.transaction(async (txx) => {
         const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
         if (!queried) return;
         await this.liveWriter.update(queried.id, { disconnectedAt: new Date() }, txx);
+        log.info(`Set live.disconnectedAt`, this.getLiveAttrs(queried));
       });
     }
 
@@ -92,16 +93,20 @@ export class LiveRecoveryManager {
     };
   }
 
-  private getWaitThresholdDate(invalidLive: LiveDto) {
+  private getWaitThresholdDate(live: LiveDto) {
+    return new Date(Date.now() - this.getWaitTimeMs(live));
+  }
+
+  private getWaitTimeMs(live: LiveDto) {
     let waitTimeMs = 0;
-    if (invalidLive.platform.name === platformNameEnum.Values.chzzk) {
+    if (live.platform.name === platformNameEnum.Values.chzzk) {
       waitTimeMs = this.env.chzzkRecoveryExtraWaitTimeMs;
-    } else if (invalidLive.platform.name === platformNameEnum.Values.soop) {
+    } else if (live.platform.name === platformNameEnum.Values.soop) {
       waitTimeMs = this.env.soopRecoveryExtraWaitTimeMs;
     } else {
-      throw new EnumCheckError(`Unsupported platform: ${invalidLive.platform.name}`);
+      throw new EnumCheckError(`Unsupported platform: ${live.platform.name}`);
     }
-    return new Date(Date.now() - waitTimeMs);
+    return waitTimeMs;
   }
 
   private async findInvalidLives() {

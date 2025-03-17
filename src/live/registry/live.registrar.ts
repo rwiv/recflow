@@ -104,8 +104,8 @@ export class LiveRegistrar {
     }
 
     // If the live is inaccessible, create a disabled live
-    const fetched = await this.fetcher.fetchChannelNotNull(pfName, channel.pid, true, true);
-    if (!fetched?.liveInfo) {
+    const fetched = await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid);
+    if (!fetched.liveInfo) {
       const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
       this.printCreatedLiveLog('This live is inaccessible', created);
       return created;

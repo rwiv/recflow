@@ -49,10 +49,11 @@ export class LiveController {
   @Post('/')
   async add(@Body() req: LiveAppendRequest) {
     const append = liveAppendRequest.parse(req);
-    const channel = channelLiveInfo.parse(
-      await this.fetcher.fetchChannelNotNull(append.platformName, append.pid, true),
-    );
-    return this.liveService.add(channel);
+    const channel = await this.fetcher.fetchChannelNotNull(append.platformName, append.pid, true);
+    if (!channel.liveInfo) {
+      throw new NotFoundError('Channel is not live');
+    }
+    return this.liveService.add(channelLiveInfo.parse(channel));
   }
 
   @Delete('/')

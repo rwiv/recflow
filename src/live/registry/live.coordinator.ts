@@ -52,10 +52,8 @@ export class LiveCoordinator {
     }
 
     const chanWithLive = await this.fetcher.fetchChannel(pfName, pid, true);
-    if (!chanWithLive?.liveInfo) {
-      log.error('Live info not found', { pfName, pid });
-      return null;
-    }
+    // If the live status is not applied to the list (it can actually happen in chzzk)
+    if (!chanWithLive?.liveInfo) return null;
 
     return channelLiveInfo.parse(chanWithLive);
   }

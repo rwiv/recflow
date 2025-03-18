@@ -107,11 +107,6 @@ export class LiveRegistrar {
     if (!(await this.fetcher.fetchChannelNotNull(pfName, channel.pid, true)).liveInfo) {
       throw NotFoundError.from('LiveInfo', 'pid', channel.pid);
     }
-    if (!(await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo) {
-      const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
-      this.printCreatedLiveLog('This live is inaccessible', created);
-      return created;
-    }
 
     // Create a live
     return tx.transaction(async (txx) => {

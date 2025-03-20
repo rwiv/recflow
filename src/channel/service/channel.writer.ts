@@ -25,6 +25,7 @@ import { TagCommandRepository } from '../storage/tag.command.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from './priority.service.js';
 import { ChannelFinder } from './channel.finder.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class ChannelWriter {
@@ -128,7 +129,17 @@ export class ChannelWriter {
     if (!channel) {
       throw new NotFoundError('earliest refreshed channel not found');
     }
-    const info = await this.fetcher.fetchChannelNotNull(channel.platform.name, channel.pid, false);
+
+    const info = await this.fetcher.fetchChannel(channel.platform.name, channel.pid, false);
+    if (!info) {
+      log.info(`During the refresh process, the fetched channelInfo is null`, {
+        platform: channel.platform.name,
+        pid: channel.pid,
+        channel: channel.username,
+      });
+      return this.update(channel.id, {}, true);
+    }
+
     const update: ChannelUpdate = {
       username: info.username,
       profileImgUrl: info.profileImgUrl,

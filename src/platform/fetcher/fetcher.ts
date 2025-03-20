@@ -11,6 +11,7 @@ import {
   soopCriterionDto,
 } from '../../criterion/spec/criterion.dto.schema.js';
 import { log } from 'jslog';
+import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 
 @Injectable()
 export class PlatformFetcher {
@@ -29,11 +30,15 @@ export class PlatformFetcher {
     }
   }
 
-  fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
+  async fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
     try {
-      return this.fetchChannelNotNull(platform, pid, hasLiveInfo);
+      return await this.fetchChannelNotNull(platform, pid, hasLiveInfo);
     } catch (e) {
-      return null;
+      if (e instanceof HttpRequestError && e.status === 404) {
+        return null;
+      } else {
+        throw e;
+      }
     }
   }
 

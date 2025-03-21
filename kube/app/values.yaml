@@ -44,7 +44,8 @@ app:
     nodeResetCycleSec: 21600
     liveRecoveryWaitTimeMs: 40000
     chzzkRecoveryExtraWaitTimeMs: 0
-    soopRecoveryExtraWaitTimeMs: 10000
+    soopRecoveryExtraWaitTimeMs: 0
+#    soopRecoveryExtraWaitTimeMs: 10000
 
 externals:
   streamq:

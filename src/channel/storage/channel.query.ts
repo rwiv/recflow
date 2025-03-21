@@ -5,7 +5,6 @@ import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { oneNullable } from '../../utils/list.js';
 import { ChannelEnt } from '../spec/channel.entity.schema.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()
 export class ChannelQueryRepository {
@@ -39,16 +38,12 @@ export class ChannelQueryRepository {
     return tx.select().from(channelTable).where(eq(channelTable.priorityId, priorityId));
   }
 
-  async findByFollowedFlag(
-    isFollowed: boolean,
-    platformName: PlatformName,
-    tx: Tx = db,
-  ): Promise<ChannelEnt[]> {
+  async findByFollowedFlag(isFollowed: boolean, tx: Tx = db): Promise<ChannelEnt[]> {
     const rows = await tx
       .select()
       .from(channelTable)
       .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
-      .where(and(eq(channelTable.isFollowed, isFollowed), eq(platformTable.name, platformName)));
+      .where(and(eq(channelTable.isFollowed, isFollowed)));
     return rows.map((row) => row.channel);
   }
 

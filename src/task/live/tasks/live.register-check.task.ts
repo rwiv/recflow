@@ -30,7 +30,7 @@ export class LiveRegisterCheckTask implements Task {
     });
     for (const existing of existingRegisterPeriodTasks) {
       const crName = existing.name.replace(`${liveTaskName.LIVE_REGISTER}_`, '');
-      if (!criteria.find((c) => c.name === crName)) {
+      if (!criteria.find((c) => c.name === crName) && existing.name !== liveTaskName.LIVE_REGISTER_FOLLOWED) {
         this.scheduler.cancelPeriodTask(existing.name);
       }
     }

@@ -14,7 +14,9 @@ import {
   DEFAULT_CLEANUP_CYCLE,
   DEFAULT_REFRESH_CYCLE,
   DEFAULT_REGISTER_CHECK_CYCLE,
+  DEFAULT_REGISTER_CYCLE,
 } from './spec/live.task.contants.js';
+import { LiveFollowedRegisterTask } from './tasks/live.register-followed-task.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -39,5 +41,8 @@ export class LiveTaskInitializer {
 
     const recoveryTask = new LiveRecoveryTask(this.liveRecoveryManager);
     this.scheduler.addPeriodTask(recoveryTask, DEFAULT_RECOVERY_CYCLE, true);
+
+    const followedRegisterTask = new LiveFollowedRegisterTask(this.liveCoordinator);
+    this.scheduler.addPeriodTask(followedRegisterTask, DEFAULT_REGISTER_CYCLE, true);
   }
 }

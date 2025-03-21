@@ -20,14 +20,16 @@ export class LiveCoordinator {
     private readonly filter: PlatformLiveFilter,
   ) {}
 
-  async registerQueriedLives(cr: PlatformCriterionDto) {
-    const followedChannels = await this.channelFinder.findFollowedChannels(cr.platform.name);
+  async registerFollowedLives() {
+    const followedChannels = await this.channelFinder.findFollowedChannels();
     for (const ch of followedChannels) {
       const chanInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
       if (!chanInfo) continue;
-      await this.liveRegistrar.add(chanInfo, cr);
+      await this.liveRegistrar.add(chanInfo);
     }
+  }
 
+  async registerQueriedLives(cr: PlatformCriterionDto) {
     const queriedLives = await this.fetcher.fetchLives(cr);
     const filtered = await this.filter.getFiltered(cr, queriedLives);
     for (const live of filtered) {

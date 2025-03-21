@@ -72,8 +72,8 @@ export class ChannelFinder {
     return this.chMapper.loadRelations(channels, withTags, tx);
   }
 
-  async findFollowedChannels(platform: PlatformName, tx: Tx = db) {
-    const entities = await this.chQuery.findByFollowedFlag(true, platform, tx);
+  async findFollowedChannels(tx: Tx = db) {
+    const entities = await this.chQuery.findByFollowedFlag(true, tx);
     return this.chMapper.mapAll(entities, tx);
   }
 }

@@ -1,34 +1,33 @@
 import fs from 'fs';
 
-const commands = {
-    create: "create",
-    delete: "delete",
-    cancel: "cancel",
-    finish: "finish",
-};
+const platformName = "chzzk";
+const filePath = '../dev/test/test_chzzk.txt'
 
-function isExitCommand(cmd) {
-    return cmd === commands.delete || cmd === commands.cancel || cmd === commands.finish;
-}
+// const platformName = "soop";
+// const filePath = '../dev/test/test_soop.txt'
 
 async function main() {
-    const [endpoint, cmd] = process.argv.slice(2);
-    const channelIds = fs.readFileSync('../dev/test_chzzk.txt', 'utf-8')
+    const [endpoint] = process.argv.slice(2);
+    const channelIds = fs.readFileSync(filePath, 'utf-8')
         .split('\n').filter(it => it.length > 0);
 
-    if (Object.values(commands).includes(cmd) === false) {
-        throw new Error("Invalid command");
-    }
-
-    let method = "POST";
-    let qs = "";
-    if (isExitCommand(cmd)) {
-        method = "DELETE";
-        qs = `?cmd=${cmd}`;
-    }
     for (const channelId of channelIds) {
-        await fetch(`${endpoint}/api/chzzk/${channelId}${qs}`, {method});
-        console.log(channelId);
+        try {
+            const res = await fetch(`${endpoint}/api/lives`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    pid: channelId,
+                    platformName,
+                }),
+            });
+            console.log(channelId);
+            if (res.status === 404) {
+                console.log(await res.text())
+            }
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 

@@ -103,9 +103,10 @@ export class LiveRegistrar {
       return null;
     }
 
-    // If the live is inaccessible, create a disabled live
-    if (!(await this.fetcher.fetchChannelNotNull(pfName, channel.pid, true)).liveInfo) {
-      throw NotFoundError.from('LiveInfo', 'pid', channel.pid);
+    // If the live is inaccessible, do nothing
+    if (!(await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo) {
+      log.info('This live is inaccessible', { platform: pfName, channel: channel.username });
+      return null;
     }
 
     // Create a live

@@ -13,7 +13,6 @@ export const liveEnt = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),
-  disconnectedAt: z.coerce.date().nullable(),
 });
 export type LiveEnt = z.infer<typeof liveEnt>;
 
@@ -23,7 +22,6 @@ export const liveEntAppend = liveEnt.partial({
   createdAt: true,
   updatedAt: true,
   deletedAt: true,
-  disconnectedAt: true,
 });
 export type LiveEntAppend = z.infer<typeof liveEntAppend>;
 

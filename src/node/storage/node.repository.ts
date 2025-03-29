@@ -19,6 +19,7 @@ export class NodeRepository {
       ...append,
       id: append.id ?? uuid(),
       isCordoned: append.isCordoned ?? false,
+      isDomestic: append.isDomestic ?? false,
       failureCnt: append.failureCnt ?? 0,
       createdAt: append.createdAt ?? new Date(),
     };

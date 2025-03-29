@@ -25,6 +25,8 @@ export class ChannelCommandRepository {
     const req: ChannelEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
+      overseasFirst: append.overseasFirst ?? false,
+      adultOnly: append.adultOnly ?? false,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? new Date(),
     };

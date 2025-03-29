@@ -18,7 +18,7 @@ const nameColumn: ColumnDef<SoopCriterionDto> = {
 
 const enforceCredsColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'enforceCreds',
-  header: () => <div className="justify-self-center">enforceCreds</div>,
+  header: () => <div className="justify-self-center">Credentials</div>,
   cell: ({ row }) => <EnforceCredentialsBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
@@ -32,14 +32,14 @@ const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
 
 const minUserCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minUserCnt',
-  header: () => <div className="justify-self-center">minUserCnt</div>,
+  header: () => <div className="justify-self-center">MUC</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
 const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minFollowCnt',
-  header: () => <div className="justify-self-center">minFollowCnt</div>,
+  header: () => <div className="justify-self-center">MFC</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };

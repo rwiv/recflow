@@ -59,6 +59,8 @@ export const channelTable = pgTable(
       .notNull()
       .references(() => channelPriorityTable.id),
     isFollowed: boolean('is_followed').notNull(),
+    overseasFirst: boolean('overseas_first').notNull(),
+    adultOnly: boolean('adult_only').notNull(),
     description: text(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),
@@ -145,6 +147,7 @@ export const nodeTable = pgTable(
       .notNull()
       .references(() => nodeGroupTable.id),
     failureCnt: integer('failure_cnt').notNull(),
+    isDomestic: boolean('is_domestic').notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
     lastAssignedAt: timestamp('last_assigned_at'),
@@ -185,7 +188,6 @@ export const liveTable = pgTable('live', {
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),
-  disconnectedAt: timestamp('disconnected_at'),
 });
 
 export const liveCriterionTable = pgTable(
@@ -201,6 +203,9 @@ export const liveCriterionTable = pgTable(
     isDeactivated: boolean('is_deactivated').notNull(),
     minUserCnt: integer('min_user_cnt').notNull(),
     minFollowCnt: integer('min_follow_cnt').notNull(),
+    domesticOnly: boolean('domestic_only').notNull(),
+    overseasFirst: boolean('overseas_first').notNull(),
+    adultOnly: boolean('adult_only').notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },

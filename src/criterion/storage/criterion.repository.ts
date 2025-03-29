@@ -24,6 +24,9 @@ export class CriterionRepository {
       ...append,
       id: append.id ?? uuid(),
       isDeactivated: append.isDeactivated ?? true,
+      domesticOnly: append.domesticOnly ?? false,
+      overseasFirst: append.overseasFirst ?? false,
+      adultOnly: append.adultOnly ?? false,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(liveCriterionTable).values(criterionEntAppendReq.parse(entReq)).returning();

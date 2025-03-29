@@ -88,10 +88,6 @@ spec:
               value: "{{ .Values.app.configs.nodeResetCycleSec }}"
             - name: LIVE_RECOVERY_WAIT_TIME_MS
               value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
-            - name: CHZZK_RECOVERY_EXTRA_WAIT_TIME_MS
-              value: "{{ .Values.app.configs.chzzkRecoveryExtraWaitTimeMs }}"
-            - name: SOOP_RECOVERY_EXTRA_WAIT_TIME_MS
-              value: "{{ .Values.app.configs.soopRecoveryExtraWaitTimeMs }}"
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- with .Values.affinity }}

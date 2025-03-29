@@ -2,7 +2,12 @@ import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NodeGroupAppend, nodeGroupEnt, NodeGroupEnt, NodeGroupUpdate } from '../spec/node.entity.schema.js';
+import {
+  nodeGroupEnt,
+  NodeGroupEnt,
+  NodeGroupEntAppend,
+  NodeGroupEntUpdate,
+} from '../spec/node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeGroupTable } from '../../infra/db/schema.js';
@@ -14,7 +19,7 @@ type NodeGroupEntAppendRequest = z.infer<typeof nodeGroupEntAppendReq>;
 
 @Injectable()
 export class NodeGroupRepository {
-  async create(append: NodeGroupAppend, tx: Tx = db): Promise<NodeGroupEnt> {
+  async create(append: NodeGroupEntAppend, tx: Tx = db): Promise<NodeGroupEnt> {
     const req: NodeGroupEntAppendRequest = {
       ...append,
       id: append.id ?? uuid(),
@@ -29,7 +34,7 @@ export class NodeGroupRepository {
     await tx.delete(nodeGroupTable).where(eq(nodeGroupTable.id, id));
   }
 
-  async update(id: string, update: NodeGroupUpdate, tx: Tx = db): Promise<NodeGroupEnt> {
+  async update(id: string, update: NodeGroupEntUpdate, tx: Tx = db): Promise<NodeGroupEnt> {
     const nodeGroup = await this.findById(id, tx);
     if (!nodeGroup) throw NotFoundError.from('NodeGroup', 'id', id);
     const req: NodeGroupEnt = {

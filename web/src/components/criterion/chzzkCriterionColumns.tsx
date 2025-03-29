@@ -6,8 +6,8 @@ import { ActivationBadge } from '@/components/criterion/units/ActivationBadge.ts
 import { EnforceCredentialsBadge } from '@/components/criterion/units/EnforceCredentialsBadge.tsx';
 import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
 
-const NORMAL_WIDTH = '7rem';
-const EDITABLE_WIDTH = '9rem';
+const NORMAL_WIDTH = '6rem';
+const EDITABLE_WIDTH = '6rem';
 
 const nameColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'name',
@@ -18,7 +18,7 @@ const nameColumn: ColumnDef<ChzzkCriterionDto> = {
 
 const enforceCredsColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'enforceCreds',
-  header: () => <div className="justify-self-center">enforceCreds</div>,
+  header: () => <div className="justify-self-center">Credentials</div>,
   cell: ({ row }) => <EnforceCredentialsBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
@@ -32,14 +32,14 @@ const isDeactivatedColumn: ColumnDef<ChzzkCriterionDto> = {
 
 const minUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'minUserCnt',
-  header: () => <div className="justify-self-center">minUserCnt</div>,
+  header: () => <div className="justify-self-center">MUC</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
 const minFollowCntColumn: ColumnDef<ChzzkCriterionDto> = {
-  accessorKey: 'minFollowCnt',
-  header: () => <div className="justify-self-center">minFollowCnt</div>,
+  accessorKey: 'miawFollowCnt',
+  header: () => <div className="justify-self-center">MFC</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };

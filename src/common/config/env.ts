@@ -22,8 +22,6 @@ export interface Env {
   nodeFailureThreshold: number;
   nodeResetCycleSec: number;
   liveRecoveryWaitTimeMs: number;
-  chzzkRecoveryExtraWaitTimeMs: number;
-  soopRecoveryExtraWaitTimeMs: number;
 }
 
 const nnint = z.coerce.number().int().nonnegative();
@@ -45,8 +43,6 @@ export function readEnv(): Env {
   const liveRecoveryWaitTimeMs = nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS);
   const nodeFailureThreshold = nnint.parse(process.env.NODE_FAILURE_THRESHOLD);
   const nodeResetCycleSec = nnint.parse(process.env.NODE_RESET_CYCLE_SEC);
-  const chzzkRecoveryExtraWaitTimeMs = nnint.parse(process.env.CHZZK_RECOVERY_EXTRA_WAIT_TIME_MS);
-  const soopRecoveryExtraWaitTimeMs = nnint.parse(process.env.SOOP_RECOVERY_EXTRA_WAIT_TIME_MS);
 
   return {
     nodeEnv,
@@ -59,7 +55,5 @@ export function readEnv(): Env {
     liveRecoveryWaitTimeMs,
     nodeFailureThreshold,
     nodeResetCycleSec,
-    chzzkRecoveryExtraWaitTimeMs,
-    soopRecoveryExtraWaitTimeMs,
   };
 }

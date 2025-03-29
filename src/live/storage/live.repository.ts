@@ -13,7 +13,6 @@ const liveEntAppendReq = liveEnt.partial({
   nodeId: true,
   updatedAt: true,
   deletedAt: true,
-  disconnectedAt: true,
 });
 type LiveEntAppendRequest = z.infer<typeof liveEntAppendReq>;
 

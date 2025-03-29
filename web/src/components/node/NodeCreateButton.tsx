@@ -63,6 +63,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       endpoint: '',
       weight: '',
       isCordoned: false,
+      isDomestic: false,
       groupId: '',
       typeName: '',
       chzzkCapacity: '',
@@ -93,6 +94,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
         <TextFormField form={form} name="name" />
         <TextFormField form={form} name="endpoint" />
         <CheckFormField form={form} name="isCordoned" label="Cordoned" />
+        <CheckFormField form={form} name="isDomestic" label="Domestic" />
         <SelectFormField form={form} name="typeName" label="Node Type">
           <SelectItem value="worker">WORKER</SelectItem>
           <SelectItem value="argo">ARGO</SelectItem>

@@ -8,8 +8,11 @@ import { platformNameEnum } from '../platform/spec/storage/platform.enum.schema.
 const criterionBatchInsert = z.object({
   name: nonempty,
   enforceCreds: z.boolean(),
+  sufficientUserCnt: z.number().int().nonnegative(),
   minUserCnt: z.number().int().nonnegative(),
   minFollowCnt: z.number().int().nonnegative(),
+  qualifyingUserCnt: z.number().int().nonnegative(),
+  qualifyingFollowCnt: z.number().int().nonnegative(),
 });
 const chzzkCriterionBatchInsert = criterionBatchInsert.extend({
   positiveTags: z.array(nonempty),

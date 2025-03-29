@@ -26,9 +26,6 @@ export const chzzkCriterionAppend = chzzkCriterionDto
     id: true,
     description: true,
     isDeactivated: true,
-    domesticOnly: true,
-    overseasFirst: true,
-    adultOnly: true,
     createdAt: true,
     updatedAt: true,
   })
@@ -51,9 +48,6 @@ export const soopCriterionAppend = soopCriterionDto
     id: true,
     description: true,
     isDeactivated: true,
-    domesticOnly: true,
-    overseasFirst: true,
-    adultOnly: true,
     createdAt: true,
     updatedAt: true,
   })

@@ -1,13 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { NodeDto } from '@/client/node/node.schema.ts';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
-import { CordonedBadge } from '@/components/node/units/CordonedBadge.tsx';
 import { NodeGroupBadge } from '@/components/node/units/GroupUpdateDialog.tsx';
 import { NodeFieldUpdateForm } from '@/components/node/units/NodeFieldUpdateForm.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
+import { NodeCordonedBadge, NodeDomesticBadge } from '@/components/node/units/node_badges.tsx';
 
 const EDITABLE_WIDTH = '12rem';
-const SWITCH_SIDTH = '10rem';
+const SWITCH_SIDTH = '8rem';
 
 const nameColumn: ColumnDef<NodeDto> = {
   accessorKey: 'name',
@@ -19,7 +19,14 @@ const nameColumn: ColumnDef<NodeDto> = {
 const cordonedColumn: ColumnDef<NodeDto> = {
   accessorKey: 'isCordoned',
   header: () => <div className="justify-self-center">Activated</div>,
-  cell: ({ row }) => <CordonedBadge node={row.original} />,
+  cell: ({ row }) => <NodeCordonedBadge node={row.original} />,
+  meta: { header: { width: SWITCH_SIDTH } },
+};
+
+const isDomesticColumn: ColumnDef<NodeDto> = {
+  accessorKey: 'isDomestic',
+  header: () => <div className="justify-self-center">Domestic</div>,
+  cell: ({ row }) => <NodeDomesticBadge node={row.original} />,
   meta: { header: { width: SWITCH_SIDTH } },
 };
 
@@ -83,6 +90,7 @@ export const nodeColumns: ColumnDef<NodeDto>[] = [
   createSelectColumn('select'),
   nameColumn,
   cordonedColumn,
+  isDomesticColumn,
   groupColumn,
   nodeTypeColumn,
   weightColumn,

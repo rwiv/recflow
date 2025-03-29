@@ -11,7 +11,7 @@ import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx'
 import { DialogBase } from '@/components/common/layout/DialogBase.tsx';
 import { NodeDto, NodeGroupDto } from '@/client/node/node.schema.ts';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
-import { updateNodeNodeGroup } from '@/client/node/node.client.ts';
+import { updateNode } from '@/client/node/node.client.ts';
 import { uuid } from '@/common/common.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { fetchNodeGroups } from '@/client/node/node-group.client.ts';
@@ -21,7 +21,7 @@ export function NodeGroupBadge({ node }: { node: NodeDto }) {
     <GroupUpdateDialog node={node}>
       <div className="justify-self-center">
         <button>
-          <Badge variant="default">{node.group?.name ?? ''}</Badge>
+          <Badge variant="secondary">{node.group?.name ?? ''}</Badge>
         </button>
       </div>
     </GroupUpdateDialog>
@@ -58,7 +58,7 @@ function CreateForm({ node, nodeGroups, cb }: { node: NodeDto; nodeGroups: NodeG
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    await updateNodeNodeGroup(node.id, data.groupId);
+    await updateNode(node.id, { groupId: data.groupId });
     await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
     cb();
   }

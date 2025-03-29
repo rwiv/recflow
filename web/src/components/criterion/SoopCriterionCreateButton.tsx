@@ -38,8 +38,14 @@ const unitReqs: Unit[] = [
 
 const formSchema = soopCriterionAppend.omit({ platformId: true }).extend({
   description: z.string(),
+  adultOnly: z.boolean(),
+  domesticOnly: z.boolean(),
+  overseasFirst: z.boolean(),
+  sufficientUserCnt: nonempty,
   minUserCnt: nonempty,
   minFollowCnt: nonempty,
+  qualifyingUserCnt: nonempty,
+  qualifyingFollowCnt: nonempty,
 });
 
 export function SoopCriterionCreateButton() {
@@ -66,10 +72,16 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       name: '',
       description: '',
-      enforceCreds: false,
       isDeactivated: true,
+      enforceCreds: false,
+      adultOnly: false,
+      domesticOnly: false,
+      overseasFirst: false,
+      sufficientUserCnt: '',
       minUserCnt: '',
       minFollowCnt: '',
+      qualifyingUserCnt: '',
+      qualifyingFollowCnt: '',
       positiveTags: [],
       negativeTags: [],
       positiveKeywords: [],
@@ -108,9 +120,20 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" label="Name" />
         <CheckFormField form={form} name="enforceCreds" label="Enforce Credentials" />
+        <CheckFormField form={form} name="adultOnly" label="Adult Only" />
+        <CheckFormField form={form} name="domesticOnly" label="Domestic Only" />
+        <CheckFormField form={form} name="overseasFirst" label="Overseas First " />
         <TextFormField form={form} name="description" label="Description" />
+        <TextFormField form={form} name="sufficientUserCnt" label="Sufficient User Count" placeholder="0" />
         <TextFormField form={form} name="minUserCnt" label="Minimum User Count" placeholder="0" />
         <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" placeholder="0" />
+        <TextFormField form={form} name="qualifyingUserCnt" label="Qualifying User Count" placeholder="0" />
+        <TextFormField
+          form={form}
+          name="qualifyingFollowCnt"
+          label="Qualifying Follow Count"
+          placeholder="0"
+        />
         {unitReqs.map((unit, idx) => (
           <FormField
             key={idx}

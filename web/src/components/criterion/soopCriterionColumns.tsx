@@ -2,12 +2,17 @@ import { ColumnDef } from '@tanstack/react-table';
 import { SoopCriterionDto } from '@/client/criterion/criterion.schema.ts';
 import { Badge } from '@/components/ui/badge.tsx';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
-import { ActivationBadge } from '@/components/criterion/units/ActivationBadge.tsx';
-import { EnforceCredentialsBadge } from '@/components/criterion/units/EnforceCredentialsBadge.tsx';
 import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
+import {
+  CriterionActivationBadge,
+  CriterionAdultOnlyBadge,
+  CriterionDomesticOnlyBadge,
+  CriterionEnforceCredentialsBadge,
+  CriterionOverseasFirstBadge,
+} from '@/components/criterion/units/criterion_badges.tsx';
 
-const NORMAL_WIDTH = '7rem';
-const EDITABLE_WIDTH = '9rem';
+const NORMAL_WIDTH = '6rem';
+const EDITABLE_WIDTH = '6rem';
 
 const nameColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'name',
@@ -19,15 +24,43 @@ const nameColumn: ColumnDef<SoopCriterionDto> = {
 const enforceCredsColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'enforceCreds',
   header: () => <div className="justify-self-center">Credentials</div>,
-  cell: ({ row }) => <EnforceCredentialsBadge criterion={row.original} />,
+  cell: ({ row }) => <CriterionEnforceCredentialsBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
+const adultOnlyColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'adultOnly',
+  header: () => <div className="justify-self-center">Adult</div>,
+  cell: ({ row }) => <CriterionAdultOnlyBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
+const domesticOnlyColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'domesticOnly',
+  header: () => <div className="justify-self-center">Domestic</div>,
+  cell: ({ row }) => <CriterionDomesticOnlyBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
+const overseasFirstColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'overseasFirst',
+  header: () => <div className="justify-self-center">Overseas</div>,
+  cell: ({ row }) => <CriterionOverseasFirstBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'isDeactivated',
   header: () => <div className="justify-self-center">Activated</div>,
-  cell: ({ row }) => <ActivationBadge criterion={row.original} />,
+  cell: ({ row }) => <CriterionActivationBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
+};
+
+const sufficientUserCntColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'sufficientUserCnt',
+  header: () => <div className="justify-self-center">SUC</div>,
+  cell: ({ row }) => <CriterionFieldUpdateForm type="sufficientUserCnt" criterion={row.original} />,
+  meta: { header: { width: EDITABLE_WIDTH } },
 };
 
 const minUserCntColumn: ColumnDef<SoopCriterionDto> = {
@@ -41,6 +74,20 @@ const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minFollowCnt',
   header: () => <div className="justify-self-center">MFC</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
+  meta: { header: { width: EDITABLE_WIDTH } },
+};
+
+const qualifyingUserCntColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'qualifyingUserCnt',
+  header: () => <div className="justify-self-center">QUC</div>,
+  cell: ({ row }) => <CriterionFieldUpdateForm type="qualifyingUserCnt" criterion={row.original} />,
+  meta: { header: { width: EDITABLE_WIDTH } },
+};
+
+const qualifyingFollowCntColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'qualifyingFollowCnt',
+  header: () => <div className="justify-self-center">QFC</div>,
+  cell: ({ row }) => <CriterionFieldUpdateForm type="qualifyingFollowCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
@@ -73,8 +120,14 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   nameColumn,
   isDeactivatedColumn,
   enforceCredsColumn,
+  adultOnlyColumn,
+  domesticOnlyColumn,
+  overseasFirstColumn,
+  sufficientUserCntColumn,
   minUserCntColumn,
   minFollowCntColumn,
+  qualifyingUserCntColumn,
+  qualifyingFollowCntColumn,
   createUnitColumn('positiveTags', 'p_tags'),
   createUnitColumn('negativeTags', 'n_tags'),
   createUnitColumn('positiveKeywords', 'p_keywords'),

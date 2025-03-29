@@ -1,6 +1,6 @@
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/common/common.client.utils.ts';
-import { NodeAppend, NodeDto, NodeUpdate, nodeDto, NodeCapacity } from '@/client/node/node.schema.ts';
+import { NodeAppend, NodeDto, NodeUpdate, nodeDto } from '@/client/node/node.schema.ts';
 import { parseList } from '@/common/utils.schema.ts';
 
 export async function fetchNodes() {
@@ -15,47 +15,9 @@ export async function createNode(append: NodeAppend) {
   return (await res.json()) as NodeDto;
 }
 
-export function updateNodeName(id: string, name: string) {
-  return updateNode(id, name, undefined, undefined, undefined, undefined, undefined, undefined);
-}
-
-export function updateNodeEndpoint(id: string, endpoint: string) {
-  return updateNode(id, undefined, endpoint, undefined, undefined, undefined, undefined, undefined);
-}
-
-export function updateNodeNodeGroup(id: string, groupId: string) {
-  return updateNode(id, undefined, undefined, undefined, undefined, undefined, groupId, undefined);
-}
-
-export function updateNodeWeight(id: string, weight: number) {
-  return updateNode(id, undefined, undefined, weight, undefined, undefined, undefined, undefined);
-}
-
-export function updateNodeFailureCnt(id: string, failureCnt: number) {
-  return updateNode(id, undefined, undefined, undefined, failureCnt, undefined, undefined, undefined);
-}
-
-export function updateNodeCapacity(id: string, capacity: NodeCapacity) {
-  return updateNode(id, undefined, undefined, undefined, undefined, undefined, undefined, capacity);
-}
-
-export function updateNodeIsCordoned(id: string, isCordoned: boolean) {
-  return updateNode(id, undefined, undefined, undefined, undefined, isCordoned, undefined, undefined);
-}
-
-async function updateNode(
-  id: string,
-  name?: string,
-  endpoint?: string,
-  weight?: number,
-  failureCnt?: number,
-  isCordoned?: boolean,
-  groupId?: string,
-  capacity?: NodeCapacity,
-) {
+export async function updateNode(id: string, form: NodeUpdate) {
   const url = `${configs.endpoint}/api/nodes/${id}`;
-  const req: NodeUpdate = { name, endpoint, weight, isCordoned, failureCnt, groupId, capacity };
-  const { method, headers, body } = getIngredients('PUT', req);
+  const { method, headers, body } = getIngredients('PUT', form);
   await request(url, { method, headers, body });
 }
 

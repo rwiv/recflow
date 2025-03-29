@@ -35,33 +35,9 @@ export async function createSoopCriterion(append: SoopCriterionAppend) {
   return (await res.json()) as SoopCriterionDto;
 }
 
-export function updateCriterionEnforceCreds(id: string, enforceCreds: boolean) {
-  return updateCriterion(id, undefined, enforceCreds);
-}
-
-export function updateCriterionIsDeactivated(id: string, isDeactivated: boolean) {
-  return updateCriterion(id, undefined, undefined, isDeactivated);
-}
-
-export function updateCriterionMinUserCnt(id: string, minUserCnt: number) {
-  return updateCriterion(id, undefined, undefined, undefined, minUserCnt);
-}
-
-export function updateCriterionMinFollowCnt(id: string, minFollowCnt: number) {
-  return updateCriterion(id, undefined, undefined, undefined, undefined, minFollowCnt);
-}
-
-async function updateCriterion(
-  id: string,
-  description?: string | null,
-  enforceCreds?: boolean,
-  isDeactivated?: boolean,
-  minUserCnt?: number,
-  minFollowCnt?: number,
-) {
+export async function updateCriterion(id: string, form: CriterionUpdate) {
   const url = `${configs.endpoint}/api/criteria/${id}`;
-  const req: CriterionUpdate = { description, enforceCreds, isDeactivated, minUserCnt, minFollowCnt };
-  const { method, headers, body } = getIngredients('PUT', req);
+  const { method, headers, body } = getIngredients('PUT', form);
   await request(url, { method, headers, body });
 }
 

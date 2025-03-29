@@ -20,14 +20,26 @@ export class CriterionBatchInserter {
     const chzzkPlatform = await this.pfFinder.findByNameNotNull('chzzk');
     const soopPlatform = await this.pfFinder.findByNameNotNull('soop');
     for (const chzzk of req.chzzk) {
-      const append: ChzzkCriterionAppend = { ...chzzk, platformId: chzzkPlatform.id };
+      const append: ChzzkCriterionAppend = {
+        ...chzzk,
+        platformId: chzzkPlatform.id,
+        adultOnly: false,
+        domesticOnly: false,
+        overseasFirst: false,
+      };
       const parsed = chzzkCriterionAppend.parse(append);
       parsed.isDeactivated = false;
       const created = await this.criterionWriter.createChzzkCriterion(parsed);
       log.info(`Inserted criterion: ${created.name}`);
     }
     for (const soop of req.soop) {
-      const append: SoopCriterionAppend = { ...soop, platformId: soopPlatform.id };
+      const append: SoopCriterionAppend = {
+        ...soop,
+        platformId: soopPlatform.id,
+        adultOnly: false,
+        domesticOnly: false,
+        overseasFirst: false,
+      };
       const created = await this.criterionWriter.createSoopCriterion(append);
       log.info(`Inserted criterion: ${created.name}`);
     }

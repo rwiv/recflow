@@ -2,16 +2,10 @@ import { TextUpdateForm } from '@/components/common/layout/TextUpdateForm.tsx';
 import { z } from 'zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { NODES_QUERY_KEY, PLATFORMS_QUERY_KEY } from '@/common/constants.ts';
-import { NodeDto } from '@/client/node/node.schema.ts';
-import {
-  updateNodeCapacity,
-  updateNodeEndpoint,
-  updateNodeFailureCnt,
-  updateNodeName,
-  updateNodeWeight,
-} from '@/client/node/node.client.ts';
+import { NodeCapacity, NodeDto } from '@/client/node/node.schema.ts';
 import { fetchPlatforms } from '@/client/common/platform.client.ts';
 import { PlatformDto } from '@/client/common/platform.schema.ts';
+import { updateNode } from '@/client/node/node.client.ts';
 
 type Type = 'name' | 'endpoint' | 'weight' | 'chzzkCapacity' | 'soopCapacity' | 'failureCnt';
 
@@ -37,19 +31,21 @@ export function NodeFieldUpdateForm({ type, node }: NodeFieldUpdateForm) {
   const submit = async (value: string) => {
     try {
       if (type === 'name') {
-        await updateNodeName(node.id, stringSchema.parse(value));
+        await updateNode(node.id, { name: stringSchema.parse(value) });
       } else if (type === 'endpoint') {
-        await updateNodeEndpoint(node.id, stringSchema.parse(value));
+        await updateNode(node.id, { endpoint: stringSchema.parse(value) });
       } else if (type === 'weight') {
-        await updateNodeWeight(node.id, numSchema.parse(value));
+        await updateNode(node.id, { weight: numSchema.parse(value) });
       } else if (type === 'failureCnt') {
-        await updateNodeFailureCnt(node.id, numSchema.parse(value));
+        await updateNode(node.id, { failureCnt: numSchema.parse(value) });
       } else if (type === 'chzzkCapacity') {
         const platform = findPlatform('chzzk', platforms);
-        await updateNodeCapacity(node.id, { platformId: platform.id, capacity: numSchema.parse(value) });
+        const capacity: NodeCapacity = { platformId: platform.id, capacity: numSchema.parse(value) };
+        await updateNode(node.id, { capacity });
       } else if (type === 'soopCapacity') {
         const platform = findPlatform('soop', platforms);
-        await updateNodeCapacity(node.id, { platformId: platform.id, capacity: numSchema.parse(value) });
+        const capacity: NodeCapacity = { platformId: platform.id, capacity: numSchema.parse(value) };
+        await updateNode(node.id, { capacity });
       }
       await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
     } catch (e) {

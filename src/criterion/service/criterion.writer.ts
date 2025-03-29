@@ -18,6 +18,7 @@ import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { CriterionRuleFinder } from './criterion.rule.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class CriterionWriter {
@@ -106,8 +107,32 @@ export class CriterionWriter {
     });
   }
 
-  async update(id: string, req: CriterionUpdate) {
+  async updateDomestically(id: string, req: CriterionUpdate) {
+    if (req.domesticOnly !== undefined && req.overseasFirst !== undefined) {
+      throw new ValidationError('Cannot set domesticOnly when overseasFirst is true');
+    }
+
+    const ent = await this.criterionRepo.findById(id);
+    if (!ent) {
+      throw NotFoundError.from('Criterion', 'id', id);
+    }
+
+    if (req.domesticOnly !== undefined && ent.overseasFirst === true) {
+      throw new ValidationError('Cannot set domesticOnly when overseasFirst is true');
+    }
+    if (req.overseasFirst !== undefined && ent.domesticOnly === true) {
+      throw new ValidationError('Cannot set overseasFirst when domesticOnly is true');
+    }
+
     await this.criterionRepo.update(id, req);
+  }
+
+  async update(id: string, req: CriterionUpdate) {
+    if (req.domesticOnly !== undefined || req.overseasFirst !== undefined) {
+      return this.updateDomestically(id, req);
+    } else {
+      return this.criterionRepo.update(id, req);
+    }
   }
 
   async delete(criterionId: string) {

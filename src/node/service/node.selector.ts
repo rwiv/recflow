@@ -15,15 +15,13 @@ export class NodeSelector {
     const pfId = channel.platform.id;
 
     // search for available nodes
-    let nodes = (await this.nodeFinder.findByNodeGteTier(channel.priority.tier, tx))
-      .filter((node) => !node.isCordoned)
-      .filter((node) => !ignoreNodeIds.includes(node.id))
-      .filter((node) => {
-        const state = findState(node, pfId);
-        if (state) return state.assigned < state.capacity;
-        else return false;
-      });
-    if (nodes.length === 0) return null;
+    let nodes = await this.findCandidateNodes(channel, ignoreNodeIds, tx);
+    if (nodes.length === 0) {
+      nodes = await this.findCandidateNodes(channel, [], tx);
+    }
+    if (nodes.length === 0) {
+      return null;
+    }
 
     // find minimum tier
     let minTier = getNodeTier(nodes[0]);
@@ -57,6 +55,20 @@ export class NodeSelector {
       }
     }
     return minNode;
+  }
+
+  private async findCandidateNodes(channel: ChannelDto, ignoreNodeIds: string[], tx: Tx) {
+    return (await this.nodeFinder.findByNodeGteTier(channel.priority.tier, tx))
+      .filter((node) => !node.isCordoned)
+      .filter((node) => !ignoreNodeIds.includes(node.id))
+      .filter((node) => {
+        const state = findState(node, channel.platform.id);
+        if (state) {
+          return state.assigned < state.capacity;
+        } else {
+          return false;
+        }
+      });
   }
 }
 

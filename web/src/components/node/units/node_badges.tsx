@@ -26,5 +26,5 @@ export function NodeDomesticBadge({ node }: { node: NodeDto }) {
     await updateNode(node.id, { isDomestic: !node.isDomestic });
     await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
   };
-  return <SwitchBadge onClick={onClick} content={node.isDomestic ? 'ON' : 'OFF'} />;
+  return <SwitchBadge onClick={onClick} content={node.isDomestic ? 'O' : 'X'} />;
 }

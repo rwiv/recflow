@@ -21,38 +21,38 @@ const nameColumn: ColumnDef<SoopCriterionDto> = {
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
+const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'isDeactivated',
+  header: () => <div className="justify-self-center">Activated</div>,
+  cell: ({ row }) => <CriterionActivationBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
 const enforceCredsColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'enforceCreds',
-  header: () => <div className="justify-self-center">Credentials</div>,
+  header: () => <div className="justify-self-center">CredentialsOnly</div>,
   cell: ({ row }) => <CriterionEnforceCredentialsBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const adultOnlyColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'adultOnly',
-  header: () => <div className="justify-self-center">Adult</div>,
+  header: () => <div className="justify-self-center">AdultOnly</div>,
   cell: ({ row }) => <CriterionAdultOnlyBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const domesticOnlyColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'domesticOnly',
-  header: () => <div className="justify-self-center">Domestic</div>,
+  header: () => <div className="justify-self-center">DomesticOnly</div>,
   cell: ({ row }) => <CriterionDomesticOnlyBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
 const overseasFirstColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'overseasFirst',
-  header: () => <div className="justify-self-center">Overseas</div>,
+  header: () => <div className="justify-self-center">OverseasFirst</div>,
   cell: ({ row }) => <CriterionOverseasFirstBadge criterion={row.original} />,
-  meta: { header: { width: NORMAL_WIDTH } },
-};
-
-const isDeactivatedColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'isDeactivated',
-  header: () => <div className="justify-self-center">Activated</div>,
-  cell: ({ row }) => <CriterionActivationBadge criterion={row.original} />,
   meta: { header: { width: NORMAL_WIDTH } },
 };
 

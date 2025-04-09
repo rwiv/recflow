@@ -8,8 +8,6 @@ prometheus-postgres-exporter:
       passwordSecret:
         name: stmgr-postgresql
         key: password
-  service:
-    type: NodePort
   serviceMonitor:
     enabled: true
     namespace: telemetry

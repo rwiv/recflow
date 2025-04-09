@@ -1,0 +1,17 @@
+prometheus-postgres-exporter:
+  fullnameOverride: stmgr-postgresql-exporter
+  config:
+    datasource:
+      host: stmgr-postgresql.media.svc.cluster.local
+      database: stmgr
+      user: admin
+      passwordSecret:
+        name: stmgr-postgresql
+        key: password
+  service:
+    type: NodePort
+  serviceMonitor:
+    enabled: true
+    namespace: telemetry
+    labels:
+      release: prometheus-stack

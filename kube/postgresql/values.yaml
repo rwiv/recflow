@@ -1,0 +1,29 @@
+metadata:
+  name: stmgr-postgresql
+  namespace: media
+vault:
+  mount: kube
+  path: media/stmgr/postgresql
+  version: 1
+  secretName: stmgr-postgresql
+  refreshAfter: 30s
+
+postgresql:
+  architecture: standalone
+  auth:
+    database: stmgr
+    username: admin
+    existingSecret: stmgr-postgresql
+    secretKeys:
+      userPasswordKey: password
+  primary:
+    service:
+      type: NodePort
+      nodePorts:
+        postgresql: 30221
+    persistence:
+      enabled: true
+      storageClass: rook-ceph-block
+      accessModes:
+        - ReadWriteOnce
+      size: 2Gi

@@ -17,4 +17,5 @@ export PGDATABASE="$PG_DATABASE"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 OUTFILE="bak_${TIMESTAMP}.sql"
 
-pg_dump --data-only -f "./dev/$OUTFILE" --exclude-schema=drizzle
+# pg_dump --data-only -f "./dev/$OUTFILE" --exclude-schema=drizzle
+pg_dump -f "./dev/$OUTFILE" --exclude-schema=drizzle

@@ -33,10 +33,10 @@ app:
     secretName: rabbitmq-main
     passwordKey: password
   postgres:
-    host: stmgr-postgres-rw.media.svc.cluster.local
+    host: stmgr-postgresql.media.svc.cluster.local
     port: 5432
     database: stmgr
-    secretName: stmgr-postgres
+    secretName: stmgr-postgresql
     usernameKey: username
     passwordKey: password
   configs:

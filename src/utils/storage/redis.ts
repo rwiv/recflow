@@ -1,11 +1,12 @@
 import { RedisConfig } from '../../common/config/config.types.js';
 import { createClient, RedisClientType } from 'redis';
 import { log } from 'jslog';
+import { stackTrace } from '../errors/utils.js';
 
 export async function createRedisClient(conf: RedisConfig, logging: boolean = false) {
   const url = `redis://${conf.host}:${conf.port}`;
   const client = await createClient({ url, password: conf.password })
-    .on('error', (err) => console.error('Redis Client Error', err))
+    .on('error', (err) => log.error('Redis Client Error', { stack: stackTrace(err) }))
     .connect();
   if (logging) {
     log.info('Redis Client Connected');

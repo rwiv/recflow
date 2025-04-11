@@ -18,7 +18,7 @@ export class HttpErrorFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const err = this.resolver.resolve(raw);
     if (this.env.nodeEnv !== 'prod') {
-      console.error(stackTrace(err));
+      log.error('NODE_ENV is not prod', { stack: stackTrace(err) });
     }
     const { message, status, code } = err;
     log.error(err.name, { message, status, code, stack: stackTrace(err) });

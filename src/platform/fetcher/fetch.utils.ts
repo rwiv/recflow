@@ -1,32 +1,30 @@
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+import { log } from 'jslog';
 
 export async function checkResponse(res: Response) {
   if (res.status >= 400) {
-    let content = '';
+    let body = '';
     try {
-      content = await res.text();
+      body = JSON.parse(await res.text()) as string;
     } catch (e) {
-      content = 'Http request failure: unknown';
+      body = 'Http request failure: unknown';
       console.error(e);
     }
-    throw new HttpRequestError(content, res.status);
+    log.error(`Failed to fetch`, { status: res.status, url: res.url, body });
+    throw new HttpRequestError('Failed to fetch', res.status);
   }
 }
 
 export async function checkChannelResponse(res: Response, pid: string) {
   if (res.status >= 400) {
-    let content = '';
+    let body = '';
     try {
-      content = await res.text();
+      body = JSON.parse(await res.text()) as string;
     } catch (e) {
-      content = 'Http request failure: unknown';
+      body = 'Http request failure: unknown';
       console.error(e);
     }
-    // TODO: update logic after modify streamq
-    if (content === 'channel not found') {
-      throw new HttpRequestError(`Channel not found: pid=${pid}`, 404);
-    } else {
-      throw new HttpRequestError(content, res.status);
-    }
+    log.error(`Failed to fetch channel`, { pid, status: res.status, url: res.url, body });
+    throw new HttpRequestError(`Failed to fetch channel`, res.status);
   }
 }

@@ -33,8 +33,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       jslog:
-        specifier: git+https://github.com/rwiv/jslog.git#v1.0.0
-        version: https://codeload.github.com/rwiv/jslog/tar.gz/e4d6eeea9580864f100f1c7780f29a0bd6ce440c
+        specifier: git+https://github.com/rwiv/jslog.git#v1.0.1
+        version: https://codeload.github.com/rwiv/jslog/tar.gz/49d7efd628b06673cdb9e105b3950824684e46b5
       pg:
         specifier: ^8.13.1
         version: 8.13.1
@@ -2642,8 +2642,8 @@ packages:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
 
-  jslog@https://codeload.github.com/rwiv/jslog/tar.gz/e4d6eeea9580864f100f1c7780f29a0bd6ce440c:
-    resolution: {tarball: https://codeload.github.com/rwiv/jslog/tar.gz/e4d6eeea9580864f100f1c7780f29a0bd6ce440c}
+  jslog@https://codeload.github.com/rwiv/jslog/tar.gz/49d7efd628b06673cdb9e105b3950824684e46b5:
+    resolution: {tarball: https://codeload.github.com/rwiv/jslog/tar.gz/49d7efd628b06673cdb9e105b3950824684e46b5}
     version: 1.0.0
 
   json-buffer@3.0.1:
@@ -6114,7 +6114,7 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
-  jslog@https://codeload.github.com/rwiv/jslog/tar.gz/e4d6eeea9580864f100f1c7780f29a0bd6ce440c:
+  jslog@https://codeload.github.com/rwiv/jslog/tar.gz/49d7efd628b06673cdb9e105b3950824684e46b5:
     dependencies:
       winston: 3.17.0
       winston-transport: 4.9.0

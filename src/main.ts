@@ -7,8 +7,11 @@ import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
 import { ProdInitializer } from './common/module/prod-initializer.js';
 import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
+import { log } from 'jslog';
 
 async function bootstrap() {
+  log.setLevel('debug');
+
   const app = await NestFactory.create(AppModule);
 
   const env = app.get<Env>(ENV);

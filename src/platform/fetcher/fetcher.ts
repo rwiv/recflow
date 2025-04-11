@@ -47,7 +47,7 @@ export class PlatformFetcher {
   }
 
   async fetchChannelWithCheckStream(platform: PlatformName, pid: string): Promise<ChannelInfo> {
-    log.info('Fetch with checkStream', { platform, pid });
+    log.debug('Fetch with checkStream', { platform, pid });
     return await this._fetchChannelNotNull(platform, pid, true, true);
   }
 

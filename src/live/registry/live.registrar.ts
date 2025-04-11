@@ -35,7 +35,8 @@ export interface DeleteOptions {
 
 interface CreatedLiveLogAttr {
   platform: string;
-  channel: string;
+  channelId: string;
+  channelName: string;
   title: string;
   node?: string;
   assigned?: number;
@@ -100,12 +101,13 @@ export class LiveRegistrar {
     const pfName = channel.platform.name;
     if (await this.amqpHttp.existsQueue(`${AMQP_EXIT_QUEUE_PREFIX}.${pfName}.${channel.pid}`)) {
       log.info('This live is already being recorded', { platform: pfName, channel: channel.username });
-      return null;
+      return this.liveWriter.createByLive(liveInfo, null, true, tx);
     }
 
     // If the live is inaccessible, do nothing
     if (!(await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo) {
-      log.info('This live is inaccessible', { platform: pfName, channel: channel.username });
+      const { pid, username } = channel;
+      log.debug('This live is inaccessible', { platform: pfName, pid, username });
       return null;
     }
 
@@ -129,7 +131,8 @@ export class LiveRegistrar {
   private printCreatedLiveLog(message: string, live: LiveDto) {
     const attr: CreatedLiveLogAttr = {
       platform: live.platform.name,
-      channel: live.channel.username,
+      channelId: live.channel.pid,
+      channelName: live.channel.username,
       title: live.liveTitle,
     };
     if (live.node) {

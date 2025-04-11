@@ -10,7 +10,7 @@ export async function checkResponse(res: Response) {
       body = 'Http request failure: unknown';
       console.error(e);
     }
-    log.error(`Failed to fetch`, { status: res.status, url: res.url, body });
+    log.debug(`Failed to fetch`, { status: res.status, url: res.url, body });
     throw new HttpRequestError('Failed to fetch', res.status);
   }
 }
@@ -24,7 +24,7 @@ export async function checkChannelResponse(res: Response, pid: string) {
       body = 'Http request failure: unknown';
       console.error(e);
     }
-    log.error(`Failed to fetch channel`, { pid, status: res.status, url: res.url, body });
+    log.debug(`Failed to fetch channel`, { pid, status: res.status, url: res.url, body });
     throw new HttpRequestError(`Failed to fetch channel`, res.status);
   }
 }

@@ -25,6 +25,7 @@ import { TagCommandRepository } from '../storage/tag.command.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from './priority.service.js';
 import { ChannelFinder } from './channel.finder.js';
+import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { log } from 'jslog';
 
 @Injectable()
@@ -130,21 +131,30 @@ export class ChannelWriter {
       throw new NotFoundError('earliest refreshed channel not found');
     }
 
-    const info = await this.fetcher.fetchChannel(channel.platform.name, channel.pid, false);
-    if (!info) {
-      log.info(`During the refresh process, the fetched channelInfo is null`, {
-        platform: channel.platform.name,
-        pid: channel.pid,
-        channel: channel.username,
-      });
-      return this.update(channel.id, {}, true);
-    }
+    try {
+      const info = await this.fetcher.fetchChannel(channel.platform.name, channel.pid, false);
+      if (!info) {
+        log.info(`During the refresh process, the fetched channelInfo is null`, {
+          platform: channel.platform.name,
+          pid: channel.pid,
+          channel: channel.username,
+        });
+        return this.update(channel.id, {}, true);
+      }
 
-    const update: ChannelUpdate = {
-      username: info.username,
-      profileImgUrl: info.profileImgUrl,
-      followerCnt: info.followerCnt,
-    };
-    return this.update(channel.id, update, true);
+      const update: ChannelUpdate = {
+        username: info.username,
+        profileImgUrl: info.profileImgUrl,
+        followerCnt: info.followerCnt,
+      };
+      return this.update(channel.id, update, true);
+    } catch (e) {
+      if (e instanceof HttpRequestError) {
+        log.debug(`During the refresh process, the fetched channelInfo is null`);
+        return this.update(channel.id, {}, true);
+      } else {
+        throw e;
+      }
+    }
   }
 }

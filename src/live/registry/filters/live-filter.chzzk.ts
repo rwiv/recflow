@@ -32,6 +32,9 @@ export class ChzzkLiveFilter {
     for (const ignoredKeyword of cr.negativeKeywords) {
       if (content.liveTitle.includes(ignoredKeyword)) return null;
     }
+    for (const ignoredWp of cr.negativeWps) {
+      if (content.watchPartyNo === parseInt(ignoredWp)) return null;
+    }
 
     // by channel
     const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');

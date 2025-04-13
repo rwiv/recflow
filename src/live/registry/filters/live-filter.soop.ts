@@ -32,6 +32,12 @@ export class SoopLiveFilter {
     for (const ignoredKeyword of cr.negativeKeywords) {
       if (content.broadTitle.includes(ignoredKeyword)) return null;
     }
+    const cateNo = content.broadCateNo;
+    if (cateNo) {
+      for (const ignoredCate of cr.negativeCates) {
+        if (parseInt(cateNo) === parseInt(ignoredCate)) return null;
+      }
+    }
 
     // by channel
     const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop');

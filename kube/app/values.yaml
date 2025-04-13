@@ -46,8 +46,8 @@ app:
 
 externals:
   streamq:
-    url: http://streamq.media.svc.cluster.local
-    qsize: 100
+    url: http://streamq-vpn.media.svc.cluster.local
+    qsize: 200
   authed:
     url: http://authed.common.svc.cluster.local
     secretName: authed-app

@@ -36,7 +36,7 @@ export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
     type: 'soop',
     pid: info.userId,
     channelName: info.userNick,
-    liveId: info.broadNo.toString(),
+    liveId: info.broadNo,
     liveTitle: info.broadTitle,
     viewCnt: info.viewCnt,
     isAdult: info.adult,

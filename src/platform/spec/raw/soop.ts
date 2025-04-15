@@ -5,7 +5,7 @@ export const soopLiveInfo = z.object({
   userId: nonempty,
   userNick: nonempty,
   broadStart: nonempty,
-  broadNo: nnint,
+  broadNo: nonempty,
   broadTitle: nonempty,
   broadCateNo: nonempty.nullable().optional(),
   viewCnt: nnint,

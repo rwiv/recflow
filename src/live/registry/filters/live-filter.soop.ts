@@ -27,7 +27,7 @@ export class SoopLiveFilter {
     // ignore
     const content = liveInfo.content as SoopLiveInfo;
     for (const ignoredTag of cr.negativeTags) {
-      if (content.hashTags && content.hashTags.includes(ignoredTag)) return null;
+      if (content.hashTags?.includes(ignoredTag)) return null;
     }
     for (const ignoredKeyword of cr.negativeKeywords) {
       if (content.broadTitle.includes(ignoredKeyword)) return null;

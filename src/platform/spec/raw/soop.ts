@@ -7,9 +7,9 @@ export const soopLiveInfo = z.object({
   broadStart: nonempty,
   broadNo: nnint,
   broadTitle: nonempty,
-  broadCateNo: nonempty.nullable(),
+  broadCateNo: nonempty.nullable().optional(),
   viewCnt: nnint,
-  hashTags: z.array(nonempty).nullable(),
+  hashTags: z.array(nonempty).nullable().optional(),
   adult: z.boolean(),
   locked: z.boolean(),
 });
@@ -20,7 +20,7 @@ export type SoopLiveInfoResponse = z.infer<typeof soopLiveInfoResponse>;
 export const soopChannelInfo = z.object({
   userId: nonempty,
   userNick: nonempty,
-  profileImageUrl: z.string().url().nullable(),
+  profileImageUrl: z.string().url().nullable().optional(),
   fanCnt: nnint,
   broadStart: nonempty,
   openLive: z.boolean(),

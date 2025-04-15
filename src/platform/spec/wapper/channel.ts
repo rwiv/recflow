@@ -1,14 +1,15 @@
 import { chzzkChannelInfo, ChzzkChannelInfo } from '../raw/chzzk.js';
 import { soopChannelInfo, SoopChannelInfo } from '../raw/soop.js';
-import { liveFromChzzk, liveFromSoop, liveInfo, LiveInfo } from './live.js';
+import { liveFromChzzk, liveFromSoop, liveInfo } from './live.js';
 import { z } from 'zod';
 import { platformNameEnum } from '../storage/platform.enum.schema.js';
+import { nnint, nonempty } from '../../../common/data/common.schema.js';
 
 export const channelInfo = z.object({
-  pid: z.string(),
-  username: z.string(),
-  profileImgUrl: z.string().nullable(),
-  followerCnt: z.number(),
+  pid: nonempty,
+  username: nonempty,
+  profileImgUrl: nonempty.nullable(),
+  followerCnt: nnint,
   platform: platformNameEnum,
   openLive: z.boolean(),
   content: z.union([chzzkChannelInfo, soopChannelInfo]),
@@ -30,7 +31,7 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
     platform: 'chzzk',
     pid: info.channelId,
     username: info.channelName,
-    profileImgUrl: info.channelImageUrl,
+    profileImgUrl: info.channelImageUrl ?? null,
     followerCnt: info.followerCount,
     openLive: info.openLive,
     content: info,
@@ -47,7 +48,7 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
     platform: 'soop',
     pid: info.userId,
     username: info.userNick,
-    profileImgUrl: info.profileImageUrl,
+    profileImgUrl: info.profileImageUrl ?? null,
     followerCnt: info.fanCnt,
     openLive: info.openLive,
     content: info,

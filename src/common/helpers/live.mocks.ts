@@ -26,7 +26,7 @@ export function mockLiveInfo(n: number, pid: string): LiveInfo {
     type: 'chzzk',
     pid,
     channelName: `ch${n}`,
-    liveId: 1,
+    liveId: '123',
     liveTitle: `live${n}`,
     viewCnt: 1,
     isAdult: false,

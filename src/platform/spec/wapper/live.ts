@@ -2,16 +2,17 @@ import { chzzkLiveInfo, ChzzkLiveInfo } from '../raw/chzzk.js';
 import { soopLiveInfo, SoopLiveInfo } from '../raw/soop.js';
 import { platformNameEnum } from '../storage/platform.enum.schema.js';
 import { z } from 'zod';
+import { nnint, nonempty } from '../../../common/data/common.schema.js';
 
 export const liveInfo = z.object({
   type: platformNameEnum,
-  pid: z.string(),
-  channelName: z.string(),
-  liveId: z.number(),
-  liveTitle: z.string(),
-  viewCnt: z.number(),
+  pid: nonempty,
+  channelName: nonempty,
+  liveId: nonempty,
+  liveTitle: nonempty,
+  viewCnt: nnint,
   isAdult: z.boolean(),
-  openDate: z.string(),
+  openDate: nonempty,
   content: z.union([chzzkLiveInfo, soopLiveInfo]),
 });
 export type LiveInfo = z.infer<typeof liveInfo>;
@@ -21,7 +22,7 @@ export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
     type: 'chzzk',
     pid: info.channelId,
     channelName: info.channelName,
-    liveId: info.liveId,
+    liveId: info.liveId.toString(),
     liveTitle: info.liveTitle,
     viewCnt: info.concurrentUserCount,
     isAdult: info.adult,
@@ -35,7 +36,7 @@ export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
     type: 'soop',
     pid: info.userId,
     channelName: info.userNick,
-    liveId: info.broadNo,
+    liveId: info.broadNo.toString(),
     liveTitle: info.broadTitle,
     viewCnt: info.viewCnt,
     isAdult: info.adult,

@@ -27,7 +27,7 @@ export class ChzzkLiveFilter {
     // ignore
     const content = liveInfo.content as ChzzkLiveInfo;
     for (const ignoredTag of cr.negativeTags) {
-      if (content.tags.includes(ignoredTag)) return null;
+      if (content.tags?.includes(ignoredTag)) return null;
     }
     for (const ignoredKeyword of cr.negativeKeywords) {
       if (content.liveTitle.includes(ignoredKeyword)) return null;

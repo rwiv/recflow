@@ -9,7 +9,6 @@ export const chzzkLiveInfo = z.object({
   liveTitle: nonempty,
   liveImageUrl: z.string().url().nullable(),
   concurrentUserCount: nnint,
-  accumulateCount: nnint,
   openDate: nonempty,
   adult: z.boolean(),
   tags: z.array(nonempty),
@@ -32,6 +31,6 @@ export const chzzkChannelInfo = z.object({
   followerCount: nnint,
   openLive: z.boolean(),
 
-  liveInfo: chzzkLiveInfo.nullable(),
+  liveInfo: chzzkLiveInfo.nullable().optional(),
 });
 export type ChzzkChannelInfo = z.infer<typeof chzzkChannelInfo>;

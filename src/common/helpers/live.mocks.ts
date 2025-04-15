@@ -10,7 +10,6 @@ export function mockChzzkLiveInfo(n: number, pid: string): ChzzkLiveInfo {
     liveImageUrl: 'https://live1.com',
     liveTitle: `live${n}`,
     concurrentUserCount: 1,
-    accumulateCount: 1,
     openDate: '2021-01-01',
     adult: false,
     tags: ['tag1'],

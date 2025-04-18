@@ -1,15 +1,33 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cookie } from '../authed/types.js';
-import { ChzzkLiveRequest, SoopLiveRequest, Stdl } from './types.js';
+import { ChzzkLiveRequest, NodeStatus, nodeStatusResponse, SoopLiveRequest, Stdl } from './types.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
 import { AUTHED } from '../infra.tokens.js';
 import { Authed } from '../authed/authed.js';
+import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()
 export class StdlImpl implements Stdl {
   constructor(@Inject(AUTHED) private readonly authClient: Authed) {}
+
+  async cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void> {
+    const body = JSON.stringify({
+      platform: platform,
+      uid: uid,
+    });
+    await fetch(endpoint, {
+      method: 'DELETE',
+      headers: { 'content-type': 'application/json' },
+      body,
+    });
+  }
+
+  async getStatus(endpoint: string): Promise<NodeStatus[]> {
+    const res = await fetch(`${endpoint}`);
+    return nodeStatusResponse.parse(await res.json()).recorders;
+  }
 
   async requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void> {
     let enforceCreds = false;

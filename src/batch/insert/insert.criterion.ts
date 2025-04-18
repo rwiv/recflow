@@ -28,7 +28,7 @@ export class CriterionBatchInserter {
         overseasFirst: false,
       };
       const parsed = chzzkCriterionAppend.parse(append);
-      parsed.isDeactivated = false;
+      // parsed.isDeactivated = false;
       const created = await this.criterionWriter.createChzzkCriterion(parsed);
       log.info(`Inserted criterion: ${created.name}`);
     }

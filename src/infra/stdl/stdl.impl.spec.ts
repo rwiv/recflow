@@ -1,16 +1,24 @@
-import { readEnv } from '../../common/config/env.js';
 import { it } from 'vitest';
 import { StdlImpl } from './stdl.impl.js';
+import { readEnv } from '../../common/config/env.js';
 import { AuthedImpl } from '../authed/authed.impl.js';
 
+const stdlUrl = '';
+const platform = 'chzzk';
 const uid = '';
 
-it('test', async () => {
+it('test getStatus', async () => {
   const env = readEnv();
-  const stdl = new StdlImpl();
-  const authClient = new AuthedImpl(env);
+  const authed = new AuthedImpl(env);
+  const stdl = new StdlImpl(authed);
+  const status = await stdl.getStatus(stdlUrl);
+  console.log(status);
+});
 
-  const stdlUrl = '';
-  const cookies = await authClient.requestChzzkCookies();
-  await stdl.requestChzzkLive(stdlUrl, uid, cookies);
+it('test cancel', async () => {
+  const env = readEnv();
+  const authed = new AuthedImpl(env);
+  const stdl = new StdlImpl(authed);
+  const status = await stdl.cancel(stdlUrl, platform, uid);
+  console.log(status);
 });

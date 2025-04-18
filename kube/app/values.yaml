@@ -57,3 +57,5 @@ externals:
     secretName: untf-client
     apiKeySecretKey: api-key
     topic: stmgr
+  vtask:
+    endpoint: http://vtask-server.media.svc.cluster.local

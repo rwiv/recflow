@@ -7,7 +7,9 @@ import { StdlMock } from './stdl/stdl.mock.js';
 import { StdlImpl } from './stdl/stdl.impl.js';
 import { AuthedMock } from './authed/authed.mock.js';
 import { AuthedImpl } from './authed/authed.impl.js';
-import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL } from './infra.tokens.js';
+import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL, VTASK } from './infra.tokens.js';
+import { VtaskImpl } from './vtask/vtask.impl.js';
+import { VtaskMock } from './vtask/vtask.mock.js';
 
 @Module({
   imports: [ConfigModule],
@@ -15,15 +17,15 @@ import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL } from './infra.tokens.js';
     InfraFactory,
     {
       provide: AUTHED,
-      useClass: process.env.NODE_ENV === 'prod' ? AuthedImpl : AuthedMock,
+      useClass: process.env.NODE_ENV === 'dev' ? AuthedMock : AuthedImpl,
     },
     {
       provide: STDL,
-      useClass: process.env.NODE_ENV === 'prod' ? StdlImpl : StdlMock,
+      useClass: process.env.NODE_ENV === 'dev' ? StdlMock : StdlImpl,
     },
     {
       provide: NOTIFIER,
-      useClass: process.env.NODE_ENV === 'prod' ? UntfNotifier : MockNotifier,
+      useClass: process.env.NODE_ENV === 'dev' ? MockNotifier : UntfNotifier,
     },
     {
       provide: AMQP,
@@ -39,7 +41,11 @@ import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL } from './infra.tokens.js';
       },
       inject: [InfraFactory],
     },
+    {
+      provide: VTASK,
+      useClass: process.env.NODE_ENV === 'dev' ? VtaskMock : VtaskImpl,
+    },
   ],
-  exports: [STDL, AUTHED, NOTIFIER, AMQP, AMQP_HTTP],
+  exports: [STDL, AUTHED, NOTIFIER, AMQP, AMQP_HTTP, VTASK],
 })
 export class InfraModule {}

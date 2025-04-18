@@ -1,4 +1,11 @@
-import { AmqpConfig, AuthedConfig, UntfConfig, PostgresConfig, StreamqConfig } from './config.types.js';
+import {
+  AmqpConfig,
+  AuthedConfig,
+  UntfConfig,
+  PostgresConfig,
+  StreamqConfig,
+  VtaskConfig,
+} from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
@@ -8,6 +15,7 @@ import {
   readPgConfig,
   readStreamqConfig,
   readUntfConfig,
+  readVtaskConfig,
 } from './env.utils.js';
 import { z } from 'zod';
 
@@ -17,6 +25,7 @@ export interface Env {
   streamq: StreamqConfig;
   authed: AuthedConfig;
   untf: UntfConfig;
+  vtask: VtaskConfig;
   amqp: AmqpConfig;
   pg: PostgresConfig;
   nodeFailureThreshold: number;
@@ -50,6 +59,7 @@ export function readEnv(): Env {
     streamq: readStreamqConfig(),
     authed: readAuthedConfig(),
     untf: readUntfConfig(),
+    vtask: readVtaskConfig(),
     amqp: readAmqpConfig(),
     pg: readPgConfig(),
     liveRecoveryWaitTimeMs,

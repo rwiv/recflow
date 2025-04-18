@@ -11,20 +11,18 @@ export class InfraFactory {
   constructor(@Inject(ENV) private readonly env: Env) {}
 
   async createAmqp() {
-    if (this.env.nodeEnv === 'prod') {
-      const amqp = new AmqpImpl(this.env);
-      await amqp.init();
-      return amqp;
-    } else {
+    if (this.env.nodeEnv === 'dev') {
       return new AmqpMock();
     }
+    const amqp = new AmqpImpl(this.env);
+    await amqp.init();
+    return amqp;
   }
 
   createAmqpHttp() {
-    if (this.env.nodeEnv === 'prod') {
-      return new AmqpHttpImpl(this.env);
-    } else {
+    if (this.env.nodeEnv === 'dev') {
       return new AmqpHttpMock();
     }
+    return new AmqpHttpImpl(this.env);
   }
 }

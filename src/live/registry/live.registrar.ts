@@ -16,17 +16,16 @@ import { log } from 'jslog';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { AMQP_HTTP, NOTIFIER, STDL } from '../../infra/infra.tokens.js';
+import { NOTIFIER, STDL } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
-import { AmqpHttp } from '../../infra/amqp/amqp.interface.js';
-import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import type { Stdl } from '../../infra/stdl/types.js';
 import { Dispatcher } from '../event/dispatcher.js';
+import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -57,7 +56,6 @@ export class LiveRegistrar {
     private readonly dispatcher: Dispatcher,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
-    @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
     @Inject(STDL) private readonly stdl: Stdl,
   ) {}
 
@@ -97,14 +95,8 @@ export class LiveRegistrar {
       return created;
     }
 
-    // If the live is already being recorded, do nothing
-    const pfName = channel.platform.name;
-    if (await this.amqpHttp.existsQueue(`${AMQP_EXIT_QUEUE_PREFIX}.${pfName}.${channel.pid}`)) {
-      log.info('This live is already being recorded', { platform: pfName, channel: channel.username });
-      return this.liveWriter.createByLive(liveInfo, null, true, tx);
-    }
-
     // If the live is inaccessible, do nothing
+    const pfName = channel.platform.name;
     if (!(await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo) {
       const { pid, username } = channel;
       log.debug('This live is inaccessible', { platform: pfName, pid, username });
@@ -165,7 +157,11 @@ export class LiveRegistrar {
     }
 
     if (exitCmd !== 'delete') {
-      await this.dispatcher.sendExitMessage(exitCmd, live.platform.name, live.channel.pid);
+      const node = live.node;
+      if (!node) {
+        throw new MissingValueError('node is missing');
+      }
+      await this.dispatcher.sendExitMessage(node.endpoint, live.platform.name, live.channel.pid, exitCmd);
     }
     log.info(`Delete Live: ${live.channel.username}`);
 

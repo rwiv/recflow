@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 
-const stdlDoneStatusEnum = z.enum(['complete', 'canceled']);
+export const stdlDoneStatusEnum = z.enum(['complete', 'canceled']);
+export type StdlDoneStatus = z.infer<typeof stdlDoneStatusEnum>;
 
-const stdlDoneMessage = z.object({
+export const stdlDoneMessage = z.object({
   status: stdlDoneStatusEnum,
   platform: platformNameEnum,
   uid: z.string().nonempty(),

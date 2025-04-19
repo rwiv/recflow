@@ -1,24 +1,45 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AMQP, AMQP_HTTP } from '../../infra/infra.tokens.js';
-import { Amqp, AmqpHttp } from '../../infra/amqp/amqp.interface.js';
-import { ExitCmd, ExitMessage } from './event.schema.js';
-import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
+import { STDL, VTASK } from '../../infra/infra.tokens.js';
+import { ExitCmd } from './event.schema.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { Stdl } from '../../infra/stdl/types.js';
+import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 
 @Injectable()
 export class Dispatcher {
   constructor(
-    @Inject(AMQP) private readonly amqp: Amqp,
-    @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
+    @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(VTASK) private readonly vtask: Vtask,
   ) {}
 
-  async sendExitMessage(cmd: ExitCmd, platform: PlatformName, pid: string) {
-    const queueName = `${AMQP_EXIT_QUEUE_PREFIX}.${platform}.${pid}`;
-    if (!(await this.amqpHttp.existsQueue(queueName))) {
-      throw NotFoundError.from('queue', 'name', queueName);
+  async sendExitMessage(nodeEndpoint: string, platform: PlatformName, pid: string, cmd: ExitCmd) {
+    const liveStatusList = await this.stdl.getStatus(nodeEndpoint);
+    const liveStatus = liveStatusList.find(
+      // TODO: add check liveId
+      (status) => status.platform === platform && status.channelId === pid,
+    );
+    if (!liveStatus) {
+      throw NotFoundError.from('live', 'platform and channelId', `${platform} ${pid}`);
     }
-    const message: ExitMessage = { cmd, platform, uid: pid };
-    this.amqp.publish(queueName, message);
+    await this.stdl.cancel(nodeEndpoint, platform, pid);
+
+    if (cmd === 'delete') {
+      return;
+    }
+    let doneCmd: StdlDoneStatus = 'complete';
+    if (cmd === 'cancel') {
+      doneCmd = 'canceled';
+    }
+    const doneMessage: StdlDoneMessage = {
+      status: doneCmd,
+      platform: liveStatus.platform,
+      uid: liveStatus.channelId,
+      videoName: liveStatus.videoName,
+      fsName: liveStatus.fsName,
+    };
+    setTimeout(() => {
+      this.vtask.addTask(doneMessage);
+    }, 60 * 1000);
   }
 }

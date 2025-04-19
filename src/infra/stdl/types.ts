@@ -1,7 +1,7 @@
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { z } from 'zod';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+import { PlatformName, platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { nnint, nonempty } from '../../common/data/common.schema.js';
 
 export interface ChzzkLiveRequest {
@@ -15,7 +15,9 @@ export interface SoopLiveRequest {
 }
 
 export interface Stdl {
+  getStatus(endpoint: string): Promise<NodeStatus[]>;
   requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void>;
+  cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void>;
 }
 
 export const stdlStreamStatusEnum = z.enum(['wait', 'recording', 'done', 'failed']);

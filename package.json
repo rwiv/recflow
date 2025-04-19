@@ -29,7 +29,7 @@
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.0",
     "js-yaml": "^4.1.0",
-    "jslog": "git+https://github.com/rwiv/jslog.git#v1.0.1",
+    "jslog": "git+https://github.com/rwiv/jslog.git#v1.0.2",
     "pg": "^8.13.1",
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",

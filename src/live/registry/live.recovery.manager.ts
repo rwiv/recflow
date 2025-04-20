@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AMQP_HTTP } from '../../infra/infra.tokens.js';
-import { AmqpHttp } from '../../infra/amqp/amqp.interface.js';
-import { AMQP_EXIT_QUEUE_PREFIX } from '../../common/data/constants.js';
+import { STDL } from '../../infra/infra.tokens.js';
 import { LiveFinder } from '../access/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
@@ -15,16 +13,22 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { log } from 'jslog';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { NodeStatus, Stdl } from '../../infra/stdl/types.js';
+import { NodeFinder } from '../../node/service/node.finder.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import assert from 'assert';
 
 @Injectable()
 export class LiveRecoveryManager {
   constructor(
     @Inject(ENV) private readonly env: Env,
-    @Inject(AMQP_HTTP) private readonly amqpHttp: AmqpHttp,
+    @Inject(STDL) private readonly stdl: Stdl,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly nodeUpdater: NodeUpdater,
+    private readonly nodeFinder: NodeFinder,
     private readonly fetcher: PlatformFetcher,
   ) {}
 
@@ -79,13 +83,41 @@ export class LiveRecoveryManager {
   }
 
   private async findInvalidLives() {
-    const prefix = AMQP_EXIT_QUEUE_PREFIX;
-    const queues = await this.amqpHttp.fetchByPattern(`${prefix}.*`);
+    const nodes: NodeDto[] = await this.nodeFinder.findAll();
+    const promises: Promise<NodeStatus[]>[] = [];
+    for (const node of nodes) {
+      promises.push(this.stdl.getStatus(node.endpoint));
+    }
+    const nodeStatusList: NodeStatus[][] = await Promise.all(promises);
+    if (nodeStatusList.length !== nodes.length) {
+      throw new ValidationError('Node status list length mismatch');
+    }
+    const nodeStatusMap = new Map<string, NodeStatus[]>();
+    for (let i = 0; i < nodeStatusList.length; i++) {
+      nodeStatusMap.set(nodes[i].id, nodeStatusList[i]);
+    }
+
     const invalidLives: LiveDto[] = [];
-    for (const live of await this.liveFinder.findAllActives({ withNode: true })) {
-      const queueName = `${prefix}.${live.platform.name}.${live.channel.pid}`;
-      if (!queues.find((q) => q.name === queueName)) {
-        invalidLives.push(live);
+    const lives = await this.liveFinder.findAllActives({ withNode: true });
+    for (const live of lives) {
+      assert(live.node);
+      const targetStatus = nodeStatusMap.get(live.node.id);
+      assert(targetStatus);
+
+      const searched = targetStatus.find((status) => {
+        return status.platform === live.platform.name && status.channelId === live.channel.pid;
+      });
+      if (searched && ['recording', 'done'].includes(searched.status)) {
+        continue;
+      }
+      invalidLives.push(live);
+      if (searched) {
+        this.stdl.cancel(live.node.endpoint, searched.platform, searched.channelId);
+        log.debug(`Cancel live`, {
+          node: live.node.name,
+          platform: searched.platform,
+          channelId: searched.channelId,
+        });
       }
     }
     const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);

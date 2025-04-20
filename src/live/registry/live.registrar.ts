@@ -144,7 +144,10 @@ export class LiveRegistrar {
       isPurge = false;
     }
 
-    const live = await this.liveFinder.findById(recordId, { includeDisabled: true });
+    const live = await this.liveFinder.findById(recordId, {
+      includeDisabled: true,
+      withNode: true,
+    });
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!isPurge) {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NodeRepository } from '../storage/node.repository.js';
 import { NodeMapper } from './node.mapper.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';
-import { NodeDto } from '../spec/node.dto.schema.js';
+import { NodeDto, NodeGroupDto } from '../spec/node.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 
@@ -35,12 +35,12 @@ export class NodeFinder {
     return Promise.all(promises);
   }
 
-  async findAll(withGroup: boolean = false, withStates: boolean = false, tx: Tx = db) {
+  async findAll(withGroup: boolean = false, withStates: boolean = false, tx: Tx = db): Promise<NodeDto[]> {
     const entities = await this.nodeRepo.findAll(tx);
     return this.mapper.mapAll(entities, withGroup, withStates, tx);
   }
 
-  async findAllGroups(tx: Tx = db) {
+  async findAllGroups(tx: Tx = db): Promise<NodeGroupDto[]> {
     return this.groupRepo.findAll(tx);
   }
 }

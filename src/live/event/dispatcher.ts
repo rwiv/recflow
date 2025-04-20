@@ -5,6 +5,7 @@ import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.j
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Stdl } from '../../infra/stdl/types.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class Dispatcher {
@@ -38,8 +39,9 @@ export class Dispatcher {
       videoName: liveStatus.videoName,
       fsName: liveStatus.fsName,
     };
-    setTimeout(() => {
-      this.vtask.addTask(doneMessage);
+    setTimeout(async () => {
+      await this.vtask.addTask(doneMessage);
+      log.info('Added task to vtask', doneMessage);
     }, 60 * 1000);
   }
 }

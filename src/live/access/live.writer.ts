@@ -11,6 +11,7 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { getFormattedTimestamp } from '../../utils/time.js';
 
 @Injectable()
 export class LiveWriter {
@@ -40,6 +41,8 @@ export class LiveWriter {
       ...live,
       platformId: platform.id,
       channelId: channel.id,
+      sourceId: live.liveId,
+      videoName: getFormattedTimestamp(),
       nodeId,
       isDisabled,
     };

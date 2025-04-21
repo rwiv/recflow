@@ -5,6 +5,7 @@ import {
   PostgresConfig,
   StreamqConfig,
   VtaskConfig,
+  RedisConfig,
 } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
@@ -13,6 +14,7 @@ import {
   readAmqpConfig,
   readAuthedConfig,
   readPgConfig,
+  readStdlRedisConfig,
   readStreamqConfig,
   readUntfConfig,
   readVtaskConfig,
@@ -28,6 +30,7 @@ export interface Env {
   vtask: VtaskConfig;
   amqp: AmqpConfig;
   pg: PostgresConfig;
+  stdlRedis: RedisConfig;
   nodeFailureThreshold: number;
   nodeResetCycleSec: number;
   liveRecoveryWaitTimeMs: number;
@@ -62,6 +65,7 @@ export function readEnv(): Env {
     vtask: readVtaskConfig(),
     amqp: readAmqpConfig(),
     pg: readPgConfig(),
+    stdlRedis: readStdlRedisConfig(),
     liveRecoveryWaitTimeMs,
     nodeFailureThreshold,
     nodeResetCycleSec,

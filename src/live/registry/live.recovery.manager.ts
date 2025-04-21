@@ -13,7 +13,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveWriter } from '../access/live.writer.js';
 import { log } from 'jslog';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { NodeStatus, Stdl } from '../../infra/stdl/types.js';
+import { NodeStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';

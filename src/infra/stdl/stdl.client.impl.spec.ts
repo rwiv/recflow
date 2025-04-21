@@ -1,5 +1,5 @@
 import { it } from 'vitest';
-import { StdlImpl } from './stdl.impl.js';
+import { StdlImpl } from './stdl.client.impl.js';
 import { readEnv } from '../../common/config/env.js';
 import { AuthedImpl } from '../authed/authed.impl.js';
 

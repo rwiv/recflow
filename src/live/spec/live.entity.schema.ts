@@ -1,15 +1,18 @@
 import { z } from 'zod';
-import { uuid } from '../../common/data/common.schema.js';
+import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
 
 export const liveEnt = z.object({
   id: uuid,
   channelId: uuid,
   platformId: uuid,
   nodeId: uuid.nullable(),
-  liveTitle: z.string().min(1),
-  viewCnt: z.number().int().nonnegative(),
+  sourceId: nonempty,
+  liveTitle: nonempty,
+  streamUrl: nonempty.nullable(),
+  viewCnt: nnint,
   isAdult: z.boolean(),
   isDisabled: z.boolean(),
+  videoName: nonempty,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),

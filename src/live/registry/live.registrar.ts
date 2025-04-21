@@ -23,7 +23,7 @@ import { Env } from '../../common/config/env.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import type { Stdl } from '../../infra/stdl/types.js';
+import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { Dispatcher } from '../event/dispatcher.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 
@@ -97,7 +97,8 @@ export class LiveRegistrar {
 
     // If the live is inaccessible, do nothing
     const pfName = channel.platform.name;
-    if (!(await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo) {
+    const newLiveInfo = (await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo;
+    if (!newLiveInfo) {
       const { pid, username } = channel;
       log.debug('This live is inaccessible', { platform: pfName, pid, username });
       return null;
@@ -105,7 +106,7 @@ export class LiveRegistrar {
 
     // Create a live
     return tx.transaction(async (txx) => {
-      const created = await this.liveWriter.createByLive(liveInfo, node?.id ?? null, node === null, txx);
+      const created = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
         await this.stdl.requestRecording(node.endpoint, created, cr);

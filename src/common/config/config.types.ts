@@ -4,6 +4,10 @@ export interface RedisConfig {
   password: string;
 }
 
+export interface StdlRedisConfig extends RedisConfig {
+  caPath: string;
+}
+
 export interface AmqpConfig {
   host: string;
   port: number;

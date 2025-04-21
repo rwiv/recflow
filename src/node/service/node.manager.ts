@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL } from '../../infra/infra.tokens.js';
-import type { Stdl } from '../../infra/stdl/types.js';
+import type { Stdl } from '../../infra/stdl/stdl.client.js';
 
 @Injectable()
 export class NodeManager {

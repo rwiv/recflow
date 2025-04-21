@@ -3,7 +3,7 @@ import { AmqpImpl } from '../../infra/amqp/amqp.impl.js';
 import { readEnv } from '../../common/config/env.js';
 import { Dispatcher } from './dispatcher.js';
 import { AmqpHttpImpl } from '../../infra/amqp/amqp-http.impl.js';
-import { StdlImpl } from '../../infra/stdl/stdl.impl.js';
+import { StdlImpl } from '../../infra/stdl/stdl.client.impl.js';
 import { VtaskImpl } from '../../infra/vtask/vtask.impl.js';
 import { AuthedImpl } from '../../infra/authed/authed.impl.js';
 

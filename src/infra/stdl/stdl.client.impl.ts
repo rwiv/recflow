@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cookie } from '../authed/types.js';
-import { ChzzkLiveRequest, NodeStatus, nodeStatusResponse, SoopLiveRequest, Stdl } from './types.js';
+import { ChzzkLiveRequest, NodeStatus, nodeStatusResponse, SoopLiveRequest, Stdl } from './stdl.client.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
@@ -11,18 +11,6 @@ import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.j
 @Injectable()
 export class StdlImpl implements Stdl {
   constructor(@Inject(AUTHED) private readonly authClient: Authed) {}
-
-  async cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void> {
-    const body = JSON.stringify({
-      platform: platform,
-      uid: uid,
-    });
-    await fetch(endpoint, {
-      method: 'DELETE',
-      headers: { 'content-type': 'application/json' },
-      body,
-    });
-  }
 
   async getStatus(endpoint: string): Promise<NodeStatus[]> {
     const res = await fetch(`${endpoint}`);
@@ -81,6 +69,18 @@ export class StdlImpl implements Stdl {
   private async request(url: string, body: string): Promise<void> {
     await fetch(url, {
       method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body,
+    });
+  }
+
+  async cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void> {
+    const body = JSON.stringify({
+      platform: platform,
+      uid: uid,
+    });
+    await fetch(endpoint, {
+      method: 'DELETE',
       headers: { 'content-type': 'application/json' },
       body,
     });

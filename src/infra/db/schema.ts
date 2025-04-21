@@ -181,10 +181,13 @@ export const liveTable = pgTable('live', {
     .notNull()
     .references(() => platformTable.id),
   nodeId: uuid('node_id').references(() => nodeTable.id),
+  sourceId: text('source_id').notNull(),
   liveTitle: text('live_title').notNull(),
+  streamUrl: text('stream_url'),
   viewCnt: integer('view_cnt').notNull(),
   isAdult: boolean('is_adult').notNull(),
   isDisabled: boolean('is_disabled').notNull(),
+  videoName: text('video_name').notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),

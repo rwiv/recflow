@@ -28,6 +28,7 @@ export function mockLiveInfo(n: number, pid: string): LiveInfo {
     channelName: `ch${n}`,
     liveId: '123',
     liveTitle: `live${n}`,
+    streamUrl: 'https://live1.com',
     viewCnt: 1,
     isAdult: false,
     openDate: '2021-01-01',

@@ -3,7 +3,7 @@ import { STDL, VTASK } from '../../infra/infra.tokens.js';
 import { ExitCmd } from './event.schema.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { Stdl } from '../../infra/stdl/types.js';
+import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
 

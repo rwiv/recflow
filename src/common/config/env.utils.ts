@@ -3,7 +3,6 @@ import {
   AuthedConfig,
   PostgresConfig,
   RedisConfig,
-  StdlRedisConfig,
   StreamqConfig,
   UntfConfig,
   VtaskConfig,
@@ -14,23 +13,13 @@ import { DEFAULT_UNTF_TOPIC } from '../data/constants.js';
 const nnint = z.coerce.number().int().nonnegative();
 
 export function readRedisConfig(): RedisConfig {
-  const host = process.env.REDIS_HOST;
-  const password = process.env.REDIS_PASSWORD;
-  const port = nnint.parse(process.env.REDIS_PORT);
+  const host = process.env.STDL_REDIS_HOST;
+  const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
     throw Error('redis data is undefined');
   }
-  return { host, port, password };
-}
-
-export function readStdlRedisConfig(): StdlRedisConfig {
-  const host = process.env.STDL_REDIS_HOST;
-  const password = process.env.STDL_REDIS_PASSWORD;
   const port = nnint.parse(process.env.STDL_REDIS_PORT);
   const caPath = process.env.STDL_REDIS_CA_PATH;
-  if (host === undefined || password === undefined || caPath === undefined) {
-    throw Error('redis data is undefined');
-  }
   return { host, port, password, caPath };
 }
 

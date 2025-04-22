@@ -7,7 +7,7 @@ import { StdlMock } from './stdl/stdl.client.mock.js';
 import { StdlImpl } from './stdl/stdl.client.impl.js';
 import { AuthedMock } from './authed/authed.mock.js';
 import { AuthedImpl } from './authed/authed.impl.js';
-import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL, VTASK } from './infra.tokens.js';
+import { AMQP, AMQP_HTTP, AUTHED, NOTIFIER, STDL, STDL_REDIS, VTASK } from './infra.tokens.js';
 import { VtaskImpl } from './vtask/vtask.impl.js';
 import { VtaskMock } from './vtask/vtask.mock.js';
 
@@ -22,6 +22,13 @@ import { VtaskMock } from './vtask/vtask.mock.js';
     {
       provide: STDL,
       useClass: process.env.NODE_ENV === 'dev' ? StdlMock : StdlImpl,
+    },
+    {
+      provide: STDL_REDIS,
+      useFactory: (factory: InfraFactory) => {
+        return factory.createStdlRedis();
+      },
+      inject: [InfraFactory],
     },
     {
       provide: NOTIFIER,
@@ -46,6 +53,6 @@ import { VtaskMock } from './vtask/vtask.mock.js';
       useClass: process.env.NODE_ENV === 'dev' ? VtaskMock : VtaskImpl,
     },
   ],
-  exports: [STDL, AUTHED, NOTIFIER, AMQP, AMQP_HTTP, VTASK],
+  exports: [STDL, STDL_REDIS, AUTHED, NOTIFIER, AMQP, AMQP_HTTP, VTASK],
 })
 export class InfraModule {}

@@ -1,21 +1,16 @@
 import { it } from 'vitest';
 import path from 'path';
 import dotenv from 'dotenv';
-import { allKeys, createRedisClient } from './redis.js';
+import { createRedisClient } from './redis.client.js';
 import { readRedisConfig } from '../../common/config/env.utils.js';
+import { allKeys } from './redis.utils.js';
 
 dotenv.config({ path: path.resolve('dev', '.env') });
 const conf = readRedisConfig();
 
-// const pattern = '*';
-const pattern = 'stmgr:*';
+const pattern = '*';
+// const pattern = 'stmgr:*';
 const targetKey = '';
-
-it('test allKeys', async () => {
-  const redis = await createRedisClient(conf);
-  const res = await allKeys(redis, pattern);
-  console.log(res);
-});
 
 it('test get', async () => {
   const redis = await createRedisClient(conf);
@@ -23,6 +18,12 @@ it('test get', async () => {
   if (value) {
     console.log(JSON.parse(value));
   }
+});
+
+it('test allKeys', async () => {
+  const redis = await createRedisClient(conf);
+  const res = await allKeys(redis, pattern);
+  console.log(res);
 });
 
 // it('clear keys', async () => {

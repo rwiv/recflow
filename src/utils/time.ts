@@ -9,7 +9,7 @@ export function getFormattedTimestamp(): string {
 
   const pad = (num: number): string => num.toString().padStart(2, '0');
 
-  const year: number = now.getFullYear();
+  const year: string = now.getFullYear().toString().slice(-2);
   const month: string = pad(now.getMonth() + 1); // 0-based month
   const day: string = pad(now.getDate());
   const hours: string = pad(now.getHours());

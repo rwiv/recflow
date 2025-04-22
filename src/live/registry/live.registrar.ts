@@ -16,7 +16,7 @@ import { log } from 'jslog';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NOTIFIER, STDL } from '../../infra/infra.tokens.js';
+import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
@@ -26,6 +26,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { Dispatcher } from '../event/dispatcher.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
+import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -57,6 +58,7 @@ export class LiveRegistrar {
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
   async add(
@@ -109,6 +111,7 @@ export class LiveRegistrar {
       const created = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
+        await this.stdlRedis.setLiveDto(created);
         await this.stdl.requestRecording(node.endpoint, created, cr);
       }
 

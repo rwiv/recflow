@@ -1,7 +1,12 @@
-import { RedisConfig } from '../../common/config/config.types.js';
 import { createClient, RedisClientType } from 'redis';
 import { log } from 'jslog';
 import { stackTrace } from '../errors/utils.js';
+
+export interface RedisConfig {
+  host: string;
+  port: number;
+  password: string;
+}
 
 export async function createRedisClient(conf: RedisConfig, logging: boolean = false) {
   const url = `redis://${conf.host}:${conf.port}`;
@@ -12,17 +17,4 @@ export async function createRedisClient(conf: RedisConfig, logging: boolean = fa
     log.info('Redis Client Connected');
   }
   return client as RedisClientType;
-}
-
-export async function allKeys(client: RedisClientType, pattern: string, cnt: number = 100) {
-  const keys: string[] = [];
-  let cursor = 0;
-
-  do {
-    const scanResult = await client.scan(cursor, { MATCH: pattern, COUNT: cnt });
-    cursor = scanResult.cursor;
-    keys.push(...scanResult.keys);
-  } while (cursor !== 0);
-
-  return keys;
 }

@@ -2,10 +2,7 @@ export interface RedisConfig {
   host: string;
   port: number;
   password: string;
-}
-
-export interface StdlRedisConfig extends RedisConfig {
-  caPath: string;
+  caPath?: string;
 }
 
 export interface AmqpConfig {

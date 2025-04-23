@@ -1,11 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL, VTASK } from '../../infra/infra.tokens.js';
 import { ExitCmd } from './event.schema.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { Stdl } from '../../infra/stdl/stdl.client.js';
+import { NodeRecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
+import { LiveDto } from '../spec/live.dto.schema.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+
+interface Target {
+  node: NodeDto;
+  status: NodeRecorderStatus;
+}
+
+interface Candidate {
+  node: NodeDto;
+  statusList: NodeRecorderStatus[];
+}
 
 @Injectable()
 export class Dispatcher {
@@ -14,16 +25,36 @@ export class Dispatcher {
     @Inject(VTASK) private readonly vtask: Vtask,
   ) {}
 
-  async sendExitMessage(nodeEndpoint: string, platform: PlatformName, pid: string, cmd: ExitCmd) {
-    const liveStatusList = await this.stdl.getStatus(nodeEndpoint);
-    const liveStatus = liveStatusList.find(
-      // TODO: add check liveId
-      (status) => status.platform === platform && status.channelId === pid,
-    );
-    if (!liveStatus) {
-      throw NotFoundError.from('live', 'platform and channelId', `${platform} ${pid}`);
+  async sendExitMessage(live: LiveDto, nodes: NodeDto[], cmd: ExitCmd) {
+    const platform = live.platform.name;
+    const pid = live.channel.pid;
+
+    const promises: Promise<Candidate>[] = nodes.map(async (node) => {
+      return { node, statusList: await this.stdl.getStatus(node.endpoint) };
+    });
+    const candidates = await Promise.all(promises);
+    const targets: Target[] = [];
+    for (const candidate of candidates) {
+      const status = candidate.statusList.find((status) => this.matchLiveAndStatus(live, status));
+      if (!status) {
+        log.info(`Live already finished`, { platform, channelId: pid });
+        return;
+      } else {
+        targets.push({ node: candidate.node, status });
+      }
     }
-    await this.stdl.cancel(nodeEndpoint, platform, pid);
+
+    if (targets.length === 0) {
+      return;
+    }
+    const fsName = targets[0].status.fsName;
+    for (let i = 1; i < targets.length; i++) {
+      const target = targets[i];
+      if (target.status.fsName !== fsName) {
+        throw new ValidationError(`fsName mismatch: ${fsName} != ${target.status.fsName}`);
+      }
+    }
+    await Promise.all(targets.map((t) => this.stdl.cancel(t.node.endpoint, platform, pid)));
 
     if (cmd === 'delete') {
       return;
@@ -32,16 +63,42 @@ export class Dispatcher {
     if (cmd === 'cancel') {
       doneCmd = 'canceled';
     }
-    const doneMessage: StdlDoneMessage = {
+    const doneMsg: StdlDoneMessage = {
       status: doneCmd,
-      platform: liveStatus.platform,
-      uid: liveStatus.channelId,
-      videoName: liveStatus.videoName,
-      fsName: liveStatus.fsName,
+      platform,
+      uid: pid,
+      videoName: live.videoName,
+      fsName,
     };
-    setTimeout(async () => {
-      await this.vtask.addTask(doneMessage);
-      log.info('Added task to vtask', doneMessage);
+    const interval = setInterval(async () => {
+      await this.checkVtask(live, targets, doneMsg);
+    }, 1000);
+    setTimeout(() => {
+      clearInterval(interval);
     }, 60 * 1000);
+  }
+
+  async checkVtask(live: LiveDto, targets: Target[], doneMsg: StdlDoneMessage) {
+    const promises: Promise<Candidate>[] = targets.map(async (target) => {
+      return { node: target.node, statusList: await this.stdl.getStatus(target.node.endpoint) };
+    });
+    const latest = await Promise.all(promises);
+    for (const candidate of latest) {
+      for (const status of candidate.statusList) {
+        if (this.matchLiveAndStatus(live, status)) {
+          log.debug(`Live still recording`, { channelId: live.channel.pid });
+          return;
+        }
+      }
+    }
+    await this.vtask.addTask(doneMsg);
+  }
+
+  private matchLiveAndStatus(live: LiveDto, status: NodeRecorderStatus) {
+    return (
+      status.platform === live.platform.name &&
+      status.channelId === live.channel.pid &&
+      status.videoName === live.videoName
+    );
   }
 }

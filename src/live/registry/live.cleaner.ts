@@ -2,16 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
-import { log } from 'jslog';
-import { FindOptions, LiveFinder } from '../access/live.finder.js';
+import { LiveFinder } from '../access/live.finder.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { LiveWriter } from '../access/live.writer.js';
+import { LiveRegistrar } from './live.registrar.js';
 
 @Injectable()
 export class LiveCleaner {
   constructor(
     private readonly liveFinder: LiveFinder,
-    private readonly liveWriter: LiveWriter,
+    private readonly liveRegistrar: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
   ) {}
 
@@ -23,14 +22,9 @@ export class LiveCleaner {
 
   private async deregisterLive(live: LiveDto, tx: Tx = db) {
     const channelInfo = await this.fetcher.fetchChannel(live.platform.name, live.channel.pid, false);
-    if (channelInfo?.openLive) return null;
-
-    return tx.transaction(async (txx) => {
-      const opts: FindOptions = { includeDisabled: true, forUpdate: true };
-      const queried = await this.liveFinder.findById(live.id, opts, txx);
-      if (!queried) return;
-      await this.liveWriter.delete(queried.id, txx);
-      log.info(`Delete: ${queried.channel.username}`);
-    });
+    if (channelInfo?.openLive) {
+      return null;
+    }
+    await this.liveRegistrar.deregister(live.id, {}, tx);
   }
 }

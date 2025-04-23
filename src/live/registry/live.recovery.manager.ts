@@ -48,12 +48,8 @@ export class LiveRecoveryManager {
 
     const chanInfo = await this.fetcher.fetchChannelWithCheckStream(live.platform.name, live.channel.pid);
     if (!chanInfo.liveInfo) {
-      return tx.transaction(async (txx) => {
-        const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
-        if (!queried) return;
-        await this.liveWriter.delete(queried.id, txx);
-        log.info(`Delete uncleaned live`, this.getLiveAttrs(queried, node));
-      });
+      await this.liveRegistrar.deregister(live.id, { msg: 'Delete uncleaned live' }, tx);
+      return;
     }
     // else
     await tx.transaction(async (txx) => {
@@ -66,7 +62,6 @@ export class LiveRecoveryManager {
         await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, txx);
       }
 
-      await this.liveWriter.delete(queried.id, txx);
       log.info(`Recovery live`, this.getLiveAttrs(queried, node));
       const req: LiveRegisterRequest = {
         channelInfo: channelLiveInfo.parse(chanInfo),

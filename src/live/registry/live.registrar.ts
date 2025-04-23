@@ -8,7 +8,7 @@ import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveWriter } from '../access/live.writer.js';
-import { LiveFinder } from '../access/live.finder.js';
+import { FindOptions, LiveFinder } from '../access/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
@@ -32,6 +32,7 @@ import assert from 'assert';
 export interface DeleteOptions {
   isPurge?: boolean;
   exitCmd?: ExitCmd;
+  msg?: string;
 }
 
 interface CreatedLiveLogAttr {
@@ -143,38 +144,33 @@ export class LiveRegistrar {
     log.info(message, attr);
   }
 
-  async deregister(recordId: string, opts: DeleteOptions = {}) {
-    let exitCmd = opts.exitCmd;
-    if (exitCmd === undefined) {
-      exitCmd = 'delete';
-    }
-    let isPurge = opts.isPurge;
-    if (isPurge === undefined) {
-      isPurge = false;
-    }
+  async deregister(recordId: string, deleteOpts: DeleteOptions = {}, tx: Tx = db) {
+    const exitCmd = deleteOpts.exitCmd ?? 'delete';
+    const isPurge = deleteOpts.isPurge ?? false;
 
-    const live = await this.liveFinder.findById(recordId, {
+    const findOpts: FindOptions = {
       includeDisabled: true,
       nodes: true,
-    });
+      forUpdate: true,
+    };
+    const live = await this.liveFinder.findById(recordId, findOpts, tx);
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!isPurge) {
       // soft delete
       if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
-      await this.liveWriter.disable(live.id);
+      await this.liveWriter.disable(live.id, tx);
     } else {
       // hard delete
-      await this.liveWriter.delete(recordId);
+      await this.liveWriter.delete(recordId, tx);
     }
 
     if (exitCmd !== 'delete') {
       assert(live.nodes);
-      for (const node of live.nodes) {
-        await this.dispatcher.sendExitMessage(node.endpoint, live.platform.name, live.channel.pid, exitCmd);
-      }
+      await this.dispatcher.sendExitMessage(live, live.nodes, exitCmd);
     }
-    log.info(`Delete Live: ${live.channel.username}`);
+    const msg = deleteOpts.msg ?? 'Delete Live';
+    log.info(`${msg}: ${live.channel.username}`);
 
     return live;
   }

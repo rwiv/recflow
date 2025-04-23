@@ -1,18 +1,19 @@
-import { LiveDto } from '../spec/live.dto.schema.js';
+import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Injectable } from '@nestjs/common';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { NodeFieldsReq } from '../../node/spec/node.dto.schema.js';
+import { NodeFinder } from '../../node/service/node.finder.js';
 
-export interface LiveMapOpt {
-  withChannelTags?: boolean;
-  withNode?: boolean;
-  withNodeGroup?: boolean;
-  withNodeStates?: boolean;
+export interface LiveFieldsReq {
+  channelTags?: boolean;
+  nodes?: boolean;
+  nodeGroup?: boolean;
+  nodeStates?: boolean;
 }
 
 @Injectable()
@@ -23,31 +24,25 @@ export class LiveMapper {
     private readonly nodeFinder: NodeFinder,
   ) {}
 
-  async mapAll(lives: LiveEnt[], tx: Tx = db, opt: LiveMapOpt): Promise<LiveDto[]> {
+  async mapAll(lives: LiveEnt[], tx: Tx = db, opt: LiveFieldsReq): Promise<LiveDtoWithNodes[]> {
     const promises = lives.map((live) => this.map(live, tx, opt));
     return Promise.all(promises);
   }
 
-  async map(liveEnt: LiveEnt, tx: Tx = db, opt: LiveMapOpt = {}): Promise<LiveDto> {
-    const withChannelTags = opt.withChannelTags ?? false;
-    const withNode = opt.withNode ?? false;
-    const withNodeGroup = opt.withNodeGroup ?? false;
-    const withNodeStates = opt.withNodeStates ?? false;
-
+  async map(liveEnt: LiveEnt, tx: Tx = db, opt: LiveFieldsReq = {}): Promise<LiveDtoWithNodes> {
     const platform = await this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
-    const channel = await this.channelFinder.findById(liveEnt.channelId, withChannelTags, tx);
+    const channel = await this.channelFinder.findById(liveEnt.channelId, opt.channelTags ?? false, tx);
     if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
-    let result: LiveDto = { ...liveEnt, channel, platform };
+    let result: LiveDtoWithNodes = { ...liveEnt, channel, platform };
 
-    if (withNode) {
-      if (liveEnt.nodeId) {
-        const node = await this.nodeFinder.findById(liveEnt.nodeId, withNodeGroup, withNodeStates, tx);
-        if (!node) throw NotFoundError.from('Node', 'id', liveEnt.nodeId);
-        result = { ...result, node };
-      } else {
-        result = { ...result, node: null };
-      }
+    if (opt.nodes) {
+      const req: NodeFieldsReq = {
+        group: opt.nodeGroup ?? false,
+        states: opt.nodeStates ?? false,
+      };
+      const nodes = await this.nodeFinder.findByLiveId(liveEnt.id, req, tx);
+      result = { ...result, nodes };
     }
     return result;
   }

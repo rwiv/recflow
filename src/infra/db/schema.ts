@@ -89,7 +89,7 @@ export const channelTagMapTable = pgTable(
   },
   (t) => [
     primaryKey({
-      name: 'id',
+      name: 'channel_tag_map_id',
       columns: [t.channelId, t.tagId],
     }),
   ],
@@ -180,7 +180,6 @@ export const liveTable = pgTable('live', {
   platformId: uuid('platform_id')
     .notNull()
     .references(() => platformTable.id),
-  nodeId: uuid('node_id').references(() => nodeTable.id),
   sourceId: text('source_id').notNull(),
   liveTitle: text('live_title').notNull(),
   streamUrl: text('stream_url'),
@@ -192,6 +191,25 @@ export const liveTable = pgTable('live', {
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),
 });
+
+export const liveNodeTable = pgTable(
+  'live_node',
+  {
+    liveId: uuid('live_id')
+      .notNull()
+      .references(() => liveTable.id),
+    nodeId: uuid('node_id')
+      .notNull()
+      .references(() => nodeTable.id),
+    createdAt: timestamp('created_at').notNull(),
+  },
+  (t) => [
+    primaryKey({
+      name: 'live_node_id',
+      columns: [t.liveId, t.nodeId],
+    }),
+  ],
+);
 
 export const liveCriterionTable = pgTable(
   'live_criterion',

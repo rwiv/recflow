@@ -50,3 +50,9 @@ export type NodeAppend = z.infer<typeof nodeAppend>;
 
 export const nodeGroupDto = nodeGroupEnt;
 export type NodeGroupDto = z.infer<typeof nodeGroupDto>;
+
+export interface NodeFieldsReq {
+  group?: boolean;
+  states?: boolean;
+  lives?: boolean;
+}

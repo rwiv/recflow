@@ -4,13 +4,12 @@ import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from '../spec/live.ent
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channelTable, liveTable } from '../../infra/db/schema.js';
+import { channelTable, liveNodeTable, liveTable } from '../../infra/db/schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { asc, eq, sql } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const liveEntAppendReq = liveEnt.partial({
-  nodeId: true,
   updatedAt: true,
   deletedAt: true,
 });
@@ -62,8 +61,13 @@ export class LiveRepository {
     return rows.map((row) => row.lives);
   }
 
-  async findByNodeId(nodeId: string, tx: Tx = db) {
-    return tx.select().from(liveTable).where(eq(liveTable.nodeId, nodeId));
+  async findByNodeId(nodeId: string, tx: Tx = db): Promise<LiveEnt[]> {
+    const records = await tx
+      .select()
+      .from(liveTable)
+      .innerJoin(liveNodeTable, eq(liveTable.id, liveNodeTable.liveId))
+      .where(eq(liveNodeTable.nodeId, nodeId));
+    return records.map((row) => row.live);
   }
 
   async update(id: string, update: LiveEntUpdate, tx: Tx = db) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LiveRepository } from '../storage/live.repository.js';
-import { LiveMapOpt, LiveMapper } from './live.mapper.js';
+import { LiveFieldsReq, LiveMapper } from './live.mapper.js';
 import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { Tx } from '../../infra/db/types.js';
@@ -8,7 +8,7 @@ import { db } from '../../infra/db/db.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 
-export interface FindOptions extends LiveMapOpt {
+export interface FindOptions extends LiveFieldsReq {
   includeDisabled?: boolean;
   forUpdate?: boolean;
 }
@@ -47,15 +47,15 @@ export class LiveFinder {
     return this.mapper.map(ent, tx, opts);
   }
 
-  async findAll(opt: LiveMapOpt = {}, tx: Tx = db) {
+  async findAll(opt: LiveFieldsReq = {}, tx: Tx = db) {
     return this.mapper.mapAll(await this.liveRepo.findAll(), tx, opt);
   }
 
-  async findAllActives(opt: LiveMapOpt = {}, tx: Tx = db) {
+  async findAllActives(opt: LiveFieldsReq = {}, tx: Tx = db) {
     return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(false), tx, opt);
   }
 
-  async findAllDeleted(opt: LiveMapOpt = {}, tx: Tx = db) {
+  async findAllDeleted(opt: LiveFieldsReq = {}, tx: Tx = db) {
     return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), tx, opt);
   }
 

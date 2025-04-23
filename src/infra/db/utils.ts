@@ -13,6 +13,7 @@ import {
   liveCriterionTable,
   liveCriterionRuleTable,
   liveCriterionUnitTable,
+  liveNodeTable,
 } from './schema.js';
 
 export async function dropAll() {
@@ -20,6 +21,7 @@ export async function dropAll() {
   await db.delete(liveCriterionRuleTable);
   await db.delete(liveCriterionTable);
 
+  await db.delete(liveNodeTable);
   await db.delete(liveTable);
 
   await db.delete(channelTagMapTable);

@@ -8,9 +8,17 @@ import { LiveWriter } from './live.writer.js';
 import { LiveMapper } from './live.mapper.js';
 import { LiveFinder } from './live.finder.js';
 import { LiveRefresher } from './live.refresher.js';
+import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 
 @Module({
-  imports: [LiveStorageModule, ChannelServiceModule, NodeServiceModule, PlatformModule, LiveEventModule],
+  imports: [
+    LiveStorageModule,
+    ChannelServiceModule,
+    NodeStorageModule,
+    NodeServiceModule,
+    PlatformModule,
+    LiveEventModule,
+  ],
   providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher],
   exports: [LiveWriter, LiveFinder, LiveRefresher],
 })

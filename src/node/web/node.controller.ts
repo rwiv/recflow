@@ -16,7 +16,7 @@ export class NodeController {
 
   @Get('/')
   nodes() {
-    return this.finder.findAll(true, true);
+    return this.finder.findAll({ group: true, states: true, lives: true });
   }
 
   @Get('/groups')

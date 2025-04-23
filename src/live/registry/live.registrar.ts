@@ -25,8 +25,9 @@ import { NodeGroupRepository } from '../../node/storage/node-group.repository.js
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { Dispatcher } from '../event/dispatcher.js';
-import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import assert from 'assert';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -40,6 +41,13 @@ interface CreatedLiveLogAttr {
   title: string;
   node?: string;
   assigned?: number;
+}
+
+export interface LiveRegisterRequest {
+  channelInfo: ChannelLiveInfo;
+  criterion?: CriterionDto | undefined;
+  live?: LiveDto | undefined;
+  ignoreNodeIds?: string[];
 }
 
 @Injectable()
@@ -61,13 +69,9 @@ export class LiveRegistrar {
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
-  async add(
-    channelInfo: ChannelLiveInfo,
-    cr: CriterionDto | undefined = undefined,
-    ignoreNodeIds: string[] = [],
-    tx: Tx = db,
-  ): Promise<LiveDto | null> {
-    const liveInfo = channelInfo.liveInfo;
+  async register(req: LiveRegisterRequest, tx: Tx = db): Promise<LiveDto | null> {
+    let live = req.live;
+    const liveInfo = req.channelInfo.liveInfo;
     const existingLive = await this.liveFinder.findByPid(liveInfo.pid, tx);
     if (existingLive && !existingLive.isDisabled) {
       throw new ConflictError(`Already exists live: pid=${liveInfo.pid}`);
@@ -79,21 +83,20 @@ export class LiveRegistrar {
         priorityId: none.id,
         isFollowed: false,
       };
-      channel = await this.chWriter.createWithInfo(append, channelInfo, tx);
+      channel = await this.chWriter.createWithInfo(append, req.channelInfo, tx);
     }
 
-    const node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
+    const node = await this.nodeSelector.match(channel, req.ignoreNodeIds ?? [], tx);
 
     // If there is no available node, notify and create a disabled live
-    const topic = this.env.untf.topic;
     const groups = await this.ngRepo.findByTier(channel.priority.tier, tx);
     if (groups.length > 0 && !node) {
       const headMessage = 'No available nodes for assignment';
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
-      this.notifier.notify(topic, `${headMessage}: ${messageFields}`);
+      this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
 
       const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
-      this.printCreatedLiveLog(headMessage, created);
+      this.printLiveLog(headMessage, created, null);
       return created;
     }
 
@@ -108,37 +111,39 @@ export class LiveRegistrar {
 
     // Create a live
     return tx.transaction(async (txx) => {
-      const created = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
+      if (!live) {
+        live = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
+      }
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
-        await this.stdlRedis.setLiveDto(created);
-        await this.stdl.requestRecording(node.endpoint, created, cr);
+        await this.stdlRedis.setLiveDto(live);
+        await this.stdl.requestRecording(node.endpoint, live, req.criterion);
       }
 
-      if (channel.priority.shouldNotify) {
-        this.notifier.sendLiveInfo(topic, created);
+      if (live.channel.priority.shouldNotify) {
+        this.notifier.sendLiveInfo(this.env.untf.topic, live);
       }
 
-      this.printCreatedLiveLog('New Live', created);
-      return created;
+      this.printLiveLog('New Live', live, node);
+      return live;
     });
   }
 
-  private printCreatedLiveLog(message: string, live: LiveDto) {
+  private printLiveLog(message: string, live: LiveDto, node: NodeDto | null) {
     const attr: CreatedLiveLogAttr = {
       platform: live.platform.name,
       channelId: live.channel.pid,
       channelName: live.channel.username,
       title: live.liveTitle,
     };
-    if (live.node) {
-      attr.node = live.node.name;
-      attr.assigned = live.node.states?.find((s) => s.platform.id === live.platform.id)?.assigned;
+    if (node) {
+      attr.node = node.name;
+      attr.assigned = node.states?.find((s) => s.platform.id === live.platform.id)?.assigned;
     }
     log.info(message, attr);
   }
 
-  async remove(recordId: string, opts: DeleteOptions = {}) {
+  async deregister(recordId: string, opts: DeleteOptions = {}) {
     let exitCmd = opts.exitCmd;
     if (exitCmd === undefined) {
       exitCmd = 'delete';
@@ -150,7 +155,7 @@ export class LiveRegistrar {
 
     const live = await this.liveFinder.findById(recordId, {
       includeDisabled: true,
-      withNode: true,
+      nodes: true,
     });
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
@@ -164,11 +169,10 @@ export class LiveRegistrar {
     }
 
     if (exitCmd !== 'delete') {
-      const node = live.node;
-      if (!node) {
-        throw new MissingValueError('node is missing');
+      assert(live.nodes);
+      for (const node of live.nodes) {
+        await this.dispatcher.sendExitMessage(node.endpoint, live.platform.name, live.channel.pid, exitCmd);
       }
-      await this.dispatcher.sendExitMessage(node.endpoint, live.platform.name, live.channel.pid, exitCmd);
     }
     log.info(`Delete Live: ${live.channel.username}`);
 

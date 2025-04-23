@@ -1,6 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cookie } from '../authed/types.js';
-import { ChzzkLiveRequest, NodeStatus, nodeStatusResponse, SoopLiveRequest, Stdl } from './stdl.client.js';
+import {
+  ChzzkLiveRequest,
+  NodeRecorderStatus,
+  nodeStatusResponse,
+  SoopLiveRequest,
+  Stdl,
+} from './stdl.client.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
@@ -12,7 +18,7 @@ import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.j
 export class StdlImpl implements Stdl {
   constructor(@Inject(AUTHED) private readonly authClient: Authed) {}
 
-  async getStatus(endpoint: string): Promise<NodeStatus[]> {
+  async getStatus(endpoint: string): Promise<NodeRecorderStatus[]> {
     const res = await fetch(`${endpoint}`);
     return nodeStatusResponse.parse(await res.json()).recorders;
   }

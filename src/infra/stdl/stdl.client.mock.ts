@@ -1,15 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { NodeStatus, Stdl } from './stdl.client.js';
+import { NodeRecorderStatus, Stdl } from './stdl.client.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
+import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
+import assert from 'assert';
 
 @Injectable()
 export class StdlMock implements Stdl {
-  getStatus(endpoint: string): Promise<NodeStatus[]> {
-    // log.info(`MockStdlClient.getStatus(...)`, { endpoint });
-    return Promise.resolve([]);
+  constructor(@Inject(ENV) private readonly env: Env) {}
+  async getStatus(endpoint: string): Promise<NodeRecorderStatus[]> {
+    const url = `http://localhost:${this.env.appPort}/api/nodes`;
+    const nodes = (await (await fetch(url)).json()) as NodeDtoWithLives[];
+    const node = nodes.find((node) => node.endpoint === endpoint);
+    assert(node);
+    assert(node.lives);
+    return node.lives.map((dto) => {
+      assert(dto.streamUrl);
+      return {
+        platform: dto.platform.name,
+        channelId: dto.channel.pid,
+        liveId: dto.sourceId,
+        videoName: dto.videoName,
+        fsName: 'local',
+        num: 0,
+        status: 'recording',
+        streamUrl: dto.streamUrl,
+      };
+    });
   }
 
   async requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void> {

@@ -1,0 +1,20 @@
+import { LiveDto } from '../../live/spec/live.dto.schema.js';
+import { LiveState } from './stdl.redis.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+
+export function liveDtoToState(dto: LiveDto, cookie: string | null): LiveState {
+  if (!dto.streamUrl) {
+    throw new ValidationError(`streamUrl is required for liveDto`);
+  }
+  return {
+    platfrom: dto.platform.name,
+    channelId: dto.channel.pid,
+    channelName: dto.channel.username,
+    liveId: dto.sourceId,
+    liveTitle: dto.liveTitle,
+    streamUrl: dto.streamUrl,
+    latestNum: null,
+    cookie,
+    videoName: dto.videoName,
+  };
+}

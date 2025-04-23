@@ -6,7 +6,7 @@ import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../access/live.finder.js';
-import { LiveMapOpt } from '../access/live.mapper.js';
+import { LiveFieldsReq } from '../access/live.mapper.js';
 import {
   liveAppendRequest,
   LiveAppendRequest,
@@ -26,22 +26,22 @@ export class LiveController {
 
   @Get('/')
   allActives(): Promise<LiveDto[]> {
-    const opt: LiveMapOpt = {
-      withChannelTags: false,
-      withNode: true,
-      withNodeGroup: true,
-      withNodeStates: false,
+    const opt: LiveFieldsReq = {
+      channelTags: false,
+      nodes: true,
+      nodeGroup: true,
+      nodeStates: false,
     };
     return this.liveFinder.findAllActives(opt);
   }
 
   @Get('/all')
   all(): Promise<LiveDto[]> {
-    const opt: LiveMapOpt = {
-      withChannelTags: false,
-      withNode: true,
-      withNodeGroup: true,
-      withNodeStates: false,
+    const opt: LiveFieldsReq = {
+      channelTags: false,
+      nodes: true,
+      nodeGroup: true,
+      nodeStates: false,
     };
     return this.liveFinder.findAll(opt);
   }
@@ -53,12 +53,12 @@ export class LiveController {
     if (!channel.liveInfo) {
       throw new NotFoundError('Channel is not live');
     }
-    return this.liveService.add(channelLiveInfo.parse(channel));
+    return this.liveService.register({ channelInfo: channelLiveInfo.parse(channel) });
   }
 
   @Delete('/')
   async delete(@Body() req: LiveDeleteRequest) {
     const { recordId, cmd, isPurge } = liveDeleteRequest.parse(req);
-    return this.liveService.remove(recordId, { exitCmd: exitCmd.parse(cmd), isPurge });
+    return this.liveService.deregister(recordId, { exitCmd: exitCmd.parse(cmd), isPurge });
   }
 }

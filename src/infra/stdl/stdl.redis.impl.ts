@@ -3,6 +3,7 @@ import { RedisClientType } from 'redis';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { Authed } from '../authed/authed.js';
+import { liveDtoToState } from './stdl.utils.js';
 
 export const LIVE_PREFIX = 'live';
 
@@ -20,18 +21,7 @@ export class StdlRedisImpl implements StdlRedis {
     if (live.isAdult) {
       cookie = await this.authed.requestCookie(live.platform.name);
     }
-    const liveState: LiveState = {
-      platfrom: live.platform.name,
-      channelId: live.channel.pid,
-      channelName: live.channel.username,
-      liveId: live.sourceId,
-      liveTitle: live.liveTitle,
-      streamUrl: live.streamUrl,
-      latestNum: null,
-      cookie,
-      videoName: live.videoName,
-    };
-    return this.setLive(liveState);
+    return this.setLive(liveDtoToState(live, cookie));
   }
 
   async setLive(live: LiveState): Promise<void> {

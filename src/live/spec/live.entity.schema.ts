@@ -5,7 +5,6 @@ export const liveEnt = z.object({
   id: uuid,
   channelId: uuid,
   platformId: uuid,
-  nodeId: uuid.nullable(),
   sourceId: nonempty,
   liveTitle: nonempty,
   streamUrl: nonempty.nullable(),

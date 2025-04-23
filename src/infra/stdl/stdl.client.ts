@@ -15,7 +15,7 @@ export interface SoopLiveRequest {
 }
 
 export interface Stdl {
-  getStatus(endpoint: string): Promise<NodeStatus[]>;
+  getStatus(endpoint: string): Promise<NodeRecorderStatus[]>;
   requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void>;
   cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void>;
 }
@@ -32,7 +32,7 @@ export const nodeRecorderStatus = z.object({
   status: stdlStreamStatusEnum,
   streamUrl: nonempty,
 });
-export type NodeStatus = z.infer<typeof nodeRecorderStatus>;
+export type NodeRecorderStatus = z.infer<typeof nodeRecorderStatus>;
 
 export const nodeStatusResponse = z.object({
   recorders: z.array(nodeRecorderStatus),

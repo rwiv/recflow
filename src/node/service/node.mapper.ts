@@ -4,7 +4,6 @@ import { NodeFieldsReq } from '../spec/node.dto.schema.js';
 import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';
-import { NodeTypeRepository } from '../storage/node-type.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
@@ -16,7 +15,6 @@ import { LiveDto } from '../../live/spec/live.dto.schema.js';
 export class NodeMapper {
   constructor(
     private readonly groupRepo: NodeGroupRepository,
-    private readonly typeRepo: NodeTypeRepository,
     private readonly liveRepo: LiveRepository,
     private readonly pfFinder: PlatformFinder,
     private readonly channelFinder: ChannelFinder,
@@ -27,9 +25,7 @@ export class NodeMapper {
   }
 
   async map(ent: NodeEnt, req: NodeFieldsReq, tx: Tx = db): Promise<NodeDtoWithLives> {
-    const nodeType = await this.typeRepo.findById(ent.typeId, tx);
-    if (!nodeType) throw NotFoundError.from('NodeType', 'id', ent.typeId);
-    let result: NodeDtoWithLives = { ...ent, type: nodeType };
+    let result: NodeDtoWithLives = ent;
     if (req.group) {
       const group = await this.groupRepo.findById(ent.groupId, tx);
       if (!group) throw NotFoundError.from('NodeGroup', 'id', ent.groupId);

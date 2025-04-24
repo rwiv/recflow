@@ -8,7 +8,7 @@ import { getLiveUrl } from '@/lib/platform.ts';
 import { cn } from '@/lib/utils.ts';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import {LiveDtoWithNodes} from "@/client/live/live.mapped.schema.ts";
+import { LiveDtoWithNodes } from '@/client/live/live.mapped.schema.ts';
 
 export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
@@ -66,7 +66,7 @@ const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
     const live = row.original;
     const nodes = row.original.nodes;
     if (!nodes) {
-      return <div>null</div>
+      return <div>null</div>;
     }
     return nodes.map((node) => {
       return (
@@ -74,7 +74,7 @@ const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
           {node.name}
         </div>
       );
-    })
+    });
   },
   meta: { header: { width: DEFAULT_WIDTH } },
 };

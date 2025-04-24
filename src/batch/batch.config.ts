@@ -1,7 +1,6 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
-import { nodeTypeNameEnum } from '../node/spec/node.enum.schema.js';
 import { nnint, nonempty } from '../common/data/common.schema.js';
 import { platformNameEnum } from '../platform/spec/storage/platform.enum.schema.js';
 
@@ -42,7 +41,6 @@ const nodeBatchInsert = z.object({
   name: nonempty,
   endpoint: z.string().url(),
   groupName: z.string().nonempty(),
-  typeName: nodeTypeNameEnum,
   weight: z.number().int().nonnegative(),
   capacity: nnint,
   isCordoned: z.boolean(),

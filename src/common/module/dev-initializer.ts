@@ -3,8 +3,6 @@ import { PlatformRepository } from '../../platform/storage/platform.repository.j
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { NodeTypeRepository } from '../../node/storage/node-type.repository.js';
-import { nodeTypeNameEnum } from '../../node/spec/node.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
 import {
@@ -18,7 +16,6 @@ export class DevInitializer {
   constructor(
     private readonly pfRepo: PlatformRepository,
     private readonly priService: PriorityService,
-    private readonly ntRepo: NodeTypeRepository,
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
     private readonly devInjector: DevInitInjector,
@@ -29,7 +26,6 @@ export class DevInitializer {
 
     await this.addPlatforms();
     await this.addPriorities();
-    await this.addNodeTypes();
     await this.addNodeGroups();
     await this.addCriterionRules();
 
@@ -50,12 +46,6 @@ export class DevInitializer {
     await this.priService.create({ name: 'review', tier: 3, seq: 4 });
     await this.priService.create({ name: 'skip', tier: 3, seq: 5 });
     await this.priService.create({ name: 'none', tier: 1, seq: 6 });
-  }
-
-  private async addNodeTypes() {
-    for (const name of nodeTypeNameEnum.options) {
-      await this.ntRepo.create({ name });
-    }
   }
 
   private async addNodeGroups() {

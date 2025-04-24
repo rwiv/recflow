@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { SelectItem } from '@/components/ui/select.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
-import { nodeAppend, NodeGroupDto, nodeTypeNameEnum } from '@/client/node/node.schema.ts';
+import { nodeAppend, NodeGroupDto } from '@/client/node/node.schema.ts';
 import { createNode } from '@/client/node/node.client.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
@@ -40,13 +40,11 @@ export function NodeCreateButton() {
 }
 
 const formSchema = nodeAppend.extend({
-  typeName: nonempty,
   weight: nonempty,
   capacity: nonempty,
 });
 
 const middleSchema = formSchema.extend({
-  typeName: nodeTypeNameEnum,
   weight: z.coerce.number().positive(),
   capacity: z.coerce.number().nonnegative(),
 });
@@ -64,7 +62,6 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       isCordoned: false,
       isDomestic: false,
       groupId: '',
-      typeName: '',
       failureCnt: 0,
     },
   });
@@ -86,10 +83,6 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
         <TextFormField form={form} name="endpoint" />
         <CheckFormField form={form} name="isCordoned" label="Cordoned" />
         <CheckFormField form={form} name="isDomestic" label="Domestic" />
-        <SelectFormField form={form} name="typeName" label="Node Type">
-          <SelectItem value="worker">WORKER</SelectItem>
-          <SelectItem value="argo">ARGO</SelectItem>
-        </SelectFormField>
         <SelectFormField form={form} name="groupId" label="Node Group">
           {nodeGroups.map((group) => (
             <SelectItem key={group.id} value={group.id}>

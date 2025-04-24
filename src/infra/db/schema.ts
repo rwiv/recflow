@@ -107,17 +107,6 @@ export const channelTagTable = pgTable(
   (t) => [uniqueIndex('channel_tag_name_idx').on(t.name)],
 );
 
-export const nodeTypeTable = pgTable(
-  'node_type',
-  {
-    id: uuid().primaryKey(),
-    name: text().notNull().unique(),
-    createdAt: timestamp('created_at').notNull(),
-    updatedAt: timestamp('updated_at'),
-  },
-  (t) => [uniqueIndex('node_type_name_idx').on(t.name)],
-);
-
 export const nodeGroupTable = pgTable(
   'node_group',
   {
@@ -141,9 +130,6 @@ export const nodeTable = pgTable(
     weight: integer().notNull(),
     capacity: integer('capacity').notNull(),
     isCordoned: boolean('is_cordoned').notNull(),
-    typeId: uuid('type_id')
-      .notNull()
-      .references(() => nodeTypeTable.id),
     groupId: uuid('group_id')
       .notNull()
       .references(() => nodeGroupTable.id),

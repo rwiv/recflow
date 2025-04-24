@@ -1,5 +1,5 @@
 import { channelDto } from '@/client/channel/channel.types.ts';
-import {platformDto} from '@/client/common/platform.schema.ts';
+import { platformDto } from '@/client/common/platform.schema.ts';
 import { z } from 'zod';
 import { nnint, uuid } from '@/common/common.schema.ts';
 

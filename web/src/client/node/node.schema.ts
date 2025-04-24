@@ -1,15 +1,6 @@
 import { z } from 'zod';
 import { nonempty, uuid } from '@/common/common.schema.ts';
 
-export const nodeTypeNameEnum = z.enum(['worker', 'argo']);
-export type NodeTypeName = z.infer<typeof nodeTypeNameEnum>;
-const nodeTypeDto = z.object({
-  id: z.string(),
-  name: nodeTypeNameEnum,
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().nullable(),
-});
-
 export const nodeGroupDto = z.object({
   id: uuid,
   name: z.string().nonempty(),
@@ -42,7 +33,6 @@ export const nodeDto = z.object({
   failureCnt: z.number().int().nonnegative(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),
-  type: nodeTypeDto,
   groupId: uuid,
   group: nodeGroupDto.optional(),
 });
@@ -54,19 +44,15 @@ export const nodeUpdate = nodeDto
     id: true,
     createdAt: true,
     updatedAt: true,
-    type: true,
     group: true,
   })
   .partial();
 export type NodeUpdate = z.infer<typeof nodeUpdate>;
 
-export const nodeAppend = nodeDto
-  .omit({
-    id: true,
-    createdAt: true,
-    updatedAt: true,
-    group: true,
-    type: true,
-  })
-  .extend({ typeName: nodeTypeNameEnum });
+export const nodeAppend = nodeDto.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  group: true,
+});
 export type NodeAppend = z.infer<typeof nodeAppend>;

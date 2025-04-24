@@ -3,7 +3,7 @@ import { randomElem } from '@/lib/list.ts';
 import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { TagDto } from '@/client/channel/tag.schema.ts';
 import { PlatformDto, platformNameEnum } from '@/client/common/platform.schema.ts';
-import {LiveDtoWithNodes} from "@/client/live/live.mapped.schema.ts";
+import { LiveDtoWithNodes } from '@/client/live/live.mapped.schema.ts';
 
 export function mockLive(): LiveDtoWithNodes {
   return {

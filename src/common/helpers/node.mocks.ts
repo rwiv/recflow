@@ -5,7 +5,6 @@ export function mockNode(n: number, groupId: string): NodeAppend {
     name: `node${n}`,
     endpoint: 'http://localhost:3000',
     weight: 1,
-    typeName: 'worker',
     groupId,
     capacity: 10,
   };

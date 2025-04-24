@@ -1,5 +1,5 @@
 import { tagDto } from '@/client/channel/tag.schema.ts';
-import {platformDto} from '@/client/common/platform.schema.ts';
+import { platformDto } from '@/client/common/platform.schema.ts';
 import { priorityDto } from '@/client/channel/priority.schema.ts';
 import { z } from 'zod';
 import { nnint, nonempty, uuid } from '@/common/common.schema.ts';

@@ -1,12 +1,7 @@
 import { z } from 'zod';
-import { nodeEnt, nodeEntAppend, nodeEntUpdate, nodeGroupEnt, nodeTypeEnt } from './node.entity.schema.js';
-import { nodeTypeNameEnum } from './node.enum.schema.js';
+import { nodeEnt, nodeEntAppend, nodeEntUpdate, nodeGroupEnt } from './node.entity.schema.js';
 
-export const nodeTypeDto = nodeTypeEnt;
-export type NodeTypeDto = z.infer<typeof nodeTypeDto>;
-
-export const nodeDto = nodeEnt.omit({ typeId: true }).extend({
-  type: nodeTypeDto,
+export const nodeDto = nodeEnt.extend({
   group: nodeGroupEnt.optional(),
 });
 export type NodeDto = z.infer<typeof nodeDto>;
@@ -14,9 +9,7 @@ export type NodeDto = z.infer<typeof nodeDto>;
 export const nodeUpdate = nodeEntUpdate;
 export type NodeUpdate = z.infer<typeof nodeUpdate>;
 
-export const nodeAppend = nodeEntAppend.omit({ typeId: true }).extend({
-  typeName: nodeTypeNameEnum,
-});
+export const nodeAppend = nodeEntAppend;
 export type NodeAppend = z.infer<typeof nodeAppend>;
 
 export const nodeGroupDto = nodeGroupEnt;

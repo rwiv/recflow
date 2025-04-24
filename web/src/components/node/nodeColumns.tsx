@@ -3,7 +3,6 @@ import { NodeDto } from '@/client/node/node.schema.ts';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { NodeGroupBadge } from '@/components/node/units/GroupUpdateDialog.tsx';
 import { NodeFieldUpdateForm } from '@/components/node/units/NodeFieldUpdateForm.tsx';
-import { Badge } from '@/components/ui/badge.tsx';
 import { NodeCordonedBadge, NodeDomesticBadge } from '@/components/node/units/node_badges.tsx';
 
 const EDITABLE_WIDTH = '12rem';
@@ -44,21 +43,6 @@ const groupColumn: ColumnDef<NodeDto> = {
   meta: { header: { width: SWITCH_SIDTH } },
 };
 
-const nodeTypeColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'type',
-  header: () => <div className="justify-self-center">Type</div>,
-  cell: ({ row }) => {
-    return (
-      <div className="justify-self-center">
-        <button>
-          <Badge variant="secondary">{row.original.type.name}</Badge>
-        </button>
-      </div>
-    );
-  },
-  meta: { header: { width: SWITCH_SIDTH } },
-};
-
 const weightColumn: ColumnDef<NodeDto> = {
   accessorKey: 'weight',
   header: () => <div className="justify-self-center">Weight</div>,
@@ -85,7 +69,6 @@ export const nodeColumns: ColumnDef<NodeDto>[] = [
   cordonedColumn,
   isDomesticColumn,
   groupColumn,
-  nodeTypeColumn,
   weightColumn,
   capacityColumn,
   failureCntColumn,

@@ -10,7 +10,6 @@ export const nodeEnt = z.object({
   capacity: z.number().int().nonnegative(),
   isCordoned: z.boolean(),
   isDomestic: z.boolean(),
-  typeId: uuid,
   groupId: uuid,
   failureCnt: z.number().int().nonnegative(),
   createdAt: z.coerce.date(),
@@ -20,9 +19,7 @@ export const nodeEnt = z.object({
 export type NodeEnt = z.infer<typeof nodeEnt>;
 
 // NodeType cannot be changed
-export const nodeEntUpdate = nodeEnt
-  .omit({ id: true, typeId: true, createdAt: true, updatedAt: true })
-  .partial();
+export const nodeEntUpdate = nodeEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type NodeEntUpdate = z.infer<typeof nodeEntUpdate>;
 
 export const nodeEntAppend = nodeEnt.partial({
@@ -36,21 +33,6 @@ export const nodeEntAppend = nodeEnt.partial({
   lastAssignedAt: true,
 });
 export type NodeEntAppend = z.infer<typeof nodeEntAppend>;
-
-export const nodeTypeEnt = z.object({
-  id: uuid,
-  name: z.string().nonempty(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date().nullable(),
-});
-export type NodeTypeEnt = z.infer<typeof nodeTypeEnt>;
-
-export const nodeTypeAppend = nodeTypeEnt.partial({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export type NodeTypeAppend = z.infer<typeof nodeTypeAppend>;
 
 export const nodeGroupEnt = z.object({
   id: uuid,

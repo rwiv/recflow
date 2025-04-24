@@ -19,38 +19,30 @@ export async function deletePriority(PriorityId: string) {
 }
 
 export function updatePriorityName(id: string, name: string) {
-  return updatePriority(id, name, undefined, undefined, undefined, undefined);
+  return updatePriority(id, { name });
 }
 
 export function updatePriorityDescription(id: string, description: string | null) {
   if (description === '') {
     description = null;
   }
-  return updatePriority(id, undefined, description, undefined, undefined, undefined);
-}
-
-export function updatePriorityTier(id: string, tier: number) {
-  return updatePriority(id, undefined, undefined, tier, undefined, undefined);
+  return updatePriority(id, { description });
 }
 
 export function updatePrioritySeq(id: string, seq: number) {
-  return updatePriority(id, undefined, undefined, undefined, seq, undefined);
+  return updatePriority(id, { seq });
+}
+
+export function updatePriorityShouldSave(id: string, shouldSave: boolean) {
+  return updatePriority(id, { shouldSave });
 }
 
 export function updatePriorityShouldNotify(id: string, shouldNotify: boolean) {
-  return updatePriority(id, undefined, undefined, undefined, undefined, shouldNotify);
+  return updatePriority(id, { shouldNotify });
 }
 
-async function updatePriority(
-  id: string,
-  name?: string,
-  description?: string | null,
-  tier?: number,
-  seq?: number,
-  shouldNotify?: boolean,
-) {
+async function updatePriority(id: string, req: PriorityUpdate) {
   const url = `${configs.endpoint}/api/channels/priorities/${id}`;
-  const req: PriorityUpdate = { name, description, tier, seq, shouldNotify };
   const { method, headers, body } = getIngredients('PUT', req);
   await request(url, { method, headers, body });
 }

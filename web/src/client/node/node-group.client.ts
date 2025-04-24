@@ -19,20 +19,16 @@ export async function deleteNodeGroup(nodeGroupId: string) {
 }
 
 export async function updateNodeGroupName(id: string, name: string) {
-  return updateTag(id, name, undefined, undefined);
+  return updateTag(id, name, undefined);
 }
 
 export function updateNodeGroupDescription(id: string, description: string | null) {
   return updateTag(id, undefined, description);
 }
 
-export function updateNodeGroupTier(id: string, tier: number) {
-  return updateTag(id, undefined, undefined, tier);
-}
-
-async function updateTag(id: string, name?: string, description?: string | null, tier?: number) {
+async function updateTag(id: string, name?: string, description?: string | null) {
   const url = `${configs.endpoint}/api/nodes/groups/${id}`;
-  const req: NodeGroupUpdate = { name, description, tier };
+  const req: NodeGroupUpdate = { name, description };
   const { method, headers, body } = getIngredients('PUT', req);
   await request(url, { method, headers, body });
 }

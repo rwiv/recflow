@@ -6,7 +6,6 @@ import {
   updatePriorityDescription,
   updatePriorityName,
   updatePrioritySeq,
-  updatePriorityTier,
 } from '@/client/channel/priority.client.ts';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
@@ -33,8 +32,6 @@ export function PriorityFieldUpdateForm({ type, priority }: NodeFieldUpdateForm)
       } else if (type === 'description') {
         const validated = value === '' ? null : stringSchema.parse(value);
         await updatePriorityDescription(priority.id, validated);
-      } else if (type === 'tier') {
-        await updatePriorityTier(priority.id, numSchema.parse(value));
       } else if (type === 'seq') {
         await updatePrioritySeq(priority.id, numSchema.parse(value));
       }
@@ -57,7 +54,6 @@ function getValidate(type: Type) {
       return stringSchema.parse;
     case 'description':
       return descriptionSchema.parse;
-    case 'tier':
     case 'seq':
       return numSchema.parse;
     default:
@@ -71,8 +67,6 @@ function getDefaultValue(type: Type, priority: PriorityDto): string {
       return priority.name;
     case 'description':
       return priority.description ?? '';
-    case 'tier':
-      return priority.tier.toString();
     case 'seq':
       return priority.seq.toString();
     default:

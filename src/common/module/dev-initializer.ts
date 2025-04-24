@@ -40,12 +40,12 @@ export class DevInitializer {
   }
 
   private async addPriorities() {
-    await this.priService.create({ name: 'must', tier: 1, seq: 1 });
-    await this.priService.create({ name: 'should', tier: 1, seq: 2 });
-    await this.priService.create({ name: 'may', tier: 2, seq: 3 });
-    await this.priService.create({ name: 'review', tier: 3, seq: 4 });
-    await this.priService.create({ name: 'skip', tier: 3, seq: 5 });
-    await this.priService.create({ name: 'none', tier: 1, seq: 6 });
+    await this.priService.create({ name: 'must', tier: 1, seq: 1, shouldSave: true });
+    await this.priService.create({ name: 'should', tier: 1, seq: 2, shouldSave: true });
+    await this.priService.create({ name: 'common', tier: 2, seq: 3, shouldSave: true });
+    await this.priService.create({ name: 'review', tier: 3, seq: 4, shouldSave: false });
+    await this.priService.create({ name: 'skip', tier: 3, seq: 5, shouldSave: false });
+    await this.priService.create({ name: 'none', tier: 1, seq: 6, shouldSave: false });
   }
 
   private async addNodeGroups() {

@@ -12,13 +12,6 @@ const nameColumn: ColumnDef<NodeGroupDto> = {
   meta: { header: { width: DEFAULT_WIDTH } },
 };
 
-const tierColumn: ColumnDef<NodeGroupDto> = {
-  accessorKey: 'tier',
-  header: () => <div className="justify-self-center">Tier</div>,
-  cell: ({ row }) => <NodeGroupFieldUpdateForm type="tier" nodeGroup={row.original} />,
-  meta: { header: { width: DEFAULT_WIDTH } },
-};
-
 const descriptionColumn: ColumnDef<NodeGroupDto> = {
   accessorKey: 'description',
   header: () => <div className="justify-self-center">Description</div>,
@@ -28,7 +21,6 @@ const descriptionColumn: ColumnDef<NodeGroupDto> = {
 export const nodeGroupColumns: ColumnDef<NodeGroupDto>[] = [
   createSelectColumn('select'),
   nameColumn,
-  tierColumn,
   descriptionColumn,
   dateColumnDef<NodeGroupDto>('createdAt', 'CreatedAt', (elem) => new Date(elem.createdAt), DEFAULT_WIDTH),
   dateColumnDef<NodeGroupDto>(

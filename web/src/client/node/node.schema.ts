@@ -5,7 +5,6 @@ export const nodeGroupDto = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
-  tier: z.coerce.number().int().positive(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
@@ -38,7 +37,6 @@ export const nodeDto = z.object({
 });
 export type NodeDto = z.infer<typeof nodeDto>;
 
-// NodeType cannot be changed
 export const nodeUpdate = nodeDto
   .omit({
     id: true,

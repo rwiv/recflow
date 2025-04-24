@@ -28,6 +28,7 @@ import { Dispatcher } from '../event/dispatcher.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import assert from 'assert';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
+import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -47,7 +48,7 @@ interface CreatedLiveLogAttr {
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
   criterion?: CriterionDto | undefined;
-  live?: LiveDto | undefined;
+  live?: LiveDtoWithNodes | undefined;
   ignoreNodeIds?: string[];
 }
 
@@ -87,7 +88,15 @@ export class LiveRegistrar {
       channel = await this.chWriter.createWithInfo(append, req.channelInfo, tx);
     }
 
-    const node = await this.nodeSelector.match(channel, req.ignoreNodeIds ?? [], tx);
+    let ignoreNodeIds: string[] = [];
+    if (req.ignoreNodeIds) {
+      ignoreNodeIds = [...req.ignoreNodeIds];
+    }
+    if (live && live.nodes) {
+      ignoreNodeIds = [...ignoreNodeIds, ...live.nodes.map((node) => node.id)];
+    }
+
+    const node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
 
     // If there is no available node, notify and create a disabled live
     const groups = await this.ngRepo.findByTier(channel.priority.tier, tx);

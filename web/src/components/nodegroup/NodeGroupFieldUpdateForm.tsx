@@ -2,14 +2,10 @@ import { TextUpdateForm } from '@/components/common/layout/TextUpdateForm.tsx';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { NODE_GROUPS_QUERY_KEY } from '@/common/constants.ts';
-import {
-  updateNodeGroupDescription,
-  updateNodeGroupName,
-  updateNodeGroupTier,
-} from '@/client/node/node-group.client.ts';
+import { updateNodeGroupDescription, updateNodeGroupName } from '@/client/node/node-group.client.ts';
 import { NodeGroupDto } from '@/client/node/node.schema.ts';
 
-type Type = 'name' | 'description' | 'tier';
+type Type = 'name' | 'description';
 
 interface NodeFieldUpdateForm {
   type: Type;
@@ -18,7 +14,6 @@ interface NodeFieldUpdateForm {
 
 const stringSchema = z.coerce.string().nonempty();
 const descriptionSchema = z.coerce.string();
-const numSchema = z.coerce.number().nonnegative();
 
 export function NodeGroupFieldUpdateForm({ type, nodeGroup }: NodeFieldUpdateForm) {
   const queryClient = useQueryClient();
@@ -32,8 +27,6 @@ export function NodeGroupFieldUpdateForm({ type, nodeGroup }: NodeFieldUpdateFor
       } else if (type === 'description') {
         const validated = value === '' ? null : stringSchema.parse(value);
         await updateNodeGroupDescription(nodeGroup.id, validated);
-      } else if (type === 'tier') {
-        await updateNodeGroupTier(nodeGroup.id, numSchema.parse(value));
       }
       await queryClient.invalidateQueries({ queryKey: [NODE_GROUPS_QUERY_KEY] });
     } catch (e) {
@@ -54,8 +47,6 @@ function getValidate(type: Type) {
       return stringSchema.parse;
     case 'description':
       return descriptionSchema.parse;
-    case 'tier':
-      return numSchema.parse;
     default:
       throw new Error(`Invalid type: ${type}`);
   }
@@ -67,8 +58,6 @@ function getDefaultValue(type: Type, nodeGroup: NodeGroupDto): string {
       return nodeGroup.name;
     case 'description':
       return nodeGroup.description ?? '';
-    case 'tier':
-      return nodeGroup.tier.toString();
     default:
       throw new Error(`Invalid type: ${type}`);
   }

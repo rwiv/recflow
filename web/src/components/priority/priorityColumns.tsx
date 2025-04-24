@@ -3,6 +3,7 @@ import { createSelectColumn, dateColumnDef } from '@/components/common/table/col
 import { NotifyOnlyBadge } from '@/components/priority/units/NotifyOnlyBadge.tsx';
 import { PriorityFieldUpdateForm } from '@/components/priority/units/PriorityFieldUpdateForm.tsx';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
+import { ShouldSaveBadge } from '@/components/priority/units/ShouldSaveBadge.tsx';
 
 const EDITABLE_WIDTH = '12rem';
 const DEFAULT_WIDTH = '11rem';
@@ -14,11 +15,11 @@ const nameColumn: ColumnDef<PriorityDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-const tierColumn: ColumnDef<PriorityDto> = {
-  accessorKey: 'tier',
-  header: () => <div className="justify-self-center">Tier</div>,
-  cell: ({ row }) => <PriorityFieldUpdateForm type="tier" priority={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
+const shouldSaveColumn: ColumnDef<PriorityDto> = {
+  accessorKey: 'shouldSave',
+  header: () => <div className="justify-self-center">Save</div>,
+  cell: ({ row }) => <ShouldSaveBadge priority={row.original} />,
+  meta: { header: { width: DEFAULT_WIDTH } },
 };
 
 const descriptionColumn: ColumnDef<PriorityDto> = {
@@ -44,7 +45,7 @@ const shouldNotifyColumn: ColumnDef<PriorityDto> = {
 export const priorityColumns: ColumnDef<PriorityDto>[] = [
   createSelectColumn('select'),
   nameColumn,
-  tierColumn,
+  shouldSaveColumn,
   seqColumn,
   descriptionColumn,
   dateColumnDef<PriorityDto>('createdAt', 'CreatedAt', (elem) => new Date(elem.createdAt), DEFAULT_WIDTH),

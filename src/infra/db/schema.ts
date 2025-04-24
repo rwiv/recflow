@@ -34,15 +34,14 @@ export const channelPriorityTable = pgTable(
   {
     id: uuid().primaryKey(),
     name: text().notNull().unique(),
-    description: text(),
-    tier: integer().notNull(),
-    seq: integer().notNull(),
     shouldSave: boolean('should_save').notNull(),
+    description: text(),
     shouldNotify: boolean('should_notify').notNull(),
+    seq: integer().notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('channel_priority_name_idx').on(t.name), index('channel_priority_tier_idx').on(t.tier)],
+  (t) => [uniqueIndex('channel_priority_name_idx').on(t.name)],
 );
 
 export const channelTable = pgTable(
@@ -114,11 +113,10 @@ export const nodeGroupTable = pgTable(
     id: uuid().primaryKey(),
     name: text().notNull().unique(),
     description: text(),
-    tier: integer().notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('node_group_name_idx').on(t.name), index('node_group_tier_idx').on(t.tier)],
+  (t) => [uniqueIndex('node_group_name_idx').on(t.name)],
 );
 
 export const nodeTable = pgTable(

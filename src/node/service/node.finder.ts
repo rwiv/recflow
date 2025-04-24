@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { NodeRepository } from '../storage/node.repository.js';
 import { NodeMapper } from './node.mapper.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';
-import { NodeDto, NodeFieldsReq, NodeGroupDto } from '../spec/node.dto.schema.js';
+import { NodeFieldsReq, NodeGroupDto } from '../spec/node.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
@@ -27,21 +27,12 @@ export class NodeFinder {
     return this.mapper.map(ent, req, tx);
   }
 
-  async findByLiveId(liveId: string, req: NodeFieldsReq, tx: Tx = db): Promise<NodeDto[]> {
+  async findByLiveId(liveId: string, req: NodeFieldsReq, tx: Tx = db): Promise<NodeDtoWithLives[]> {
     const entities = await this.nodeRepo.findByLiveId(liveId, tx);
     return this.mapper.mapAll(entities, req, tx);
   }
 
-  async findByNodeGteTier(tier: number, tx: Tx = db): Promise<NodeDtoWithLives[]> {
-    const queryResult = await this.nodeRepo.findByNodeGteTier(tier, tx);
-    const promises = queryResult.map(async ([node, group]) => {
-      const withOutGroup = await this.mapper.map(node, { group: false, lives: true }, tx);
-      return { ...withOutGroup, group };
-    });
-    return Promise.all(promises);
-  }
-
-  async findAll(req: NodeFieldsReq, tx: Tx = db): Promise<NodeDto[]> {
+  async findAll(req: NodeFieldsReq, tx: Tx = db): Promise<NodeDtoWithLives[]> {
     const entities = await this.nodeRepo.findAll(tx);
     return this.mapper.mapAll(entities, req, tx);
   }

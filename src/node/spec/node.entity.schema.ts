@@ -38,7 +38,6 @@ export const nodeGroupEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
-  tier: z.number().int().positive(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });

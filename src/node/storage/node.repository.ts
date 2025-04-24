@@ -27,15 +27,6 @@ export class NodeRepository {
     return oneNotNull(ent);
   }
 
-  async findByNodeGteTier(tier: number, tx: Tx = db): Promise<[NodeEnt, NodeGroupEnt][]> {
-    const records = await tx
-      .select()
-      .from(nodeTable)
-      .innerJoin(nodeGroupTable, eq(nodeTable.groupId, nodeGroupTable.id))
-      .where(gte(nodeGroupTable.tier, tier));
-    return records.map((row) => [row.node, row.node_group]);
-  }
-
   async findByLiveId(liveId: string, tx: Tx = db): Promise<NodeEnt[]> {
     const records = await tx
       .select()

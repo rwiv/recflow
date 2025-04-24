@@ -99,7 +99,7 @@ export class LiveRegistrar {
     const node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
 
     // If there is no available node, notify and create a disabled live
-    const groups = await this.ngRepo.findByTier(channel.priority.tier, tx);
+    const groups = await this.ngRepo.findAll(tx);
     if (groups.length > 0 && !node) {
       const headMessage = 'No available nodes for assignment';
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;

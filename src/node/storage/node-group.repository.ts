@@ -58,10 +58,6 @@ export class NodeGroupRepository {
     return oneNullable(await tx.select().from(nodeGroupTable).where(eq(nodeGroupTable.name, name)));
   }
 
-  async findByTier(tier: number, tx: Tx = db) {
-    return tx.select().from(nodeGroupTable).where(eq(nodeGroupTable.tier, tier));
-  }
-
   async findAll(tx: Tx = db) {
     return tx.select().from(nodeGroupTable);
   }

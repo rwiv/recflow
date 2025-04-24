@@ -5,7 +5,6 @@ export const priorityEnt = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
-  tier: z.number().int().positive(),
   seq: z.number().int().nonnegative(),
   shouldSave: z.boolean(),
   shouldNotify: z.boolean(),

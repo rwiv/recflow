@@ -40,18 +40,18 @@ export class DevInitializer {
   }
 
   private async addPriorities() {
-    await this.priService.create({ name: 'must', tier: 1, seq: 1, shouldSave: true });
-    await this.priService.create({ name: 'should', tier: 1, seq: 2, shouldSave: true });
-    await this.priService.create({ name: 'common', tier: 2, seq: 3, shouldSave: true });
-    await this.priService.create({ name: 'review', tier: 3, seq: 4, shouldSave: false });
-    await this.priService.create({ name: 'skip', tier: 3, seq: 5, shouldSave: false });
-    await this.priService.create({ name: 'none', tier: 1, seq: 6, shouldSave: false });
+    await this.priService.create({ name: 'must', shouldSave: true, seq: 1 });
+    await this.priService.create({ name: 'should', shouldSave: true, seq: 2 });
+    await this.priService.create({ name: 'common', shouldSave: true, seq: 3 });
+    await this.priService.create({ name: 'review', shouldSave: false, seq: 4 });
+    await this.priService.create({ name: 'skip', shouldSave: false, seq: 5 });
+    await this.priService.create({ name: 'none', shouldSave: false, seq: 6 });
   }
 
   private async addNodeGroups() {
-    await this.ngRepo.create({ name: 'main', tier: 1 });
-    await this.ngRepo.create({ name: 'sub', tier: 2 });
-    await this.ngRepo.create({ name: 'extra', tier: 3 });
+    await this.ngRepo.create({ name: 'main' });
+    await this.ngRepo.create({ name: 'sub' });
+    await this.ngRepo.create({ name: 'extra' });
   }
 
   private async addCriterionRules() {

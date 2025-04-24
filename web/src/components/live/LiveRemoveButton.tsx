@@ -1,5 +1,5 @@
 import { Table } from '@tanstack/react-table';
-import { LiveDto } from '@/client/live/live.types.ts';
+import { LiveDto } from '@/client/live/live.schema.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@/client/live/live.client.ts';
 import { RefObject, useRef, useState } from 'react';

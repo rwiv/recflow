@@ -66,17 +66,10 @@ const weightColumn: ColumnDef<NodeDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-const chzzkColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'chzzk',
-  header: () => <div className="justify-self-center">Chzzk</div>,
-  cell: ({ row }) => <NodeFieldUpdateForm type="chzzkCapacity" node={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
-const soopColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'soop',
-  header: () => <div className="justify-self-center">Soop</div>,
-  cell: ({ row }) => <NodeFieldUpdateForm type="soopCapacity" node={row.original} />,
+const capacityColumn: ColumnDef<NodeDto> = {
+  accessorKey: 'capacity',
+  header: () => <div className="justify-self-center">Capacity</div>,
+  cell: ({ row }) => <NodeFieldUpdateForm type="capacity" node={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
@@ -94,8 +87,7 @@ export const nodeColumns: ColumnDef<NodeDto>[] = [
   groupColumn,
   nodeTypeColumn,
   weightColumn,
+  capacityColumn,
   failureCntColumn,
-  chzzkColumn,
-  soopColumn,
   endpointColumn,
 ];

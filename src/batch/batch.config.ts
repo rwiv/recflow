@@ -2,7 +2,7 @@ import fs from 'fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import { nodeTypeNameEnum } from '../node/spec/node.enum.schema.js';
-import { nonempty } from '../common/data/common.schema.js';
+import { nnint, nonempty } from '../common/data/common.schema.js';
 import { platformNameEnum } from '../platform/spec/storage/platform.enum.schema.js';
 
 const criterionBatchInsert = z.object({
@@ -44,11 +44,8 @@ const nodeBatchInsert = z.object({
   groupName: z.string().nonempty(),
   typeName: nodeTypeNameEnum,
   weight: z.number().int().nonnegative(),
-  capacities: z.object({
-    chzzk: z.number().int().nonnegative(),
-    soop: z.number().int().nonnegative(),
-    twitch: z.number().int().nonnegative(),
-  }),
+  capacity: nnint,
+  isCordoned: z.boolean(),
 });
 export type NodeBatchInsert = z.infer<typeof nodeBatchInsert>;
 

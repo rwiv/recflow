@@ -2,23 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeDto } from '../spec/node.dto.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
+import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
+import { notNull } from '../../utils/null.js';
 
 @Injectable()
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(channel: ChannelDto, ignoreNodeIds: string[] = [], tx: Tx = db): Promise<NodeDto | null> {
+  async match(
+    channel: ChannelDto,
+    ignoreNodeIds: string[] = [],
+    tx: Tx = db,
+  ): Promise<NodeDtoWithLives | null> {
     const pfId = channel.platform.id;
 
     // search for available nodes
     let nodes = await this.findCandidateNodes(channel, ignoreNodeIds, tx);
-    if (nodes.length === 0) {
-      nodes = await this.findCandidateNodes(channel, [], tx);
-    }
     if (nodes.length === 0) {
       return null;
     }
@@ -48,36 +50,23 @@ export class NodeSelector {
 
     let minNode = nodes[0];
     for (let i = 0; i < nodes.length; i++) {
-      const curState = findState(nodes[i], pfId);
-      const minState = findState(minNode, pfId);
-      if (curState.assigned < minState.assigned) {
+      if (notNull(nodes[i].lives).length < notNull(minNode.lives).length) {
         minNode = nodes[i];
       }
     }
     return minNode;
   }
 
-  private async findCandidateNodes(channel: ChannelDto, ignoreNodeIds: string[], tx: Tx) {
+  private async findCandidateNodes(
+    channel: ChannelDto,
+    ignoreNodeIds: string[],
+    tx: Tx,
+  ): Promise<NodeDtoWithLives[]> {
     return (await this.nodeFinder.findByNodeGteTier(channel.priority.tier, tx))
       .filter((node) => !node.isCordoned)
       .filter((node) => !ignoreNodeIds.includes(node.id))
-      .filter((node) => {
-        const state = findState(node, channel.platform.id);
-        if (state) {
-          return state.assigned < state.capacity;
-        } else {
-          return false;
-        }
-      });
+      .filter((node) => notNull(node.lives).length < node.capacity);
   }
-}
-
-function findState(node: NodeDto, platformId: string) {
-  const target = node.states?.find((state) => state.platform.id === platformId);
-  if (!target) {
-    throw NotFoundError.from('NodeState', 'platformId', platformId);
-  }
-  return target;
 }
 
 function getNodeTier(node: NodeDto) {

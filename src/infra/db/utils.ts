@@ -8,7 +8,6 @@ import {
   nodeTypeTable,
   nodeGroupTable,
   nodeTable,
-  nodeStateTable,
   liveTable,
   liveCriterionTable,
   liveCriterionRuleTable,
@@ -29,7 +28,6 @@ export async function dropAll() {
   await db.delete(channelTable);
   await db.delete(channelPriorityTable);
 
-  await db.delete(nodeStateTable);
   await db.delete(nodeTable);
   await db.delete(nodeTypeTable);
   await db.delete(nodeGroupTable);

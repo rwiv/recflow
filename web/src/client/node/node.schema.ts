@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { platformDto, platformNameEnum } from '@/client/common/platform.schema.ts';
 import { nonempty, uuid } from '@/common/common.schema.ts';
 
 export const nodeTypeNameEnum = z.enum(['worker', 'argo']);
@@ -32,22 +31,12 @@ export type NodeGroupAppend = z.infer<typeof nodeGroupAppend>;
 export const nodeGroupUpdate = nodeGroupDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type NodeGroupUpdate = z.infer<typeof nodeGroupUpdate>;
 
-const nodeStateDto = z.object({
-  id: z.string(),
-  nodeId: z.string(),
-  platform: platformDto,
-  capacity: z.number(),
-  assigned: z.number(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().nullable(),
-});
-export type NodeStateDto = z.infer<typeof nodeStateDto>;
-
 export const nodeDto = z.object({
   id: uuid,
   name: nonempty,
   endpoint: nonempty,
   weight: z.coerce.number().nonnegative(),
+  capacity: z.coerce.number().nonnegative(),
   isCordoned: z.boolean(),
   isDomestic: z.boolean(),
   failureCnt: z.number().int().nonnegative(),
@@ -56,15 +45,9 @@ export const nodeDto = z.object({
   type: nodeTypeDto,
   groupId: uuid,
   group: nodeGroupDto.optional(),
-  states: z.array(nodeStateDto).optional(),
 });
 export type NodeDto = z.infer<typeof nodeDto>;
 
-const nodeCapacity = z.object({
-  platformId: uuid,
-  capacity: z.number().int().nonnegative(),
-});
-export type NodeCapacity = z.infer<typeof nodeCapacity>;
 // NodeType cannot be changed
 export const nodeUpdate = nodeDto
   .omit({
@@ -73,27 +56,17 @@ export const nodeUpdate = nodeDto
     updatedAt: true,
     type: true,
     group: true,
-    states: true,
   })
-  .extend({ capacity: nodeCapacity })
   .partial();
 export type NodeUpdate = z.infer<typeof nodeUpdate>;
 
-export const nodeCapacities = z.array(
-  z.object({
-    platformName: platformNameEnum,
-    capacity: z.number().nonnegative(),
-  }),
-);
-export type NodeCapacities = z.infer<typeof nodeCapacities>;
 export const nodeAppend = nodeDto
   .omit({
     id: true,
     createdAt: true,
     updatedAt: true,
     group: true,
-    states: true,
     type: true,
   })
-  .extend({ capacities: nodeCapacities, typeName: nodeTypeNameEnum });
+  .extend({ typeName: nodeTypeNameEnum });
 export type NodeAppend = z.infer<typeof nodeAppend>;

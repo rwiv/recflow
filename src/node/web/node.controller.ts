@@ -16,7 +16,7 @@ export class NodeController {
 
   @Get('/')
   nodes() {
-    return this.finder.findAll({ group: true, states: true, lives: true });
+    return this.finder.findAll({ group: true, lives: true });
   }
 
   @Get('/groups')
@@ -32,11 +32,7 @@ export class NodeController {
   @Put('/:nodeId')
   update(@Param('nodeId') nodeId: string, @Body() req: NodeUpdate) {
     const update = nodeUpdate.parse(req);
-    if (update.capacity) {
-      return this.updater.updateCapacity(nodeId, update.capacity.platformId, update.capacity.capacity);
-    } else {
-      return this.updater.update(nodeId, update);
-    }
+    return this.updater.update(nodeId, update);
   }
 
   @Delete('/:nodeId')

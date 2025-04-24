@@ -13,7 +13,6 @@ export interface LiveFieldsReq {
   channelTags?: boolean;
   nodes?: boolean;
   nodeGroup?: boolean;
-  nodeStates?: boolean;
 }
 
 @Injectable()
@@ -39,7 +38,7 @@ export class LiveMapper {
     if (opt.nodes) {
       const req: NodeFieldsReq = {
         group: opt.nodeGroup ?? false,
-        states: opt.nodeStates ?? false,
+        lives: false,
       };
       const nodes = await this.nodeFinder.findByLiveId(liveEnt.id, req, tx);
       result = { ...result, nodes };

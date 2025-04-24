@@ -5,6 +5,7 @@ import { NodeGroupRepository } from '../storage/node-group.repository.js';
 import { NodeDto, NodeFieldsReq, NodeGroupDto } from '../spec/node.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
 
 @Injectable()
 export class NodeFinder {
@@ -31,10 +32,10 @@ export class NodeFinder {
     return this.mapper.mapAll(entities, req, tx);
   }
 
-  async findByNodeGteTier(tier: number, tx: Tx = db): Promise<NodeDto[]> {
+  async findByNodeGteTier(tier: number, tx: Tx = db): Promise<NodeDtoWithLives[]> {
     const queryResult = await this.nodeRepo.findByNodeGteTier(tier, tx);
     const promises = queryResult.map(async ([node, group]) => {
-      const withOutGroup = await this.mapper.map(node, { group: false, states: true }, tx);
+      const withOutGroup = await this.mapper.map(node, { group: false, lives: true }, tx);
       return { ...withOutGroup, group };
     });
     return Promise.all(promises);

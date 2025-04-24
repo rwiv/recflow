@@ -3,7 +3,7 @@ import { ColumnSelector } from '@/components/common/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
-import { LiveDto } from '@/client/live/live.types.ts';
+import { LiveDto } from '@/client/live/live.schema.ts';
 import { liveColumns } from '@/components/live/liveColumns.tsx';
 import { LiveRemoveButton } from '@/components/live/LiveRemoveButton.tsx';
 import { FilterInput } from '@/components/common/table/FilterInput.tsx';

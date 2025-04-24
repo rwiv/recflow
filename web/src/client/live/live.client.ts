@@ -1,12 +1,13 @@
-import { LiveDto } from '@/client/live/live.types.ts';
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/common/common.client.utils.ts';
 import { PlatformName } from '@/client/common/platform.schema.ts';
 import { ExitCmd } from '@/client/common/common.schema.ts';
+import { liveDtoWithNodes } from '@/client/live/live.mapped.schema.ts';
+import { parseList } from '@/common/utils.schema.ts';
 
 export async function fetchAllLives() {
   const res = await request(`${configs.endpoint}/api/lives/all`);
-  return (await res.json()) as LiveDto[];
+  return parseList(liveDtoWithNodes, await res.json());
 }
 
 export async function createLive(pid: string, platform: PlatformName) {
@@ -14,7 +15,7 @@ export async function createLive(pid: string, platform: PlatformName) {
   const req = { pid, platformName: platform };
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
-  return (await res.json()) as LiveDto;
+  return liveDtoWithNodes.parse(await res.json());
 }
 
 export async function deleteLive(recordId: string, cmd: ExitCmd, isPurge: boolean) {

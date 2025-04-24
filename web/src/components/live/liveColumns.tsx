@@ -4,11 +4,11 @@ import {
   dateColumnDef,
   sortableColumnDef,
 } from '@/components/common/table/column_utils.tsx';
-import { LiveDto } from '@/client/live/live.types.ts';
 import { getLiveUrl } from '@/lib/platform.ts';
 import { cn } from '@/lib/utils.ts';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
+import {LiveDtoWithNodes} from "@/client/live/live.mapped.schema.ts";
 
 export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
@@ -16,7 +16,7 @@ export const viewCntCid = 'viewCnt';
 const DISABLED_CN = 'opacity-40';
 const DEFAULT_WIDTH = '15rem';
 
-const channelColumn: ColumnDef<LiveDto> = {
+const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'channel',
   header: () => <div className="">Channel</div>,
   cell: ({ row }) => {
@@ -29,7 +29,7 @@ const channelColumn: ColumnDef<LiveDto> = {
   meta: { header: { width: DEFAULT_WIDTH } },
 };
 
-const priorityColumn: ColumnDef<LiveDto> = {
+const priorityColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'priority',
   header: () => <div className="ml-1">Priority</div>,
   cell: ({ row }) => (
@@ -43,7 +43,7 @@ const priorityColumn: ColumnDef<LiveDto> = {
   meta: { header: { width: '9rem' } },
 };
 
-const titleColumn: ColumnDef<LiveDto> = {
+const titleColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'title',
   header: 'Title',
   cell: ({ row }) => {
@@ -59,30 +59,33 @@ const titleColumn: ColumnDef<LiveDto> = {
   },
 };
 
-const nodeColumn: ColumnDef<LiveDto> = {
+const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'node',
   header: () => <div className="justify-self-center">Node</div>,
   cell: ({ row }) => {
     const live = row.original;
-    return (
-      <div className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
-        {live.node ? `${live.node.name} (${live.node.group?.name})` : '-'}
-      </div>
-    );
-  },
-  filterFn: (rows, _, filterValue) => {
-    return rows.original.node?.name.includes(filterValue) ?? false;
+    const nodes = row.original.nodes;
+    if (!nodes) {
+      return <div>null</div>
+    }
+    return nodes.map((node) => {
+      return (
+        <div className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
+          {node.name}
+        </div>
+      );
+    })
   },
   meta: { header: { width: DEFAULT_WIDTH } },
 };
 
-export const liveColumns: ColumnDef<LiveDto>[] = [
+export const liveColumns: ColumnDef<LiveDtoWithNodes>[] = [
   createSelectColumn(selectCid),
   channelColumn,
   priorityColumn,
   titleColumn,
   sortableColumnDef(viewCntCid, 'Viewers', (live) => (live.isDisabled ? DISABLED_CN : undefined)),
-  dateColumnDef<LiveDto>(
+  dateColumnDef<LiveDtoWithNodes>(
     'createdAt',
     'CreatedAt',
     (elem) => new Date(elem.createdAt),

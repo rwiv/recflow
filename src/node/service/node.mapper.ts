@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { NodeEnt, NodeStateEnt } from '../spec/node.entity.schema.js';
-import { NodeFieldsReq, NodeStateDto } from '../spec/node.dto.schema.js';
+import { NodeEnt } from '../spec/node.entity.schema.js';
+import { NodeFieldsReq } from '../spec/node.dto.schema.js';
 import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';
 import { NodeTypeRepository } from '../storage/node-type.repository.js';
-import { NodeStateRepository } from '../storage/node-state.repository.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { LiveRepository } from '../../live/storage/live.repository.js';
-import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 
@@ -19,7 +17,6 @@ export class NodeMapper {
   constructor(
     private readonly groupRepo: NodeGroupRepository,
     private readonly typeRepo: NodeTypeRepository,
-    private readonly stateRepo: NodeStateRepository,
     private readonly liveRepo: LiveRepository,
     private readonly pfFinder: PlatformFinder,
     private readonly channelFinder: ChannelFinder,
@@ -38,11 +35,6 @@ export class NodeMapper {
       if (!group) throw NotFoundError.from('NodeGroup', 'id', ent.groupId);
       result = { ...result, group };
     }
-    if (req.states) {
-      const stateEntities = await this.stateRepo.findByNodeId(ent.id, tx);
-      const states = await Promise.all(stateEntities.map((state) => this.mapState(state, tx)));
-      result = { ...result, states };
-    }
     if (req.lives) {
       const liveEnts = await this.liveRepo.findByNodeId(ent.id, tx);
       const lives: LiveDto[] = [];
@@ -55,13 +47,5 @@ export class NodeMapper {
       result = { ...result, lives };
     }
     return result;
-  }
-
-  async mapState(ent: NodeStateEnt, tx: Tx = db, exPlatform?: PlatformDto): Promise<NodeStateDto> {
-    const platform = exPlatform ?? (await this.pfFinder.findByIdNotNull(ent.platformId, tx));
-    const lives = (await this.liveRepo.findByNodeId(ent.nodeId, tx)).filter(
-      (live) => live.platformId === platform.id,
-    );
-    return { ...ent, assigned: lives.length, platform };
   }
 }

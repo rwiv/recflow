@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { LiveDto } from '@/client/live/live.types.ts';
 import { randomElem } from '@/lib/list.ts';
 import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { TagDto } from '@/client/channel/tag.schema.ts';
 import { PlatformDto, platformNameEnum } from '@/client/common/platform.schema.ts';
+import {LiveDtoWithNodes} from "@/client/live/live.mapped.schema.ts";
 
-export function mockLive(): LiveDto {
+export function mockLive(): LiveDtoWithNodes {
   return {
     id: faker.string.uuid().replace(/-/g, ''),
     platform: mockPlatform(),
@@ -14,11 +14,10 @@ export function mockLive(): LiveDto {
     liveTitle: faker.lorem.sentence(),
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
     isAdult: randomElem([true, false]),
-    createdAt: faker.date.anytime().toISOString(),
-    updatedAt: faker.date.anytime().toISOString(),
-    deletedAt: faker.date.anytime().toISOString(),
+    createdAt: faker.date.anytime(),
+    updatedAt: faker.date.anytime(),
+    deletedAt: faker.date.anytime(),
     isDisabled: randomElem([true, false]),
-    node: undefined,
   };
 }
 

@@ -7,6 +7,7 @@ export const nodeEnt = z.object({
   description: z.string().nonempty().nullable(),
   endpoint: z.string().nonempty(),
   weight: z.number().int().positive(),
+  capacity: z.number().int().nonnegative(),
   isCordoned: z.boolean(),
   isDomestic: z.boolean(),
   typeId: uuid,
@@ -80,26 +81,6 @@ export type NodeGroupEntUpdate = z.infer<typeof nodeGroupEntUpdate>;
 
 export const nodeGroupUpdate = nodeGroupEntUpdate;
 export type NodeGroupUpdate = NodeGroupEntUpdate;
-
-export const nodeStateEnt = z.object({
-  id: uuid,
-  nodeId: uuid,
-  platformId: uuid,
-  capacity: z.number().int().nonnegative(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date().nullable(),
-});
-export type NodeStateEnt = z.infer<typeof nodeStateEnt>;
-
-export const nodeStateEntAppend = nodeStateEnt.partial({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-export type NodeStateEntAppend = z.infer<typeof nodeStateEntAppend>;
-
-export const nodeStateEntUpdate = nodeStateEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
-export type NodeStateEntUpdate = z.infer<typeof nodeStateEntUpdate>;
 
 export const liveNodeEnt = z.object({
   liveId: uuid,

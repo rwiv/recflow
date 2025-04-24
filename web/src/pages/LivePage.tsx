@@ -1,5 +1,5 @@
 import { LiveTable } from '@/components/live/LiveTable.tsx';
-import { LiveDto } from '@/client/live/live.types.ts';
+import { LiveDto } from '@/client/live/live.schema.ts';
 import { fetchAllLives } from '@/client/live/live.client.ts';
 import { useQuery } from '@tanstack/react-query';
 import { LIVES_QUERY_KEY } from '@/common/constants.ts';

@@ -30,7 +30,6 @@ export class LiveController {
       channelTags: false,
       nodes: true,
       nodeGroup: true,
-      nodeStates: false,
     };
     return this.liveFinder.findAllActives(opt);
   }
@@ -41,7 +40,6 @@ export class LiveController {
       channelTags: false,
       nodes: true,
       nodeGroup: true,
-      nodeStates: false,
     };
     return this.liveFinder.findAll(opt);
   }

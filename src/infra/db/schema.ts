@@ -139,6 +139,7 @@ export const nodeTable = pgTable(
     description: text(),
     endpoint: text().notNull(),
     weight: integer().notNull(),
+    capacity: integer('capacity').notNull(),
     isCordoned: boolean('is_cordoned').notNull(),
     typeId: uuid('type_id')
       .notNull()
@@ -158,19 +159,6 @@ export const nodeTable = pgTable(
     index('node_last_assigned_at_idx').on(t.lastAssignedAt.nullsFirst()),
   ],
 );
-
-export const nodeStateTable = pgTable('node_state', {
-  id: uuid().primaryKey(),
-  nodeId: uuid('node_id')
-    .notNull()
-    .references(() => nodeTable.id),
-  platformId: uuid('platform_id')
-    .notNull()
-    .references(() => platformTable.id),
-  capacity: integer().notNull(),
-  createdAt: timestamp('created_at').notNull(),
-  updatedAt: timestamp('updated_at'),
-});
 
 export const liveTable = pgTable('live', {
   id: uuid().primaryKey(),

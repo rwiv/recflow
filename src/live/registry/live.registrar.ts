@@ -26,8 +26,8 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { Dispatcher } from '../event/dispatcher.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import assert from 'assert';
+import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -130,7 +130,7 @@ export class LiveRegistrar {
     });
   }
 
-  private printLiveLog(message: string, live: LiveDto, node: NodeDto | null) {
+  private printLiveLog(message: string, live: LiveDto, node: NodeDtoWithLives | null) {
     const attr: CreatedLiveLogAttr = {
       platform: live.platform.name,
       channelId: live.channel.pid,
@@ -139,7 +139,9 @@ export class LiveRegistrar {
     };
     if (node) {
       attr.node = node.name;
-      attr.assigned = node.states?.find((s) => s.platform.id === live.platform.id)?.assigned;
+      if (node.lives) {
+        attr.assigned = node.lives.length;
+      }
     }
     log.info(message, attr);
   }

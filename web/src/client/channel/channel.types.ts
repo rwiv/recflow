@@ -1,21 +1,25 @@
-import { TagDto } from '@/client/channel/tag.schema.ts';
-import { PlatformDto } from '@/client/common/platform.schema.ts';
-import { PriorityDto } from '@/client/channel/priority.schema.ts';
+import { tagDto } from '@/client/channel/tag.schema.ts';
+import {platformDto} from '@/client/common/platform.schema.ts';
+import { priorityDto } from '@/client/channel/priority.schema.ts';
+import { z } from 'zod';
+import { nnint, nonempty, uuid } from '@/common/common.schema.ts';
 
-export interface ChannelDto {
-  id: string;
-  pid: string;
-  username: string;
-  profileImgUrl: string | null;
-  followerCnt: number;
-  platform: PlatformDto;
-  priority: PriorityDto;
-  isFollowed: boolean;
-  description: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  tags?: TagDto[];
-}
+export const channelDto = z.object({
+  id: uuid,
+  pid: nonempty,
+  username: nonempty,
+  profileImgUrl: nonempty.nullable(),
+  followerCnt: nnint,
+  platform: platformDto,
+  priority: priorityDto,
+  isFollowed: z.boolean(),
+  description: nonempty.nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  tags: z.array(tagDto).optional(),
+});
+
+export type ChannelDto = z.infer<typeof channelDto>;
 
 export interface ChannelAppend {
   pid: string;

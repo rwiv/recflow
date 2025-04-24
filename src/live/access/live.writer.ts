@@ -40,7 +40,7 @@ export class LiveWriter {
 
     let node: NodeDto | null | undefined = null;
     if (nodeId) {
-      node = await this.nodeFinder.findById(nodeId, { group: false, states: false }, tx);
+      node = await this.nodeFinder.findById(nodeId, { group: false, lives: false }, tx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
     }
 

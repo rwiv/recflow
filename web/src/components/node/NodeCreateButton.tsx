@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { SelectItem } from '@/components/ui/select.tsx';
 import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
-import { nodeAppend, NodeCapacities, NodeGroupDto, nodeTypeNameEnum } from '@/client/node/node.schema.ts';
+import { nodeAppend, NodeGroupDto, nodeTypeNameEnum } from '@/client/node/node.schema.ts';
 import { createNode } from '@/client/node/node.client.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
@@ -39,18 +39,16 @@ export function NodeCreateButton() {
   );
 }
 
-const formSchema = nodeAppend.omit({ capacities: true }).extend({
+const formSchema = nodeAppend.extend({
   typeName: nonempty,
   weight: nonempty,
-  chzzkCapacity: nonempty,
-  soopCapacity: nonempty,
+  capacity: nonempty,
 });
 
 const middleSchema = formSchema.extend({
   typeName: nodeTypeNameEnum,
   weight: z.coerce.number().positive(),
-  chzzkCapacity: z.coerce.number().nonnegative(),
-  soopCapacity: z.coerce.number().nonnegative(),
+  capacity: z.coerce.number().nonnegative(),
 });
 
 export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb: () => void }) {
@@ -62,26 +60,19 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       name: '',
       endpoint: '',
       weight: '',
+      capacity: '',
       isCordoned: false,
       isDomestic: false,
       groupId: '',
       typeName: '',
-      chzzkCapacity: '',
-      soopCapacity: '',
       failureCnt: 0,
     },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
     const middleData = parse(middleSchema, data, form);
     if (!middleData) return;
-    const capacities: NodeCapacities = [
-      { platformName: 'chzzk', capacity: middleData.chzzkCapacity },
-      { platformName: 'soop', capacity: middleData.soopCapacity },
-      { platformName: 'twitch', capacity: 0 },
-    ];
-    const req = nodeAppend.parse({ ...middleData, capacities });
+    const req = nodeAppend.parse(middleData);
     if (!req) return;
     await createNode(req);
     await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
@@ -107,8 +98,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
           ))}
         </SelectFormField>
         <TextFormField form={form} name="weight" placeholder="1" />
-        <TextFormField form={form} name="chzzkCapacity" label="Chzzk Capacity" placeholder="0" />
-        <TextFormField form={form} name="soopCapacity" label="Soop Capacity" placeholder="0" />
+        <TextFormField form={form} name="capacity" placeholder="0" />
         <FormSubmitButton />
       </form>
     </Form>

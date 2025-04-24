@@ -70,7 +70,7 @@ const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
     }
     return nodes.map((node) => {
       return (
-        <div className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
+        <div key={node.id} className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
           {node.name}
         </div>
       );

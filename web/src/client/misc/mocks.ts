@@ -10,7 +10,6 @@ export function mockLive(): LiveDtoWithNodes {
     id: faker.string.uuid().replace(/-/g, ''),
     platform: mockPlatform(),
     channel: mockChannel(),
-    nodeId: faker.string.uuid().replace(/-/g, ''),
     liveTitle: faker.lorem.sentence(),
     viewCnt: faker.number.int({ min: 10, max: 10000 }),
     isAdult: randomElem([true, false]),

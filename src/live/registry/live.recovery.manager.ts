@@ -48,7 +48,7 @@ export class LiveRecoveryManager {
 
     const chanInfo = await this.fetcher.fetchChannelWithCheckStream(live.platform.name, live.channel.pid);
     if (!chanInfo.liveInfo) {
-      await this.liveRegistrar.deregister(live.id, { msg: 'Delete uncleaned live' }, tx);
+      await this.liveRegistrar.deregister(live.id, { isPurge: true, msg: 'Delete uncleaned live' }, tx);
       return;
     }
     // else

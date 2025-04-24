@@ -7,7 +7,6 @@ export const liveDto = z.object({
   id: uuid,
   platform: platformDto,
   channel: channelDto,
-  nodeId: uuid.nullable(),
   liveTitle: z.string(),
   viewCnt: nnint,
   isAdult: z.boolean(),

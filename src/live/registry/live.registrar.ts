@@ -74,10 +74,6 @@ export class LiveRegistrar {
   async register(req: LiveRegisterRequest, tx: Tx = db): Promise<LiveDto | null> {
     let live = req.live;
     const liveInfo = req.channelInfo.liveInfo;
-    const existingLive = await this.liveFinder.findByPid(liveInfo.pid, tx);
-    if (existingLive && !existingLive.isDisabled) {
-      throw new ConflictError(`Already exists live: pid=${liveInfo.pid}`);
-    }
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false, tx);
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);

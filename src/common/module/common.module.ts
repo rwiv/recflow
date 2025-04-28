@@ -10,9 +10,11 @@ import { CriterionStorageModule } from '../../criterion/storage/criterion.storag
 import { CriterionServiceModule } from '../../criterion/service/criterion.service.module.js';
 import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
 import { ProdInitializer } from './prod-initializer.js';
+import { InfraModule } from '../../infra/infra.module.js';
 
 @Module({
   imports: [
+    InfraModule,
     ChannelServiceModule,
     PlatformModule,
     NodeStorageModule,

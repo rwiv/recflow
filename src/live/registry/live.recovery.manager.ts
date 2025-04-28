@@ -9,7 +9,6 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { LiveWriter } from '../access/live.writer.js';
 import { log } from 'jslog';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { NodeRecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
@@ -29,7 +28,6 @@ export class LiveRecoveryManager {
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
     private readonly liveFinder: LiveFinder,
-    private readonly liveWriter: LiveWriter,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly nodeUpdater: NodeUpdater,
     private readonly nodeFinder: NodeFinder,
@@ -112,7 +110,7 @@ export class LiveRecoveryManager {
         }
         invalidPairs.push({ live, node });
         if (searched) {
-          stdlCancelPromises.push(this.stdl.cancel(node.endpoint, searched.platform, searched.channelId));
+          stdlCancelPromises.push(this.stdl.cancel(node.endpoint, live.id));
           log.debug(`Cancel liveNode`, {
             platform: searched.platform,
             channelId: searched.channelId,

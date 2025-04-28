@@ -21,6 +21,7 @@ export class StdlMock implements Stdl {
     return node.lives.map((dto) => {
       assert(dto.streamUrl);
       return {
+        id: dto.id,
         platform: dto.platform.name,
         channelId: dto.channel.pid,
         liveId: dto.sourceId,
@@ -33,13 +34,13 @@ export class StdlMock implements Stdl {
     });
   }
 
-  async requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void> {
-    log.info(`MockStdlClient.requestRecording(...)`, { nodeEndpoint });
+  async requestRecording(endpoint: string, recordId: string): Promise<void> {
+    log.info(`MockStdlClient.requestRecording(...)`, { endpoint, recordId });
     await Promise.resolve(undefined);
   }
 
-  async cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void> {
-    log.info(`MockStdlClient.cancel(...)`, { endpoint, platform, uid });
+  async cancel(endpoint: string, recordId: string): Promise<void> {
+    log.info(`MockStdlClient.cancel(...)`, { endpoint, recordId });
     await Promise.resolve(undefined);
   }
 }

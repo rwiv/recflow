@@ -14,12 +14,12 @@ export class StdlRedisImpl implements StdlRedis {
     private readonly authed: Authed,
   ) {}
 
-  async setLiveDto(live: LiveDto): Promise<void> {
+  async setLiveDto(live: LiveDto, enforceCreds: boolean): Promise<void> {
     if (!live.streamUrl) {
       throw new ValidationError(`streamUrl is required for liveDto`);
     }
     let cookie = null;
-    if (live.isAdult) {
+    if (live.isAdult || enforceCreds) {
       cookie = await this.authed.requestCookie(live.platform.name);
     }
     return this.set(liveDtoToState(live, cookie));
@@ -47,6 +47,13 @@ export class StdlRedisImpl implements StdlRedis {
   async delete(liveRecordId: string): Promise<void> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
     if (await this.client.get(key)) {
+      await this.client.del(key);
+    }
+  }
+
+  async dropAll(): Promise<void> {
+    const keys = await this.client.keys(`*`);
+    for (const key of keys) {
       await this.client.del(key);
     }
   }

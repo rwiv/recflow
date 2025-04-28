@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/storage/platform.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { DevInitInjector } from './dev-injector.js';
@@ -10,6 +10,8 @@ import {
   soopCriterionRuleNameEnum,
 } from '../../criterion/spec/criterion.rule.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
+import { STDL_REDIS } from '../../infra/infra.tokens.js';
+import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 @Injectable()
 export class DevInitializer {
@@ -19,10 +21,12 @@ export class DevInitializer {
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
     private readonly devInjector: DevInitInjector,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
   async initDev() {
     await dropAll();
+    await this.stdlRedis.dropAll();
 
     await this.addPlatforms();
     await this.addPriorities();

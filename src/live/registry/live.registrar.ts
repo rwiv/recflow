@@ -122,8 +122,8 @@ export class LiveRegistrar {
       }
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
-        await this.stdlRedis.setLiveDto(live);
-        await this.stdl.requestRecording(node.endpoint, live, req.criterion);
+        await this.stdlRedis.setLiveDto(live, req.criterion?.enforceCreds ?? false);
+        await this.stdl.requestRecording(node.endpoint, live.id);
       }
 
       if (live.channel.priority.shouldNotify) {

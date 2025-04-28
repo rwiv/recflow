@@ -8,7 +8,7 @@ export function liveDtoToState(dto: LiveDto, cookie: string | null): LiveState {
   }
   return {
     id: dto.id,
-    platfrom: dto.platform.name,
+    platform: dto.platform.name,
     channelId: dto.channel.pid,
     channelName: dto.channel.username,
     liveId: dto.sourceId,

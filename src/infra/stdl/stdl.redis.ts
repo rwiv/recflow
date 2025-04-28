@@ -5,7 +5,7 @@ import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
 
 export const liveState = z.object({
   id: uuid,
-  platfrom: platformNameEnum,
+  platform: platformNameEnum,
   channelId: nonempty,
   channelName: nonempty,
   liveId: nonempty,
@@ -19,8 +19,9 @@ export const liveState = z.object({
 export type LiveState = z.infer<typeof liveState>;
 
 export interface StdlRedis {
-  setLiveDto(live: LiveDto): Promise<void>;
+  setLiveDto(live: LiveDto, enforceCreds: boolean): Promise<void>;
   set(live: LiveState): Promise<void>;
   get(id: string): Promise<LiveState | undefined>;
   delete(id: string): Promise<void>;
+  dropAll(): Promise<void>;
 }

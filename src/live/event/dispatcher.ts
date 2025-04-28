@@ -56,7 +56,7 @@ export class Dispatcher {
         throw new ValidationError(`fsName mismatch: ${fsName} != ${target.status.fsName}`);
       }
     }
-    await Promise.all(targets.map((t) => this.stdl.cancel(t.node.endpoint, platform, pid)));
+    await Promise.all(targets.map((t) => this.stdl.cancel(t.node.endpoint, t.status.id)));
 
     if (cmd === 'delete') {
       return;
@@ -72,11 +72,12 @@ export class Dispatcher {
       videoName: live.videoName,
       fsName,
     };
+
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
     interval = setInterval(async () => {
       const isComplete = await this.checkVtask(live, targets, doneMsg);
       if (isComplete) {
-        log.debug(`Vtask completed`, { channelId: live.channel.pid });
+        log.debug(`Add StdlDone task`, { channelId: live.channel.pid });
         clearInterval(interval);
         interval = undefined;
         return;
@@ -86,7 +87,7 @@ export class Dispatcher {
       if (interval !== undefined) {
         clearInterval(interval);
       }
-    }, 60 * 1000);
+    }, 180 * 1000);
   }
 
   async checkVtask(live: LiveDto, targets: Target[], doneMsg: StdlDoneMessage) {
@@ -97,7 +98,6 @@ export class Dispatcher {
     for (const candidate of latest) {
       for (const status of candidate.statusList) {
         if (this.matchLiveAndStatus(live, status)) {
-          log.debug(`Live still recording`, { channelId: live.channel.pid });
           return false;
         }
       }

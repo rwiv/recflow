@@ -1,28 +1,17 @@
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { z } from 'zod';
-import { PlatformName, platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { nnint, nonempty } from '../../common/data/common.schema.js';
-
-export interface ChzzkLiveRequest {
-  uid: string;
-  cookies?: string;
-}
-
-export interface SoopLiveRequest {
-  userId: string;
-  cookies?: string;
-}
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
 
 export interface Stdl {
   getStatus(endpoint: string): Promise<NodeRecorderStatus[]>;
-  requestRecording(nodeEndpoint: string, live: LiveDto, cr?: CriterionDto): Promise<void>;
-  cancel(endpoint: string, platform: PlatformName, uid: string): Promise<void>;
+  requestRecording(endpoint: string, recordId: string): Promise<void>;
+  cancel(endpoint: string, recordId: string): Promise<void>;
 }
 
 export const stdlStreamStatusEnum = z.enum(['wait', 'recording', 'done', 'failed']);
 
 export const nodeRecorderStatus = z.object({
+  id: uuid,
   platform: platformNameEnum,
   channelId: nonempty,
   liveId: nonempty,

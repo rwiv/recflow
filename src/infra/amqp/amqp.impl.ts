@@ -10,11 +10,8 @@ import { UninitializedError } from '../../utils/errors/errors/UninitializedError
 export class AmqpImpl implements Amqp {
   private conn: Connection | undefined = undefined;
   private ch: Channel | undefined = undefined;
-  private readonly conf: AmqpConfig;
 
-  constructor(@Inject(ENV) private readonly env: Env) {
-    this.conf = this.env.amqp;
-  }
+  constructor(private readonly conf: AmqpConfig) {}
 
   async init() {
     const { host, port, username, password } = this.conf;

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL, VTASK } from '../../infra/infra.tokens.js';
+import { STDL, STDL_REDIS, VTASK } from '../../infra/infra.tokens.js';
 import { ExitCmd } from './event.schema.js';
 import { NodeRecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
@@ -7,6 +7,7 @@ import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 interface Target {
   node: NodeDto;
@@ -22,6 +23,7 @@ interface Candidate {
 export class Dispatcher {
   constructor(
     @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     @Inject(VTASK) private readonly vtask: Vtask,
   ) {}
 
@@ -70,11 +72,20 @@ export class Dispatcher {
       videoName: live.videoName,
       fsName,
     };
-    const interval = setInterval(async () => {
-      await this.checkVtask(live, targets, doneMsg);
+    let interval: ReturnType<typeof setInterval> | undefined = undefined;
+    interval = setInterval(async () => {
+      const isComplete = await this.checkVtask(live, targets, doneMsg);
+      if (isComplete) {
+        log.debug(`Vtask completed`, { channelId: live.channel.pid });
+        clearInterval(interval);
+        interval = undefined;
+        return;
+      }
     }, 1000);
     setTimeout(() => {
-      clearInterval(interval);
+      if (interval !== undefined) {
+        clearInterval(interval);
+      }
     }, 60 * 1000);
   }
 
@@ -87,11 +98,13 @@ export class Dispatcher {
       for (const status of candidate.statusList) {
         if (this.matchLiveAndStatus(live, status)) {
           log.debug(`Live still recording`, { channelId: live.channel.pid });
-          return;
+          return false;
         }
       }
     }
     await this.vtask.addTask(doneMsg);
+    await this.stdlRedis.delete(live.id);
+    return true;
   }
 
   private matchLiveAndStatus(live: LiveDto, status: NodeRecorderStatus) {

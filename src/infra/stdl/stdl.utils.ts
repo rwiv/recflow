@@ -7,6 +7,7 @@ export function liveDtoToState(dto: LiveDto, cookie: string | null): LiveState {
     throw new ValidationError(`streamUrl is required for liveDto`);
   }
   return {
+    id: dto.id,
     platfrom: dto.platform.name,
     channelId: dto.channel.pid,
     channelName: dto.channel.username,

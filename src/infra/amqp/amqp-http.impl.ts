@@ -18,11 +18,7 @@ const BASE_RETRY_DELAY = 100;
 
 @Injectable()
 export class AmqpHttpImpl implements AmqpHttp {
-  private readonly conf: AmqpConfig;
-
-  constructor(@Inject(ENV) private readonly env: Env) {
-    this.conf = this.env.amqp;
-  }
+  constructor(private readonly conf: AmqpConfig) {}
 
   async fetchByPattern(pattern: string) {
     const queues = await this.fetchAllQueues();

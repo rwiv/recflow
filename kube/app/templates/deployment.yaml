@@ -55,19 +55,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.redis.secretName }}
                   key: {{ .Values.app.redis.passwordKey }}
-            - name: AMQP_HOST
-              value: {{ .Values.app.rabbitmq.host }}
-            - name: AMQP_PORT
-              value: "{{ .Values.app.rabbitmq.port }}"
-            - name: AMQP_HTTP_PORT
-              value: "{{ .Values.app.rabbitmq.httpPort }}"
-            - name: AMQP_USERNAME
-              value: {{ .Values.app.rabbitmq.username }}
-            - name: AMQP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.app.rabbitmq.secretName }}
-                  key: {{ .Values.app.rabbitmq.passwordKey }}
             - name: PG_HOST
               value: {{ .Values.app.postgres.host }}
             - name: PG_PORT

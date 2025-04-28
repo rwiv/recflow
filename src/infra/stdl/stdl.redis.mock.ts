@@ -8,13 +8,18 @@ export class StdlRedisMock implements StdlRedis {
     return Promise.resolve();
   }
 
-  async setLive(live: LiveState): Promise<void> {
+  async set(live: LiveState): Promise<void> {
     log.info(`StdlRedisMock.setLive(${JSON.stringify(live)})`);
     return Promise.resolve();
   }
 
-  async getLive(liveId: string): Promise<LiveState | undefined> {
+  async get(liveId: string): Promise<LiveState | undefined> {
     log.info(`StdlRedisMock.getLive(${liveId})`);
     return Promise.resolve(undefined);
+  }
+
+  async delete(liveId: string): Promise<void> {
+    log.info(`StdlRedisMock.delete(${liveId})`);
+    return Promise.resolve();
   }
 }

@@ -1,5 +1,4 @@
 import {
-  AmqpConfig,
   AuthedConfig,
   UntfConfig,
   PostgresConfig,
@@ -11,7 +10,6 @@ import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
 import {
-  readAmqpConfig,
   readAuthedConfig,
   readPgConfig,
   readRedisConfig,
@@ -28,7 +26,6 @@ export interface Env {
   authed: AuthedConfig;
   untf: UntfConfig;
   vtask: VtaskConfig;
-  amqp: AmqpConfig;
   pg: PostgresConfig;
   stdlRedis: RedisConfig;
   nodeFailureThreshold: number;
@@ -63,7 +60,6 @@ export function readEnv(): Env {
     authed: readAuthedConfig(),
     untf: readUntfConfig(),
     vtask: readVtaskConfig(),
-    amqp: readAmqpConfig(),
     pg: readPgConfig(),
     stdlRedis: readRedisConfig(),
     liveRecoveryWaitTimeMs,

@@ -24,6 +24,6 @@ export async function checkChannelResponse(res: Response, pid: string) {
       log.error('Http request failure: unknown', { stack: stackTrace(e) });
     }
     log.debug(`Failed to fetch channel`, { pid, status: res.status, url: res.url, body });
-    throw new HttpRequestError(`Failed to fetch channel`, res.status);
+    throw new HttpRequestError(`Failed to fetch channel: url=${res.url}`, res.status);
   }
 }

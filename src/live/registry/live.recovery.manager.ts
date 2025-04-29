@@ -65,6 +65,7 @@ export class LiveRecoveryManager {
         channelInfo: channelLiveInfo.parse(chanInfo),
         ignoreNodeIds: [node.id],
         live: queried,
+        failedNode: node,
       };
       await this.liveRegistrar.register(req, txx);
     });

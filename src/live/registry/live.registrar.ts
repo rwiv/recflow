@@ -29,6 +29,7 @@ import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import assert from 'assert';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -37,6 +38,7 @@ export interface DeleteOptions {
 }
 
 interface CreatedLiveLogAttr {
+  liveId: string;
   platform: string;
   channelId: string;
   channelName: string;
@@ -47,8 +49,9 @@ interface CreatedLiveLogAttr {
 
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
-  criterion?: CriterionDto | undefined;
-  live?: LiveDtoWithNodes | undefined;
+  criterion?: CriterionDto;
+  live?: LiveDtoWithNodes;
+  failedNode?: NodeDto;
   ignoreNodeIds?: string[];
 }
 
@@ -74,6 +77,7 @@ export class LiveRegistrar {
   async register(req: LiveRegisterRequest, tx: Tx = db): Promise<LiveDto | null> {
     let live = req.live;
     const liveInfo = req.channelInfo.liveInfo;
+
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false, tx);
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
@@ -117,12 +121,22 @@ export class LiveRegistrar {
 
     // Create a live
     return tx.transaction(async (txx) => {
-      if (!live) {
+      if (live) {
+        if (live && req.failedNode) {
+          await this.liveWriter.unbind(live.id, req.failedNode.id, txx);
+        }
+        if (live && node) {
+          await this.liveWriter.bind(live.id, node.id, txx);
+        }
+      } else {
         live = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
       }
+
       if (node) {
         await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
-        await this.stdlRedis.setLiveDto(live, req.criterion?.enforceCreds ?? false);
+        if (!(await this.stdlRedis.get(live.id))) {
+          await this.stdlRedis.setLiveDto(live, req.criterion?.enforceCreds ?? false);
+        }
         await this.stdl.requestRecording(node.endpoint, live.id);
       }
 
@@ -137,6 +151,7 @@ export class LiveRegistrar {
 
   private printLiveLog(message: string, live: LiveDto, node: NodeDtoWithLives | null) {
     const attr: CreatedLiveLogAttr = {
+      liveId: live.id,
       platform: live.platform.name,
       channelId: live.channel.pid,
       channelName: live.channel.username,

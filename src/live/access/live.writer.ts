@@ -63,6 +63,14 @@ export class LiveWriter {
     });
   }
 
+  async bind(liveId: string, nodeId: string, tx: Tx = db) {
+    await this.liveNodeRepo.create({ liveId, nodeId }, tx);
+  }
+
+  async unbind(liveId: string, nodeId: string, tx: Tx = db) {
+    await this.liveNodeRepo.delete({ liveId, nodeId }, tx);
+  }
+
   async delete(liveId: string, tx: Tx = db) {
     const live = await this.liveFinder.findById(liveId, { nodes: true }, tx);
     if (!live) throw NotFoundError.from('Live', 'id', liveId);

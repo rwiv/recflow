@@ -27,6 +27,6 @@ export class LiveCleaner {
     if (channelInfo?.openLive) {
       return;
     }
-    await this.liveRegistrar.deregister(live.id, { isPurge: true }, tx);
+    await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish' }, tx);
   }
 }

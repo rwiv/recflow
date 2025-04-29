@@ -48,7 +48,8 @@ export class LiveRecoveryManager {
 
     const chanInfo = await this.fetcher.fetchChannelWithCheckStream(live.platform.name, live.channel.pid);
     if (!chanInfo.liveInfo) {
-      await this.liveRegistrar.deregister(live.id, { isPurge: true, msg: 'Delete uncleaned live' }, tx);
+      const msg = 'Delete uncleaned live';
+      await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish', msg }, tx);
       return;
     }
     // else
@@ -76,7 +77,7 @@ export class LiveRecoveryManager {
         req.live = queried;
       } else {
         log.debug('Use new live', this.getLiveAttrs(queried, node));
-        await this.liveRegistrar.deregister(live.id, { isPurge: true }, tx);
+        await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish' }, tx);
       }
       await this.liveRegistrar.register(req, txx);
     });

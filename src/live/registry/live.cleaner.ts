@@ -15,15 +15,17 @@ export class LiveCleaner {
   ) {}
 
   async cleanup(tx: Tx = db) {
+    const promises = [];
     for (const live of await this.liveFinder.findAll()) {
-      await this.deregisterLive(live, tx);
+      promises.push(this.deregisterLive(live, tx));
     }
+    await Promise.all(promises);
   }
 
   private async deregisterLive(live: LiveDto, tx: Tx = db) {
     const channelInfo = await this.fetcher.fetchChannel(live.platform.name, live.channel.pid, false);
     if (channelInfo?.openLive) {
-      return null;
+      return;
     }
     await this.liveRegistrar.deregister(live.id, { isPurge: true }, tx);
   }

@@ -35,9 +35,11 @@ export class LiveRecoveryManager {
   ) {}
 
   async check(tx: Tx = db) {
+    const promises = [];
     for (const invalidPair of await this.retrieveAndCancelInvalidPairs()) {
-      await this.checkOne(invalidPair, tx);
+      promises.push(this.checkOne(invalidPair, tx));
     }
+    await Promise.all(promises);
   }
 
   private async checkOne(pair: LiveNodePair, tx: Tx = db) {
@@ -64,9 +66,15 @@ export class LiveRecoveryManager {
       const req: LiveRegisterRequest = {
         channelInfo: channelLiveInfo.parse(chanInfo),
         ignoreNodeIds: [node.id],
-        live: queried,
         failedNode: node,
       };
+      if (live.sourceId === chanInfo.liveInfo?.liveId) {
+        log.debug('Use existed live', this.getLiveAttrs(queried, node));
+        req.live = queried;
+      } else {
+        log.debug('Use new live', this.getLiveAttrs(queried, node));
+        await this.liveRegistrar.deregister(live.id, { isPurge: true }, tx);
+      }
       await this.liveRegistrar.register(req, txx);
     });
   }

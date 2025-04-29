@@ -39,7 +39,7 @@ export class Dispatcher {
     for (const candidate of candidates) {
       const status = candidate.statusList.find((status) => this.matchLiveAndStatus(live, status));
       if (!status) {
-        log.info(`Live already finished`, { platform, channelId: pid });
+        log.debug(`Live already finished`, { platform, channelId: pid });
         return;
       } else {
         targets.push({ node: candidate.node, status });

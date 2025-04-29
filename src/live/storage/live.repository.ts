@@ -6,7 +6,7 @@ import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelTable, liveNodeTable, liveTable } from '../../infra/db/schema.js';
 import { uuid } from '../../utils/uuid.js';
-import { asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const liveEntAppendReq = liveEnt.partial({
@@ -38,6 +38,15 @@ export class LiveRepository {
 
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)));
+  }
+
+  async findByPlatformAndSourceId(
+    platformId: string,
+    sourceId: string,
+    tx: Tx = db,
+  ): Promise<LiveEnt | undefined> {
+    const cond = and(eq(liveTable.platformId, platformId), eq(liveTable.sourceId, sourceId));
+    return oneNullable(await tx.select().from(liveTable).where(cond));
   }
 
   async findByIdForUpdate(id: string, tx: Tx = db) {

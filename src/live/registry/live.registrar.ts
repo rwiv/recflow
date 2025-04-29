@@ -121,6 +121,7 @@ export class LiveRegistrar {
 
     // Create a live
     return tx.transaction(async (txx) => {
+      let logMsg = 'New live';
       if (live) {
         if (live && req.failedNode) {
           await this.liveWriter.unbind(live.id, req.failedNode.id, txx);
@@ -128,6 +129,7 @@ export class LiveRegistrar {
         if (live && node) {
           await this.liveWriter.bind(live.id, node.id, txx);
         }
+        logMsg = 'Update node in live';
       } else {
         live = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
       }
@@ -144,7 +146,7 @@ export class LiveRegistrar {
         this.notifier.sendLiveInfo(this.env.untf.topic, live);
       }
 
-      this.printLiveLog('New Live', live, node);
+      this.printLiveLog(logMsg, live, node);
       return live;
     });
   }

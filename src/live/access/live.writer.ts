@@ -15,6 +15,7 @@ import { getFormattedTimestamp } from '../../utils/time.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
 export class LiveWriter {
@@ -37,6 +38,10 @@ export class LiveWriter {
     const platform = await this.pfFinder.findByNameNotNull(live.type, tx);
     const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, false, tx);
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
+
+    if (await this.liveRepo.findByPlatformAndSourceId(platform.id, live.liveId)) {
+      throw new ValidationError(`Duplicated live, channel=${channel.username}`);
+    }
 
     let node: NodeDto | null | undefined = null;
     if (nodeId) {

@@ -2,13 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ExitCmd } from '../event/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
-import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveWriter } from '../access/live.writer.js';
-import { FindOptions, LiveFinder } from '../access/live.finder.js';
+import { LiveFinder } from '../access/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
@@ -30,7 +30,7 @@ import assert from 'assert';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { NodeFinder } from '../../node/service/node.finder.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -61,6 +61,7 @@ export class LiveRegistrar {
   constructor(
     private readonly nodeSelector: NodeSelector,
     private readonly nodeUpdater: NodeUpdater,
+    private readonly nodeFinder: NodeFinder,
     private readonly ngRepo: NodeGroupRepository,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
@@ -176,7 +177,7 @@ export class LiveRegistrar {
     const exitCmd = deleteOpts.exitCmd ?? 'delete';
     const isPurge = deleteOpts.isPurge ?? false;
 
-    const live = await this.liveFinder.findById(recordId, { nodes: true, forUpdate: true }, tx);
+    const live = await this.liveFinder.findById(recordId, { nodes: true }, tx);
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!isPurge) {
@@ -196,5 +197,23 @@ export class LiveRegistrar {
     log.info(`${msg}: ${live.channel.username}`);
 
     return live;
+  }
+
+  async drainNode(nodeId: string, isCordoned: boolean) {
+    const node = await this.nodeFinder.findById(nodeId, { lives: true });
+    if (!node) throw NotFoundError.from('Node', 'id', nodeId);
+    assert(node.lives);
+    if (isCordoned) {
+      await this.nodeUpdater.update(node.id, { isCordoned: true });
+    }
+    for (const live of node.lives) {
+      const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+      const req: LiveRegisterRequest = {
+        channelInfo: channelLiveInfo.parse(channelInfo),
+        live,
+        failedNode: node,
+      };
+      await this.register(req);
+    }
   }
 }

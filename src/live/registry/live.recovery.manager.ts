@@ -39,11 +39,9 @@ export class LiveRecoveryManager {
   ) {}
 
   async check(tx: Tx = db) {
-    const promises = [];
     for (const invalidPair of await this.retrieveAndCancelInvalidPairs()) {
-      promises.push(this.checkOne(invalidPair, tx));
+      await this.checkOne(invalidPair, tx);
     }
-    await Promise.all(promises);
   }
 
   private async checkOne(pair: LiveNodePair, tx: Tx = db) {
@@ -58,7 +56,7 @@ export class LiveRecoveryManager {
     }
     // else
     await tx.transaction(async (txx) => {
-      const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
+      const queried = await this.liveFinder.findById(live.id, {}, txx);
       if (!queried) return;
       if (queried.isDisabled) {
         throw new ValidationError('Live is disabled');

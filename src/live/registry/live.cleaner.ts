@@ -15,11 +15,9 @@ export class LiveCleaner {
   ) {}
 
   async cleanup(tx: Tx = db) {
-    const promises = [];
     for (const live of await this.liveFinder.findAll()) {
-      promises.push(this.deregisterLive(live, tx));
+      await this.deregisterLive(live, tx);
     }
-    await Promise.all(promises);
   }
 
   private async deregisterLive(live: LiveDto, tx: Tx = db) {

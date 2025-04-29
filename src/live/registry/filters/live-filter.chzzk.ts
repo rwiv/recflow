@@ -5,14 +5,12 @@ import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { ChzzkCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
-import { NodeSelector } from '../../../node/service/node.selector.js';
 
 @Injectable()
 export class ChzzkLiveFilter {
   constructor(
     private readonly fetcher: PlatformFetcher,
     private readonly chFinder: ChannelFinder,
-    private readonly nodeSelector: NodeSelector,
   ) {}
 
   async getFiltered(lives: LiveInfo[], cr: ChzzkCriterionDto): Promise<LiveInfo[]> {

@@ -2,11 +2,11 @@ import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { liveNodeTable, nodeGroupTable, nodeTable } from '../../infra/db/schema.js';
+import { liveNodeTable, nodeTable } from '../../infra/db/schema.js';
 import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate, NodeGroupEnt } from '../spec/node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { eq, gte } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true, lastAssignedAt: true });

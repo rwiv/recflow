@@ -9,12 +9,12 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
-interface Target {
+interface TargetRecorder {
   node: NodeDto;
   status: NodeRecorderStatus;
 }
 
-interface Candidate {
+interface CandidateNode {
   node: NodeDto;
   statusList: NodeRecorderStatus[];
 }
@@ -31,39 +31,51 @@ export class Dispatcher {
     const platform = live.platform.name;
     const pid = live.channel.pid;
 
-    const promises: Promise<Candidate>[] = nodes.map(async (node) => {
+    // Find to be closed target live status list
+    const promises: Promise<CandidateNode>[] = nodes.map(async (node) => {
       return { node, statusList: await this.stdl.getStatus(node.endpoint) };
     });
-    const candidates = await Promise.all(promises);
-    const targets: Target[] = [];
-    for (const candidate of candidates) {
-      const status = candidate.statusList.find((status) => this.matchLiveAndStatus(live, status));
-      if (!status) {
+    const candidateNodes = await Promise.all(promises);
+    const targetRecorders: TargetRecorder[] = [];
+    for (const candidateNode of candidateNodes) {
+      const recorderStatus = candidateNode.statusList.find((status) => this.matchLiveAndStatus(live, status));
+      if (!recorderStatus) {
         log.debug(`Live already finished`, { platform, channelId: pid });
         return;
       } else {
-        targets.push({ node: candidate.node, status });
+        targetRecorders.push({ node: candidateNode.node, status: recorderStatus });
       }
     }
 
-    if (targets.length === 0) {
+    if (targetRecorders.length === 0) {
       return;
     }
-    const fsName = targets[0].status.fsName;
-    for (let i = 1; i < targets.length; i++) {
-      const target = targets[i];
+
+    // Validate fsName
+    const fsName = targetRecorders[0].status.fsName;
+    for (let i = 1; i < targetRecorders.length; i++) {
+      const target = targetRecorders[i];
       if (target.status.fsName !== fsName) {
         throw new ValidationError(`fsName mismatch: ${fsName} != ${target.status.fsName}`);
       }
     }
-    await Promise.all(targets.map((t) => this.stdl.cancel(t.node.endpoint, t.status.id)));
 
+    // Close recorder
+    const promises2 = targetRecorders.map((t) => {
+      log.debug('Close recorder', { channelId: t.status.channelId });
+      return this.stdl.cancel(t.node.endpoint, t.status.id);
+    });
+    await Promise.all(promises2);
+
+    // Create DoneMessage
     if (cmd === 'delete') {
       return;
     }
     let doneCmd: StdlDoneStatus = 'complete';
     if (cmd === 'cancel') {
       doneCmd = 'canceled';
+    } else if (cmd === 'finish') {
+      doneCmd = 'complete';
     }
     const doneMsg: StdlDoneMessage = {
       status: doneCmd,
@@ -73,11 +85,12 @@ export class Dispatcher {
       fsName,
     };
 
+    // Register StdlDone task
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
     interval = setInterval(async () => {
-      const isComplete = await this.checkVtask(live, targets, doneMsg);
+      const isComplete = await this.checkVtask(live, targetRecorders, doneMsg);
       if (isComplete) {
-        log.debug(`Add StdlDone task`, { channelId: live.channel.pid });
+        log.debug(`Register StdlDone task`, { channelId: live.channel.pid });
         clearInterval(interval);
         interval = undefined;
         return;
@@ -90,8 +103,8 @@ export class Dispatcher {
     }, 180 * 1000);
   }
 
-  async checkVtask(live: LiveDto, targets: Target[], doneMsg: StdlDoneMessage) {
-    const promises: Promise<Candidate>[] = targets.map(async (target) => {
+  private async checkVtask(live: LiveDto, targets: TargetRecorder[], doneMsg: StdlDoneMessage) {
+    const promises: Promise<CandidateNode>[] = targets.map(async (target) => {
       return { node: target.node, statusList: await this.stdl.getStatus(target.node.endpoint) };
     });
     const latest = await Promise.all(promises);

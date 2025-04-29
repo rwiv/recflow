@@ -20,7 +20,7 @@ export class NodeMapper {
     private readonly channelFinder: ChannelFinder,
   ) {}
 
-  async mapAll(entities: NodeEnt[], req: NodeFieldsReq, tx: Tx = db) {
+  async mapAll(entities: NodeEnt[], req: NodeFieldsReq, tx: Tx = db): Promise<NodeDtoWithLives[]> {
     return Promise.all(entities.map((ent) => this.map(ent, req, tx)));
   }
 

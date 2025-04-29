@@ -16,10 +16,13 @@ import { NodeFinder } from '../../node/service/node.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import assert from 'assert';
+import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 interface LiveNodePair {
   live: LiveDto;
   node: NodeDto;
+  mappedAt: Date;
 }
 
 @Injectable()
@@ -29,6 +32,7 @@ export class LiveRecoveryManager {
     @Inject(STDL) private readonly stdl: Stdl,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
+    private readonly liveNodeRepo: LiveNodeRepository,
     private readonly nodeUpdater: NodeUpdater,
     private readonly nodeFinder: NodeFinder,
     private readonly fetcher: PlatformFetcher,
@@ -121,7 +125,11 @@ export class LiveRecoveryManager {
         if (searched && ['recording', 'done'].includes(searched.status)) {
           continue;
         }
-        invalidPairs.push({ live, node });
+        const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
+        if (!liveNode) {
+          throw new NotFoundError(`LiveNode Not Found: liveId=${live.id}, nodeId=${node.id}`);
+        }
+        invalidPairs.push({ live, node, mappedAt: liveNode.createdAt });
         if (searched) {
           stdlCancelPromises.push(this.stdl.cancel(node.endpoint, live.id));
           log.debug(`Cancel liveNode`, {
@@ -134,6 +142,6 @@ export class LiveRecoveryManager {
     }
     await Promise.all(stdlCancelPromises);
     const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);
-    return invalidPairs.filter((pair) => pair.live.createdAt < threshold);
+    return invalidPairs.filter((pair) => pair.mappedAt < threshold);
   }
 }

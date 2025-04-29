@@ -71,3 +71,6 @@ export const liveNodeEnt = z.object({
 export type LiveNodeEnt = z.infer<typeof liveNodeEnt>;
 export const liveNodeEntAppend = liveNodeEnt.partial({ createdAt: true });
 export type LiveNodeEntAppend = z.infer<typeof liveNodeEntAppend>;
+
+export const liveNodeEntUpdate = liveNodeEnt.omit({ liveId: true, nodeId: true });
+export type LiveNodeEntUpdate = z.infer<typeof liveNodeEntUpdate>;

@@ -89,10 +89,6 @@ export class LiveRegistrar {
       channel = await this.chWriter.createWithInfo(append, req.channelInfo, tx);
     }
 
-    if (!channel.priority.shouldSave) {
-      throw new ValidationError(`Channels that should not be saved: channel=${channel.username}`);
-    }
-
     let ignoreNodeIds: string[] = [];
     if (req.ignoreNodeIds) {
       ignoreNodeIds = [...req.ignoreNodeIds];
@@ -101,7 +97,10 @@ export class LiveRegistrar {
       ignoreNodeIds = [...ignoreNodeIds, ...live.nodes.map((node) => node.id)];
     }
 
-    const node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
+    let node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
+    if (!channel.priority.shouldSave) {
+      node = null;
+    }
 
     // If there is no available node, notify and create a disabled live
     const groups = await this.ngRepo.findAll(tx);

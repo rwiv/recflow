@@ -9,7 +9,6 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 
 export interface FindOptions extends LiveFieldsReq {
-  includeDisabled?: boolean;
   forUpdate?: boolean;
 }
 
@@ -23,10 +22,12 @@ export class LiveFinder {
   async findById(id: string, opts: FindOptions = {}, tx: Tx = db) {
     if (opts.forUpdate) {
       const ent = await this.liveRepo.findByIdForUpdate(id, tx);
-      return this.filterByOpts(ent, opts);
+      if (!ent) return undefined;
+      return this.mapper.map(ent, tx, opts);
     } else {
       const ent = await this.liveRepo.findById(id, tx);
-      return this.filterByOpts(ent, opts);
+      if (!ent) return undefined;
+      return this.mapper.map(ent, tx, opts);
     }
   }
 
@@ -34,16 +35,8 @@ export class LiveFinder {
     const entities = await this.liveRepo.findByPid(pid, tx);
     if (entities.length === 0) return undefined;
     if (entities.length > 1) throw new ValidationError(`Duplicated live entities: pid=${pid}`);
-    return this.filterByOpts(entities[0], opts);
-  }
-
-  private async filterByOpts(ent: LiveEnt | undefined, opts: FindOptions = {}, tx: Tx = db) {
-    let withDisabled = opts.includeDisabled;
-    if (withDisabled === undefined) {
-      withDisabled = false;
-    }
+    const ent = entities[0];
     if (!ent) return undefined;
-    if (ent.isDisabled && !withDisabled) return undefined;
     return this.mapper.map(ent, tx, opts);
   }
 
@@ -52,11 +45,7 @@ export class LiveFinder {
   }
 
   async findAllActives(opt: LiveFieldsReq = {}, tx: Tx = db) {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(false), tx, opt);
-  }
-
-  async findAllDeleted(opt: LiveFieldsReq = {}, tx: Tx = db) {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDeleted(true), tx, opt);
+    return this.mapper.mapAll(await this.liveRepo.findByIsDisabled(false), tx, opt);
   }
 
   async findEarliestUpdatedOne(tx: Tx = db): Promise<LiveDto | undefined> {

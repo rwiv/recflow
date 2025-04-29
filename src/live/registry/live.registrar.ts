@@ -177,12 +177,7 @@ export class LiveRegistrar {
     const exitCmd = deleteOpts.exitCmd ?? 'delete';
     const isPurge = deleteOpts.isPurge ?? false;
 
-    const findOpts: FindOptions = {
-      includeDisabled: true,
-      nodes: true,
-      forUpdate: true,
-    };
-    const live = await this.liveFinder.findById(recordId, findOpts, tx);
+    const live = await this.liveFinder.findById(recordId, { nodes: true, forUpdate: true }, tx);
     if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
     if (!isPurge) {

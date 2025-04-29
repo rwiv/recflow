@@ -53,7 +53,7 @@ export class LiveRepository {
     return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)).for('update'));
   }
 
-  async findByIsDeleted(isDisabled: boolean, tx: Tx = db) {
+  async findByIsDisabled(isDisabled: boolean, tx: Tx = db) {
     return tx
       .select()
       .from(liveTable)

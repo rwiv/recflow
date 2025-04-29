@@ -55,6 +55,9 @@ export class LiveRecoveryManager {
     await tx.transaction(async (txx) => {
       const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
       if (!queried) return;
+      if (queried.isDisabled) {
+        throw new ValidationError('Live is disabled');
+      }
 
       if (node.failureCnt >= this.env.nodeFailureThreshold) {
         await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, txx);

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveWriter } from './live.writer.js';
-import { FindOptions, LiveFinder } from './live.finder.js';
+import { LiveFinder } from './live.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
@@ -23,8 +23,7 @@ export class LiveRefresher {
     if (!chanInfo.liveInfo) return;
 
     return tx.transaction(async (txx) => {
-      const opts: FindOptions = { includeDisabled: true, forUpdate: true };
-      const queried = await this.liveFinder.findById(live.id, opts, txx);
+      const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
       if (!queried) return;
       await this.liveWriter.updateByLive(live.id, channelLiveInfo.parse(chanInfo).liveInfo, txx);
     });

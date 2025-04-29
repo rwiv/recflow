@@ -46,15 +46,17 @@ spec:
               value: {{ .Values.externals.untf.topic }}
             - name: VTASK_ENDPOINT
               value: {{ .Values.externals.vtask.endpoint }}
-            - name: REDIS_HOST
+            - name: STDL_REDIS_HOST
               value: {{ .Values.app.redis.host }}
-            - name: REDIS_PORT
+            - name: STDL_REDIS_PORT
               value: "{{ .Values.app.redis.port }}"
-            - name: REDIS_PASSWORD
+            - name: STDL_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.app.redis.secretName }}
-                  key: {{ .Values.app.redis.passwordKey }}
+                  name: {{ .Values.app.redis.secrets.auth.name }}
+                  key: {{ .Values.app.redis.secrets.auth.passwordKey }}
+            - name: STDL_REDIS_CA_PATH
+              value: /mnt/stdl-redis-tls/ca.crt
             - name: PG_HOST
               value: {{ .Values.app.postgres.host }}
             - name: PG_PORT
@@ -77,6 +79,10 @@ spec:
               value: "{{ .Values.app.configs.nodeResetCycleSec }}"
             - name: LIVE_RECOVERY_WAIT_TIME_MS
               value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
+          volumeMounts:
+            - name: stdl-redis-tls
+              mountPath: "/mnt/stdl-redis-tls/{{ .Values.app.redis.secrets.tls.caKey }}"
+              subPath: {{ .Values.app.redis.secrets.tls.caKey }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- with .Values.affinity }}
@@ -87,3 +93,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: stdl-redis-tls
+          secret:
+            secretName: {{ .Values.app.redis.secrets.tls.name }}

@@ -47,9 +47,9 @@ export class DevInitializer {
     await this.priService.create({ name: 'must', shouldSave: true, seq: 1 });
     await this.priService.create({ name: 'should', shouldSave: true, seq: 2 });
     await this.priService.create({ name: 'common', shouldSave: true, seq: 3 });
-    await this.priService.create({ name: 'review', shouldSave: false, seq: 4 });
-    await this.priService.create({ name: 'skip', shouldSave: false, seq: 5 });
-    await this.priService.create({ name: 'none', shouldSave: false, seq: 6 });
+    await this.priService.create({ name: 'none', shouldSave: true, seq: 4 });
+    await this.priService.create({ name: 'review', shouldSave: false, seq: 5 });
+    await this.priService.create({ name: 'skip', shouldSave: false, seq: 6 });
   }
 
   private async addNodeGroups() {

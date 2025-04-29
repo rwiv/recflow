@@ -42,7 +42,7 @@ export class ChzzkLiveFilter {
       if (channel.priority.shouldNotify) {
         return liveInfo;
       }
-      if (await this.nodeSelector.match(channel)) {
+      if (channel.priority.shouldSave) {
         return liveInfo;
       } else {
         return null;

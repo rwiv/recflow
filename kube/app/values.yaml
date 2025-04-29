@@ -4,13 +4,22 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 0.9.3
+  tag: 0.9.4
   pullSecret: image-pull-secret
 
 affinity: ~
 tolerations: ~
 podLabels:
   sidecar.istio.io/inject: "true"
+
+vault:
+  mount: kube
+  refreshAfter: 30s
+  redis:
+    path: media/stdl/redis
+    version: 1
+    secretName: stdl-redis
+    passwordKey: password
 
 service:
   type: NodePort
@@ -23,8 +32,13 @@ app:
   redis:
     host: stdl-redis.rwiv.xyz
     port: 30211
-    secretName: redis-main
-    passwordKey: password
+    secrets:
+      auth:
+        name: stdl-redis-auth
+        passwordKey: password
+      tls:
+        name: stdl-redis-tls
+        caKey: ca.crt
   postgres:
     host: stmgr-postgresql.media.svc.cluster.local
     port: 5432

@@ -30,6 +30,7 @@ import assert from 'assert';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -86,6 +87,10 @@ export class LiveRegistrar {
         isFollowed: false,
       };
       channel = await this.chWriter.createWithInfo(append, req.channelInfo, tx);
+    }
+
+    if (!channel.priority.shouldSave) {
+      throw new ValidationError(`Channels that should not be saved: channel=${channel.username}`);
     }
 
     let ignoreNodeIds: string[] = [];

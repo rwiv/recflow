@@ -120,11 +120,15 @@ export class LiveRecoveryManager {
         assert(targetStatus);
 
         const searched = targetStatus.find((status) => {
-          return status.platform === live.platform.name && status.channelId === live.channel.pid;
+          return (
+            status.platform === live.platform.name &&
+            status.channelId === live.channel.pid &&
+            status.videoName === live.videoName
+          );
         });
-        if (searched && ['recording', 'done'].includes(searched.status)) {
-          continue;
-        }
+
+        if (searched && ['recording', 'done'].includes(searched.status)) continue;
+
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
         if (!liveNode) {
           throw new NotFoundError(`LiveNode Not Found: liveId=${live.id}, nodeId=${node.id}`);

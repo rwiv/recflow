@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeDto } from '../spec/node.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
@@ -11,13 +10,7 @@ import { notNull } from '../../utils/null.js';
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(
-    channel: ChannelDto,
-    ignoreNodeIds: string[] = [],
-    tx: Tx = db,
-  ): Promise<NodeDtoWithLives | null> {
-    const pfId = channel.platform.id;
-
+  async match(ignoreNodeIds: string[] = [], tx: Tx = db): Promise<NodeDtoWithLives | null> {
     // search for available nodes
     let nodes = await this.findCandidateNodes(ignoreNodeIds, tx);
     if (nodes.length === 0) {

@@ -47,10 +47,6 @@ export class Dispatcher {
       }
     }
 
-    if (targetRecorders.length === 0) {
-      return;
-    }
-
     // Validate fsName
     const fsName = targetRecorders[0].status.fsName;
     for (let i = 1; i < targetRecorders.length; i++) {

@@ -100,7 +100,7 @@ export class LiveRegistrar {
       ignoreNodeIds = [...ignoreNodeIds, ...live.nodes.map((node) => node.id)];
     }
 
-    let node = await this.nodeSelector.match(channel, ignoreNodeIds, tx);
+    let node = await this.nodeSelector.match(ignoreNodeIds, tx);
     if (!channel.priority.shouldSave) {
       node = null;
     }

@@ -4,7 +4,6 @@ import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
-import { NodeSelector } from '../../../node/service/node.selector.js';
 import { SoopLiveInfo } from '../../../platform/spec/raw/soop.js';
 
 @Injectable()
@@ -12,7 +11,6 @@ export class SoopLiveFilter {
   constructor(
     private readonly fetcher: PlatformFetcher,
     private readonly chFinder: ChannelFinder,
-    private readonly nodeSelector: NodeSelector,
   ) {}
 
   async getFiltered(lives: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {

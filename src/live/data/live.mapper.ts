@@ -8,6 +8,7 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { NodeFieldsReq } from '../../node/spec/node.dto.schema.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
+import { headers } from '../../common/data/common.schema.js';
 
 export interface LiveFieldsReq {
   channelTags?: boolean;
@@ -33,7 +34,12 @@ export class LiveMapper {
     const channel = await this.channelFinder.findById(liveEnt.channelId, opt.channelTags ?? false, tx);
     if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
-    let result: LiveDtoWithNodes = { ...liveEnt, channel, platform };
+    let result: LiveDtoWithNodes = {
+      ...liveEnt,
+      channel,
+      platform,
+      headers: liveEnt.headers ? headers.parse(JSON.parse(liveEnt.headers)) : null,
+    };
 
     if (opt.nodes) {
       const req: NodeFieldsReq = {

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL } from '../../infra/infra.tokens.js';
-import { LiveFinder } from '../access/live.finder.js';
+import { LiveFinder } from '../data/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { Tx } from '../../infra/db/types.js';

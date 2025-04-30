@@ -10,6 +10,7 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { LiveRepository } from '../../live/storage/live.repository.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
+import { headers } from '../../common/data/common.schema.js';
 
 @Injectable()
 export class NodeMapper {
@@ -38,7 +39,12 @@ export class NodeMapper {
         const platform = await this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
         const channel = await this.channelFinder.findById(liveEnt.channelId, false, tx);
         if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
-        lives.push({ ...liveEnt, channel, platform });
+        lives.push({
+          ...liveEnt,
+          channel,
+          platform,
+          headers: liveEnt.headers ? headers.parse(JSON.parse(liveEnt.headers)) : null,
+        });
       }
       result = { ...result, lives };
     }

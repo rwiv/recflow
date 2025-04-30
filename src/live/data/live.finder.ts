@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LiveRepository } from '../storage/live.repository.js';
 import { LiveFieldsReq, LiveMapper } from './live.mapper.js';
-import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';

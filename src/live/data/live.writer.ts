@@ -60,6 +60,7 @@ export class LiveWriter {
         videoName: getFormattedTimestamp(),
         isDisabled,
         streamUrl: streamInfo?.best?.mediaPlaylistUrl ?? null,
+        headers: streamInfo?.headers ? JSON.stringify(streamInfo.headers) : null,
       };
       const ent = await this.liveRepo.create(req, tx);
 
@@ -67,7 +68,7 @@ export class LiveWriter {
         await this.liveNodeRepo.create({ liveId: ent.id, nodeId: node.id }, tx);
       }
 
-      return { ...ent, channel, platform, node };
+      return { ...ent, channel, platform, node, headers: streamInfo?.headers ?? null };
     });
   }
 

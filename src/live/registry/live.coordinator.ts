@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { LiveFinder } from '../access/live.finder.js';
+import { LiveFinder } from '../data/live.finder.js';
 import { PlatformLiveFilter } from './live.filter.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';

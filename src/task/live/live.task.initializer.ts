@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { LiveCoordinator } from '../../live/registry/live.coordinator.js';
-import { LiveRefresher } from '../../live/access/live.refresher.js';
+import { LiveRefresher } from '../../live/data/live.refresher.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
 import { LiveCleaner } from '../../live/registry/live.cleaner.js';
 import { LiveRefreshTask } from './tasks/live.refresh-task.js';

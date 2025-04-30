@@ -7,8 +7,8 @@ import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js'
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveWriter } from '../access/live.writer.js';
-import { LiveFinder } from '../access/live.finder.js';
+import { LiveWriter } from '../data/live.writer.js';
+import { LiveFinder } from '../data/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';

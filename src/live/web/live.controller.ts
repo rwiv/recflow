@@ -5,8 +5,8 @@ import { exitCmd } from '../event/event.schema.js';
 import { HttpErrorFilter } from '../../common/module/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
-import { LiveFinder } from '../access/live.finder.js';
-import { LiveFieldsReq } from '../access/live.mapper.js';
+import { LiveFinder } from '../data/live.finder.js';
+import { LiveFieldsReq } from '../data/live.mapper.js';
 import {
   liveAppendRequest,
   LiveAppendRequest,

@@ -156,6 +156,7 @@ export const liveTable = pgTable('live', {
   sourceId: text('source_id').notNull(),
   liveTitle: text('live_title').notNull(),
   streamUrl: text('stream_url'),
+  headers: text('headers'),
   viewCnt: integer('view_cnt').notNull(),
   isAdult: boolean('is_adult').notNull(),
   isDisabled: boolean('is_disabled').notNull(),

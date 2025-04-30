@@ -8,6 +8,7 @@ export const liveEnt = z.object({
   sourceId: nonempty,
   liveTitle: nonempty,
   streamUrl: nonempty.nullable(),
+  headers: nonempty.nullable(),
   viewCnt: nnint,
   isAdult: z.boolean(),
   isDisabled: z.boolean(),

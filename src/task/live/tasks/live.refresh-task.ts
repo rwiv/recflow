@@ -1,5 +1,5 @@
 import { Task } from '../../spec/task.interface.js';
-import { LiveRefresher } from '../../../live/access/live.refresher.js';
+import { LiveRefresher } from '../../../live/data/live.refresher.js';
 import { liveTaskName } from '../spec/live.task.names.js';
 
 export class LiveRefreshTask implements Task {

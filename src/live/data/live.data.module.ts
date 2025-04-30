@@ -22,4 +22,4 @@ import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
   providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher],
   exports: [LiveWriter, LiveFinder, LiveRefresher],
 })
-export class LiveAccessModule {}
+export class LiveDataModule {}

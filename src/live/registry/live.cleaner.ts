@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
-import { LiveFinder } from '../access/live.finder.js';
+import { LiveFinder } from '../data/live.finder.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveRegistrar } from './live.registrar.js';
 

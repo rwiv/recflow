@@ -17,7 +17,6 @@ export const chzzkLiveInfo = z.object({
   liveCategoryValue: nonempty.nullable().optional(),
   watchPartyNo: nnint.nullable().optional(),
   watchPartyTag: nonempty.nullable().optional(),
-  streamUrl: nonempty.optional(),
 });
 export type ChzzkLiveInfo = z.infer<typeof chzzkLiveInfo>;
 export const chzzkLiveInfoResponse = z.array(chzzkLiveInfo);

@@ -12,7 +12,6 @@ export const soopLiveInfo = z.object({
   hashTags: z.array(nonempty).nullable().optional(),
   adult: z.boolean(),
   locked: z.boolean(),
-  streamUrl: nonempty.optional(),
 });
 export type SoopLiveInfo = z.infer<typeof soopLiveInfo>;
 export const soopLiveInfoResponse = z.array(soopLiveInfo);

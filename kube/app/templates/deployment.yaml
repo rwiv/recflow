@@ -28,6 +28,8 @@ spec:
               value: {{ .Values.externals.streamq.url }}
             - name: STREAMQ_QSIZE
               value: "{{ .Values.externals.streamq.qsize }}"
+            - name: STLINK_ENDPOINT
+              value: {{ .Values.externals.stlink.endpoint }}
             - name: AUTHED_URL
               value: {{ .Values.externals.authed.url }}
             - name: AUTHED_API_KEY

@@ -31,6 +31,7 @@ import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
+import { Stlink } from '../../platform/stlink/stlink.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -70,6 +71,7 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
     private readonly fetcher: PlatformFetcher,
     private readonly dispatcher: Dispatcher,
+    private readonly stlink: Stlink,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(STDL) private readonly stdl: Stdl,
@@ -110,15 +112,19 @@ export class LiveRegistrar {
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
       this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
 
-      const created = await this.liveWriter.createByLive(liveInfo, null, true, tx);
+      const created = await this.liveWriter.createByLive(liveInfo, null, null, true, tx);
       this.printLiveLog(headMessage, created, null);
       return created;
     }
 
     // If the live is inaccessible, do nothing
     const pfName = channel.platform.name;
-    const newLiveInfo = (await this.fetcher.fetchChannelWithCheckStream(pfName, channel.pid)).liveInfo;
-    if (!newLiveInfo) {
+    let useCred = liveInfo.isAdult;
+    if (req.criterion?.enforceCreds) {
+      useCred = true;
+    }
+    const streamInfo = await this.stlink.fetchStreamInfo(pfName, channel.pid, useCred);
+    if (!streamInfo) {
       const { pid, username } = channel;
       log.debug('This live is inaccessible', { platform: pfName, pid, username });
       return null;
@@ -136,7 +142,7 @@ export class LiveRegistrar {
         }
         logMsg = 'Update node in live';
       } else {
-        live = await this.liveWriter.createByLive(newLiveInfo, node?.id ?? null, node === null, txx);
+        live = await this.liveWriter.createByLive(liveInfo, streamInfo, node?.id ?? null, node === null, txx);
       }
 
       if (node) {

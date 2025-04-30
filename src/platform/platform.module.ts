@@ -6,11 +6,12 @@ import { SoopFetcher } from './fetcher/fetcher.soop.js';
 import { PlatformRepository } from './storage/platform.repository.js';
 import { PlatformFinder } from './storage/platform.finder.js';
 import { PlatformController } from './storage/platform.controller.js';
+import { Stlink } from './stlink/stlink.js';
 
 @Module({
   imports: [ConfigModule],
   controllers: [PlatformController],
-  providers: [PlatformFetcher, ChzzkFetcher, SoopFetcher, PlatformRepository, PlatformFinder],
-  exports: [PlatformFetcher, PlatformRepository, PlatformFinder],
+  providers: [PlatformFetcher, ChzzkFetcher, SoopFetcher, PlatformRepository, PlatformFinder, Stlink],
+  exports: [PlatformFetcher, PlatformRepository, PlatformFinder, Stlink],
 })
 export class PlatformModule {}

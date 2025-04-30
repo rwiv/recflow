@@ -16,6 +16,7 @@ import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { StreamInfo } from '../../platform/stlink/stlink.js';
 
 @Injectable()
 export class LiveWriter {
@@ -31,6 +32,7 @@ export class LiveWriter {
 
   async createByLive(
     live: LiveInfo,
+    streamInfo: StreamInfo | null,
     nodeId: string | null,
     isDisabled: boolean,
     tx: Tx = db,
@@ -57,6 +59,7 @@ export class LiveWriter {
         sourceId: live.liveId,
         videoName: getFormattedTimestamp(),
         isDisabled,
+        streamUrl: streamInfo?.best?.mediaPlaylistUrl ?? null,
       };
       const ent = await this.liveRepo.create(req, tx);
 
@@ -90,11 +93,7 @@ export class LiveWriter {
   }
 
   async updateByLive(id: string, live: LiveInfo, tx: Tx = db) {
-    const update: LiveUpdate = { ...live };
-    if (!live.streamUrl) {
-      delete update.streamUrl;
-    }
-    return this.update(id, update, tx);
+    return this.update(id, { ...live }, tx);
   }
 
   async disable(liveId: string, tx: Tx = db) {

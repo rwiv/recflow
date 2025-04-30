@@ -3,6 +3,7 @@ import {
   AuthedConfig,
   PostgresConfig,
   RedisConfig,
+  StlinkConfig,
   StreamqConfig,
   UntfConfig,
   VtaskConfig,
@@ -76,6 +77,12 @@ export function readStreamqConfig(): StreamqConfig {
   if (url === undefined) throw Error('streamq data is undefined');
   const qsize = nnint.parse(process.env.STREAMQ_QSIZE);
   return { url, qsize };
+}
+
+export function readStlinkConfig(): StlinkConfig {
+  const endpoint = process.env.STLINK_ENDPOINT;
+  if (endpoint === undefined) throw Error('stlink data is undefined');
+  return { endpoint };
 }
 
 export function readAuthedConfig(): AuthedConfig {

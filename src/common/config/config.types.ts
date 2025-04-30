@@ -27,6 +27,10 @@ export interface StreamqConfig {
   qsize: number;
 }
 
+export interface StlinkConfig {
+  endpoint: string;
+}
+
 export interface AuthedConfig {
   url: string;
   apiKey: string;

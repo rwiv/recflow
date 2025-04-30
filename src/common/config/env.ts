@@ -5,6 +5,7 @@ import {
   StreamqConfig,
   VtaskConfig,
   RedisConfig,
+  StlinkConfig,
 } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
@@ -13,6 +14,7 @@ import {
   readAuthedConfig,
   readPgConfig,
   readRedisConfig,
+  readStlinkConfig,
   readStreamqConfig,
   readUntfConfig,
   readVtaskConfig,
@@ -23,6 +25,7 @@ export interface Env {
   nodeEnv: string;
   appPort: number;
   streamq: StreamqConfig;
+  stlink: StlinkConfig;
   authed: AuthedConfig;
   untf: UntfConfig;
   vtask: VtaskConfig;
@@ -57,6 +60,7 @@ export function readEnv(): Env {
     nodeEnv,
     appPort,
     streamq: readStreamqConfig(),
+    stlink: readStlinkConfig(),
     authed: readAuthedConfig(),
     untf: readUntfConfig(),
     vtask: readVtaskConfig(),

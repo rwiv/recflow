@@ -18,6 +18,7 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import assert from 'assert';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { Stlink } from '../../platform/stlink/stlink.js';
 
 interface LiveNodePair {
   live: LiveDto;
@@ -30,6 +31,7 @@ export class LiveRecoveryManager {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
+    private readonly stlink: Stlink,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly liveNodeRepo: LiveNodeRepository,
@@ -48,13 +50,15 @@ export class LiveRecoveryManager {
     const live = pair.live;
     const node = pair.node;
 
-    const chanInfo = await this.fetcher.fetchChannelWithCheckStream(live.platform.name, live.channel.pid);
-    if (!chanInfo.liveInfo) {
+    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
+    if (!streamInfo.openLive) {
       const msg = 'Delete uncleaned live';
       await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish', msg }, tx);
       return;
     }
-    // else
+
+    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+
     await tx.transaction(async (txx) => {
       const queried = await this.liveFinder.findById(live.id, {}, txx);
       if (!queried) return;

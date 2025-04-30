@@ -8,13 +8,12 @@ import { NodeUpdater } from './node.updater.js';
 import { NodeSelector } from './node.selector.js';
 import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
 import { NodeGroupService } from './node-group.service.js';
-import { NodeManager } from './node.manager.js';
 import { InfraModule } from '../../infra/infra.module.js';
 import { ChannelServiceModule } from '../../channel/service/channel.service.module.js';
 
 @Module({
   imports: [NodeStorageModule, LiveStorageModule, PlatformModule, InfraModule, ChannelServiceModule],
-  providers: [NodeMapper, NodeWriter, NodeUpdater, NodeFinder, NodeSelector, NodeGroupService, NodeManager],
-  exports: [NodeWriter, NodeUpdater, NodeFinder, NodeSelector, NodeGroupService, NodeManager],
+  providers: [NodeMapper, NodeWriter, NodeUpdater, NodeFinder, NodeSelector, NodeGroupService],
+  exports: [NodeWriter, NodeUpdater, NodeFinder, NodeSelector, NodeGroupService],
 })
 export class NodeServiceModule {}

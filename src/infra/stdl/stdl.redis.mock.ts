@@ -3,8 +3,8 @@ import { log } from 'jslog';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 
 export class StdlRedisMock implements StdlRedis {
-  async setLiveDto(live: LiveDto, enforceCreds: boolean): Promise<void> {
-    log.info(`StdlRedisMock.setLiveDto(...)`, { live, enforceCreds });
+  async setLiveDto(live: LiveDto): Promise<void> {
+    log.info(`StdlRedisMock.setLiveDto(...)`, { live });
     return Promise.resolve();
   }
 

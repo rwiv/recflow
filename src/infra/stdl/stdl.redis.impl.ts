@@ -2,27 +2,19 @@ import { liveState, LiveState, StdlRedis } from './stdl.redis.js';
 import { RedisClientType } from 'redis';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { Authed } from '../authed/authed.js';
 import { liveDtoToState } from './stdl.utils.js';
 
 export const LIVE_PREFIX = 'live';
 export const EXPIRATION_TIME_SEC = 60 * 60 * 24 * 7; // 7 day
 
 export class StdlRedisImpl implements StdlRedis {
-  constructor(
-    private readonly client: RedisClientType,
-    private readonly authed: Authed,
-  ) {}
+  constructor(private readonly client: RedisClientType) {}
 
-  async setLiveDto(live: LiveDto, enforceCreds: boolean): Promise<void> {
+  async setLiveDto(live: LiveDto): Promise<void> {
     if (!live.streamUrl) {
       throw new ValidationError(`streamUrl is required for liveDto`);
     }
-    let cookie = null;
-    if (live.isAdult || enforceCreds) {
-      cookie = await this.authed.requestCookie(live.platform.name);
-    }
-    return this.set(liveDtoToState(live, cookie));
+    return this.set(liveDtoToState(live));
   }
 
   async set(state: LiveState): Promise<void> {

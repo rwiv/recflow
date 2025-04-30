@@ -5,6 +5,7 @@ export const priorityDto = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
+  tier: z.number().int().nonnegative(),
   seq: z.number().int().nonnegative(),
   shouldSave: z.boolean(),
   shouldNotify: z.boolean(),

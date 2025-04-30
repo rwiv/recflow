@@ -5,7 +5,6 @@ import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
 import {
   CriterionActivationBadge,
-  CriterionAdultOnlyBadge,
   CriterionDomesticOnlyBadge,
   CriterionEnforceCredentialsBadge,
   CriterionOverseasFirstBadge,
@@ -35,12 +34,12 @@ const enforceCredsColumn: ColumnDef<SoopCriterionDto> = {
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
-const adultOnlyColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'adultOnly',
-  header: () => <div className="justify-self-center">AdultOnly</div>,
-  cell: ({ row }) => <CriterionAdultOnlyBadge criterion={row.original} />,
-  meta: { header: { width: NORMAL_WIDTH } },
-};
+// const adultOnlyColumn: ColumnDef<SoopCriterionDto> = {
+//   accessorKey: 'adultOnly',
+//   header: () => <div className="justify-self-center">AdultOnly</div>,
+//   cell: ({ row }) => <CriterionAdultOnlyBadge criterion={row.original} />,
+//   meta: { header: { width: NORMAL_WIDTH } },
+// };
 
 const domesticOnlyColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'domesticOnly',
@@ -77,20 +76,6 @@ const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
-const qualifyingUserCntColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'qualifyingUserCnt',
-  header: () => <div className="justify-self-center">QUC</div>,
-  cell: ({ row }) => <CriterionFieldUpdateForm type="qualifyingUserCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
-const qualifyingFollowCntColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'qualifyingFollowCnt',
-  header: () => <div className="justify-self-center">QFC</div>,
-  cell: ({ row }) => <CriterionFieldUpdateForm type="qualifyingFollowCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
 type RuleKey =
   | 'positiveTags'
   | 'negativeTags'
@@ -120,14 +105,12 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   nameColumn,
   isDeactivatedColumn,
   enforceCredsColumn,
-  adultOnlyColumn,
+  // adultOnlyColumn,
   domesticOnlyColumn,
   overseasFirstColumn,
   sufficientUserCntColumn,
   minUserCntColumn,
   minFollowCntColumn,
-  qualifyingUserCntColumn,
-  qualifyingFollowCntColumn,
   createUnitColumn('positiveTags', 'p_tags'),
   createUnitColumn('negativeTags', 'n_tags'),
   createUnitColumn('positiveKeywords', 'p_keywords'),

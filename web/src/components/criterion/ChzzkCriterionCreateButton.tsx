@@ -44,8 +44,6 @@ const formSchema = chzzkCriterionAppend.omit({ platformId: true }).extend({
   sufficientUserCnt: nonempty,
   minUserCnt: nonempty,
   minFollowCnt: nonempty,
-  qualifyingUserCnt: nonempty,
-  qualifyingFollowCnt: nonempty,
 });
 
 export function ChzzkCriterionCreateButton() {
@@ -80,8 +78,6 @@ export function CreateForm({ cb }: { cb: () => void }) {
       sufficientUserCnt: '',
       minUserCnt: '',
       minFollowCnt: '',
-      qualifyingUserCnt: '',
-      qualifyingFollowCnt: '',
       positiveTags: [],
       negativeTags: [],
       positiveKeywords: [],
@@ -127,13 +123,6 @@ export function CreateForm({ cb }: { cb: () => void }) {
         <TextFormField form={form} name="sufficientUserCnt" label="Sufficient User Count" placeholder="0" />
         <TextFormField form={form} name="minUserCnt" label="Minimum User Count" placeholder="0" />
         <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" placeholder="0" />
-        <TextFormField form={form} name="qualifyingUserCnt" label="Qualifying User Count" placeholder="0" />
-        <TextFormField
-          form={form}
-          name="qualifyingFollowCnt"
-          label="Qualifying Follow Count"
-          placeholder="0"
-        />
         {unitReqs.map((unit, idx) => (
           <FormField
             key={idx}

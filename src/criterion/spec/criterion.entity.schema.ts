@@ -15,8 +15,6 @@ export const criterionEnt = z.object({
   sufficientUserCnt: z.number().int().nonnegative(),
   minUserCnt: z.number().int().nonnegative(),
   minFollowCnt: z.number().int().nonnegative(),
-  qualifyingUserCnt: z.number().int().nonnegative(),
-  qualifyingFollowCnt: z.number().int().nonnegative(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });

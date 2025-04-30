@@ -11,7 +11,6 @@ import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { css } from '@emotion/react';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { parse } from '@/common/utils.form.ts';
-import { nonempty } from '@/common/common.schema.ts';
 import { createNodeGroup } from '@/client/node/node-group.client.ts';
 
 export function NodeGroupCreateButton() {
@@ -32,11 +31,9 @@ export function NodeGroupCreateButton() {
 
 const formSchema = nodeGroupAppend.extend({
   description: z.string(),
-  tier: nonempty,
 });
 const middleSchema = formSchema.extend({
   description: z.string().nullable(),
-  tier: z.coerce.number().positive(),
 });
 
 export function CreateForm({ cb }: { cb: () => void }) {
@@ -47,7 +44,6 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       name: '',
       description: '',
-      tier: '',
     },
   });
 
@@ -67,7 +63,6 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" />
         <TextFormField form={form} name="description" />
-        <TextFormField form={form} name="tier" />
         <FormSubmitButton />
       </form>
     </Form>

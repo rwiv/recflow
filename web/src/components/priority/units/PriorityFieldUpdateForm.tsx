@@ -2,11 +2,7 @@ import { TextUpdateForm } from '@/components/common/layout/TextUpdateForm.tsx';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
-import {
-  updatePriorityDescription,
-  updatePriorityName,
-  updatePrioritySeq,
-} from '@/client/channel/priority.client.ts';
+import { updatePriority } from '@/client/channel/priority.client.ts';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
 
 type Type = 'name' | 'description' | 'tier' | 'seq';
@@ -28,12 +24,14 @@ export function PriorityFieldUpdateForm({ type, priority }: NodeFieldUpdateForm)
   const submit = async (value: string) => {
     try {
       if (type === 'name') {
-        await updatePriorityName(priority.id, stringSchema.parse(value));
+        await updatePriority(priority.id, { name: stringSchema.parse(value) });
       } else if (type === 'description') {
         const validated = value === '' ? null : stringSchema.parse(value);
-        await updatePriorityDescription(priority.id, validated);
+        await updatePriority(priority.id, { description: validated });
+      } else if (type == 'tier') {
+        await updatePriority(priority.id, { tier: numSchema.parse(value) });
       } else if (type === 'seq') {
-        await updatePrioritySeq(priority.id, numSchema.parse(value));
+        await updatePriority(priority.id, { seq: numSchema.parse(value) });
       }
       await queryClient.invalidateQueries({ queryKey: [PRIORITIES_QUERY_KEY] });
     } catch (e) {
@@ -54,6 +52,7 @@ function getValidate(type: Type) {
       return stringSchema.parse;
     case 'description':
       return descriptionSchema.parse;
+    case 'tier':
     case 'seq':
       return numSchema.parse;
     default:
@@ -67,6 +66,8 @@ function getDefaultValue(type: Type, priority: PriorityDto): string {
       return priority.name;
     case 'description':
       return priority.description ?? '';
+    case 'tier':
+      return priority.tier.toString();
     case 'seq':
       return priority.seq.toString();
     default:

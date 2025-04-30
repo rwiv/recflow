@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
-import { updatePriorityShouldSave } from '@/client/channel/priority.client.ts';
+import { updatePriority } from '@/client/channel/priority.client.ts';
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
 import { switchBatchCn } from '@/components/common/styles/common.ts';
 
@@ -11,7 +11,7 @@ export function ShouldSaveBadge({ priority }: { priority: PriorityDto }) {
   const content = priority.shouldSave ? 'ON' : 'OFF';
 
   const onClick = async () => {
-    await updatePriorityShouldSave(priority.id, !priority.shouldSave);
+    await updatePriority(priority.id, { shouldSave: !priority.shouldSave });
     await queryClient.invalidateQueries({ queryKey: [PRIORITIES_QUERY_KEY] });
   };
 

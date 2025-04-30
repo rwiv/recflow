@@ -10,8 +10,6 @@ const criterionBatchInsert = z.object({
   sufficientUserCnt: z.number().int().nonnegative(),
   minUserCnt: z.number().int().nonnegative(),
   minFollowCnt: z.number().int().nonnegative(),
-  qualifyingUserCnt: z.number().int().nonnegative(),
-  qualifyingFollowCnt: z.number().int().nonnegative(),
 });
 const chzzkCriterionBatchInsert = criterionBatchInsert.extend({
   positiveTags: z.array(nonempty),

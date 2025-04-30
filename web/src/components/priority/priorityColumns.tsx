@@ -5,8 +5,10 @@ import { PriorityFieldUpdateForm } from '@/components/priority/units/PriorityFie
 import { PriorityDto } from '@/client/channel/priority.schema.ts';
 import { ShouldSaveBadge } from '@/components/priority/units/ShouldSaveBadge.tsx';
 
-const EDITABLE_WIDTH = '12rem';
-const DEFAULT_WIDTH = '11rem';
+const EDITABLE_WIDTH = '10rem';
+const EDITABLE_NUM_WIDTH = '6rem';
+const BUTTON_WIDTH = '8rem';
+const DEFAULT_WIDTH = '9rem';
 
 const nameColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'name',
@@ -19,7 +21,7 @@ const shouldSaveColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'shouldSave',
   header: () => <div className="justify-self-center">Save</div>,
   cell: ({ row }) => <ShouldSaveBadge priority={row.original} />,
-  meta: { header: { width: DEFAULT_WIDTH } },
+  meta: { header: { width: BUTTON_WIDTH } },
 };
 
 const descriptionColumn: ColumnDef<PriorityDto> = {
@@ -28,24 +30,32 @@ const descriptionColumn: ColumnDef<PriorityDto> = {
   cell: ({ row }) => <PriorityFieldUpdateForm type="description" priority={row.original} />,
 };
 
+const tierColumn: ColumnDef<PriorityDto> = {
+  accessorKey: 'seq',
+  header: () => <div className="justify-self-center">Tier</div>,
+  cell: ({ row }) => <PriorityFieldUpdateForm type="tier" priority={row.original} />,
+  meta: { header: { width: EDITABLE_NUM_WIDTH } },
+};
+
 const seqColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'seq',
   header: () => <div className="justify-self-center">Seq</div>,
   cell: ({ row }) => <PriorityFieldUpdateForm type="seq" priority={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
+  meta: { header: { width: EDITABLE_NUM_WIDTH } },
 };
 
 const shouldNotifyColumn: ColumnDef<PriorityDto> = {
   accessorKey: 'shouldNotify',
   header: () => <div className="justify-self-center">Notify</div>,
   cell: ({ row }) => <NotifyOnlyBadge priority={row.original} />,
-  meta: { header: { width: DEFAULT_WIDTH } },
+  meta: { header: { width: BUTTON_WIDTH } },
 };
 
 export const priorityColumns: ColumnDef<PriorityDto>[] = [
   createSelectColumn('select'),
   nameColumn,
   shouldSaveColumn,
+  tierColumn,
   seqColumn,
   descriptionColumn,
   dateColumnDef<PriorityDto>('createdAt', 'CreatedAt', (elem) => new Date(elem.createdAt), DEFAULT_WIDTH),

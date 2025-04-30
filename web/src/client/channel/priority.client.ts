@@ -18,30 +18,7 @@ export async function deletePriority(PriorityId: string) {
   await request(`${configs.endpoint}/api/channels/priorities/${PriorityId}`, { method: 'DELETE' });
 }
 
-export function updatePriorityName(id: string, name: string) {
-  return updatePriority(id, { name });
-}
-
-export function updatePriorityDescription(id: string, description: string | null) {
-  if (description === '') {
-    description = null;
-  }
-  return updatePriority(id, { description });
-}
-
-export function updatePrioritySeq(id: string, seq: number) {
-  return updatePriority(id, { seq });
-}
-
-export function updatePriorityShouldSave(id: string, shouldSave: boolean) {
-  return updatePriority(id, { shouldSave });
-}
-
-export function updatePriorityShouldNotify(id: string, shouldNotify: boolean) {
-  return updatePriority(id, { shouldNotify });
-}
-
-async function updatePriority(id: string, req: PriorityUpdate) {
+export async function updatePriority(id: string, req: PriorityUpdate) {
   const url = `${configs.endpoint}/api/channels/priorities/${id}`;
   const { method, headers, body } = getIngredients('PUT', req);
   await request(url, { method, headers, body });

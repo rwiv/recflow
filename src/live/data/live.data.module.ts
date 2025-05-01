@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { LiveStorageModule } from '../storage/live.storage.module.js';
 import { PlatformModule } from '../../platform/platform.module.js';
-import { LiveEventModule } from '../event/event.module.js';
 import { ChannelServiceModule } from '../../channel/service/channel.service.module.js';
 import { NodeServiceModule } from '../../node/service/node.service.module.js';
 import { LiveWriter } from './live.writer.js';
@@ -11,14 +10,7 @@ import { LiveRefresher } from './live.refresher.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 
 @Module({
-  imports: [
-    LiveStorageModule,
-    ChannelServiceModule,
-    NodeStorageModule,
-    NodeServiceModule,
-    PlatformModule,
-    LiveEventModule,
-  ],
+  imports: [LiveStorageModule, ChannelServiceModule, NodeStorageModule, NodeServiceModule, PlatformModule],
   providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher],
   exports: [LiveWriter, LiveFinder, LiveRefresher],
 })

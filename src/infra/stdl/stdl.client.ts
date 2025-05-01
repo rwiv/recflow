@@ -4,8 +4,8 @@ import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
 
 export interface Stdl {
   getStatus(endpoint: string): Promise<NodeRecorderStatus[]>;
-  requestRecording(endpoint: string, recordId: string): Promise<void>;
-  cancel(endpoint: string, recordId: string): Promise<void>;
+  startRecording(endpoint: string, recordId: string): Promise<void>;
+  cancelRecording(endpoint: string, recordId: string): Promise<void>;
 }
 
 export const stdlStreamStatusEnum = z.enum(['wait', 'recording', 'done', 'failed']);

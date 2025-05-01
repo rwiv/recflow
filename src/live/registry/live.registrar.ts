@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ExitCmd } from '../event/event.schema.js';
+import { ExitCmd } from '../spec/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
-import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
@@ -22,15 +22,13 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
-import { Dispatcher } from '../event/dispatcher.js';
+import { LiveDispatcher } from './live.dispatcher.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import assert from 'assert';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
 
 export interface DeleteOptions {
@@ -62,15 +60,13 @@ export class LiveRegistrar {
   constructor(
     private readonly nodeSelector: NodeSelector,
     private readonly nodeUpdater: NodeUpdater,
-    private readonly nodeFinder: NodeFinder,
     private readonly ngRepo: NodeGroupRepository,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
-    private readonly fetcher: PlatformFetcher,
-    private readonly dispatcher: Dispatcher,
+    private readonly dispatcher: LiveDispatcher,
     private readonly stlink: Stlink,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
@@ -150,7 +146,7 @@ export class LiveRegistrar {
         if (!(await this.stdlRedis.get(live.id))) {
           await this.stdlRedis.setLiveDto(live);
         }
-        await this.stdl.requestRecording(node.endpoint, live.id);
+        await this.stdl.startRecording(node.endpoint, live.id);
       }
 
       if (live.channel.priority.shouldNotify) {
@@ -197,29 +193,15 @@ export class LiveRegistrar {
 
     if (exitCmd !== 'delete') {
       assert(live.nodes);
-      await this.dispatcher.sendExitMessage(live, live.nodes, exitCmd);
+      await this.dispatcher.finishLive(live, live.nodes, exitCmd);
     }
     const msg = deleteOpts.msg ?? 'Delete Live';
-    log.info(`${msg}: ${live.channel.username}`);
+    log.info(`${msg}: ${exitCmd}`, {
+      platform: live.platform.name,
+      channelId: live.channel.pid,
+      channelName: live.channel.username,
+    });
 
     return live;
-  }
-
-  async drainNode(nodeId: string, isCordoned: boolean) {
-    const node = await this.nodeFinder.findById(nodeId, { lives: true });
-    if (!node) throw NotFoundError.from('Node', 'id', nodeId);
-    assert(node.lives);
-    if (isCordoned) {
-      await this.nodeUpdater.update(node.id, { isCordoned: true });
-    }
-    for (const live of node.lives) {
-      const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-      const req: LiveRegisterRequest = {
-        channelInfo: channelLiveInfo.parse(channelInfo),
-        live,
-        failedNode: node,
-      };
-      await this.register(req);
-    }
   }
 }

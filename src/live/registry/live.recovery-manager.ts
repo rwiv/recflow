@@ -57,6 +57,16 @@ export class LiveRecoveryManager {
       return;
     }
 
+    const m3u8Text = await this.stlink.fetchM3u8ByLive(pair.live);
+    if (!m3u8Text) {
+      // TODO: implement handling logic
+      log.warn('Failed to fetch m3u8', {
+        platform: live.platform.name,
+        channelId: live.channel.pid,
+        node: node.name,
+      });
+    }
+
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
 
     await tx.transaction(async (txx) => {
@@ -137,7 +147,7 @@ export class LiveRecoveryManager {
         }
         invalidPairs.push({ live, node, mappedAt: liveNode.createdAt });
         if (searched) {
-          stdlCancelPromises.push(this.stdl.cancel(node.endpoint, live.id));
+          stdlCancelPromises.push(this.stdl.cancelRecording(node.endpoint, live.id));
           log.debug(`Cancel liveNode`, {
             platform: searched.platform,
             channelId: searched.channelId,

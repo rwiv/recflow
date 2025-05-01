@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { exitCmd } from '../event/event.schema.js';
+import { exitCmd } from '../spec/event.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
 
 export const liveAppendRequest = z.object({

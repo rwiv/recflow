@@ -9,7 +9,7 @@ export class StdlImpl implements Stdl {
     return nodeStatusResponse.parse(await res.json()).recorders;
   }
 
-  async requestRecording(endpoint: string, recordId: string): Promise<void> {
+  async startRecording(endpoint: string, recordId: string): Promise<void> {
     const res = await fetch(`${endpoint}/${recordId}`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -19,7 +19,7 @@ export class StdlImpl implements Stdl {
     }
   }
 
-  async cancel(endpoint: string, recordId: string): Promise<void> {
+  async cancelRecording(endpoint: string, recordId: string): Promise<void> {
     const res = await fetch(`${endpoint}/${recordId}`, {
       method: 'DELETE',
       headers: { 'content-type': 'application/json' },

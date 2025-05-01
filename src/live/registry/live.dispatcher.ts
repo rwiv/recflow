@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL, STDL_REDIS, VTASK } from '../../infra/infra.tokens.js';
-import { ExitCmd } from './event.schema.js';
+import { ExitCmd } from '../spec/event.schema.js';
 import { NodeRecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
@@ -10,58 +10,54 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 interface TargetRecorder {
-  node: NodeDto;
   status: NodeRecorderStatus;
+  node: NodeDto;
 }
 
-interface CandidateNode {
+interface NodeStats {
   node: NodeDto;
   statusList: NodeRecorderStatus[];
 }
 
 @Injectable()
-export class Dispatcher {
+export class LiveDispatcher {
   constructor(
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     @Inject(VTASK) private readonly vtask: Vtask,
   ) {}
 
-  async sendExitMessage(live: LiveDto, nodes: NodeDto[], cmd: ExitCmd) {
-    const platform = live.platform.name;
-    const pid = live.channel.pid;
-
-    // Find to be closed target live status list
-    const promises: Promise<CandidateNode>[] = nodes.map(async (node) => {
-      return { node, statusList: await this.stdl.getStatus(node.endpoint) };
-    });
-    const candidateNodes = await Promise.all(promises);
-    const targetRecorders: TargetRecorder[] = [];
-    for (const candidateNode of candidateNodes) {
-      const recorderStatus = candidateNode.statusList.find((status) => this.matchLiveAndStatus(live, status));
-      if (!recorderStatus) {
-        log.debug(`Live already finished`, { platform, channelId: pid });
-        return;
-      } else {
-        targetRecorders.push({ node: candidateNode.node, status: recorderStatus });
-      }
+  async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
+    const statusList: NodeRecorderStatus[] = await this.stdl.getStatus(node.endpoint);
+    const recStatus = statusList.find((status) => this.matchLiveAndStatus(live, status));
+    if (!recStatus) {
+      log.debug(`Live already finished`, { platform: live.platform.name, channelId: live.channel.pid });
+      return null;
     }
 
+    // Close recorder
+    log.debug('Close recorder', { channelId: live.channel.pid });
+    await this.stdl.cancelRecording(node.endpoint, recStatus.id);
+
+    return { status: recStatus, node };
+  }
+
+  async finishLive(live: LiveDto, nodes: NodeDto[], cmd: ExitCmd) {
+    const promises = nodes.map((n) => this.cancelRecorder(live, n));
+    const tgRecs: TargetRecorder[] = (await Promise.all(promises)).filter((r) => r !== null);
+
+    this.addVtask(live, tgRecs, cmd);
+  }
+
+  private addVtask(live: LiveDto, tgRecs: TargetRecorder[], cmd: ExitCmd) {
     // Validate fsName
-    const fsName = targetRecorders[0].status.fsName;
-    for (let i = 1; i < targetRecorders.length; i++) {
-      const target = targetRecorders[i];
+    const fsName = tgRecs[0].status.fsName;
+    for (let i = 1; i < tgRecs.length; i++) {
+      const target = tgRecs[i];
       if (target.status.fsName !== fsName) {
         throw new ValidationError(`fsName mismatch: ${fsName} != ${target.status.fsName}`);
       }
     }
-
-    // Close recorder
-    const promises2 = targetRecorders.map((t) => {
-      log.debug('Close recorder', { channelId: t.status.channelId });
-      return this.stdl.cancel(t.node.endpoint, t.status.id);
-    });
-    await Promise.all(promises2);
 
     // Create DoneMessage
     if (cmd === 'delete') {
@@ -75,8 +71,8 @@ export class Dispatcher {
     }
     const doneMsg: StdlDoneMessage = {
       status: doneCmd,
-      platform,
-      uid: pid,
+      platform: live.platform.name,
+      uid: live.channel.pid,
       videoName: live.videoName,
       fsName,
     };
@@ -84,7 +80,7 @@ export class Dispatcher {
     // Register StdlDone task
     let interval: ReturnType<typeof setInterval> | undefined = undefined;
     interval = setInterval(async () => {
-      const isComplete = await this.checkVtask(live, targetRecorders, doneMsg);
+      const isComplete = await this.checkVtask(live, tgRecs, doneMsg);
       if (isComplete) {
         log.debug(`Register StdlDone task`, { channelId: live.channel.pid });
         clearInterval(interval);
@@ -99,8 +95,8 @@ export class Dispatcher {
     }, 180 * 1000);
   }
 
-  private async checkVtask(live: LiveDto, targets: TargetRecorder[], doneMsg: StdlDoneMessage) {
-    const promises: Promise<CandidateNode>[] = targets.map(async (target) => {
+  private async checkVtask(live: LiveDto, tgRecs: TargetRecorder[], doneMsg: StdlDoneMessage) {
+    const promises: Promise<NodeStats>[] = tgRecs.map(async (target) => {
       return { node: target.node, statusList: await this.stdl.getStatus(target.node.endpoint) };
     });
     const latest = await Promise.all(promises);

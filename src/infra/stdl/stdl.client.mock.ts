@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { NodeRecorderStatus, Stdl } from './stdl.client.js';
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
@@ -34,12 +31,12 @@ export class StdlMock implements Stdl {
     });
   }
 
-  async requestRecording(endpoint: string, recordId: string): Promise<void> {
+  async startRecording(endpoint: string, recordId: string): Promise<void> {
     log.info(`MockStdlClient.requestRecording(...)`, { endpoint, recordId });
     await Promise.resolve(undefined);
   }
 
-  async cancel(endpoint: string, recordId: string): Promise<void> {
+  async cancelRecording(endpoint: string, recordId: string): Promise<void> {
     log.info(`MockStdlClient.cancel(...)`, { endpoint, recordId });
     await Promise.resolve(undefined);
   }

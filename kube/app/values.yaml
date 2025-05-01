@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.0.1
+  tag: 1.0.2
   pullSecret: image-pull-secret
 
 affinity: ~

@@ -23,36 +23,27 @@ import { Env } from '../../common/config/env.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
-import { LiveDispatcher } from './live.dispatcher.js';
+import { LiveFinalizer } from './live.finalizer.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import assert from 'assert';
-import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
+import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
-export interface DeleteOptions {
+export interface FinishOptions {
   isPurge?: boolean;
   exitCmd?: ExitCmd;
   msg?: string;
 }
 
-interface CreatedLiveLogAttr {
-  liveId: string;
-  platform: string;
-  channelId: string;
-  channelName: string;
-  title: string;
-  node?: string;
-  assigned?: number;
-}
-
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
-  criterion?: CriterionDto;
-  live?: LiveDtoWithNodes;
-  failedNode?: NodeDto;
+  reusableLive?: LiveDtoWithNodes;
+
+  // node selection options
   ignoreNodeIds?: string[];
+  criterion?: CriterionDto;
   domesticOnly?: boolean;
   overseasFirst?: boolean;
 }
@@ -68,7 +59,7 @@ export class LiveRegistrar {
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
-    private readonly dispatcher: LiveDispatcher,
+    private readonly dispatcher: LiveFinalizer,
     private readonly stlink: Stlink,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
@@ -76,10 +67,10 @@ export class LiveRegistrar {
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
-  async register(req: LiveRegisterRequest): Promise<LiveDto | null> {
+  async register(req: LiveRegisterRequest): Promise<string | null> {
     const liveInfo = req.channelInfo.liveInfo;
 
-    // If the live is inaccessible, do nothing
+    // Check if the live is accessible
     const { platform, pid, username } = req.channelInfo;
     let useCred = liveInfo.isAdult;
     if (req.criterion?.enforceCreds) {
@@ -88,6 +79,7 @@ export class LiveRegistrar {
     const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, useCred);
     if (!streamInfo) {
       log.debug('This live is inaccessible', { platform, pid, username });
+      // live record is not created as it may normalize later
       return null;
     }
 
@@ -110,8 +102,8 @@ export class LiveRegistrar {
     channel: ChannelDto,
     streamInfo: StreamInfo,
     tx: Tx,
-  ): Promise<LiveDto | null> {
-    let live = req.live;
+  ): Promise<string | null> {
+    let live = req.reusableLive;
     const liveInfo = req.channelInfo.liveInfo;
 
     let node = await this.nodeSelector.match(this.getNodeSelectOpts(req, live, channel), tx);
@@ -130,27 +122,22 @@ export class LiveRegistrar {
       if (disabled) {
         await this.liveWriter.disable(disabled.id, tx);
       } else {
-        disabled = await this.liveWriter.createByLive(liveInfo, null, null, true, tx);
+        disabled = await this.liveWriter.createByLive(liveInfo, null, true, tx);
       }
-      this.printLiveLog(headMessage, disabled, null);
-      return disabled;
+      log.info(headMessage, liveNodeAttr(disabled));
+      return disabled.id;
     }
 
-    // Create a live
-    let logMsg = 'New live';
-    if (live) {
-      if (live && req.failedNode) {
-        await this.liveWriter.unbind(live.id, req.failedNode.id, tx);
-      }
-      if (live && node) {
-        await this.liveWriter.bind(live.id, node.id, tx);
-      }
-      logMsg = 'Update node in live';
-    } else {
-      live = await this.liveWriter.createByLive(liveInfo, streamInfo, node?.id ?? null, node === null, tx);
+    // Create live if not exists
+    let logMsg = 'Change node in live';
+    if (!live) {
+      logMsg = 'New Live';
+      live = await this.liveWriter.createByLive(liveInfo, streamInfo, !node, tx);
     }
 
+    // Set node
     if (node) {
+      await this.liveWriter.bind(live.id, node.id, tx);
       await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
       if (!(await this.stdlRedis.get(live.id))) {
         await this.stdlRedis.setLiveDto(live);
@@ -158,12 +145,47 @@ export class LiveRegistrar {
       await this.stdl.startRecording(node.endpoint, live.id);
     }
 
+    // Send notification
     if (live.channel.priority.shouldNotify) {
       this.notifier.sendLiveInfo(this.env.untf.topic, live);
     }
 
-    this.printLiveLog(logMsg, live, node);
-    return live;
+    log.info(logMsg, liveNodeAttr(live, node));
+    return live.id;
+  }
+
+  async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
+    await this.liveWriter.unbind(live.id, node.id, tx);
+    await this.dispatcher.cancelRecorder(live, node);
+    log.debug('Deregister node in live', liveNodeAttr(live, node));
+  }
+
+  async finishLive(recordId: string, deleteOpts: FinishOptions = {}) {
+    const exitCmd = deleteOpts.exitCmd ?? 'delete';
+    const isPurge = deleteOpts.isPurge ?? false;
+
+    const removedLive = await db.transaction(async (tx) => {
+      const live = await this.liveFinder.findById(recordId, { nodes: true, forUpdate: true }, tx);
+      if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
+
+      if (!isPurge) {
+        // soft delete
+        if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
+        await this.liveWriter.disable(live.id, tx);
+      } else {
+        // hard delete
+        await this.liveWriter.delete(recordId, tx);
+      }
+      return live;
+    });
+
+    if (exitCmd !== 'delete') {
+      assert(removedLive.nodes);
+      await this.dispatcher.finishLive(removedLive, removedLive.nodes, exitCmd);
+    }
+
+    log.info(`${deleteOpts.msg ?? 'Delete Live'}: ${exitCmd}`, liveNodeAttr(removedLive));
+    return removedLive;
   }
 
   private getNodeSelectOpts(
@@ -196,61 +218,5 @@ export class LiveRegistrar {
     }
 
     return opts;
-  }
-
-  private printLiveLog(message: string, live: LiveDto, node: NodeDtoWithLives | null) {
-    const attr: CreatedLiveLogAttr = {
-      liveId: live.id,
-      platform: live.platform.name,
-      channelId: live.channel.pid,
-      channelName: live.channel.username,
-      title: live.liveTitle,
-    };
-    if (node) {
-      attr.node = node.name;
-      if (node.lives) {
-        attr.assigned = node.lives.length;
-      }
-    }
-    log.info(message, attr);
-  }
-
-  async finishLive(recordId: string, deleteOpts: DeleteOptions = {}) {
-    const exitCmd = deleteOpts.exitCmd ?? 'delete';
-    const isPurge = deleteOpts.isPurge ?? false;
-
-    const removedLive = await db.transaction(async (tx) => {
-      const live = await this.liveFinder.findById(recordId, { nodes: true, forUpdate: true }, tx);
-      if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
-
-      if (!isPurge) {
-        // soft delete
-        if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
-        await this.liveWriter.disable(live.id, tx);
-      } else {
-        // hard delete
-        await this.liveWriter.delete(recordId, tx);
-      }
-      return live;
-    });
-
-    if (exitCmd !== 'delete') {
-      assert(removedLive.nodes);
-      await this.dispatcher.finishLive(removedLive, removedLive.nodes, exitCmd);
-    }
-
-    const msg = deleteOpts.msg ?? 'Delete Live';
-    log.info(`${msg}: ${exitCmd}`, {
-      platform: removedLive.platform.name,
-      channelId: removedLive.channel.pid,
-      channelName: removedLive.channel.username,
-    });
-
-    return removedLive;
-  }
-
-  async deregister(live: LiveDto, node: NodeDto) {
-    await this.dispatcher.cancelRecorder(live, node);
-    console.log();
   }
 }

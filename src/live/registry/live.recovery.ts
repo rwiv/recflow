@@ -5,7 +5,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
 import { ChannelLiveInfo, channelLiveInfo } from '../../platform/spec/wapper/channel.js';
@@ -16,6 +16,7 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
+import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -24,7 +25,7 @@ interface InvalidNode {
   mappedAt: Date;
 }
 
-interface InvalidLive {
+interface TargetLive {
   live: LiveDto;
   invalidNodes: InvalidNode[];
 }
@@ -44,15 +45,14 @@ export class LiveRecoveryManager {
   ) {}
 
   async check() {
-    const invalidLiveMap = await this.retrieveInvalidLive();
-    await this.cancelInvalidRecorders(invalidLiveMap);
-    for (const [liveId, invalidLive] of invalidLiveMap) {
-      await this.checkInvalidLive(invalidLive);
+    const invalidNodes = await this.retrieveInvalidNodes();
+    for (const [liveId, tgLive] of invalidNodes) {
+      await this.checkInvalidLive(tgLive);
     }
   }
 
-  private async checkInvalidLive(invalidLive: InvalidLive) {
-    const live = invalidLive.live;
+  private async checkInvalidLive(tgLive: TargetLive) {
+    const live = tgLive.live;
 
     const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
     if (!streamInfo.openLive) {
@@ -82,13 +82,13 @@ export class LiveRecoveryManager {
     }
 
     const chanLiveInfo = channelLiveInfo.parse(chanInfo);
-    for (const invalidNode of invalidLive.invalidNodes) {
+    for (const invalidNode of tgLive.invalidNodes) {
       await this.checkInvalidNode(live, invalidNode.node, chanLiveInfo);
     }
   }
 
-  private async checkInvalidNode(invalidLive: LiveDto, invalidNode: NodeDto, channelInfo: ChannelLiveInfo) {
-    if (invalidLive.isDisabled) {
+  private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto, channelInfo: ChannelLiveInfo) {
+    if (tgLive.isDisabled) {
       throw new ValidationError('Live is disabled');
     }
 
@@ -98,23 +98,21 @@ export class LiveRecoveryManager {
       await this.nodeUpdater.update(invalidNode.id, { failureCnt: invalidNode.failureCnt + 1 });
     }
 
-    log.info(`Recovery live`, this.getLiveAttrs(invalidLive, invalidNode));
-    const registerReq: LiveRegisterRequest = {
+    await this.liveRegistrar.deregister(tgLive, invalidNode);
+    await this.liveRegistrar.register({
       channelInfo,
       ignoreNodeIds: [invalidNode.id],
-      failedNode: invalidNode,
-      live: invalidLive,
-    };
-    await this.liveRegistrar.register(registerReq);
+      reusableLive: tgLive,
+    });
   }
 
-  private async retrieveInvalidLive(): Promise<Map<string, InvalidLive>> {
+  private async retrieveInvalidNodes(): Promise<Map<string, TargetLive>> {
     const nodes: NodeDto[] = await this.nodeFinder.findAll({});
     const nodeRecsMap: Map<string, RecorderStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
 
     const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);
 
-    const invalidLiveMap = new Map<string, InvalidLive>();
+    const invalidLiveMap = new Map<string, TargetLive>();
     for (const live of await this.liveFinder.findAllActives({ nodes: true })) {
       assert(live.nodes);
       for (const node of live.nodes) {
@@ -128,7 +126,7 @@ export class LiveRecoveryManager {
         }
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
         if (!liveNode) {
-          log.error('LiveNode Not Found', { liveId: live.id, nodeId: node.id });
+          log.error('LiveNode Not Found', liveNodeAttr(live, node));
           continue;
         }
         if (liveNode.createdAt >= threshold) {
@@ -150,26 +148,5 @@ export class LiveRecoveryManager {
       }
     }
     return invalidLiveMap;
-  }
-
-  private async cancelInvalidRecorders(invalidLiveMap: Map<string, InvalidLive>) {
-    const promises: Promise<void>[] = [];
-    for (const [liveId, invalidLive] of invalidLiveMap) {
-      for (const invalidNode of invalidLive.invalidNodes) {
-        if (invalidNode.status) {
-          promises.push(this.stdl.cancelRecording(invalidNode.node.endpoint, invalidLive.live.id));
-          log.debug(`Cancel liveNode`, this.getLiveAttrs(invalidLive.live, invalidNode.node));
-        }
-      }
-    }
-    await Promise.all(promises);
-  }
-
-  private getLiveAttrs(live: LiveDto, node: NodeDto) {
-    return {
-      platform: live.platform.name,
-      channel: live.channel.username,
-      node: node.name,
-    };
   }
 }

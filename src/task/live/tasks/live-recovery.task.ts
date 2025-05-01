@@ -1,6 +1,6 @@
 import { Task } from '../../spec/task.interface.js';
 import { liveTaskName } from '../spec/live.task.names.js';
-import { LiveRecoveryManager } from '../../../live/registry/live.recovery-manager.js';
+import { LiveRecoveryManager } from '../../../live/registry/live.recovery.js';
 
 export class LiveRecoveryTask implements Task {
   public readonly name = liveTaskName.LIVE_RECOVERY;

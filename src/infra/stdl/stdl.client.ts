@@ -7,6 +7,17 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 export abstract class Stdl {
   abstract getStatus(endpoint: string): Promise<RecorderStatus[]>;
 
+  async findStatus(endpoint: string, liveId: string) {
+    const recs = (await this.getStatus(endpoint)).filter((status) => status.id === liveId);
+    if (recs.length === 0) {
+      return null;
+    }
+    if (recs.length > 1) {
+      throw new ValidationError('Multiple recorders found');
+    }
+    return recs[0];
+  }
+
   async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecorderStatus[]>> {
     const promises: Promise<RecorderStatus[]>[] = [];
     for (const node of nodes) {

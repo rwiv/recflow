@@ -9,11 +9,11 @@ import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
 import { SoopLiveFilter } from './filters/live-filter.soop.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveCoordinator } from './live.coordinator.js';
-import { LiveRecoveryManager } from './live.recovery-manager.js';
+import { LiveRecoveryManager } from './live.recovery.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { LiveCleaner } from './live.cleaner.js';
 import { InfraModule } from '../../infra/infra.module.js';
-import { LiveDispatcher } from './live.dispatcher.js';
+import { LiveFinalizer } from './live.finalizer.js';
 import { LiveRebalancer } from './live.rebalancer.js';
 
 @Module({
@@ -34,7 +34,7 @@ import { LiveRebalancer } from './live.rebalancer.js';
     ChzzkLiveFilter,
     SoopLiveFilter,
     LiveRecoveryManager,
-    LiveDispatcher,
+    LiveFinalizer,
     LiveRebalancer,
   ],
   exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager, LiveRebalancer],

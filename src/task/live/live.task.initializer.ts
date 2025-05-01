@@ -7,7 +7,7 @@ import { LiveCleaner } from '../../live/registry/live.cleaner.js';
 import { LiveRefreshTask } from './tasks/live.refresh-task.js';
 import { LiveRegisterCheckTask } from './tasks/live.register-check.task.js';
 import { LiveRecoveryTask } from './tasks/live-recovery.task.js';
-import { LiveRecoveryManager } from '../../live/registry/live.recovery-manager.js';
+import { LiveRecoveryManager } from '../../live/registry/live.recovery.js';
 import { LiveCleanupTask } from './tasks/live.cleanup-task.js';
 import {
   DEFAULT_RECOVERY_CYCLE,

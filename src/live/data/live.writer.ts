@@ -1,7 +1,6 @@
 import { LiveRepository } from '../storage/live.repository.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend } from '../spec/live.entity.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
@@ -10,12 +9,10 @@ import { LiveDto, LiveUpdate } from '../spec/live.dto.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { getFormattedTimestamp } from '../../utils/time.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { StreamInfo } from '../../platform/stlink/stlink.js';
 
 @Injectable()
@@ -25,7 +22,6 @@ export class LiveWriter {
     private readonly pfFinder: PlatformFinder,
     private readonly liveFinder: LiveFinder,
     private readonly channelFinder: ChannelFinder,
-    private readonly nodeFinder: NodeFinder,
     private readonly liveNodeRepo: LiveNodeRepository,
     private readonly mapper: LiveMapper,
   ) {}
@@ -33,19 +29,12 @@ export class LiveWriter {
   async createByLive(
     live: LiveInfo,
     streamInfo: StreamInfo | null,
-    nodeId: string | null,
     isDisabled: boolean,
     tx: Tx = db,
   ): Promise<LiveDto> {
     const platform = await this.pfFinder.findByNameNotNull(live.type, tx);
     const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, false, tx);
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
-
-    let node: NodeDto | null | undefined = null;
-    if (nodeId) {
-      node = await this.nodeFinder.findById(nodeId, { group: false, lives: false }, tx);
-      if (!node) throw NotFoundError.from('Node', 'id', nodeId);
-    }
 
     return tx.transaction(async (tx) => {
       const req: LiveEntAppend = {
@@ -60,11 +49,7 @@ export class LiveWriter {
       };
       const ent = await this.liveRepo.create(req, tx);
 
-      if (node) {
-        await this.liveNodeRepo.create({ liveId: ent.id, nodeId: node.id }, tx);
-      }
-
-      return { ...ent, channel, platform, node, headers: streamInfo?.headers ?? null };
+      return { ...ent, channel, platform, headers: streamInfo?.headers ?? null };
     });
   }
 
@@ -102,8 +87,7 @@ export class LiveWriter {
       for (const node of live.nodes) {
         await this.liveNodeRepo.delete({ liveId, nodeId: node.id });
       }
-      const update: LiveUpdate = { isDisabled: true, deletedAt: new Date() };
-      await this.update(liveId, update, txx);
+      await this.update(liveId, { isDisabled: true, deletedAt: new Date() }, txx);
     });
   }
 

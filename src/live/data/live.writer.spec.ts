@@ -37,7 +37,7 @@ describe('ChannelService', () => {
     const pf = await pfFinder.findByNameNotNull('chzzk');
     const pri = await priService.findByNameNotNull('none');
     const ch = await chWriter.createWithTagNames(mockChannel(1, pf, pri), ['tag1', 'tag2']);
-    const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), node.id, false);
+    const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), null, false);
     console.log(live1);
 
     const live2 = await liveWriter.updateByLive(live1.id, mockLiveInfo(2, ch.pid));

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from './live.registrar.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
@@ -37,12 +37,12 @@ export class LiveRebalancer {
     }
     for (const live of node.lives) {
       const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-      const req: LiveRegisterRequest = {
-        channelInfo: channelLiveInfo.parse(channelInfo),
-        live,
-        failedNode: node,
-      };
-      await this.liveRegistrar.register(req);
+      const chanLiveInfo = channelLiveInfo.parse(channelInfo);
+      await this.liveRegistrar.deregister(live, node);
+      await this.liveRegistrar.register({
+        channelInfo: chanLiveInfo,
+        reusableLive: live,
+      });
     }
   }
 }

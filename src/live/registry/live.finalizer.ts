@@ -20,7 +20,7 @@ interface NodeStats {
 }
 
 @Injectable()
-export class LiveDispatcher {
+export class LiveFinalizer {
   constructor(
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
@@ -28,8 +28,7 @@ export class LiveDispatcher {
   ) {}
 
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
-    const statusList: RecorderStatus[] = await this.stdl.getStatus(node.endpoint);
-    const recStatus = statusList.find((status) => this.matchLiveAndStatus(live, status));
+    const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
     if (!recStatus) {
       log.debug(`Live already finished`, { platform: live.platform.name, channelId: live.channel.pid });
       return null;
@@ -102,7 +101,8 @@ export class LiveDispatcher {
     const latest = await Promise.all(promises);
     for (const candidate of latest) {
       for (const status of candidate.statusList) {
-        if (this.matchLiveAndStatus(live, status)) {
+        if (status.id === live.id) {
+          // if status exists
           return false;
         }
       }
@@ -110,13 +110,5 @@ export class LiveDispatcher {
     await this.vtask.addTask(doneMsg);
     await this.stdlRedis.delete(live.id);
     return true;
-  }
-
-  private matchLiveAndStatus(live: LiveDto, status: RecorderStatus) {
-    return (
-      status.platform === live.platform.name &&
-      status.channelId === live.channel.pid &&
-      status.videoName === live.videoName
-    );
   }
 }

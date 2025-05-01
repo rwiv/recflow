@@ -15,7 +15,10 @@ export async function createLive(pid: string, platform: PlatformName) {
   const req = { pid, platformName: platform };
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
-  return liveDtoWithNodes.parse(await res.json());
+  if (res.status >= 400) {
+    throw new Error(`Failed to create live: ${res.status}`);
+  }
+  return await res.text(); // live id
 }
 
 export async function deleteLive(recordId: string, cmd: ExitCmd, isPurge: boolean) {

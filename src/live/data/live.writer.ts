@@ -41,10 +41,6 @@ export class LiveWriter {
     const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, false, tx);
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
 
-    if (await this.liveRepo.findByPlatformAndSourceId(platform.id, live.liveId)) {
-      throw new ValidationError(`Duplicated live, channel=${channel.username}`);
-    }
-
     let node: NodeDto | null | undefined = null;
     if (nodeId) {
       node = await this.nodeFinder.findById(nodeId, { group: false, lives: false }, tx);
@@ -101,14 +97,13 @@ export class LiveWriter {
     const live = await this.liveFinder.findById(liveId, { nodes: true }, tx);
     if (!live) throw NotFoundError.from('Live', 'id', liveId);
 
-    return tx.transaction(async (tx) => {
+    return tx.transaction(async (txx) => {
       assert(live.nodes);
       for (const node of live.nodes) {
         await this.liveNodeRepo.delete({ liveId, nodeId: node.id });
       }
-
       const update: LiveUpdate = { isDisabled: true, deletedAt: new Date() };
-      await this.update(liveId, update, tx);
+      await this.update(liveId, update, txx);
     });
   }
 

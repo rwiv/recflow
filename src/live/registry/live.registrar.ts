@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ExitCmd } from '../spec/event.schema.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { NodeSelector } from '../../node/service/node.selector.js';
+import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selector.js';
 import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelAppendWithInfo } from '../../channel/spec/channel.dto.schema.js';
+import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -53,6 +53,8 @@ export interface LiveRegisterRequest {
   live?: LiveDtoWithNodes;
   failedNode?: NodeDto;
   ignoreNodeIds?: string[];
+  domesticOnly?: boolean;
+  overseasFirst?: boolean;
 }
 
 @Injectable()
@@ -81,22 +83,11 @@ export class LiveRegistrar {
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false, tx);
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
-      const append: ChannelAppendWithInfo = {
-        priorityId: none.id,
-        isFollowed: false,
-      };
+      const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
       channel = await this.chWriter.createWithInfo(append, req.channelInfo, tx);
     }
 
-    let ignoreNodeIds: string[] = [];
-    if (req.ignoreNodeIds) {
-      ignoreNodeIds = [...req.ignoreNodeIds];
-    }
-    if (live && live.nodes) {
-      ignoreNodeIds = [...ignoreNodeIds, ...live.nodes.map((node) => node.id)];
-    }
-
-    let node = await this.nodeSelector.match(ignoreNodeIds, tx);
+    let node = await this.nodeSelector.match(this.getNodeSelectOpts(req, live, channel), tx);
     if (!channel.priority.shouldSave) {
       node = null;
     }
@@ -108,9 +99,14 @@ export class LiveRegistrar {
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
       this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
 
-      const created = await this.liveWriter.createByLive(liveInfo, null, null, true, tx);
-      this.printLiveLog(headMessage, created, null);
-      return created;
+      let disabled = live;
+      if (disabled) {
+        await this.liveWriter.disable(disabled.id, tx);
+      } else {
+        disabled = await this.liveWriter.createByLive(liveInfo, null, null, true, tx);
+      }
+      this.printLiveLog(headMessage, disabled, null);
+      return disabled;
     }
 
     // If the live is inaccessible, do nothing
@@ -156,6 +152,38 @@ export class LiveRegistrar {
       this.printLiveLog(logMsg, live, node);
       return live;
     });
+  }
+
+  private getNodeSelectOpts(
+    req: LiveRegisterRequest,
+    live: LiveDtoWithNodes | undefined,
+    channel: ChannelDto,
+  ): NodeSelectorOptions {
+    let domesticOnly = false;
+    if (req.criterion) {
+      domesticOnly = req.criterion.domesticOnly;
+    }
+    if (req.domesticOnly !== undefined) {
+      domesticOnly = req.domesticOnly;
+    }
+
+    let overseasFirst = channel.overseasFirst;
+    if (req.criterion) {
+      overseasFirst = req.criterion.overseasFirst;
+    }
+    if (req.overseasFirst !== undefined) {
+      overseasFirst = req.overseasFirst;
+    }
+
+    const opts: NodeSelectorOptions = { ignoreNodeIds: [], domesticOnly, overseasFirst };
+    if (req.ignoreNodeIds) {
+      opts.ignoreNodeIds = [...req.ignoreNodeIds];
+    }
+    if (live && live.nodes) {
+      opts.ignoreNodeIds = [...opts.ignoreNodeIds, ...live.nodes.map((node) => node.id)];
+    }
+
+    return opts;
   }
 
   private printLiveLog(message: string, live: LiveDto, node: NodeDtoWithLives | null) {

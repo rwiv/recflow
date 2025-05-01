@@ -36,14 +36,12 @@ export class NodeWriter {
     await this.nodeRepo.delete(id, tx);
   }
 
-  async resetFailureCntAll(tx: Tx = db) {
-    return tx.transaction(async (txx) => {
-      const nodes = await this.nodeRepo.findAllForUpdate(txx);
-      const promises = [];
-      for (const node of nodes) {
-        promises.push(this.nodeRepo.update(node.id, { failureCnt: 0 }, txx));
-      }
-      return Promise.all(promises);
-    });
+  async resetFailureCntAll() {
+    const nodes = await this.nodeRepo.findAll();
+    const promises = [];
+    for (const node of nodes) {
+      promises.push(this.nodeRepo.update(node.id, { failureCnt: 0 }));
+    }
+    return Promise.all(promises);
   }
 }

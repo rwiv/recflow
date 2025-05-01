@@ -48,6 +48,9 @@ export class ChzzkLiveFilter {
     }
 
     // by user count
+    if (liveInfo.viewCnt >= cr.sufficientUserCnt) {
+      return liveInfo;
+    }
     if (liveInfo.viewCnt >= cr.minUserCnt) {
       return this.checkFollowerCnt(liveInfo, cr.minFollowCnt);
     }

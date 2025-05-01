@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { liveNodeTable, nodeTable } from '../../infra/db/schema.js';
-import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate, NodeGroupEnt } from '../spec/node.entity.schema.js';
+import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate } from '../spec/node.entity.schema.js';
 import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
@@ -46,14 +46,6 @@ export class NodeRepository {
 
   async findAll(tx: Tx = db) {
     return tx.select().from(nodeTable);
-  }
-
-  async findAllForUpdate(tx: Tx = db) {
-    return tx.select().from(nodeTable).for('update');
-  }
-
-  async setUpdatedAtNow(id: string, tx: Tx = db) {
-    return this.update(id, {}, tx);
   }
 
   async setLastAssignedAtNow(id: string, tx: Tx = db) {

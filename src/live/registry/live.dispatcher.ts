@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL, STDL_REDIS, VTASK } from '../../infra/infra.tokens.js';
 import { ExitCmd } from '../spec/event.schema.js';
-import { NodeRecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
+import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
@@ -10,13 +10,13 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 interface TargetRecorder {
-  status: NodeRecorderStatus;
+  status: RecorderStatus;
   node: NodeDto;
 }
 
 interface NodeStats {
   node: NodeDto;
-  statusList: NodeRecorderStatus[];
+  statusList: RecorderStatus[];
 }
 
 @Injectable()
@@ -28,7 +28,7 @@ export class LiveDispatcher {
   ) {}
 
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
-    const statusList: NodeRecorderStatus[] = await this.stdl.getStatus(node.endpoint);
+    const statusList: RecorderStatus[] = await this.stdl.getStatus(node.endpoint);
     const recStatus = statusList.find((status) => this.matchLiveAndStatus(live, status));
     if (!recStatus) {
       log.debug(`Live already finished`, { platform: live.platform.name, channelId: live.channel.pid });
@@ -43,8 +43,8 @@ export class LiveDispatcher {
   }
 
   async finishLive(live: LiveDto, nodes: NodeDto[], cmd: ExitCmd) {
-    const promises = nodes.map((n) => this.cancelRecorder(live, n));
-    const tgRecs: TargetRecorder[] = (await Promise.all(promises)).filter((r) => r !== null);
+    const cancelPromises = nodes.map((n) => this.cancelRecorder(live, n));
+    const tgRecs: TargetRecorder[] = (await Promise.all(cancelPromises)).filter((r) => r !== null);
 
     this.addVtask(live, tgRecs, cmd);
   }
@@ -112,7 +112,7 @@ export class LiveDispatcher {
     return true;
   }
 
-  private matchLiveAndStatus(live: LiveDto, status: NodeRecorderStatus) {
+  private matchLiveAndStatus(live: LiveDto, status: RecorderStatus) {
     return (
       status.platform === live.platform.name &&
       status.channelId === live.channel.pid &&

@@ -3,27 +3,30 @@ import { STDL } from '../../infra/infra.tokens.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
-import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { NodeRecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
+import { ChannelLiveInfo, channelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import assert from 'assert';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
+import assert from 'assert';
 
-interface LiveNodePair {
-  live: LiveDto;
+interface InvalidNode {
   node: NodeDto;
+  // if status is null, it means the recorder has already been canceled.
+  status: RecorderStatus | null;
   mappedAt: Date;
+}
+
+interface InvalidLive {
+  live: LiveDto;
+  invalidNodes: InvalidNode[];
 }
 
 @Injectable()
@@ -40,63 +43,126 @@ export class LiveRecoveryManager {
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async check(tx: Tx = db) {
-    for (const invalidPair of await this.retrieveAndCancelInvalidPairs()) {
-      await this.checkOne(invalidPair, tx);
+  async check() {
+    const invalidLiveMap = await this.retrieveInvalidLive();
+    await this.cancelInvalidRecorders(invalidLiveMap);
+    for (const [liveId, invalidLive] of invalidLiveMap) {
+      await this.checkInvalidLive(invalidLive);
     }
   }
 
-  private async checkOne(pair: LiveNodePair, tx: Tx = db) {
-    const live = pair.live;
-    const node = pair.node;
+  private async checkInvalidLive(invalidLive: InvalidLive) {
+    const live = invalidLive.live;
 
     const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
     if (!streamInfo.openLive) {
-      const msg = 'Delete uncleaned live';
-      await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish', msg }, tx);
-      return;
-    }
-
-    const m3u8Text = await this.stlink.fetchM3u8ByLive(pair.live);
-    if (!m3u8Text) {
-      // TODO: implement handling logic
-      log.warn('Failed to fetch m3u8', {
-        platform: live.platform.name,
-        channelId: live.channel.pid,
-        node: node.name,
+      return this.liveRegistrar.finishLive(live.id, {
+        isPurge: true,
+        exitCmd: 'finish',
+        msg: 'Delete uncleaned live',
       });
     }
 
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+    if (live.sourceId !== chanInfo.liveInfo?.liveId) {
+      return this.liveRegistrar.finishLive(live.id, {
+        isPurge: true,
+        exitCmd: 'finish',
+        msg: 'Delete restarted live',
+      });
+    }
 
-    await tx.transaction(async (txx) => {
-      const queried = await this.liveFinder.findById(live.id, {}, txx);
-      if (!queried) return;
-      if (queried.isDisabled) {
-        throw new ValidationError('Live is disabled');
-      }
+    const m3u8Text = await this.stlink.fetchM3u8ByLive(live);
+    if (!m3u8Text) {
+      return this.liveRegistrar.finishLive(live.id, {
+        isPurge: true,
+        exitCmd: 'finish',
+        msg: 'Delete live because m3u8 is not valid',
+      });
+    }
 
-      if (node.failureCnt >= this.env.nodeFailureThreshold) {
-        await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, txx);
-      } else {
-        await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, txx);
-      }
+    const chanLiveInfo = channelLiveInfo.parse(chanInfo);
+    for (const invalidNode of invalidLive.invalidNodes) {
+      await this.checkInvalidNode(live, invalidNode.node, chanLiveInfo);
+    }
+  }
 
-      log.info(`Recovery live`, this.getLiveAttrs(queried, node));
-      const req: LiveRegisterRequest = {
-        channelInfo: channelLiveInfo.parse(chanInfo),
-        ignoreNodeIds: [node.id],
-        failedNode: node,
-      };
-      if (live.sourceId === chanInfo.liveInfo?.liveId) {
-        log.debug('Use existed live', this.getLiveAttrs(queried, node));
-        req.live = queried;
-      } else {
-        log.debug('Use new live', this.getLiveAttrs(queried, node));
-        await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish' }, tx);
+  private async checkInvalidNode(invalidLive: LiveDto, invalidNode: NodeDto, channelInfo: ChannelLiveInfo) {
+    if (invalidLive.isDisabled) {
+      throw new ValidationError('Live is disabled');
+    }
+
+    if (invalidNode.failureCnt >= this.env.nodeFailureThreshold) {
+      await this.nodeUpdater.update(invalidNode.id, { failureCnt: 0, isCordoned: true });
+    } else {
+      await this.nodeUpdater.update(invalidNode.id, { failureCnt: invalidNode.failureCnt + 1 });
+    }
+
+    log.info(`Recovery live`, this.getLiveAttrs(invalidLive, invalidNode));
+    const registerReq: LiveRegisterRequest = {
+      channelInfo,
+      ignoreNodeIds: [invalidNode.id],
+      failedNode: invalidNode,
+      live: invalidLive,
+    };
+    await this.liveRegistrar.register(registerReq);
+  }
+
+  private async retrieveInvalidLive(): Promise<Map<string, InvalidLive>> {
+    const nodes: NodeDto[] = await this.nodeFinder.findAll({});
+    const nodeRecsMap: Map<string, RecorderStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
+
+    const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);
+
+    const invalidLiveMap = new Map<string, InvalidLive>();
+    for (const live of await this.liveFinder.findAllActives({ nodes: true })) {
+      assert(live.nodes);
+      for (const node of live.nodes) {
+        const nodeRecs: RecorderStatus[] | undefined = nodeRecsMap.get(node.id);
+        assert(nodeRecs);
+
+        // Filter valid recorders in node
+        const recStatus = nodeRecs.find((status) => status.id === live.id);
+        if (recStatus && ['recording', 'done'].includes(recStatus.status)) {
+          continue;
+        }
+        const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
+        if (!liveNode) {
+          log.error('LiveNode Not Found', { liveId: live.id, nodeId: node.id });
+          continue;
+        }
+        if (liveNode.createdAt >= threshold) {
+          continue;
+        }
+
+        // Add invalid node to invalidLiveMap
+        const invalidNode: InvalidNode = {
+          node,
+          status: recStatus ?? null,
+          mappedAt: liveNode.createdAt,
+        };
+        const invalidLive = invalidLiveMap.get(live.id);
+        if (invalidLive) {
+          invalidLive.invalidNodes.push(invalidNode);
+        } else {
+          invalidLiveMap.set(live.id, { live, invalidNodes: [invalidNode] });
+        }
       }
-      await this.liveRegistrar.register(req, txx);
-    });
+    }
+    return invalidLiveMap;
+  }
+
+  private async cancelInvalidRecorders(invalidLiveMap: Map<string, InvalidLive>) {
+    const promises: Promise<void>[] = [];
+    for (const [liveId, invalidLive] of invalidLiveMap) {
+      for (const invalidNode of invalidLive.invalidNodes) {
+        if (invalidNode.status) {
+          promises.push(this.stdl.cancelRecording(invalidNode.node.endpoint, invalidLive.live.id));
+          log.debug(`Cancel liveNode`, this.getLiveAttrs(invalidLive.live, invalidNode.node));
+        }
+      }
+    }
+    await Promise.all(promises);
   }
 
   private getLiveAttrs(live: LiveDto, node: NodeDto) {
@@ -105,59 +171,5 @@ export class LiveRecoveryManager {
       channel: live.channel.username,
       node: node.name,
     };
-  }
-
-  private async retrieveAndCancelInvalidPairs(): Promise<LiveNodePair[]> {
-    const nodes: NodeDto[] = await this.nodeFinder.findAll({});
-    const promises: Promise<NodeRecorderStatus[]>[] = [];
-    for (const node of nodes) {
-      promises.push(this.stdl.getStatus(node.endpoint));
-    }
-    const nodeStatusList: NodeRecorderStatus[][] = await Promise.all(promises);
-    if (nodeStatusList.length !== nodes.length) {
-      throw new ValidationError('Node status list length mismatch');
-    }
-    const nodeStatusMap = new Map<string, NodeRecorderStatus[]>();
-    for (let i = 0; i < nodeStatusList.length; i++) {
-      nodeStatusMap.set(nodes[i].id, nodeStatusList[i]);
-    }
-
-    const stdlCancelPromises: Promise<void>[] = [];
-    const invalidPairs: LiveNodePair[] = [];
-    const lives = await this.liveFinder.findAllActives({ nodes: true });
-    for (const live of lives) {
-      assert(live.nodes);
-      for (const node of live.nodes) {
-        const targetStatus = nodeStatusMap.get(node.id);
-        assert(targetStatus);
-
-        const searched = targetStatus.find((status) => {
-          return (
-            status.platform === live.platform.name &&
-            status.channelId === live.channel.pid &&
-            status.videoName === live.videoName
-          );
-        });
-
-        if (searched && ['recording', 'done'].includes(searched.status)) continue;
-
-        const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
-        if (!liveNode) {
-          throw new NotFoundError(`LiveNode Not Found: liveId=${live.id}, nodeId=${node.id}`);
-        }
-        invalidPairs.push({ live, node, mappedAt: liveNode.createdAt });
-        if (searched) {
-          stdlCancelPromises.push(this.stdl.cancelRecording(node.endpoint, live.id));
-          log.debug(`Cancel liveNode`, {
-            platform: searched.platform,
-            channelId: searched.channelId,
-            node: node.name,
-          });
-        }
-      }
-    }
-    await Promise.all(stdlCancelPromises);
-    const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);
-    return invalidPairs.filter((pair) => pair.mappedAt < threshold);
   }
 }

@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
@@ -14,17 +12,17 @@ export class LiveCleaner {
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async cleanup(tx: Tx = db) {
+  async cleanup() {
     for (const live of await this.liveFinder.findAll()) {
-      await this.deregisterLive(live, tx);
+      await this.deregisterLive(live);
     }
   }
 
-  private async deregisterLive(live: LiveDto, tx: Tx = db) {
+  private async deregisterLive(live: LiveDto) {
     const channelInfo = await this.fetcher.fetchChannel(live.platform.name, live.channel.pid, false);
     if (channelInfo?.openLive) {
       return;
     }
-    await this.liveRegistrar.deregister(live.id, { isPurge: true, exitCmd: 'finish' }, tx);
+    await this.liveRegistrar.finishLive(live.id, { isPurge: true, exitCmd: 'finish' });
   }
 }

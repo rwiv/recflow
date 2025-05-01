@@ -1,15 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { NodeRecorderStatus, Stdl } from './stdl.client.js';
+import { RecorderStatus, Stdl } from './stdl.client.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import assert from 'assert';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 @Injectable()
-export class StdlMock implements Stdl {
-  constructor(@Inject(ENV) private readonly env: Env) {}
-  async getStatus(endpoint: string): Promise<NodeRecorderStatus[]> {
+export class StdlMock extends Stdl {
+  constructor(@Inject(ENV) private readonly env: Env) {
+    super();
+  }
+  async getStatus(endpoint: string): Promise<RecorderStatus[]> {
     const url = `http://localhost:${this.env.appPort}/api/nodes`;
     const nodes = (await (await fetch(url)).json()) as NodeDtoWithLives[];
     const node = nodes.find((node) => node.endpoint === endpoint);
@@ -29,6 +33,22 @@ export class StdlMock implements Stdl {
         streamUrl: dto.streamUrl,
       };
     });
+  }
+
+  async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecorderStatus[]>> {
+    const promises = [];
+    for (const node of nodes) {
+      promises.push(this.getStatus(node.endpoint));
+    }
+    const nodeStatusList: RecorderStatus[][] = await Promise.all(promises);
+    if (nodeStatusList.length !== nodes.length) {
+      throw new ValidationError('Node status list length mismatch');
+    }
+    const nodeStatusMap = new Map<string, RecorderStatus[]>();
+    for (let i = 0; i < nodeStatusList.length; i++) {
+      nodeStatusMap.set(nodes[i].id, nodeStatusList[i]);
+    }
+    return nodeStatusMap;
   }
 
   async startRecording(endpoint: string, recordId: string): Promise<void> {

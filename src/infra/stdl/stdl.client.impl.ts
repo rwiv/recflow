@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { NodeRecorderStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
+import { RecorderStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 
 @Injectable()
-export class StdlImpl implements Stdl {
-  async getStatus(endpoint: string): Promise<NodeRecorderStatus[]> {
+export class StdlImpl extends Stdl {
+  async getStatus(endpoint: string): Promise<RecorderStatus[]> {
     const res = await fetch(`${endpoint}`);
     return nodeStatusResponse.parse(await res.json()).recorders;
   }

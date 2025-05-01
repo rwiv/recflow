@@ -29,7 +29,7 @@ import assert from 'assert';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { Stlink } from '../../platform/stlink/stlink.js';
+import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
 
 export interface DeleteOptions {
   isPurge?: boolean;
@@ -76,16 +76,43 @@ export class LiveRegistrar {
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
-  async register(req: LiveRegisterRequest, tx: Tx = db): Promise<LiveDto | null> {
-    let live = req.live;
+  async register(req: LiveRegisterRequest): Promise<LiveDto | null> {
     const liveInfo = req.channelInfo.liveInfo;
 
-    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false, tx);
+    // If the live is inaccessible, do nothing
+    const { platform, pid, username } = req.channelInfo;
+    let useCred = liveInfo.isAdult;
+    if (req.criterion?.enforceCreds) {
+      useCred = true;
+    }
+    const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, useCred);
+    if (!streamInfo) {
+      log.debug('This live is inaccessible', { platform, pid, username });
+      return null;
+    }
+
+    // If channel is not registered, create a new channel
+    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false);
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
       const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
-      channel = await this.chWriter.createWithInfo(append, req.channelInfo, tx);
+      channel = await this.chWriter.createWithInfo(append, req.channelInfo);
     }
+
+    // Register live
+    return db.transaction(async (tx) => {
+      return this._register(req, channel, streamInfo, tx);
+    });
+  }
+
+  private async _register(
+    req: LiveRegisterRequest,
+    channel: ChannelDto,
+    streamInfo: StreamInfo,
+    tx: Tx,
+  ): Promise<LiveDto | null> {
+    let live = req.live;
+    const liveInfo = req.channelInfo.liveInfo;
 
     let node = await this.nodeSelector.match(this.getNodeSelectOpts(req, live, channel), tx);
     if (!channel.priority.shouldSave) {
@@ -109,49 +136,34 @@ export class LiveRegistrar {
       return disabled;
     }
 
-    // If the live is inaccessible, do nothing
-    const pfName = channel.platform.name;
-    let useCred = liveInfo.isAdult;
-    if (req.criterion?.enforceCreds) {
-      useCred = true;
-    }
-    const streamInfo = await this.stlink.fetchStreamInfo(pfName, channel.pid, useCred);
-    if (!streamInfo) {
-      const { pid, username } = channel;
-      log.debug('This live is inaccessible', { platform: pfName, pid, username });
-      return null;
-    }
-
     // Create a live
-    return tx.transaction(async (txx) => {
-      let logMsg = 'New live';
-      if (live) {
-        if (live && req.failedNode) {
-          await this.liveWriter.unbind(live.id, req.failedNode.id, txx);
-        }
-        if (live && node) {
-          await this.liveWriter.bind(live.id, node.id, txx);
-        }
-        logMsg = 'Update node in live';
-      } else {
-        live = await this.liveWriter.createByLive(liveInfo, streamInfo, node?.id ?? null, node === null, txx);
+    let logMsg = 'New live';
+    if (live) {
+      if (live && req.failedNode) {
+        await this.liveWriter.unbind(live.id, req.failedNode.id, tx);
       }
-
-      if (node) {
-        await this.nodeUpdater.setLastAssignedAtNow(node.id, txx);
-        if (!(await this.stdlRedis.get(live.id))) {
-          await this.stdlRedis.setLiveDto(live);
-        }
-        await this.stdl.startRecording(node.endpoint, live.id);
+      if (live && node) {
+        await this.liveWriter.bind(live.id, node.id, tx);
       }
+      logMsg = 'Update node in live';
+    } else {
+      live = await this.liveWriter.createByLive(liveInfo, streamInfo, node?.id ?? null, node === null, tx);
+    }
 
-      if (live.channel.priority.shouldNotify) {
-        this.notifier.sendLiveInfo(this.env.untf.topic, live);
+    if (node) {
+      await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
+      if (!(await this.stdlRedis.get(live.id))) {
+        await this.stdlRedis.setLiveDto(live);
       }
+      await this.stdl.startRecording(node.endpoint, live.id);
+    }
 
-      this.printLiveLog(logMsg, live, node);
-      return live;
-    });
+    if (live.channel.priority.shouldNotify) {
+      this.notifier.sendLiveInfo(this.env.untf.topic, live);
+    }
+
+    this.printLiveLog(logMsg, live, node);
+    return live;
   }
 
   private getNodeSelectOpts(
@@ -203,33 +215,42 @@ export class LiveRegistrar {
     log.info(message, attr);
   }
 
-  async deregister(recordId: string, deleteOpts: DeleteOptions = {}, tx: Tx = db) {
+  async finishLive(recordId: string, deleteOpts: DeleteOptions = {}) {
     const exitCmd = deleteOpts.exitCmd ?? 'delete';
     const isPurge = deleteOpts.isPurge ?? false;
 
-    const live = await this.liveFinder.findById(recordId, { nodes: true }, tx);
-    if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
+    const removedLive = await db.transaction(async (tx) => {
+      const live = await this.liveFinder.findById(recordId, { nodes: true, forUpdate: true }, tx);
+      if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
 
-    if (!isPurge) {
-      // soft delete
-      if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
-      await this.liveWriter.disable(live.id, tx);
-    } else {
-      // hard delete
-      await this.liveWriter.delete(recordId, tx);
-    }
-
-    if (exitCmd !== 'delete') {
-      assert(live.nodes);
-      await this.dispatcher.finishLive(live, live.nodes, exitCmd);
-    }
-    const msg = deleteOpts.msg ?? 'Delete Live';
-    log.info(`${msg}: ${exitCmd}`, {
-      platform: live.platform.name,
-      channelId: live.channel.pid,
-      channelName: live.channel.username,
+      if (!isPurge) {
+        // soft delete
+        if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
+        await this.liveWriter.disable(live.id, tx);
+      } else {
+        // hard delete
+        await this.liveWriter.delete(recordId, tx);
+      }
+      return live;
     });
 
-    return live;
+    if (exitCmd !== 'delete') {
+      assert(removedLive.nodes);
+      await this.dispatcher.finishLive(removedLive, removedLive.nodes, exitCmd);
+    }
+
+    const msg = deleteOpts.msg ?? 'Delete Live';
+    log.info(`${msg}: ${exitCmd}`, {
+      platform: removedLive.platform.name,
+      channelId: removedLive.channel.pid,
+      channelName: removedLive.channel.username,
+    });
+
+    return removedLive;
+  }
+
+  async deregister(live: LiveDto, node: NodeDto) {
+    await this.dispatcher.cancelRecorder(live, node);
+    console.log();
   }
 }

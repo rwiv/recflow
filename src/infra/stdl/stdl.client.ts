@@ -1,16 +1,35 @@
 import { z } from 'zod';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
-export interface Stdl {
-  getStatus(endpoint: string): Promise<NodeRecorderStatus[]>;
-  startRecording(endpoint: string, recordId: string): Promise<void>;
-  cancelRecording(endpoint: string, recordId: string): Promise<void>;
+export abstract class Stdl {
+  abstract getStatus(endpoint: string): Promise<RecorderStatus[]>;
+
+  async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecorderStatus[]>> {
+    const promises: Promise<RecorderStatus[]>[] = [];
+    for (const node of nodes) {
+      promises.push(this.getStatus(node.endpoint));
+    }
+    const nodeStatusList: RecorderStatus[][] = await Promise.all(promises);
+    if (nodeStatusList.length !== nodes.length) {
+      throw new ValidationError('Node status list length mismatch');
+    }
+    const nodeStatusMap = new Map<string, RecorderStatus[]>();
+    for (let i = 0; i < nodeStatusList.length; i++) {
+      nodeStatusMap.set(nodes[i].id, nodeStatusList[i]);
+    }
+    return nodeStatusMap;
+  }
+
+  abstract startRecording(endpoint: string, recordId: string): Promise<void>;
+  abstract cancelRecording(endpoint: string, recordId: string): Promise<void>;
 }
 
 export const stdlStreamStatusEnum = z.enum(['wait', 'recording', 'done', 'failed']);
 
-export const nodeRecorderStatus = z.object({
+export const recorderStatus = z.object({
   id: uuid,
   platform: platformNameEnum,
   channelId: nonempty,
@@ -21,9 +40,9 @@ export const nodeRecorderStatus = z.object({
   status: stdlStreamStatusEnum,
   streamUrl: nonempty,
 });
-export type NodeRecorderStatus = z.infer<typeof nodeRecorderStatus>;
+export type RecorderStatus = z.infer<typeof recorderStatus>;
 
 export const nodeStatusResponse = z.object({
-  recorders: z.array(nodeRecorderStatus),
+  recorders: z.array(recorderStatus),
 });
 export type NodeStatusResponse = z.infer<typeof nodeStatusResponse>;

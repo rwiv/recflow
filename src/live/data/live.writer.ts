@@ -1,5 +1,5 @@
 import { LiveRepository } from '../storage/live.repository.js';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend } from '../spec/live.entity.schema.js';
@@ -14,10 +14,13 @@ import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
 import { StreamInfo } from '../../platform/stlink/stlink.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 
 @Injectable()
 export class LiveWriter {
   constructor(
+    @Inject(ENV) private readonly env: Env,
     private readonly liveRepo: LiveRepository,
     private readonly pfFinder: PlatformFinder,
     private readonly liveFinder: LiveFinder,
@@ -46,6 +49,7 @@ export class LiveWriter {
         isDisabled,
         streamUrl: streamInfo?.best?.mediaPlaylistUrl ?? null,
         headers: streamInfo?.headers ? JSON.stringify(streamInfo.headers) : null,
+        fsName: this.env.fsName,
       };
       const ent = await this.liveRepo.create(req, tx);
 

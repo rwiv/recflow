@@ -8,9 +8,17 @@ import { LiveMapper } from './live.mapper.js';
 import { LiveFinder } from './live.finder.js';
 import { LiveRefresher } from './live.refresher.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
+import { ConfigModule } from '../../common/config/config.module.js';
 
 @Module({
-  imports: [LiveStorageModule, ChannelServiceModule, NodeStorageModule, NodeServiceModule, PlatformModule],
+  imports: [
+    ConfigModule,
+    LiveStorageModule,
+    ChannelServiceModule,
+    NodeStorageModule,
+    NodeServiceModule,
+    PlatformModule,
+  ],
   providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher],
   exports: [LiveWriter, LiveFinder, LiveRefresher],
 })

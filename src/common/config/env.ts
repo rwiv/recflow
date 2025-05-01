@@ -24,6 +24,7 @@ import { z } from 'zod';
 export interface Env {
   nodeEnv: string;
   appPort: number;
+  fsName: string;
   streamq: StreamqConfig;
   stlink: StlinkConfig;
   authed: AuthedConfig;
@@ -37,6 +38,7 @@ export interface Env {
 }
 
 const nnint = z.coerce.number().int().nonnegative();
+const nonempty = z.string().nonempty();
 
 export function readEnv(): Env {
   // NODE_ENV
@@ -51,6 +53,7 @@ export function readEnv(): Env {
   }
 
   const appPort = nnint.parse(process.env.APP_PORT);
+  const fsName = nonempty.parse(process.env.FS_NAME);
 
   const liveRecoveryWaitTimeMs = nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS);
   const nodeFailureThreshold = nnint.parse(process.env.NODE_FAILURE_THRESHOLD);
@@ -59,6 +62,7 @@ export function readEnv(): Env {
   return {
     nodeEnv,
     appPort,
+    fsName,
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),
     authed: readAuthedConfig(),

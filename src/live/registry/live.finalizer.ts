@@ -8,6 +8,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
 interface TargetRecorder {
   status: RecorderStatus;
@@ -18,6 +19,8 @@ interface NodeStats {
   node: NodeDto;
   statusList: RecorderStatus[];
 }
+
+const RECORDING_CLOSE_WAIT_TIMEOUT = 180 * 1000; // 3 min
 
 @Injectable()
 export class LiveFinalizer {
@@ -50,11 +53,9 @@ export class LiveFinalizer {
 
   private addVtask(live: LiveDto, tgRecs: TargetRecorder[], cmd: ExitCmd) {
     // Validate fsName
-    const fsName = tgRecs[0].status.fsName;
-    for (let i = 1; i < tgRecs.length; i++) {
-      const target = tgRecs[i];
-      if (target.status.fsName !== fsName) {
-        throw new ValidationError(`fsName mismatch: ${fsName} != ${target.status.fsName}`);
+    for (const rec of tgRecs) {
+      if (live.fsName !== rec.status.fsName) {
+        throw new ValidationError(`fsName mismatch: ${live.fsName} != ${rec.status.fsName}`);
       }
     }
 
@@ -73,7 +74,7 @@ export class LiveFinalizer {
       platform: live.platform.name,
       uid: live.channel.pid,
       videoName: live.videoName,
-      fsName,
+      fsName: live.fsName,
     };
 
     // Register StdlDone task
@@ -81,17 +82,19 @@ export class LiveFinalizer {
     interval = setInterval(async () => {
       const isComplete = await this.checkVtask(live, tgRecs, doneMsg);
       if (isComplete) {
-        log.debug(`Register StdlDone task`, { channelId: live.channel.pid });
+        log.debug(`Register StdlDone task`, liveNodeAttr(live));
         clearInterval(interval);
         interval = undefined;
         return;
       }
     }, 1000);
+
+    // Stop interval after timeout
     setTimeout(() => {
       if (interval !== undefined) {
         clearInterval(interval);
       }
-    }, 180 * 1000);
+    }, RECORDING_CLOSE_WAIT_TIMEOUT);
   }
 
   private async checkVtask(live: LiveDto, tgRecs: TargetRecorder[], doneMsg: StdlDoneMessage) {

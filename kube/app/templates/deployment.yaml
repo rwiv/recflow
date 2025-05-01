@@ -24,6 +24,11 @@ spec:
               value: prod
             - name: APP_PORT
               value: "{{ .Values.app.server.port }}"
+            - name: FS_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.vault.secretName }}
+                  key: {{ .Values.vault.keys.fsName}}
             - name: STREAMQ_URL
               value: {{ .Values.externals.streamq.url }}
             - name: STREAMQ_QSIZE

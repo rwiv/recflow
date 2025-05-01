@@ -19,11 +19,6 @@ export class NodeController {
     return this.finder.findAll({ group: true, lives: true });
   }
 
-  @Get('/groups')
-  groups() {
-    return this.finder.findAllGroups();
-  }
-
   @Post('/')
   create(@Body() append: NodeAppend) {
     return this.writer.create(nodeAppend.parse(append), true);

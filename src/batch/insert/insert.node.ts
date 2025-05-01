@@ -3,18 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { NodeBatchInsert } from '../batch.config.js';
 import { NodeAppend } from '../../node/spec/node.dto.schema.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
 import { notNull } from '../../utils/null.js';
+import { NodeGroupService } from '../../node/service/node-group.service.js';
 
 @Injectable()
 export class NodeBatchInserter {
   constructor(
     private readonly nodeWriter: NodeWriter,
-    private readonly nodeFinder: NodeFinder,
+    private readonly nodeGroupService: NodeGroupService,
   ) {}
 
   async insert(batchNodes: NodeBatchInsert[]) {
-    const groups = await this.nodeFinder.findAllGroups();
+    const groups = await this.nodeGroupService.findAll();
     for (const batchNode of batchNodes) {
       const group = notNull(groups.find((group) => group.name === batchNode.groupName));
       const append: NodeAppend = {

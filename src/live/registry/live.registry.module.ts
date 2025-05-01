@@ -14,6 +14,7 @@ import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { LiveCleaner } from './live.cleaner.js';
 import { InfraModule } from '../../infra/infra.module.js';
 import { LiveDispatcher } from './live.dispatcher.js';
+import { LiveRebalancer } from './live.rebalancer.js';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { LiveDispatcher } from './live.dispatcher.js';
     SoopLiveFilter,
     LiveRecoveryManager,
     LiveDispatcher,
+    LiveRebalancer,
   ],
-  exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager],
+  exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager, LiveRebalancer],
 })
 export class LiveRegistryModule {}

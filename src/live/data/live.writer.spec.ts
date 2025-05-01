@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterAll } from 'vitest';
 import { createTestApp } from '../../common/helpers/helper.app.js';
-import { DevInitializer } from '../../common/module/dev-initializer.js';
+import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropAll } from '../../infra/db/utils.js';
 import { LiveWriter } from './live.writer.js';
 import { mockLiveInfo } from '../../common/helpers/live.mocks.js';

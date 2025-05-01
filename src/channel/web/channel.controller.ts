@@ -22,7 +22,7 @@ import {
   ChannelSortType,
 } from '../spec/channel.dto.schema.js';
 import { ChannelFinder } from '../service/channel.finder.js';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../service/channel.searcher.js';
 import { PageQuery, pageQuery } from '../../common/data/common.schema.js';

@@ -3,7 +3,7 @@ import { dropAll } from '../../infra/db/utils.js';
 import { mockNode } from '../../common/helpers/node.mocks.js';
 import { notNull } from '../../utils/null.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
-import { DevInitializer } from '../../common/module/dev-initializer.js';
+import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { NodeWriter } from './node.writer.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';

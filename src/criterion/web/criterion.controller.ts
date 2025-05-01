@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { CriterionFinder } from '../service/criterion.finder.js';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { CriterionWriter } from '../service/criterion.writer.js';
 import {
   ChzzkCriterionAppend,

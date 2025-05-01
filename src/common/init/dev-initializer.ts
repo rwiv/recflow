@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PlatformRepository } from '../../platform/storage/platform.repository.js';
 import { dropAll } from '../../infra/db/utils.js';
-import { DevInitInjector } from './dev-injector.js';
+import { DevChannelInserter } from './insert/insert.channel.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
@@ -20,7 +20,7 @@ export class DevInitializer {
     private readonly priService: PriorityService,
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
-    private readonly devInjector: DevInitInjector,
+    private readonly devInjector: DevChannelInserter,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 

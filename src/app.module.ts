@@ -3,7 +3,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { LiveModule } from './live/live.module.js';
 import { ChannelModule } from './channel/channel.module.js';
-import { CommonModule } from './common/module/common.module.js';
+import { InitModule } from './common/init/init.module.js';
 import { NodeModule } from './node/node.module.js';
 import { CriterionModule } from './criterion/criterion.module.js';
 import { TaskModule } from './task/task.module.js';
@@ -14,7 +14,7 @@ import { PlatformModule } from './platform/platform.module.js';
     ServeStaticModule.forRoot({
       rootPath: join(import.meta.dirname, '..', 'public'),
     }),
-    CommonModule,
+    InitModule,
     PlatformModule,
     LiveModule,
     ChannelModule,

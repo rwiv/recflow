@@ -1,27 +1,27 @@
 import fs from 'fs';
 import path from 'path';
-import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { randomElem } from '../../utils/list.js';
-import { randomInt } from '../../utils/random.js';
-import { ChannelAppend, channelAppend } from '../../channel/spec/channel.dto.schema.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
+import { ChannelInfo } from '../../../platform/spec/wapper/channel.js';
+import { ChannelWriter } from '../../../channel/service/channel.writer.js';
+import { randomElem } from '../../../utils/list.js';
+import { randomInt } from '../../../utils/random.js';
+import { ChannelAppend, channelAppend } from '../../../channel/spec/channel.dto.schema.js';
+import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
-import { readBatchConfig } from '../../batch/batch.config.js';
-import { NodeBatchInserter } from '../../batch/insert/insert.node.js';
-import { CriterionBatchInserter } from '../../batch/insert/insert.criterion.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PriorityService } from '../../channel/service/priority.service.js';
+import { readBatchConfig } from './insert.config.js';
+import { DevNodeInserter } from './insert.node.js';
+import { DevCriterionInserter } from './insert.criterion.js';
+import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
+import { PriorityService } from '../../../channel/service/priority.service.js';
 
 @Injectable()
-export class DevInitInjector {
+export class DevChannelInserter {
   private readonly testChannelFilePath: string;
   constructor(
     private readonly channelWriter: ChannelWriter,
     private readonly fetcher: PlatformFetcher,
-    private readonly nodeInserter: NodeBatchInserter,
-    private readonly criterionInserter: CriterionBatchInserter,
+    private readonly nodeInserter: DevNodeInserter,
+    private readonly criterionInserter: DevCriterionInserter,
     private readonly pfFinder: PlatformFinder,
     private readonly priService: PriorityService,
   ) {

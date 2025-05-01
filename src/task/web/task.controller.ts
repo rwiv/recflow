@@ -1,5 +1,5 @@
 import { Controller, Get, UseFilters } from '@nestjs/common';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
 
 @UseFilters(HttpErrorFilter)

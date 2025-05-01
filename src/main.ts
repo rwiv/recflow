@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ENV } from './common/config/config.module.js';
 import { Env } from './common/config/env.js';
-import { DevInitializer } from './common/module/dev-initializer.js';
+import { DevInitializer } from './common/init/dev-initializer.js';
+import { ProdInitializer } from './common/init/prod-initializer.js';
 import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
-import { ProdInitializer } from './common/module/prod-initializer.js';
 import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
 import { log } from 'jslog';
 

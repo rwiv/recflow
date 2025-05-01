@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { NodeGroupService } from '../service/node-group.service.js';
 import {
   NodeGroupAppend,

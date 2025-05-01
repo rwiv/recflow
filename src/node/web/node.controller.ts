@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { NodeFinder } from '../service/node.finder.js';
 import { NodeWriter } from '../service/node.writer.js';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
 import { NodeUpdater } from '../service/node.updater.js';
 

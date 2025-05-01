@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Post, UseFilters } from '@nestjs/common'
 import { LiveRegistrar } from '../registry/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../spec/event.schema.js';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../data/live.finder.js';

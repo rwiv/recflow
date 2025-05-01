@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, UseFilters } from '@nestjs/common';
 import { TagWriter } from '../service/tag.writer.js';
 import { TagFinder } from '../service/tag.finder.js';
-import { HttpErrorFilter } from '../../common/module/error.filter.js';
+import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import {
   tagAppend,
   TagAppend,

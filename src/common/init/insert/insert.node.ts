@@ -1,13 +1,24 @@
 import { log } from 'jslog';
 import { Injectable } from '@nestjs/common';
-import { NodeWriter } from '../../node/service/node.writer.js';
-import { NodeBatchInsert } from '../batch.config.js';
-import { NodeAppend } from '../../node/spec/node.dto.schema.js';
-import { notNull } from '../../utils/null.js';
-import { NodeGroupService } from '../../node/service/node-group.service.js';
+import { NodeWriter } from '../../../node/service/node.writer.js';
+import { NodeAppend } from '../../../node/spec/node.dto.schema.js';
+import { notNull } from '../../../utils/null.js';
+import { NodeGroupService } from '../../../node/service/node-group.service.js';
+import { z } from 'zod';
+import { nnint, nonempty } from '../../data/common.schema.js';
+
+const nodeBatchInsert = z.object({
+  name: nonempty,
+  endpoint: z.string().url(),
+  groupName: z.string().nonempty(),
+  weight: z.number().int().nonnegative(),
+  capacity: nnint,
+  isCordoned: z.boolean(),
+});
+export type NodeBatchInsert = z.infer<typeof nodeBatchInsert>;
 
 @Injectable()
-export class NodeBatchInserter {
+export class DevNodeInserter {
   constructor(
     private readonly nodeWriter: NodeWriter,
     private readonly nodeGroupService: NodeGroupService,

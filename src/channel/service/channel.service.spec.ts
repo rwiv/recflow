@@ -3,7 +3,7 @@ import { dropAll } from '../../infra/db/utils.js';
 import { mockChannel } from '../../common/helpers/channel.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { ChannelFinder } from './channel.finder.js';
-import { DevInitializer } from '../../common/module/dev-initializer.js';
+import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { ChannelWriter } from './channel.writer.js';
 import { ChannelSearcher } from './channel.searcher.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';

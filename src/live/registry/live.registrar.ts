@@ -77,7 +77,7 @@ export class LiveRegistrar {
       useCred = true;
     }
     const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, useCred);
-    if (!streamInfo) {
+    if (!streamInfo.openLive) {
       log.debug('This live is inaccessible', { platform, pid, username });
       // live record is not created as it may normalize later
       return null;

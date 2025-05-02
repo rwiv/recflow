@@ -31,7 +31,7 @@ const descriptionColumn: ColumnDef<PriorityDto> = {
 };
 
 const tierColumn: ColumnDef<PriorityDto> = {
-  accessorKey: 'seq',
+  accessorKey: 'tier',
   header: () => <div className="justify-self-center">Tier</div>,
   cell: ({ row }) => <PriorityFieldUpdateForm type="tier" priority={row.original} />,
   meta: { header: { width: EDITABLE_NUM_WIDTH } },

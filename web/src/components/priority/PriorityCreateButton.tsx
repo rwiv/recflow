@@ -23,7 +23,7 @@ export function PriorityCreateButton() {
       contentCn="sm:max-w-lg overflow-auto"
       contentStyle={css({ maxHeight: '50rem' })}
       label="Append"
-      title="Add New Node"
+      title="Add New Grade"
       closeRef={closeBtnRef}
     >
       <CreateForm cb={() => closeBtnRef.current?.click()} />
@@ -36,6 +36,7 @@ const formSchema = priorityAppend.extend({
   tier: nonempty,
   seq: nonempty,
 });
+
 const middleSchema = formSchema.extend({
   description: z.string().nullable(),
   tier: z.coerce.number().positive(),
@@ -50,6 +51,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       name: '',
       description: '',
+      shouldSave: false,
       shouldNotify: false,
       tier: '',
       seq: '',
@@ -72,6 +74,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" />
         <TextFormField form={form} name="description" />
+        <CheckFormField form={form} name="shouldSave" label="Save" />
         <CheckFormField form={form} name="shouldNotify" label="Notify" />
         <TextFormField form={form} name="tier" />
         <TextFormField form={form} name="seq" />

@@ -25,7 +25,7 @@ export function PageHeaderTab(props: HeaderTabProps) {
       </TabList>
       <TabList className="my-3">
         <PageTabButton isActive={props.channel ?? false} to={channelUrl} content={'Channels'} />
-        <PageTabButton isActive={props.priority ?? false} to={'/priorities'} content={'Priorities'} />
+        <PageTabButton isActive={props.priority ?? false} to={'/priorities'} content={'Grades'} />
         <PageTabButton isActive={props.tag ?? false} to={'/tags'} content={'Tags'} />
       </TabList>
     </div>

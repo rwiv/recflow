@@ -31,7 +31,7 @@ const channelColumn: ColumnDef<LiveDtoWithNodes> = {
 
 const priorityColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'priority',
-  header: () => <div className="ml-1">Priority</div>,
+  header: () => <div className="ml-1">Grade</div>,
   cell: ({ row }) => (
     <button className="uppercase">
       <Badge variant="default">{row.original.channel.priority.name}</Badge>

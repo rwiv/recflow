@@ -11,7 +11,7 @@ export function ChannelTableContent({ channels }: { channels: ChannelDto[] }) {
           <TableHead css={css({ width: '15rem' })}>
             <div className="ml-2">Channel</div>
           </TableHead>
-          <TableHead css={css({ width: '9rem' })}>Priority</TableHead>
+          <TableHead css={css({ width: '9rem' })}>Grade</TableHead>
           <TableHead css={css({ width: '18rem' })}>Tags</TableHead>
           <TableHead>Description</TableHead>
           <TableHead css={css({ width: '8rem' })}>

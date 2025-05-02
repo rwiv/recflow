@@ -31,7 +31,7 @@ export function PriorityUpdateDialog({ channel, children }: { channel: ChannelDt
   });
 
   return (
-    <DialogBase title="Update Channel Priority" closeRef={closeBtnRef} triggerNode={children}>
+    <DialogBase title="Update Channel Grade" closeRef={closeBtnRef} triggerNode={children}>
       <CreateForm channel={channel} priorities={priorities ?? []} cb={() => closeBtnRef?.current?.click()} />
     </DialogBase>
   );
@@ -69,6 +69,7 @@ function CreateForm({
         <SelectFormField
           form={form}
           name="priorityId"
+          label="Grade"
           style={css({ marginTop: '0.4rem', marginBottom: '2rem' })}
         >
           {priorities.map((priority) => (

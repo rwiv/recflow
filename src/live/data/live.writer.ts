@@ -36,7 +36,7 @@ export class LiveWriter {
     tx: Tx = db,
   ): Promise<LiveDto> {
     const platform = await this.pfFinder.findByNameNotNull(live.type, tx);
-    const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, false, tx);
+    const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, {}, tx);
     if (channel === undefined) throw NotFoundError.from('Channel', 'pid', live.pid);
 
     return tx.transaction(async (tx) => {

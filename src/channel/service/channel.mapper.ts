@@ -6,6 +6,7 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from './priority.service.js';
+import { ChannelMapOptions } from '../spec/channel.types.js';
 
 @Injectable()
 export class ChannelMapper {
@@ -25,25 +26,28 @@ export class ChannelMapper {
   }
 
   async map(ent: ChannelEnt, tx: Tx = db): Promise<ChannelDto> {
-    const platform = await this.pfFinder.findByIdNotNull(ent.platformId, tx);
-    const priority = await this.priService.findByIdNotNull(ent.priorityId, tx);
-    return { ...ent, platform, priority };
+    const platformP = this.pfFinder.findByIdNotNull(ent.platformId, tx);
+    const priorityP = this.priService.findByIdNotNull(ent.priorityId, tx);
+    return { ...ent, platform: await platformP, priority: await priorityP };
   }
 
-  async loadRelations(channels: ChannelDto[], withTags: boolean = false, tx: Tx = db): Promise<ChannelDto[]> {
-    if (!withTags) return channels;
-    const promises = channels.map(async (channel) => ({
-      ...channel,
-      tags: await this.tagQuery.findTagsByChannelId(channel.id, tx),
-    }));
+  async loadRelations(channels: ChannelDto[], opts: ChannelMapOptions, tx: Tx = db): Promise<ChannelDto[]> {
+    const withTags = opts.tags ?? false;
+    const withTopics = opts.topics ?? false;
+    if (!withTags && !withTopics) return channels;
+    const promises = channels.map(async (channel) => {
+      return this.loadRelation(channel, opts, tx);
+    });
     return Promise.all(promises);
   }
 
-  async loadRelation(channels: ChannelDto, withTags: boolean = false, tx: Tx = db): Promise<ChannelDto> {
-    if (!withTags) return channels;
+  async loadRelation(channel: ChannelDto, opts: ChannelMapOptions, tx: Tx = db): Promise<ChannelDto> {
+    const withTags = opts.tags ?? false;
+    const withTopics = opts.topics ?? false;
+    if (!withTags && !withTopics) return channel;
     return {
-      ...channels,
-      tags: await this.tagQuery.findTagsByChannelId(channels.id, tx),
+      ...channel,
+      tags: await this.tagQuery.findTagsByChannelId(channel.id, tx),
     };
   }
 }

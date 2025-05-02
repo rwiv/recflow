@@ -4,6 +4,7 @@ import { ChannelPageEntResult } from '../spec/channel.entity.schema.js';
 import { ChannelSearchRepository } from '../storage/channel.search.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { PageQuery } from '../../common/data/common.schema.js';
+import { ChannelMapOptions } from '../spec/channel.types.js';
 
 @Injectable()
 export class ChannelSearcher {
@@ -16,10 +17,10 @@ export class ChannelSearcher {
     page: PageQuery,
     sortBy?: ChannelSortType,
     priorityName?: string,
-    withTags: boolean = false,
+    opts: ChannelMapOptions = {},
   ) {
     const entRet = await this.chSearch.findByQuery(page, sortBy, priorityName);
-    return this.toPageResult(entRet, withTags);
+    return this.toPageResult(entRet, opts);
   }
 
   async findByAnyTag(
@@ -28,10 +29,10 @@ export class ChannelSearcher {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priority?: string,
-    withTags: boolean = false,
+    opts: ChannelMapOptions = {},
   ) {
     const entRet = await this.chSearch.findByAnyTag(includeTagNames, excludeTagNames, page, sortBy, priority);
-    return this.toPageResult(entRet, withTags);
+    return this.toPageResult(entRet, opts);
   }
 
   async findByAllTags(
@@ -40,7 +41,7 @@ export class ChannelSearcher {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priority?: string,
-    withTags: boolean = false,
+    opts: ChannelMapOptions = {},
   ) {
     const entRet = await this.chSearch.findByAllTags(
       includeTagNames,
@@ -49,13 +50,13 @@ export class ChannelSearcher {
       sortBy,
       priority,
     );
-    return this.toPageResult(entRet, withTags);
+    return this.toPageResult(entRet, opts);
   }
 
-  private async toPageResult(entRet: ChannelPageEntResult, withTags: boolean) {
+  private async toPageResult(entRet: ChannelPageEntResult, opts: ChannelMapOptions) {
     const { total, channels: entities } = entRet;
     const chsNotTags = await this.chMapper.mapAll(entities);
-    const channels = await this.chMapper.loadRelations(chsNotTags, withTags);
+    const channels = await this.chMapper.loadRelations(chsNotTags, opts);
     const result: ChannelPageResult = { total, channels };
     return channelPageResult.parse(result);
   }

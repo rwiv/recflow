@@ -35,7 +35,7 @@ export class ChzzkLiveFilter {
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
+    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk', {});
     if (channel) {
       if (channel.priority.shouldNotify) {
         return liveInfo;

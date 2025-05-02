@@ -126,7 +126,7 @@ export class ChannelWriter {
   }
 
   async refresh(): Promise<ChannelDto> {
-    const channel = await this.chFinder.findEarliestRefreshedOne();
+    const channel = await this.chFinder.findEarliestRefreshedOne({});
     if (!channel) {
       throw new NotFoundError('earliest refreshed channel not found');
     }

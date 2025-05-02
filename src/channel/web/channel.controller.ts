@@ -27,6 +27,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../service/channel.searcher.js';
 import { PageQuery, pageQuery } from '../../common/data/common.schema.js';
 import { PriorityService } from '../service/priority.service.js';
+import { ChannelMapOptions } from '../spec/channel.types.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -48,13 +49,19 @@ export class ChannelController {
     @Query('p', new ParseIntPipe({ optional: true })) page?: number,
     @Query('s', new ParseIntPipe({ optional: true })) size?: number,
     @Query('wt', new ParseBoolPipe({ optional: true })) withTags?: boolean,
+    @Query('wtp', new ParseBoolPipe({ optional: true })) withTopics?: boolean,
   ) {
+    const opts: ChannelMapOptions = {
+      tags: withTags ?? false,
+      topics: withTopics ?? false,
+    };
+
     if (pid) {
-      const channels = await this.chFinder.findByPid(pid, withTags);
+      const channels = await this.chFinder.findByPid(pid, opts);
       return channelPageResult.parse({ channels, total: 1 });
     }
     if (username) {
-      const channels = await this.chFinder.findByUsernameLike(username, withTags);
+      const channels = await this.chFinder.findByUsernameLike(username, opts);
       return channelPageResult.parse({ channels, total: 1 });
     }
 
@@ -67,9 +74,9 @@ export class ChannelController {
     }
     const pq: PageQuery = { page, size };
     if (tagName) {
-      return this.chSearcher.findByAnyTag([tagName], undefined, pq, sortBy, priority, withTags);
+      return this.chSearcher.findByAnyTag([tagName], undefined, pq, sortBy, priority, opts);
     } else {
-      return this.chSearcher.findByQuery(pageQuery.parse(pq), sortBy, priority, withTags);
+      return this.chSearcher.findByQuery(pageQuery.parse(pq), sortBy, priority, opts);
     }
   }
 

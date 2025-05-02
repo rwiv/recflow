@@ -84,7 +84,7 @@ export class LiveRegistrar {
     }
 
     // If channel is not registered, create a new channel
-    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, false);
+    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type, {});
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
       const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };

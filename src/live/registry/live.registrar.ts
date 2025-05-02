@@ -7,7 +7,7 @@ import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dt
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveWriter } from '../data/live.writer.js';
+import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
@@ -106,7 +106,9 @@ export class LiveRegistrar {
     let live = req.reusableLive;
     const liveInfo = req.channelInfo.liveInfo;
 
-    let node = await this.nodeSelector.match(this.getNodeSelectOpts(req, live, channel), tx);
+    const selectOpts = this.getNodeSelectOpts(req, live, channel);
+    const { domesticOnly, overseasFirst } = selectOpts;
+    let node = await this.nodeSelector.match(selectOpts, tx);
     if (!channel.priority.shouldSave) {
       node = null;
     }
@@ -122,7 +124,8 @@ export class LiveRegistrar {
       if (disabled) {
         await this.liveWriter.disable(disabled.id, tx);
       } else {
-        disabled = await this.liveWriter.createByLive(liveInfo, null, true, tx);
+        const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
+        disabled = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
       }
       log.info(headMessage, liveNodeAttr(disabled));
       return disabled.id;
@@ -132,7 +135,8 @@ export class LiveRegistrar {
     let logMsg = 'Change node in live';
     if (!live) {
       logMsg = 'New Live';
-      live = await this.liveWriter.createByLive(liveInfo, streamInfo, !node, tx);
+      const createOpts: LiveCreateOptions = { isDisabled: !node, domesticOnly, overseasFirst };
+      live = await this.liveWriter.createByLive(liveInfo, streamInfo, createOpts, tx);
     }
 
     // Set node
@@ -197,6 +201,9 @@ export class LiveRegistrar {
     if (req.criterion) {
       domesticOnly = req.criterion.domesticOnly;
     }
+    if (live) {
+      domesticOnly = live.domesticOnly;
+    }
     if (req.domesticOnly !== undefined) {
       domesticOnly = req.domesticOnly;
     }
@@ -204,6 +211,9 @@ export class LiveRegistrar {
     let overseasFirst = channel.overseasFirst;
     if (req.criterion) {
       overseasFirst = req.criterion.overseasFirst;
+    }
+    if (live) {
+      overseasFirst = live.overseasFirst;
     }
     if (req.overseasFirst !== undefined) {
       overseasFirst = req.overseasFirst;

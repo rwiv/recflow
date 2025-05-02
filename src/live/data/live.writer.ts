@@ -17,6 +17,12 @@ import { StreamInfo } from '../../platform/stlink/stlink.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 
+export interface LiveCreateOptions {
+  isDisabled: boolean;
+  domesticOnly: boolean;
+  overseasFirst: boolean;
+}
+
 @Injectable()
 export class LiveWriter {
   constructor(
@@ -32,7 +38,7 @@ export class LiveWriter {
   async createByLive(
     live: LiveInfo,
     streamInfo: StreamInfo | null,
-    isDisabled: boolean,
+    opts: LiveCreateOptions,
     tx: Tx = db,
   ): Promise<LiveDto> {
     const platform = await this.pfFinder.findByNameNotNull(live.type, tx);
@@ -42,11 +48,11 @@ export class LiveWriter {
     return tx.transaction(async (tx) => {
       const req: LiveEntAppend = {
         ...live,
+        ...opts,
         platformId: platform.id,
         channelId: channel.id,
         sourceId: live.liveId,
         videoName: getFormattedTimestamp(),
-        isDisabled,
         streamUrl: streamInfo?.best?.mediaPlaylistUrl ?? null,
         headers: streamInfo?.headers ? JSON.stringify(streamInfo.headers) : null,
         fsName: this.env.fsName,

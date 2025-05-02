@@ -14,6 +14,8 @@ export const liveEnt = z.object({
   viewCnt: nnint,
   isAdult: z.boolean(),
   isDisabled: z.boolean(),
+  domesticOnly: z.boolean(),
+  overseasFirst: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),

@@ -8,12 +8,26 @@ import assert from 'assert';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
+const FAILURE_CNT_THRESHOLD = 10;
+// const FAILURE_ENABLED = true;
+const FAILURE_ENABLED = false;
+
 @Injectable()
 export class StdlMock extends Stdl {
+  private failureCnt: number = 0;
   constructor(@Inject(ENV) private readonly env: Env) {
     super();
   }
+
   async getStatus(endpoint: string): Promise<RecorderStatus[]> {
+    if (FAILURE_ENABLED) {
+      this.failureCnt++;
+      if (this.failureCnt >= FAILURE_CNT_THRESHOLD) {
+        this.failureCnt = 0;
+        return [];
+      }
+    }
+
     const url = `http://localhost:${this.env.appPort}/api/nodes`;
     const nodes = (await (await fetch(url)).json()) as NodeDtoWithLives[];
     const node = nodes.find((node) => node.endpoint === endpoint);

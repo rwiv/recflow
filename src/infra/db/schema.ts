@@ -163,6 +163,8 @@ export const liveTable = pgTable('live', {
   viewCnt: integer('view_cnt').notNull(),
   isAdult: boolean('is_adult').notNull(),
   isDisabled: boolean('is_disabled').notNull(),
+  domesticOnly: boolean('domestic_only').notNull(),
+  overseasFirst: boolean('overseas_first').notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at'),
   deletedAt: timestamp('deleted_at'),

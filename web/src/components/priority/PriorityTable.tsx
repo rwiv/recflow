@@ -14,7 +14,7 @@ import { PriorityCreateButton } from '@/components/priority/PriorityCreateButton
 
 export function PriorityTable({ data }: { data: PriorityDto[] }) {
   const queryClient = useQueryClient();
-  const table = useTable(data, priorityColumns);
+  const table = useTable(data, priorityColumns, 30);
 
   const onDelete = async () => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);

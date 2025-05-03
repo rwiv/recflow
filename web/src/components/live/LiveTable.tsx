@@ -19,7 +19,7 @@ interface LiveTableProps {
 }
 
 export function LiveTable({ lives, withDisabled, setWithDisabled }: LiveTableProps) {
-  const table = useTable(lives, liveColumns, 30);
+  const table = useTable(lives, liveColumns, 100);
 
   return (
     <div className="w-full">

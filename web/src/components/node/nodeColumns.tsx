@@ -45,7 +45,7 @@ const groupColumn: ColumnDef<NodeDto> = {
 
 const weightColumn: ColumnDef<NodeDto> = {
   accessorKey: 'weight',
-  header: () => <div className="justify-self-center">Weight</div>,
+  header: () => <div className="justify-self-center">Priority</div>,
   cell: ({ row }) => <NodeFieldUpdateForm type="weight" node={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };

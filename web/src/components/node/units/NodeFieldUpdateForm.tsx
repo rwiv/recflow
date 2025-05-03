@@ -89,9 +89,9 @@ function getPrintValue(type: Type, node: NodeDtoWithLives) {
       }
     case 'capacity':
       if (!lives) {
-        return `-1 (${node.capacity})`;
+        return `-1 / ${node.capacity}`;
       } else {
-        return `${lives.length} (${node.capacity})`;
+        return `${lives.length} / ${node.capacity}`;
       }
     default:
       return getDefaultValue(type, node);

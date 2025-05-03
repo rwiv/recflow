@@ -14,7 +14,7 @@ import { TagCreateButton } from '@/components/tag/TagCreateButton.tsx';
 
 export function TagTable({ data }: { data: TagDto[] }) {
   const queryClient = useQueryClient();
-  const table = useTable(data, tagColumns);
+  const table = useTable(data, tagColumns, 30);
 
   const onDelete = async () => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);

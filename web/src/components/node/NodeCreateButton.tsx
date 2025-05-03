@@ -90,7 +90,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
             </SelectItem>
           ))}
         </SelectFormField>
-        <TextFormField form={form} name="weight" placeholder="1" />
+        <TextFormField form={form} name="weight" label="Priority" placeholder="1" />
         <TextFormField form={form} name="capacity" placeholder="0" />
         <FormSubmitButton />
       </form>

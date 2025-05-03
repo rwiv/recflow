@@ -32,6 +32,7 @@ export interface Env {
   vtask: VtaskConfig;
   pg: PostgresConfig;
   stdlRedis: RedisConfig;
+  httpTimeout: number;
   nodeFailureThreshold: number;
   nodeResetCycleSec: number;
   liveRecoveryWaitTimeMs: number;
@@ -51,18 +52,12 @@ export function readEnv(): Env {
   if (!nodeEnv) {
     nodeEnv = 'dev';
   }
-
-  const appPort = nnint.parse(process.env.APP_PORT);
-  const fsName = nonempty.parse(process.env.FS_NAME);
-
-  const liveRecoveryWaitTimeMs = nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS);
-  const nodeFailureThreshold = nnint.parse(process.env.NODE_FAILURE_THRESHOLD);
-  const nodeResetCycleSec = nnint.parse(process.env.NODE_RESET_CYCLE_SEC);
+  console.log(nnint.parse(process.env.HTTP_TIMEOUT_MS));
 
   return {
     nodeEnv,
-    appPort,
-    fsName,
+    appPort: nnint.parse(process.env.APP_PORT),
+    fsName: nonempty.parse(process.env.FS_NAME),
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),
     authed: readAuthedConfig(),
@@ -70,8 +65,9 @@ export function readEnv(): Env {
     vtask: readVtaskConfig(),
     pg: readPgConfig(),
     stdlRedis: readRedisConfig(),
-    liveRecoveryWaitTimeMs,
-    nodeFailureThreshold,
-    nodeResetCycleSec,
+    httpTimeout: nnint.parse(process.env.HTTP_TIMEOUT_MS),
+    liveRecoveryWaitTimeMs: nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS),
+    nodeFailureThreshold: nnint.parse(process.env.NODE_FAILURE_THRESHOLD),
+    nodeResetCycleSec: nnint.parse(process.env.NODE_RESET_CYCLE_SEC),
   };
 }

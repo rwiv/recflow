@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { RecorderStatus, Stdl } from './stdl.client.js';
-import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
+import { nodeDtoListWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import assert from 'assert';
@@ -29,7 +29,9 @@ export class StdlMock extends Stdl {
     }
 
     const url = `http://localhost:${this.env.appPort}/api/nodes`;
-    const nodes = (await (await fetch(url)).json()) as NodeDtoWithLives[];
+    const nodes = nodeDtoListWithLives.parse(
+      await (await fetch(url, { signal: AbortSignal.timeout(this.env.httpTimeout) })).json(),
+    );
     const node = nodes.find((node) => node.endpoint === endpoint);
     assert(node);
     assert(node.lives);

@@ -6,11 +6,11 @@ const env = readEnv();
 const pattern = 'stdl.*';
 // const pattern = 'stdl.exit.*';
 
-it('test', async () => {
-  const client = new AmqpHttpImpl(env);
-  // const queues = await client.fetchAllQueues();
-  const queues = await client.fetchByPattern(pattern);
-  for (const queue of queues) {
-    console.log(queue.name, queue.state);
-  }
-});
+// it('test', async () => {
+//   const client = new AmqpHttpImpl(env);
+//   // const queues = await client.fetchAllQueues();
+//   const queues = await client.fetchByPattern(pattern);
+//   for (const queue of queues) {
+//     console.log(queue.name, queue.state);
+//   }
+// });

@@ -16,9 +16,11 @@ export type QueueState = z.infer<typeof queueState>;
 const MAX_RETRY_CNT = 3;
 const BASE_RETRY_DELAY = 100;
 
-@Injectable()
 export class AmqpHttpImpl implements AmqpHttp {
-  constructor(private readonly conf: AmqpConfig) {}
+  constructor(
+    private readonly conf: AmqpConfig,
+    private readonly env: Env,
+  ) {}
 
   async fetchByPattern(pattern: string) {
     const queues = await this.fetchAllQueues();
@@ -45,6 +47,7 @@ export class AmqpHttpImpl implements AmqpHttp {
     const token = Buffer.from(`${this.conf.username}:${this.conf.password}`).toString('base64');
     const res = await fetch(url, {
       headers: { Authorization: `Basic ${token}` },
+      signal: AbortSignal.timeout(this.env.httpTimeout),
     });
     if (res.status >= 400) {
       throw new HttpRequestError(await res.text(), res.status);

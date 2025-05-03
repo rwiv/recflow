@@ -31,6 +31,7 @@ export class AuthedImpl implements Authed {
     const res = await fetch(`${this.authUrl}/api/chzzk/cookies/v1`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${this.apiKey}` },
+      signal: AbortSignal.timeout(this.env.httpTimeout),
     });
     if (!res.ok) {
       throw new HttpRequestError('Failed to request chzzk cookies', res.status);
@@ -42,6 +43,7 @@ export class AuthedImpl implements Authed {
     const res = await fetch(`${this.authUrl}/api/soop/cookies/v1`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${this.apiKey}` },
+      signal: AbortSignal.timeout(this.env.httpTimeout),
     });
     if (!res.ok) {
       throw new HttpRequestError('Failed to request soop cookies', res.status);

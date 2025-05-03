@@ -16,6 +16,7 @@ export class VtaskImpl implements Vtask {
     const res = await fetch(`${this.endpoint}/api/stdl/tasks`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
+      signal: AbortSignal.timeout(this.env.httpTimeout),
       body,
     });
     if (res.status >= 400) {

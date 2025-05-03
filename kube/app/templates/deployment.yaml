@@ -80,6 +80,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.postgres.secretName }}
                   key: {{ .Values.app.postgres.passwordKey }}
+            - name: HTTP_TIMEOUT_MS
+              value: "{{ .Values.app.configs.httpTimeoutMs }}"
             - name: NODE_FAILURE_THRESHOLD
               value: "{{ .Values.app.configs.nodeFailureThreshold }}"
             - name: NODE_RESET_CYCLE_SEC

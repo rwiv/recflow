@@ -47,7 +47,7 @@ export class ChzzkFetcher {
     if (params.toString().length > 0) {
       url += `?${params.toString()}`;
     }
-    const res = await fetch(url, { method: 'GET' });
+    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
     await checkChannelResponse(res, pid);
     return channelFromChzzk(chzzkChannelInfo.parse(await res.json()));
   }
@@ -72,7 +72,7 @@ export class ChzzkFetcher {
   }
 
   private async requestLives(url: string) {
-    const res = await fetch(url, { method: 'GET' });
+    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
     await checkResponse(res);
     return chzzkLiveInfoResponse.parse(await res.json());
   }

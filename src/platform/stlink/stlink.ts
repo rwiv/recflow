@@ -25,6 +25,7 @@ export type StreamInfo = z.infer<typeof streamInfo>;
 
 const RETRY_LIMIT = 3;
 const RETRY_DELAY_MS = 500;
+const STLINK_HTTP_TIMEOUT_MS = 10000;
 
 @Injectable()
 export class Stlink {
@@ -36,7 +37,7 @@ export class Stlink {
       params.set('useCredentials', 'true');
     }
     const url = `${this.env.stlink.endpoint}/api/streams/${platform}/${uid}?${params.toString()}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(STLINK_HTTP_TIMEOUT_MS) });
     if (res.status >= 400) {
       throw new HttpRequestError(`Failed to fetch stream info from stlink`, res.status);
     }
@@ -58,7 +59,10 @@ export class Stlink {
   async fetchM3u8(streamUrl: string, headers: Record<string, string>): Promise<string | null> {
     for (let retryCnt = 0; retryCnt <= RETRY_LIMIT; retryCnt++) {
       try {
-        const res = await fetch(streamUrl, { headers: headers });
+        const res = await fetch(streamUrl, {
+          headers: headers,
+          signal: AbortSignal.timeout(this.env.httpTimeout),
+        });
         if (res.status >= 400) {
           throw new HttpRequestError(`Failed to fetch m3u8 from stlink`, res.status);
         }

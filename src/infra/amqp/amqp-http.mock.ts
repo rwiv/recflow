@@ -1,8 +1,6 @@
 import { AmqpHttp } from './amqp.interface.js';
-import { Injectable } from '@nestjs/common';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 
-@Injectable()
 export class AmqpHttpMock implements AmqpHttp {
   async fetchByPattern(pattern: string) {
     return [];

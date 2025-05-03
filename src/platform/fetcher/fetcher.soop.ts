@@ -50,7 +50,7 @@ export class SoopFetcher {
     if (params.toString().length > 0) {
       url += `?${params.toString()}`;
     }
-    const res = await fetch(url, { method: 'GET' });
+    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
     await checkChannelResponse(res, pid);
     return channelFromSoop(soopChannelInfo.parse(await res.json()));
   }
@@ -79,7 +79,7 @@ export class SoopFetcher {
   }
 
   private async requestLives(url: string) {
-    const res = await fetch(url, { method: 'GET' });
+    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
     await checkResponse(res);
     return soopLiveInfoResponse.parse(await res.json());
   }

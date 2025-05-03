@@ -39,6 +39,7 @@ export class UntfNotifier extends Notifier {
         Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(this.env.httpTimeout),
     });
     if (res.status >= 400) {
       const errRes = errorResponse.parse(await res.json());

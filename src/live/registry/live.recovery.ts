@@ -45,10 +45,11 @@ export class LiveRecoveryManager {
   ) {}
 
   async check() {
-    const invalidNodes = await this.retrieveInvalidNodes();
-    for (const [liveId, tgLive] of invalidNodes) {
-      await this.checkInvalidLive(tgLive);
+    const promises = [];
+    for (const [liveId, tgLive] of await this.retrieveInvalidNodes()) {
+      promises.push(this.checkInvalidLive(tgLive));
     }
+    await Promise.all(promises);
   }
 
   private async checkInvalidLive(tgLive: TargetLive) {
@@ -82,9 +83,11 @@ export class LiveRecoveryManager {
     }
 
     const chanLiveInfo = channelLiveInfo.parse(chanInfo);
+    const promises = [];
     for (const invalidNode of tgLive.invalidNodes) {
-      await this.checkInvalidNode(live, invalidNode.node, chanLiveInfo);
+      promises.push(this.checkInvalidNode(live, invalidNode.node, chanLiveInfo));
     }
+    await Promise.all(promises);
   }
 
   private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto, channelInfo: ChannelLiveInfo) {

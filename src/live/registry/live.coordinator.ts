@@ -22,21 +22,25 @@ export class LiveCoordinator {
 
   async registerFollowedLives() {
     const followedChannels = await this.channelFinder.findFollowedChannels();
+    const promises = [];
     for (const ch of followedChannels) {
       const channelInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
       if (!channelInfo) continue;
-      await this.liveRegistrar.register({ channelInfo });
+      promises.push(this.liveRegistrar.register({ channelInfo }));
     }
+    await Promise.all(promises);
   }
 
   async registerQueriedLives(criterion: PlatformCriterionDto) {
     const queriedLives = await this.fetcher.fetchLives(criterion);
     const filtered = await this.filter.getFiltered(criterion, queriedLives);
+    const promises = [];
     for (const live of filtered) {
       const channelInfo = await this.fetchInfo(live.type, live.pid, false);
       if (!channelInfo) continue;
-      await this.liveRegistrar.register({ channelInfo, criterion });
+      promises.push(this.liveRegistrar.register({ channelInfo, criterion }));
     }
+    await Promise.all(promises);
   }
 
   private async fetchInfo(

@@ -22,8 +22,10 @@ spec:
           env:
             - name: NODE_ENV
               value: prod
+            - name: APP_HOST
+              value: {{ .Values.app.server.host }}
             - name: APP_PORT
-              value: "{{ .Values.app.server.port }}"
+              value: "{{ .Values.service.targetPort }}"
             - name: FS_NAME
               valueFrom:
                 secretKeyRef:

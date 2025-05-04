@@ -23,6 +23,7 @@ import { z } from 'zod';
 
 export interface Env {
   nodeEnv: string;
+  appHost: string;
   appPort: number;
   fsName: string;
   streamq: StreamqConfig;
@@ -52,10 +53,10 @@ export function readEnv(): Env {
   if (!nodeEnv) {
     nodeEnv = 'dev';
   }
-  console.log(nnint.parse(process.env.HTTP_TIMEOUT_MS));
 
   return {
     nodeEnv,
+    appHost: nonempty.parse(process.env.APP_HOST),
     appPort: nnint.parse(process.env.APP_PORT),
     fsName: nonempty.parse(process.env.FS_NAME),
     streamq: readStreamqConfig(),

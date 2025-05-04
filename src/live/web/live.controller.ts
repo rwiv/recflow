@@ -14,6 +14,9 @@ import {
   LiveDeleteRequest,
 } from './live.web.schema.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { LiveFinishRequest, liveFinishRequest, LiveFinalizer } from '../registry/live.finalizer.js';
+import { log } from 'jslog';
+import { stacktrace } from '../../utils/errors/utils.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -22,6 +25,7 @@ export class LiveController {
     private readonly liveService: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
     private readonly liveFinder: LiveFinder,
+    private readonly finalizer: LiveFinalizer,
   ) {}
 
   @Get('/')
@@ -58,5 +62,13 @@ export class LiveController {
   async delete(@Body() req: LiveDeleteRequest) {
     const { recordId, cmd, isPurge } = liveDeleteRequest.parse(req);
     return this.liveService.finishLive(recordId, { exitCmd: exitCmd.parse(cmd), isPurge });
+  }
+
+  @Post('/tasks/finish')
+  finish(@Body() req: LiveFinishRequest) {
+    this.finalizer.finishLive(liveFinishRequest.parse(req)).catch((err) => {
+      log.error('Error while finishing live', { stacktrace: stacktrace(err) });
+    });
+    return 'ok';
   }
 }

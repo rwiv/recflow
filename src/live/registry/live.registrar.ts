@@ -25,13 +25,12 @@ import { NodeGroupRepository } from '../../node/storage/node-group.repository.js
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
-import assert from 'assert';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
-export interface FinishOptions {
+export interface LiveFinishOptions {
   isPurge?: boolean;
   exitCmd?: ExitCmd;
   msg?: string;
@@ -59,7 +58,7 @@ export class LiveRegistrar {
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
-    private readonly dispatcher: LiveFinalizer,
+    private readonly finalizer: LiveFinalizer,
     private readonly stlink: Stlink,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
@@ -160,36 +159,32 @@ export class LiveRegistrar {
 
   async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
     await this.liveWriter.unbind(live.id, node.id, tx);
-    await this.dispatcher.cancelRecorder(live, node);
+    await this.finalizer.cancelRecorder(live, node);
     log.debug('Deregister node in live', liveNodeAttr(live, node));
   }
 
-  async finishLive(recordId: string, deleteOpts: FinishOptions = {}) {
-    const exitCmd = deleteOpts.exitCmd ?? 'delete';
-    const isPurge = deleteOpts.isPurge ?? false;
-
-    const removedLive = await db.transaction(async (tx) => {
-      const live = await this.liveFinder.findById(recordId, { nodes: true, forUpdate: true }, tx);
-      if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
-
-      if (!isPurge) {
-        // soft delete
-        if (live.isDisabled) throw new ConflictError(`Already removed live: ${recordId}`);
-        await this.liveWriter.disable(live.id, tx);
-      } else {
-        // hard delete
-        await this.liveWriter.delete(recordId, tx);
-      }
-      return live;
-    });
-
-    if (exitCmd !== 'delete') {
-      assert(removedLive.nodes);
-      await this.dispatcher.requestFinishLive(removedLive.id, exitCmd);
+  async finishLive(recordId: string, opts: LiveFinishOptions = {}) {
+    const exitCmd = opts.exitCmd ?? 'delete';
+    const isPurge = opts.isPurge ?? false;
+    let msg = opts.msg ?? 'Delete live';
+    if (!opts.msg && !isPurge) {
+      msg = 'Disable live';
     }
 
-    log.info(`${deleteOpts.msg ?? 'Delete Live'}: ${exitCmd}`, liveNodeAttr(removedLive));
-    return removedLive;
+    // If exitCmd != delete, request live finish operation by http
+    if (exitCmd !== 'delete') {
+      const live = await this.liveFinder.findById(recordId, {});
+      if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
+      await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg });
+      return live; // not delete live record
+    }
+
+    // Else Delete live record
+    return db.transaction(async (tx) => {
+      const deleted = await this.liveWriter.delete(recordId, isPurge, tx);
+      log.info(msg, { ...liveNodeAttr(deleted), cmd: exitCmd });
+      return deleted;
+    });
   }
 
   private getNodeSelectOpts(

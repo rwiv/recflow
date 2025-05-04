@@ -37,6 +37,6 @@ import { LiveRebalancer } from './live.rebalancer.js';
     LiveFinalizer,
     LiveRebalancer,
   ],
-  exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager, LiveRebalancer],
+  exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager, LiveRebalancer, LiveFinalizer],
 })
 export class LiveRegistryModule {}

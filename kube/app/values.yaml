@@ -22,13 +22,17 @@ vault:
     fsName: fs-name
 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 80
-  nodePort: 30220
+  targetPort: 8080
+
+ingress:
+  gateway: istio-system/internal-gateway
+  hostName: stmgr.home.rwiv.xyz
 
 app:
   server:
-    port: 8080
+    host: stmgr.home.rwiv.xyz
   redis:
     host: stdl-redis.rwiv.xyz
     port: 30211

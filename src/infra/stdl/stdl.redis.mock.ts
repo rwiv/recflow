@@ -4,7 +4,7 @@ import { LiveDto } from '../../live/spec/live.dto.schema.js';
 
 export class StdlRedisMock implements StdlRedis {
   async setLiveDto(live: LiveDto): Promise<void> {
-    log.info(`StdlRedisMock.setLiveDto(...)`, { live });
+    log.info(`StdlRedisMock.setLiveDto(...)`);
     return Promise.resolve();
   }
 

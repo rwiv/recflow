@@ -9,7 +9,4 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.app.server.port }}
-      {{ if .Values.service.nodePort }}
-      nodePort: {{ .Values.service.nodePort }}
-      {{ end }}
+      targetPort: {{ .Values.service.targetPort }}

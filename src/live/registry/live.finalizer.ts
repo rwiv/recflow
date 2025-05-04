@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL, STDL_REDIS, VTASK } from '../../infra/infra.tokens.js';
-import { ExitCmd } from '../spec/event.schema.js';
+import { exitCmd, ExitCmd } from '../spec/event.schema.js';
 import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
@@ -13,8 +13,13 @@ import { delay } from '../../utils/time.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { z } from 'zod';
+import { uuid } from '../../common/data/common.schema.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
+import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+import { LiveWriter } from '../data/live.writer.js';
 
 interface TargetRecorder {
   status: RecorderStatus;
@@ -26,8 +31,18 @@ interface NodeStats {
   statusList: RecorderStatus[];
 }
 
+export const liveFinishRequest = z.object({
+  liveId: uuid,
+  exitCmd: exitCmd,
+  isPurge: z.boolean(),
+  msg: z.string(),
+});
+export type LiveFinishRequest = z.infer<typeof liveFinishRequest>;
+
 const TASK_WAIT_INTERVAL_MS = 1000; // 1 sec
 const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 180 * 1000; // 3 min
+const RETRY_LIMIT = 3;
+const RETRY_DELAY_MS = 3000; // 3 sec
 
 @Injectable()
 export class LiveFinalizer {
@@ -35,44 +50,68 @@ export class LiveFinalizer {
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     @Inject(VTASK) private readonly vtask: Vtask,
+    @Inject(ENV) private readonly env: Env,
     private readonly liveFinder: LiveFinder,
+    private readonly liveWriter: LiveWriter,
   ) {}
 
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
     const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
     if (!recStatus) {
-      log.debug(`Live already finished`, { platform: live.platform.name, channelId: live.channel.pid });
+      log.debug(`Live already finished`, liveNodeAttr(live, node));
       return null;
     }
 
     // Close recorder
-    log.debug('Close recorder', { channelId: live.channel.pid });
+    log.debug('Close recorder', liveNodeAttr(live, node));
     await this.stdl.cancelRecording(node.endpoint, recStatus.id);
 
     return { status: recStatus, node };
   }
 
-  async requestFinishLive(liveId: string, cmd: ExitCmd) {
-    // fetch();
-  }
-
-  async finishLive(liveId: string, cmd: ExitCmd) {
-    const live = await this.liveFinder.findById(liveId, { nodes: true });
-    if (!live) {
-      log.error(`Live not found`, { liveId, cmd });
-      return;
-    }
-
-    try {
-      await this._finishLive(live, cmd);
-    } catch (e) {
-      const attr = liveNodeAttr(live);
-      attr.stacktrace = stacktrace(e);
-      log.error(`Error while adding vtask`, attr);
+  async requestFinishLive(req: LiveFinishRequest) {
+    const endpoint = `http://${this.env.appHost}:${this.env.appPort}`;
+    const res = await fetch(`${endpoint}/api/lives/tasks/finish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(liveFinishRequest.parse(req)),
+      signal: AbortSignal.timeout(this.env.httpTimeout),
+    });
+    if (res.status >= 400) {
+      throw new HttpRequestError(`Failed to finish live`, res.status);
     }
   }
 
-  async _finishLive(live: LiveDtoWithNodes, cmd: ExitCmd) {
+  async finishLive(req: LiveFinishRequest) {
+    for (let retryCnt = 0; retryCnt < RETRY_LIMIT; retryCnt++) {
+      const live = await this.liveFinder.findById(req.liveId, { nodes: true });
+      if (!live) {
+        log.error(`Live not found`, { liveId: req.liveId });
+        return;
+      }
+
+      try {
+        await this._finishLive(live, req.exitCmd);
+        const deleted = await this.liveWriter.delete(live.id, req.isPurge);
+        log.info(req.msg, { ...liveNodeAttr(deleted), cmd: req.exitCmd });
+        return;
+      } catch (e) {
+        if (retryCnt === RETRY_LIMIT) {
+          log.error(`Failed to finish live`, { ...liveNodeAttr(live), stacktrace: stacktrace(e) });
+          return;
+        }
+        log.warn(`Retrying to finish live`, {
+          ...liveNodeAttr(live),
+          cmd: req.exitCmd,
+          attempt: retryCnt + 1,
+          stacktrace: stacktrace(e),
+        });
+        await delay(RETRY_DELAY_MS);
+      }
+    }
+  }
+
+  private async _finishLive(live: LiveDtoWithNodes, cmd: ExitCmd) {
     assert(live.nodes);
 
     // Cancel all recorders

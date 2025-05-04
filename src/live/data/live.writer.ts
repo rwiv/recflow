@@ -16,6 +16,7 @@ import assert from 'assert';
 import { StreamInfo } from '../../platform/stlink/stlink.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 export interface LiveCreateOptions {
   isDisabled: boolean;
@@ -71,7 +72,7 @@ export class LiveWriter {
     await this.liveNodeRepo.delete({ liveId, nodeId }, tx);
   }
 
-  async delete(liveId: string, tx: Tx = db) {
+  private async hardDelete(liveId: string, tx: Tx = db) {
     const live = await this.liveFinder.findById(liveId, { nodes: true }, tx);
     if (!live) throw NotFoundError.from('Live', 'id', liveId);
 
@@ -80,7 +81,8 @@ export class LiveWriter {
       for (const node of live.nodes) {
         await this.liveNodeRepo.delete({ liveId, nodeId: node.id });
       }
-      return this.liveRepo.delete(liveId, tx);
+      await this.liveRepo.delete(liveId, tx);
+      return live;
     });
   }
 
@@ -88,9 +90,20 @@ export class LiveWriter {
     return this.update(id, { ...live }, tx);
   }
 
+  async delete(liveId: string, isPurge: boolean, tx: Tx = db) {
+    if (isPurge) {
+      // hard delete
+      return this.hardDelete(liveId, tx);
+    } else {
+      // soft delete
+      return this.disable(liveId, tx);
+    }
+  }
+
   async disable(liveId: string, tx: Tx = db) {
     const live = await this.liveFinder.findById(liveId, { nodes: true }, tx);
     if (!live) throw NotFoundError.from('Live', 'id', liveId);
+    if (live.isDisabled) throw new ConflictError(`Already removed live: ${liveId}`);
 
     return tx.transaction(async (txx) => {
       assert(live.nodes);
@@ -98,6 +111,7 @@ export class LiveWriter {
         await this.liveNodeRepo.delete({ liveId, nodeId: node.id });
       }
       await this.update(liveId, { isDisabled: true, deletedAt: new Date() }, txx);
+      return live;
     });
   }
 

@@ -17,6 +17,13 @@ import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveFinishRequest, liveFinishRequest, LiveFinalizer } from '../registry/live.finalizer.js';
 import { log } from 'jslog';
 import { stacktrace } from '../../utils/errors/utils.js';
+import {
+  LiveRebalancer,
+  nodeAdjustRequest,
+  NodeAdjustRequest,
+  nodeGroupAdjustRequest,
+  NodeGroupAdjustRequest,
+} from '../registry/live.rebalancer.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -26,6 +33,7 @@ export class LiveController {
     private readonly fetcher: PlatformFetcher,
     private readonly liveFinder: LiveFinder,
     private readonly finalizer: LiveFinalizer,
+    private readonly rebalancer: LiveRebalancer,
   ) {}
 
   @Get('/')
@@ -68,6 +76,22 @@ export class LiveController {
   finish(@Body() req: LiveFinishRequest) {
     this.finalizer.finishLive(liveFinishRequest.parse(req)).catch((err) => {
       log.error('Error while finishing live', { stacktrace: stacktrace(err) });
+    });
+    return 'ok';
+  }
+
+  @Post('/tasks/adjust/node-group')
+  adjustNodeGroup(@Body() req: NodeGroupAdjustRequest) {
+    this.rebalancer.adjustByNodeGroup(nodeGroupAdjustRequest.parse(req)).catch((err) => {
+      log.error('Error while adjusting nodeGroup', { stacktrace: stacktrace(err) });
+    });
+    return 'ok';
+  }
+
+  @Post('/tasks/adjust/node')
+  adjustNode(@Body() req: NodeAdjustRequest) {
+    this.rebalancer.adjustByNode(nodeAdjustRequest.parse(req), []).catch((err) => {
+      log.error('Error while adjusting node', { stacktrace: stacktrace(err) });
     });
     return 'ok';
   }

@@ -9,6 +9,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface NodeSelectorOptions {
   ignoreNodeIds: string[];
+  ignoreGroupIds: string[];
   domesticOnly: boolean;
   overseasFirst: boolean;
 }
@@ -66,6 +67,7 @@ export class NodeSelector {
     return (await this.nodeFinder.findAll({ lives: true }, tx))
       .filter((node) => !node.isCordoned)
       .filter((node) => !opts.ignoreNodeIds.includes(node.id))
+      .filter((node) => !opts.ignoreGroupIds.includes(node.groupId))
       .filter((node) => (opts.domesticOnly ? node.isDomestic : true))
       .filter((node) => (opts.overseasFirst ? !node.isDomestic : true))
       .filter((node) => notNull(node.lives).length < node.capacity);

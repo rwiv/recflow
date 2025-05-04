@@ -7,7 +7,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 export abstract class Stdl {
   abstract getStatus(endpoint: string): Promise<RecorderStatus[]>;
 
-  async findStatus(endpoint: string, liveId: string) {
+  async findStatus(endpoint: string, liveId: string): Promise<RecorderStatus | null> {
     const recs = (await this.getStatus(endpoint)).filter((status) => status.id === liveId);
     if (recs.length === 0) {
       return null;

@@ -25,6 +25,11 @@ export class NodeFinder {
     return this.mapper.map(ent, req, tx);
   }
 
+  async findByGroupId(groupId: string, req: NodeFieldsReq, tx: Tx = db): Promise<NodeDtoWithLives[]> {
+    const entities = await this.nodeRepo.findByGroupId(groupId, tx);
+    return this.mapper.mapAll(entities, req, tx);
+  }
+
   async findByLiveId(liveId: string, req: NodeFieldsReq, tx: Tx = db): Promise<NodeDtoWithLives[]> {
     const entities = await this.nodeRepo.findByLiveId(liveId, tx);
     return this.mapper.mapAll(entities, req, tx);

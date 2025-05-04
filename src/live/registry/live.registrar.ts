@@ -5,7 +5,6 @@ import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selec
 import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
 import { LiveFinder } from '../data/live.finder.js';
@@ -21,7 +20,6 @@ import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
-import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
@@ -29,6 +27,7 @@ import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import assert from 'assert';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
@@ -42,6 +41,7 @@ export interface LiveRegisterRequest {
 
   // node selection options
   ignoreNodeIds?: string[];
+  ignoreGroupIds?: string[];
   criterion?: CriterionDto;
   domesticOnly?: boolean;
   overseasFirst?: boolean;
@@ -52,7 +52,6 @@ export class LiveRegistrar {
   constructor(
     private readonly nodeSelector: NodeSelector,
     private readonly nodeUpdater: NodeUpdater,
-    private readonly ngRepo: NodeGroupRepository,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly priService: PriorityService,
@@ -113,40 +112,36 @@ export class LiveRegistrar {
     }
 
     // If there is no available node, notify and create a disabled live
-    const groups = await this.ngRepo.findAll(tx);
-    if (groups.length > 0 && !node) {
+    if (!node) {
+      if (live) {
+        await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true });
+      }
+      const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
+      const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
+
       const headMessage = 'No available nodes for assignment';
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
       this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
+      log.info(headMessage, liveNodeAttr(newDisabledLive));
 
-      let disabled = live;
-      if (disabled) {
-        await this.liveWriter.disable(disabled.id, tx);
-      } else {
-        const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-        disabled = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
-      }
-      log.info(headMessage, liveNodeAttr(disabled));
-      return disabled.id;
+      return newDisabledLive.id;
     }
 
     // Create live if not exists
     let logMsg = 'Change node in live';
     if (!live) {
       logMsg = 'New Live';
-      const createOpts: LiveCreateOptions = { isDisabled: !node, domesticOnly, overseasFirst };
+      const createOpts: LiveCreateOptions = { isDisabled: false, domesticOnly, overseasFirst };
       live = await this.liveWriter.createByLive(liveInfo, streamInfo, createOpts, tx);
     }
 
     // Set node
-    if (node) {
-      await this.liveWriter.bind(live.id, node.id, tx);
-      await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
-      if (!(await this.stdlRedis.get(live.id))) {
-        await this.stdlRedis.setLiveDto(live);
-      }
-      await this.stdl.startRecording(node.endpoint, live.id);
+    await this.liveWriter.bind(live.id, node.id, tx);
+    await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
+    if (!(await this.stdlRedis.get(live.id))) {
+      await this.stdlRedis.setLiveDto(live);
     }
+    await this.stdl.startRecording(node.endpoint, live.id);
 
     // Send notification
     if (live.channel.priority.shouldNotify) {
@@ -164,24 +159,30 @@ export class LiveRegistrar {
   }
 
   async finishLive(recordId: string, opts: LiveFinishOptions = {}) {
-    const exitCmd = opts.exitCmd ?? 'delete';
     const isPurge = opts.isPurge ?? false;
+    let exitCmd = opts.exitCmd ?? 'delete';
     let msg = opts.msg ?? 'Delete live';
     if (!opts.msg && !isPurge) {
       msg = 'Disable live';
     }
 
+    const live = await this.liveFinder.findById(recordId, { nodes: true });
+    if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
+    assert(live.nodes);
+    if (live.nodes.length === 0) {
+      exitCmd = 'delete';
+    }
+
     // If exitCmd != delete, request live finish operation by http
     if (exitCmd !== 'delete') {
-      const live = await this.liveFinder.findById(recordId, {});
-      if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
+      await this.liveWriter.disable(live.id, false); // if Live is not disabled, it will become a recovery target and cause an error.
       await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg });
       return live; // not delete live record
     }
 
     // Else Delete live record
     return db.transaction(async (tx) => {
-      const deleted = await this.liveWriter.delete(recordId, isPurge, tx);
+      const deleted = await this.liveWriter.delete(recordId, true, isPurge, tx);
       log.info(msg, { ...liveNodeAttr(deleted), cmd: exitCmd });
       return deleted;
     });
@@ -214,7 +215,10 @@ export class LiveRegistrar {
       overseasFirst = req.overseasFirst;
     }
 
-    const opts: NodeSelectorOptions = { ignoreNodeIds: [], domesticOnly, overseasFirst };
+    const opts: NodeSelectorOptions = { ignoreNodeIds: [], ignoreGroupIds: [], domesticOnly, overseasFirst };
+    if (req.ignoreGroupIds) {
+      opts.ignoreGroupIds = [...req.ignoreGroupIds];
+    }
     if (req.ignoreNodeIds) {
       opts.ignoreNodeIds = [...req.ignoreNodeIds];
     }

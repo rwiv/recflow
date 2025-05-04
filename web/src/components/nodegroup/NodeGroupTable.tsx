@@ -10,11 +10,13 @@ import { Button } from '@/components/ui/button.tsx';
 import { NodeGroupCreateButton } from '@/components/nodegroup/NodeGroupCreateButton.tsx';
 import { NodeGroupDto } from '@/client/node/node.schema.ts';
 import { nodeGroupColumns } from '@/components/nodegroup/nodeGroupColumns.tsx';
-import { deleteNodeGroup } from '@/client/node/node-group.client.ts';
+import { adjustNodeGroup, deleteNodeGroup } from '@/client/node/node-group.client.ts';
 
 export function NodeGroupTable({ data }: { data: NodeGroupDto[] }) {
   const queryClient = useQueryClient();
   const table = useTable(data, nodeGroupColumns);
+
+  const disabledAdjustBtn = table.getFilteredSelectedRowModel().rows.length !== 1;
 
   const onDelete = async () => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
@@ -29,6 +31,19 @@ export function NodeGroupTable({ data }: { data: NodeGroupDto[] }) {
     await queryClient.invalidateQueries({ queryKey: [NODE_GROUPS_QUERY_KEY] });
   };
 
+  const onAdjust = async (isDrain: boolean) => {
+    const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
+    table.toggleAllPageRowsSelected(false);
+    if (checked.length === 0) {
+      return;
+    }
+    if (checked.length > 1) {
+      throw new Error('Only one node group can be drained at a time');
+    }
+    const target = checked[0];
+    await adjustNodeGroup(target.id, isDrain);
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center mb-4">
@@ -37,6 +52,12 @@ export function NodeGroupTable({ data }: { data: NodeGroupDto[] }) {
           <NodeGroupCreateButton />
           <Button variant="secondary" onClick={onDelete}>
             Remove
+          </Button>
+          <Button variant="secondary" disabled={disabledAdjustBtn} onClick={() => onAdjust(true)}>
+            Drain
+          </Button>
+          <Button variant="secondary" disabled={disabledAdjustBtn} onClick={() => onAdjust(false)}>
+            Rebalance
           </Button>
         </div>
         <ColumnSelector table={table} />

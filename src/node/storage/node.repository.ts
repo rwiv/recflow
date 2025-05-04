@@ -44,6 +44,10 @@ export class NodeRepository {
     return oneNullable(await tx.select().from(nodeTable).where(eq(nodeTable.name, name)));
   }
 
+  async findByGroupId(groupId: string, tx: Tx = db) {
+    return tx.select().from(nodeTable).where(eq(nodeTable.groupId, groupId));
+  }
+
   async findAll(tx: Tx = db) {
     return tx.select().from(nodeTable);
   }

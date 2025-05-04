@@ -57,14 +57,12 @@ export function LiveRemoveButton({ table }: LiveRemoveButtonProps) {
     if (selected.length === 0) {
       return true;
     }
-
     const isDisabledLive = selected[0].isDisabled;
     for (const live of selected) {
       if (live.isDisabled !== isDisabledLive) {
         return true;
       }
     }
-
     return false;
   };
 

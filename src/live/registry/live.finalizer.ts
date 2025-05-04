@@ -40,7 +40,7 @@ export const liveFinishRequest = z.object({
 export type LiveFinishRequest = z.infer<typeof liveFinishRequest>;
 
 const TASK_WAIT_INTERVAL_MS = 1000; // 1 sec
-const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 180 * 1000; // 3 min
+const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
 const RETRY_LIMIT = 3;
 const RETRY_DELAY_MS = 3000; // 3 sec
 
@@ -91,7 +91,7 @@ export class LiveFinalizer {
 
       try {
         await this._finishLive(live, req.exitCmd);
-        const deleted = await this.liveWriter.delete(live.id, req.isPurge);
+        const deleted = await this.liveWriter.delete(live.id, true, req.isPurge);
         log.info(req.msg, { ...liveNodeAttr(deleted), cmd: req.exitCmd });
         return;
       } catch (e) {
@@ -112,6 +112,9 @@ export class LiveFinalizer {
 
   private async _finishLive(live: LiveDtoWithNodes, cmd: ExitCmd) {
     assert(live.nodes);
+    if (live.nodes.length === 0) {
+      return;
+    }
 
     // Cancel all recorders
     const cancelPromises = live.nodes.map((n) => this.cancelRecorder(live, n));

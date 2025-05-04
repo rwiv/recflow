@@ -2,12 +2,10 @@ import { z } from 'zod';
 import { AmqpConfig } from '../../common/config/config.types.js';
 import { queueState } from './amqp.schema.js';
 import { AmqpHttp } from './amqp.interface.js';
-import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { log } from 'jslog';
-import { stackTrace } from '../../utils/errors/utils.js';
+import { stacktrace } from '../../utils/errors/utils.js';
 import { FatalError } from '../../utils/errors/errors/FatalError.js';
 
 const queueStates = z.array(queueState);
@@ -57,7 +55,7 @@ export class AmqpHttpImpl implements AmqpHttp {
     try {
       return queueStates.parse(JSON.parse(text));
     } catch (e) {
-      log.error('Failed to parse', { source: text, stack: stackTrace(e) });
+      log.error('Failed to parse', { source: text, stacktrace: stacktrace(e) });
       throw e;
     }
   }

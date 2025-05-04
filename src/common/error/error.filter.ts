@@ -2,7 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost, Inject } from '@nestjs/common';
 import { Response } from 'express';
 import { HttpErrorResolver } from '../../utils/errors/resolver.http.js';
 import { log } from 'jslog';
-import { stackTrace } from '../../utils/errors/utils.js';
+import { stacktrace } from '../../utils/errors/utils.js';
 import { ErrorResponse } from '../data/common.schema.js';
 import { ENV } from '../config/config.module.js';
 import { Env } from '../config/env.js';
@@ -18,7 +18,7 @@ export class HttpErrorFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const err = this.resolver.resolve(raw);
     const { message, status, code } = err;
-    log.error(err.name, { message, status, code, stack: stackTrace(err) });
+    log.error(err.name, { message, status, code, stacktrace: stacktrace(err) });
 
     let body: ErrorResponse = {
       statusCode: err.status,

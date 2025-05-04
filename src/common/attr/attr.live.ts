@@ -9,6 +9,7 @@ interface LiveNodeAttr {
   title: string;
   node?: string;
   assigned?: number;
+  stacktrace?: string;
 }
 
 export function liveNodeAttr(live: LiveDto, node: NodeDtoWithLives | null = null) {

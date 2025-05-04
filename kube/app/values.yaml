@@ -47,7 +47,7 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    httpTimeoutMs: 3000
+    httpTimeoutMs: 5000
     nodeFailureThreshold: 1000
     nodeResetCycleSec: 43200 # 12 hours
     liveRecoveryWaitTimeMs: 40000

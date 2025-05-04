@@ -185,7 +185,7 @@ export class LiveRegistrar {
 
     if (exitCmd !== 'delete') {
       assert(removedLive.nodes);
-      await this.dispatcher.finishLive(removedLive, removedLive.nodes, exitCmd);
+      await this.dispatcher.requestFinishLive(removedLive.id, exitCmd);
     }
 
     log.info(`${deleteOpts.msg ?? 'Delete Live'}: ${exitCmd}`, liveNodeAttr(removedLive));

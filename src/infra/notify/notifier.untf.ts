@@ -5,7 +5,7 @@ import { Notifier } from './notifier.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { errorResponse } from '../../common/data/common.schema.js';
 import { log } from 'jslog';
-import { stackTrace } from '../../utils/errors/utils.js';
+import { stacktrace } from '../../utils/errors/utils.js';
 
 interface UntfSendRequest {
   topic: string;
@@ -25,7 +25,7 @@ export class UntfNotifier extends Notifier {
 
   notify(topic: string, message: string): void {
     this._notify(topic, message).catch((err) => {
-      log.error('Notification failure', { stack: stackTrace(err) });
+      log.error('Notification failure', { stacktrace: stacktrace(err) });
     });
   }
 

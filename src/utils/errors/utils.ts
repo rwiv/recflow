@@ -1,4 +1,4 @@
-export function stackTrace(err: unknown) {
+export function stacktrace(err: unknown) {
   if (!(err instanceof Error)) {
     throw new TypeError(`Unknown error: ${err}`);
   }

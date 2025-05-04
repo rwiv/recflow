@@ -23,8 +23,8 @@ import { z } from 'zod';
 
 export interface Env {
   nodeEnv: string;
-  appHost: string;
   appPort: number;
+  appEndpoint: string;
   fsName: string;
   streamq: StreamqConfig;
   stlink: StlinkConfig;
@@ -56,8 +56,8 @@ export function readEnv(): Env {
 
   return {
     nodeEnv,
-    appHost: nonempty.parse(process.env.APP_HOST),
     appPort: nnint.parse(process.env.APP_PORT),
+    appEndpoint: nonempty.parse(process.env.APP_ENDPOINT),
     fsName: nonempty.parse(process.env.FS_NAME),
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),

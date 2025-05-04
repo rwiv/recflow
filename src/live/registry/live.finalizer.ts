@@ -70,8 +70,7 @@ export class LiveFinalizer {
   }
 
   async requestFinishLive(req: LiveFinishRequest) {
-    const endpoint = `http://${this.env.appHost}:${this.env.appPort}`;
-    const res = await fetch(`${endpoint}/api/lives/tasks/finish`, {
+    const res = await fetch(`${this.env.appEndpoint}/api/lives/tasks/finish`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(liveFinishRequest.parse(req)),

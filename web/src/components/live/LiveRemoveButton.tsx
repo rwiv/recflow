@@ -27,6 +27,7 @@ import {
 import { Switch } from '@/components/ui/switch.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { ExitCmd } from '@/client/common/common.schema.ts';
+import { css, SerializedStyles } from '@emotion/react';
 
 interface LiveRemoveButtonProps {
   table: Table<LiveDto>;
@@ -112,6 +113,7 @@ export function LiveRemoveButton({ table }: LiveRemoveButtonProps) {
         onAction={(isPurge) => remove('cancel', isPurge)}
         triggerRef={cancelRef}
         isDisabledLives={isDisabled}
+        fontStyle={css({ color: 'red' })}
       />
     </div>
   );
@@ -121,16 +123,17 @@ interface AlertDialogProps {
   onAction: (isPurge: boolean) => void;
   triggerRef: RefObject<HTMLButtonElement>;
   isDisabledLives: boolean;
+  fontStyle?: SerializedStyles;
 }
 
-export function AlertDialog({ onAction, triggerRef, isDisabledLives }: AlertDialogProps) {
+export function AlertDialog({ onAction, triggerRef, isDisabledLives, fontStyle }: AlertDialogProps) {
   return (
     <AlertDialogContainer>
       <AlertDialogTrigger asChild>
         <button ref={triggerRef} />
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <DialogContent onAction={onAction} isDisabledLives={isDisabledLives} />
+        <DialogContent onAction={onAction} isDisabledLives={isDisabledLives} fontStyle={fontStyle} />
       </AlertDialogContent>
     </AlertDialogContainer>
   );
@@ -139,10 +142,13 @@ export function AlertDialog({ onAction, triggerRef, isDisabledLives }: AlertDial
 interface DialogContentProps {
   onAction: (isPurge: boolean) => void;
   isDisabledLives: boolean;
+  titleStyle?: SerializedStyles;
+  descriptionStyle?: SerializedStyles;
+  fontStyle?: SerializedStyles;
 }
 
 // You can initialize the isPurge state every time by extracting the corresponding component separately and dynamically loading it.
-function DialogContent({ onAction, isDisabledLives }: DialogContentProps) {
+function DialogContent({ onAction, isDisabledLives, fontStyle }: DialogContentProps) {
   const cancelText = 'Cancel';
   const actionText = 'Remove';
   const title = 'Are you absolutely sure?';
@@ -152,8 +158,8 @@ function DialogContent({ onAction, isDisabledLives }: DialogContentProps) {
   return (
     <>
       <AlertDialogHeader>
-        <AlertDialogTitle>{title}</AlertDialogTitle>
-        <AlertDialogDescription>{description}</AlertDialogDescription>
+        <AlertDialogTitle css={fontStyle}>{title}</AlertDialogTitle>
+        <AlertDialogDescription css={fontStyle}>{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <div className="flex items-center space-x-2 mt-1 mb-1.5">
         <Switch
@@ -162,7 +168,9 @@ function DialogContent({ onAction, isDisabledLives }: DialogContentProps) {
           checked={isPurge}
           onCheckedChange={() => setIsPurge((prev) => !prev)}
         />
-        <Label htmlFor="isPurge">Whether to Purge the channel</Label>
+        <Label htmlFor="isPurge" css={fontStyle}>
+          Whether to Purge the channel
+        </Label>
       </div>
       <AlertDialogFooter>
         <AlertDialogCancel>{cancelText}</AlertDialogCancel>

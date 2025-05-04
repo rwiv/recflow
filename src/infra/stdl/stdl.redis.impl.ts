@@ -7,7 +7,10 @@ import { log } from 'jslog';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
 export const LIVE_PREFIX = 'live';
+export const LIVES_KEY = 'lives';
+export const SEG_PREFIX = 'seg';
 export const EXPIRATION_TIME_SEC = 60 * 60 * 24 * 7; // 7 day
+// export const EXPIRATION_TIME_SEC = 60 * 60 * 6; // 6 hours
 
 export class StdlRedisImpl implements StdlRedis {
   constructor(private readonly client: RedisClientType) {}
@@ -26,9 +29,12 @@ export class StdlRedisImpl implements StdlRedis {
     if (await this.client.get(key)) {
       throw new ValidationError(`liveId ${state.liveId} already exists`);
     }
-    await this.client.set(key, JSON.stringify(state), {
-      EX: EXPIRATION_TIME_SEC,
-    });
+    await this.client.set(key, JSON.stringify(state), { EX: EXPIRATION_TIME_SEC });
+    await this.client.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
+  }
+
+  async expire(liveId: string) {
+    await this.client.expire(`${LIVE_PREFIX}:${liveId}`, EXPIRATION_TIME_SEC);
   }
 
   async get(liveRecordId: string): Promise<LiveState | undefined> {
@@ -45,6 +51,7 @@ export class StdlRedisImpl implements StdlRedis {
     if (await this.client.get(key)) {
       await this.client.del(key);
     }
+    await this.client.zRem(LIVES_KEY, liveRecordId);
   }
 
   async dropAll(): Promise<void> {
@@ -52,5 +59,6 @@ export class StdlRedisImpl implements StdlRedis {
     for (const key of keys) {
       await this.client.del(key);
     }
+    await this.client.del(LIVES_KEY);
   }
 }

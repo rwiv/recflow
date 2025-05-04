@@ -20,6 +20,7 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { LiveWriter } from '../data/live.writer.js';
+import { db } from '../../infra/db/db.js';
 
 interface TargetRecorder {
   status: RecorderStatus;
@@ -91,8 +92,14 @@ export class LiveFinalizer {
 
       try {
         await this._finishLive(live, req.exitCmd);
-        const deleted = await this.liveWriter.delete(live.id, true, req.isPurge);
-        log.info(req.msg, { ...liveNodeAttr(deleted), cmd: req.exitCmd });
+        await db.transaction(async (tx) => {
+          const live = await this.liveFinder.findById(req.liveId, { forUpdate: true }, tx);
+          // LiveCleaner may have already removed live
+          if (live) {
+            const deleted = await this.liveWriter.delete(live.id, true, req.isPurge, tx);
+            log.info(req.msg, { ...liveNodeAttr(deleted), cmd: req.exitCmd });
+          }
+        });
         return;
       } catch (e) {
         if (retryCnt === RETRY_LIMIT) {

@@ -5,18 +5,36 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { NODE_GROUPS_QUERY_KEY } from '@/common/constants.ts';
+import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { NodeGroupCreateButton } from '@/components/nodegroup/NodeGroupCreateButton.tsx';
 import { NodeGroupDto } from '@/client/node/node.schema.ts';
 import { nodeGroupColumns } from '@/components/nodegroup/nodeGroupColumns.tsx';
 import { adjustNodeGroup, deleteNodeGroup } from '@/client/node/node-group.client.ts';
+import { fetchNodes, updateNode } from '@/client/node/node.client.ts';
 
 export function NodeGroupTable({ data }: { data: NodeGroupDto[] }) {
   const queryClient = useQueryClient();
   const table = useTable(data, nodeGroupColumns);
 
   const disabledAdjustBtn = table.getFilteredSelectedRowModel().rows.length !== 1;
+
+  const onUpdateIsCordoned = async (isCordoned: boolean) => {
+    const nodes = await fetchNodes();
+    const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
+    table.toggleAllPageRowsSelected(false);
+    for (const nodeGroup of checked) {
+      try {
+        const targets = nodes.filter((node) => node.groupId === nodeGroup.id);
+        const promises = targets.map((node) => updateNode(node.id, { isCordoned }));
+        await Promise.all(promises);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    await queryClient.invalidateQueries({ queryKey: [NODE_GROUPS_QUERY_KEY] });
+    await queryClient.invalidateQueries({ queryKey: [NODES_QUERY_KEY] });
+  };
 
   const onDelete = async () => {
     const checked = table.getFilteredSelectedRowModel().rows.map((it) => it.original);
@@ -50,13 +68,29 @@ export function NodeGroupTable({ data }: { data: NodeGroupDto[] }) {
         <FilterInput table={table} columnId={'name'} placeholder="Filter names..." />
         <div className="flex gap-1.5 mx-5">
           <NodeGroupCreateButton />
-          <Button variant="secondary" onClick={onDelete}>
+          <Button variant="secondary" className="mr-1" onClick={onDelete}>
             Remove
           </Button>
-          <Button variant="secondary" disabled={disabledAdjustBtn} onClick={() => onAdjust(true)}>
+          <Button variant="secondary" className="ml-1" onClick={() => onUpdateIsCordoned(false)}>
+            Activate
+          </Button>
+          <Button variant="secondary" className="mr-1" onClick={() => onUpdateIsCordoned(true)}>
+            Deactivate
+          </Button>
+          <Button
+            variant="secondary"
+            className="ml-1"
+            disabled={disabledAdjustBtn}
+            onClick={() => onAdjust(true)}
+          >
             Drain
           </Button>
-          <Button variant="secondary" disabled={disabledAdjustBtn} onClick={() => onAdjust(false)}>
+          <Button
+            variant="secondary"
+            className="mr-1"
+            disabled={disabledAdjustBtn}
+            onClick={() => onAdjust(false)}
+          >
             Rebalance
           </Button>
         </div>

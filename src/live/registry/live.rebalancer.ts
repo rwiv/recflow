@@ -98,6 +98,7 @@ export class LiveRebalancer {
       await this.liveRegistrar.register({
         channelInfo: channelLiveInfo.parse(channelInfo),
         reusableLive: live,
+        ignoreNodeIds: [node.id],
         ignoreGroupIds,
       });
       await this.waitForRecording(live, node);

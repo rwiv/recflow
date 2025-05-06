@@ -16,7 +16,6 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
-import { delay } from '../../utils/time.js';
 
 export const nodeGroupAdjustRequest = z.object({
   groupId: uuid,
@@ -59,11 +58,9 @@ export class LiveRebalancer {
       return;
     }
 
-    const promises = [];
     for (const node of targets) {
-      promises.push(this.adjustByNode({ nodeId: node.id, isDrain }, ignoreGroupIds));
+      await this.adjustByNode({ nodeId: node.id, isDrain }, ignoreGroupIds);
     }
-    await Promise.all(promises);
     log.info(`Node group adjust completed`, { groupId, groupName: group.name });
   }
 
@@ -86,8 +83,9 @@ export class LiveRebalancer {
         return;
       }
 
-      const promises = node.lives.map((live) => this.adjustByLive(live, node, ignoreGroupIds));
-      await Promise.all(promises);
+      for (const live of node.lives) {
+        await this.adjustByLive(live, node, ignoreGroupIds);
+      }
       log.info(`Node adjust completed`, { groupId: node.groupId, nodeId, nodeName: node.name });
     } catch (e) {
       log.error(`Failed to adjusting live`, { nodeId, stacktrace: stacktrace(e) });
@@ -103,7 +101,6 @@ export class LiveRebalancer {
         ignoreGroupIds,
       });
       await this.waitForRecording(live, node);
-      await delay(3000); // TODO: remove
 
       await this.liveRegistrar.deregister(live, node);
       await this.waitForCanceled(live, node);

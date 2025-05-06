@@ -16,6 +16,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
+import { delay } from '../../utils/time.js';
 
 export const nodeGroupAdjustRequest = z.object({
   groupId: uuid,
@@ -102,6 +103,7 @@ export class LiveRebalancer {
         ignoreGroupIds,
       });
       await this.waitForRecording(live, node);
+      await delay(3000); // TODO: remove
 
       await this.liveRegistrar.deregister(live, node);
       await this.waitForCanceled(live, node);

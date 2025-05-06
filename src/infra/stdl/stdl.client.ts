@@ -44,12 +44,12 @@ export const recorderStatus = z.object({
   id: uuid,
   platform: platformNameEnum,
   channelId: nonempty,
+  channelName: nonempty,
   liveId: nonempty,
   videoName: nonempty,
   fsName: nonempty,
   num: nnint,
   status: stdlStreamStatusEnum,
-  streamUrl: nonempty,
 });
 export type RecorderStatus = z.infer<typeof recorderStatus>;
 

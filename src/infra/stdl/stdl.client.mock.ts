@@ -36,17 +36,16 @@ export class StdlMock extends Stdl {
     assert(node);
     assert(node.lives);
     return node.lives.map((dto) => {
-      assert(dto.streamUrl);
       return {
         id: dto.id,
         platform: dto.platform.name,
         channelId: dto.channel.pid,
+        channelName: dto.channel.username,
         liveId: dto.sourceId,
         videoName: dto.videoName,
         fsName: dto.fsName,
         num: 0,
         status: 'recording',
-        streamUrl: dto.streamUrl,
       };
     });
   }

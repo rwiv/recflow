@@ -3,6 +3,7 @@ import { RecorderStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class StdlImpl extends Stdl {
@@ -22,7 +23,8 @@ export class StdlImpl extends Stdl {
       signal: AbortSignal.timeout(this.env.httpTimeout),
     });
     if (res.status >= 400) {
-      throw new HttpRequestError(`Error requesting recording`, res.status);
+      log.error(`Failed to start recording`, { status: res.status, body: await res.text() });
+      throw new HttpRequestError(`Failed to start recording`, res.status);
     }
   }
 

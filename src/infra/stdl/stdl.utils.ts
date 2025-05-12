@@ -15,7 +15,7 @@ export function liveDtoToState(dto: LiveDto): LiveState {
     liveTitle: dto.liveTitle,
     streamUrl: dto.streamUrl,
     headers: dto.headers,
-    fsName: dto.fsName,
     videoName: dto.videoName,
+    isInvalid: false,
   };
 }

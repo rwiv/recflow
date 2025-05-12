@@ -101,11 +101,13 @@ export class LiveRebalancer {
         ignoreNodeIds: [node.id],
         ignoreGroupIds,
       });
-      await this.waitForRecording(live, node);
+      const ok = await this.waitForRecording(live, node);
+      if (!ok) {
+        log.error(`Failed to wait for recording`, liveNodeAttr(live, node));
+        return;
+      }
 
       await this.liveRegistrar.deregister(live, node);
-      await this.waitForCanceled(live, node);
-
       log.debug(`Live adjust completed`, liveNodeAttr(live, node));
     } catch (e) {
       log.error(`Failed to adjusting live`, { ...liveNodeAttr(live, node), stacktrace: stacktrace(e) });
@@ -120,19 +122,19 @@ export class LiveRebalancer {
     return this.waitForRecorder(live, node, false);
   }
 
-  private async waitForRecorder(live: LiveDto, node: NodeDto, exists: boolean) {
+  private async waitForRecorder(live: LiveDto, node: NodeDto, exists: boolean): Promise<boolean> {
     const startTime = Date.now();
     while (true) {
       if (Date.now() - startTime > RECORDING_CLOSE_WAIT_TIMEOUT_MS) {
         log.error(`Timeout while waiting for recording to finish`, liveNodeAttr(live));
-        return;
+        return false;
       }
       const status = await this.stdl.findStatus(node.endpoint, live.id);
       if (exists && status) {
-        return;
+        return true;
       }
       if (!exists && !status) {
-        return;
+        return true;
       }
     }
   }

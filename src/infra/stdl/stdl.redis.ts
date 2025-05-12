@@ -12,8 +12,8 @@ export const liveState = z.object({
   liveTitle: nonempty,
   streamUrl: nonempty,
   headers: headers.nullable(),
-  fsName: nonempty.optional(), // TODO: remove this
   videoName: nonempty,
+  isInvalid: z.boolean().optional(), // TODO: remove optional()
 });
 
 export type LiveState = z.infer<typeof liveState>;

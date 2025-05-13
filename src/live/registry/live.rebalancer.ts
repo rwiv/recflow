@@ -8,7 +8,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import assert from 'assert';
 import { NodeGroupService } from '../../node/service/node-group.service.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
-import { STDL } from '../../infra/infra.tokens.js';
+import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { log } from 'jslog';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -16,6 +16,9 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
+import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { delay } from '../../utils/time.js';
+import { LiveFinder } from '../data/live.finder.js';
 
 export const nodeGroupAdjustRequest = z.object({
   groupId: uuid,
@@ -30,16 +33,19 @@ export const nodeAdjustRequest = z.object({
 export type NodeAdjustRequest = z.infer<typeof nodeAdjustRequest>;
 
 const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
+const RECORDING_CLOSE_INTERVAL_DELAY_MS = 100; // 1 sec
 
 @Injectable()
 export class LiveRebalancer {
   constructor(
     private readonly liveRegistrar: LiveRegistrar,
+    private readonly liveFinder: LiveFinder,
     private readonly nodeFinder: NodeFinder,
     private readonly nodeGroupService: NodeGroupService,
     private readonly nodeUpdater: NodeUpdater,
     private readonly fetcher: PlatformFetcher,
     @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
   async adjustByNodeGroup(req: NodeGroupAdjustRequest) {
@@ -52,13 +58,13 @@ export class LiveRebalancer {
       ignoreGroupIds.push(group.id);
     }
 
-    const targets = await this.nodeFinder.findByGroupId(group.id, {});
-    if (targets.length === 0) {
+    const targetNodes = await this.nodeFinder.findByGroupId(group.id, {});
+    if (targetNodes.length === 0) {
       log.debug(`No nodes to adjust`, { groupId, groupName: group.name });
       return;
     }
 
-    for (const node of targets) {
+    for (const node of targetNodes) {
       await this.adjustByNode({ nodeId: node.id, isDrain }, ignoreGroupIds);
     }
     log.info(`Node group adjust completed`, { groupId, groupName: group.name });
@@ -92,7 +98,24 @@ export class LiveRebalancer {
     }
   }
 
-  async adjustByLive(live: LiveDto, node: NodeDto, ignoreGroupIds: string[]) {
+  async adjustByLive(reqLive: LiveDto, node: NodeDto, ignoreGroupIds: string[]) {
+    const live = await this.liveFinder.findById(reqLive.id); // latest live dto
+    if (!live) {
+      log.error(`Live not found`, liveNodeAttr(reqLive, node));
+      return;
+    }
+
+    // Skip already finished live
+    if (live.isDisabled) {
+      log.error('Live is disabled', liveNodeAttr(live));
+      return;
+    }
+
+    // Skip if live is invalid
+    if (await this.stdlRedis.isInvalidLive(live)) {
+      return;
+    }
+
     try {
       const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
       await this.liveRegistrar.register({
@@ -129,6 +152,11 @@ export class LiveRebalancer {
         log.error(`Timeout while waiting for recording to finish`, liveNodeAttr(live));
         return false;
       }
+
+      if (await this.stdlRedis.isInvalidLive(live)) {
+        return false;
+      }
+
       const status = await this.stdl.findStatus(node.endpoint, live.id);
       if (exists && status) {
         return true;
@@ -136,6 +164,8 @@ export class LiveRebalancer {
       if (!exists && !status) {
         return true;
       }
+
+      await delay(RECORDING_CLOSE_INTERVAL_DELAY_MS);
     }
   }
 }

@@ -33,9 +33,9 @@ export class NodeMapper {
       result = { ...result, group };
     }
     if (req.lives) {
-      const liveEnts = await this.liveRepo.findByNodeId(ent.id, tx);
+      const liveEntities = await this.liveRepo.findByNodeId(ent.id, tx);
       const lives: LiveDto[] = [];
-      for (const liveEnt of liveEnts) {
+      for (const liveEnt of liveEntities) {
         const platform = await this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
         const channel = await this.channelFinder.findById(liveEnt.channelId, false, tx);
         if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);

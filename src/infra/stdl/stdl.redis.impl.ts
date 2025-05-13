@@ -8,12 +8,13 @@ import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
-export const SEG_PREFIX = 'seg';
 export const EXPIRATION_TIME_SEC = 60 * 60 * 24 * 7; // 7 day
 // export const EXPIRATION_TIME_SEC = 60 * 60 * 6; // 6 hours
 
-export class StdlRedisImpl implements StdlRedis {
-  constructor(private readonly client: RedisClientType) {}
+export class StdlRedisImpl extends StdlRedis {
+  constructor(private readonly client: RedisClientType) {
+    super();
+  }
 
   async setLiveDto(live: LiveDto): Promise<void> {
     if (!live.streamUrl) {

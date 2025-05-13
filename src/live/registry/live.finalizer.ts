@@ -166,7 +166,7 @@ export class LiveFinalizer {
         continue;
       }
       await this.vtask.addTask(doneMsg);
-      await this.stdlRedis.delete(live.id);
+      await this.stdlRedis.delete(live.id); // TODO: remove
       break;
     }
     log.debug(`Complete adding StdlDone task`, liveNodeAttr(live));

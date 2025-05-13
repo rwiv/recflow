@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL } from '../../infra/infra.tokens.js';
+import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
@@ -11,12 +11,12 @@ import { log } from 'jslog';
 import { ChannelLiveInfo, channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -35,6 +35,7 @@ export class LiveRecoveryManager {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly stlink: Stlink,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
@@ -45,54 +46,73 @@ export class LiveRecoveryManager {
   ) {}
 
   async check() {
-    const promises = [];
     for (const [liveId, tgLive] of await this.retrieveInvalidNodes()) {
-      promises.push(this.checkInvalidLive(tgLive));
+      await this.checkInvalidLive(tgLive);
     }
-    await Promise.all(promises);
   }
 
   private async checkInvalidLive(tgLive: TargetLive) {
-    const live = tgLive.live;
+    const live = await this.liveFinder.findById(tgLive.live.id); // latest live dto
+    if (!live) {
+      log.error(`Live not found`, liveNodeAttr(tgLive.live));
+      return;
+    }
 
+    // Skip already finished live
+    if (live.isDisabled) {
+      log.error('Live is disabled', liveNodeAttr(live));
+      return;
+    }
+
+    // Finish if live is not invalid
+    if (await this.stdlRedis.isInvalidLive(live)) {
+      return this.finishLive(live.id, 'Live is not invalid');
+    }
+
+    // Finish if live not open
     const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
     if (!streamInfo.openLive) {
-      return this.liveRegistrar.finishLive(live.id, {
-        isPurge: true,
-        exitCmd: 'finish',
-        msg: 'Delete uncleaned live',
-      });
+      return this.finishLive(live.id, 'Delete uncleaned live');
     }
 
+    // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     if (live.sourceId !== chanInfo.liveInfo?.liveId) {
-      return this.liveRegistrar.finishLive(live.id, {
-        isPurge: true,
-        exitCmd: 'finish',
-        msg: 'Delete restarted live',
-      });
+      return this.finishLive(live.id, 'Delete restarted live');
     }
 
+    // Finish if live m3u8 is not valid
     const m3u8Text = await this.stlink.fetchM3u8ByLive(live);
     if (!m3u8Text) {
-      return this.liveRegistrar.finishLive(live.id, {
-        isPurge: true,
-        exitCmd: 'finish',
-        msg: 'Delete live because m3u8 is not valid',
-      });
+      return this.finishLive(live.id, 'Delete live because m3u8 is not valid');
     }
 
+    // Recovery invalid nodes in live
     const chanLiveInfo = channelLiveInfo.parse(chanInfo);
-    const promises = [];
     for (const invalidNode of tgLive.invalidNodes) {
-      promises.push(this.checkInvalidNode(live, invalidNode.node, chanLiveInfo));
+      await this.checkInvalidNode(live, invalidNode.node, chanLiveInfo);
     }
-    await Promise.all(promises);
+  }
+
+  private finishLive(liveId: string, message: string) {
+    return this.liveRegistrar.finishLive(liveId, {
+      isPurge: true,
+      exitCmd: 'finish',
+      msg: message,
+    });
   }
 
   private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto, channelInfo: ChannelLiveInfo) {
+    const live = await this.liveFinder.findById(tgLive.id); // latest live dto
+    if (!live) {
+      log.error(`Live not found`, liveNodeAttr(tgLive, invalidNode));
+      return;
+    }
+
+    // Skip already finished live
     if (tgLive.isDisabled) {
-      throw new ValidationError('Live is disabled');
+      log.error('Live is disabled', liveNodeAttr(tgLive, invalidNode));
+      return;
     }
 
     if (invalidNode.failureCnt >= this.env.nodeFailureThreshold) {

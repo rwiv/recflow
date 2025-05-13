@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL, STDL_REDIS, VTASK } from '../../infra/infra.tokens.js';
+import { STDL, VTASK } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
 import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
@@ -7,7 +7,6 @@ import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 import { delay } from '../../utils/time.js';
 import { stacktrace } from '../../utils/errors/utils.js';
@@ -49,7 +48,6 @@ const RETRY_DELAY_MS = 3000; // 3 sec
 export class LiveFinalizer {
   constructor(
     @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     @Inject(VTASK) private readonly vtask: Vtask,
     @Inject(ENV) private readonly env: Env,
     private readonly liveFinder: LiveFinder,
@@ -166,7 +164,6 @@ export class LiveFinalizer {
         continue;
       }
       await this.vtask.addTask(doneMsg);
-      await this.stdlRedis.delete(live.id); // TODO: remove
       break;
     }
     log.debug(`Complete adding StdlDone task`, liveNodeAttr(live));

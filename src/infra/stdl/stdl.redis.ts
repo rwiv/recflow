@@ -15,7 +15,7 @@ export const liveState = z.object({
   streamUrl: nonempty,
   headers: headers.nullable(),
   videoName: nonempty,
-  isInvalid: z.boolean().optional(), // TODO: remove optional()
+  isInvalid: z.boolean(),
 });
 
 export type LiveState = z.infer<typeof liveState>;
@@ -34,7 +34,7 @@ export abstract class StdlRedis {
       return true;
     }
     if (liveState.isInvalid) {
-      log.error(`Live is not invalid`, liveNodeAttr(live));
+      log.error(`Live is invalid`, liveNodeAttr(live));
       return true;
     }
     return false;

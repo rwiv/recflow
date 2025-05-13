@@ -55,6 +55,7 @@ app:
     nodeFailureThreshold: 1000
     nodeResetCycleSec: 43200 # 12 hours
     liveRecoveryWaitTimeMs: 40000
+    liveClearBatchSize: 50
 
 externals:
   streamq:

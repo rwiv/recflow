@@ -32,3 +32,26 @@ export function randomElem<T>(array: readonly T[]): T {
   const randomIndex = Math.floor(Math.random() * array.length);
   return array[randomIndex];
 }
+
+export function subLists<T>(list: T[], n: number): T[][] {
+  if (n <= 0) {
+    throw new Error('n should be greater than 0');
+  }
+
+  const result: T[][] = [];
+  let current: T[] = [];
+
+  for (const elem of list) {
+    if (current.length >= n) {
+      result.push(current);
+      current = [];
+    }
+    current.push(elem);
+  }
+
+  if (current.length > 0) {
+    result.push(current);
+  }
+
+  return result;
+}

@@ -21,14 +21,18 @@ export const liveState = z.object({
 export type LiveState = z.infer<typeof liveState>;
 
 export abstract class StdlRedis {
-  abstract setLiveDto(live: LiveDto): Promise<void>;
-  abstract set(live: LiveState): Promise<void>;
-  abstract get(id: string): Promise<LiveState | undefined>;
-  abstract delete(id: string): Promise<void>;
-  abstract dropAll(): Promise<void>;
+  abstract setLive(live: LiveDto): Promise<void>;
+  abstract getLive(id: string): Promise<LiveState | undefined>;
+  abstract deleteLive(id: string): Promise<void>;
+  abstract dropAllLives(): Promise<void>;
+
+  abstract getLivesIds(): Promise<string[]>;
+  abstract getSuccessSegNums(liveId: string): Promise<string[]>;
+  abstract deleteSuccessSegNumSet(liveId: string): Promise<void>;
+  abstract deleteSegmentState(liveId: string, num: string): Promise<void>;
 
   async isInvalidLive(live: LiveDto): Promise<boolean> {
-    const liveState = await this.get(live.id);
+    const liveState = await this.getLive(live.id);
     if (!liveState) {
       log.error(`Live not found in STDL`, liveNodeAttr(live));
       return true;

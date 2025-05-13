@@ -23,8 +23,8 @@ export const streamInfo = z.object({
 });
 export type StreamInfo = z.infer<typeof streamInfo>;
 
-const RETRY_LIMIT = 3;
-const RETRY_DELAY_MS = 500;
+const RETRY_LIMIT = 2;
+const RETRY_DELAY_MS = 100;
 const STLINK_HTTP_TIMEOUT_MS = 10000;
 
 @Injectable()
@@ -73,8 +73,7 @@ export class Stlink {
           return null;
         }
         log.debug('Retrying m3u8 request', { retryCnt, streamUrl });
-        const backoff = 2 ** retryCnt;
-        await delay(RETRY_DELAY_MS * backoff);
+        await delay(RETRY_DELAY_MS);
       }
     }
     return null;

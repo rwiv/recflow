@@ -15,8 +15,11 @@ import {
   DEFAULT_REFRESH_CYCLE,
   DEFAULT_REGISTER_CHECK_CYCLE,
   DEFAULT_REGISTER_CYCLE,
+  DEFAULT_LIVE_STATE_CLEANUP_CYCLE,
 } from './spec/live.task.contants.js';
 import { LiveFollowedRegisterTask } from './tasks/live.register-followed-task.js';
+import { LiveStateCleanupTask } from './tasks/live-state.cleanup-task.js';
+import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -25,6 +28,7 @@ export class LiveTaskInitializer {
     private readonly liveCoordinator: LiveCoordinator,
     private readonly liveCleaner: LiveCleaner,
     private readonly liveRefresher: LiveRefresher,
+    private readonly liveStateCleaner: LiveStateCleaner,
     private readonly liveRecoveryManager: LiveRecoveryManager,
     private readonly scheduler: TaskScheduler,
   ) {}
@@ -44,5 +48,8 @@ export class LiveTaskInitializer {
 
     const followedRegisterTask = new LiveFollowedRegisterTask(this.liveCoordinator);
     this.scheduler.addPeriodTask(followedRegisterTask, DEFAULT_REGISTER_CYCLE, true);
+
+    const liveStateCleanupTask = new LiveStateCleanupTask(this.liveStateCleaner);
+    this.scheduler.addPeriodTask(liveStateCleanupTask, DEFAULT_LIVE_STATE_CLEANUP_CYCLE, true);
   }
 }

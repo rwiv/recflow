@@ -2,7 +2,7 @@ import { describe, it, beforeEach, afterAll } from 'vitest';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropAll } from '../../infra/db/utils.js';
-import { LiveWriter } from './live.writer.js';
+import { LiveCreateOptions, LiveWriter } from './live.writer.js';
 import { mockLiveInfo } from '../../common/helpers/live.mocks.js';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { notNull } from '../../utils/null.js';
@@ -37,7 +37,8 @@ describe('ChannelService', () => {
     const pf = await pfFinder.findByNameNotNull('chzzk');
     const pri = await priService.findByNameNotNull('none');
     const ch = await chWriter.createWithTagNames(mockChannel(1, pf, pri), ['tag1', 'tag2']);
-    const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), null, false);
+    const opts: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
+    const live1 = await liveWriter.createByLive(mockLiveInfo(1, ch.pid), null, opts);
     console.log(live1);
 
     const live2 = await liveWriter.updateByLive(live1.id, mockLiveInfo(2, ch.pid));

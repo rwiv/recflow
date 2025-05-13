@@ -90,6 +90,8 @@ spec:
               value: "{{ .Values.app.configs.nodeResetCycleSec }}"
             - name: LIVE_RECOVERY_WAIT_TIME_MS
               value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
+            - name: LIVE_CLEAR_BATCH_SIZE
+              value: "{{ .Values.app.configs.liveClearBatchSize }}"
           volumeMounts:
             - name: stdl-redis-tls
               mountPath: "/mnt/stdl-redis-tls/{{ .Values.app.redis.secrets.tls.caKey }}"

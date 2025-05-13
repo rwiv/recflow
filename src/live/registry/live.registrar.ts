@@ -28,6 +28,7 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 import assert from 'assert';
+import { LiveInfo } from '../../platform/spec/wapper/live.js';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
@@ -113,18 +114,19 @@ export class LiveRegistrar {
 
     // If there is no available node, notify and create a disabled live
     if (!node) {
-      if (live) {
-        await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true });
-      }
       const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-      const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
-
       const headMessage = 'No available nodes for assignment';
-      const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
-      this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
-      log.info(headMessage, liveNodeAttr(newDisabledLive));
+      return this.createDisabledLive(live, liveInfo, createOpts, headMessage, tx);
+    }
 
-      return newDisabledLive.id;
+    // If m3u8 is not available, create a disabled live
+    if (streamInfo.best && streamInfo.headers) {
+      const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
+      if (!m3u8) {
+        const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
+        const headMessage = 'M3U8 not available';
+        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, tx);
+      }
     }
 
     // Create live if not exists
@@ -138,8 +140,8 @@ export class LiveRegistrar {
     // Set node
     await this.liveWriter.bind(live.id, node.id, tx);
     await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
-    if (!(await this.stdlRedis.get(live.id))) {
-      await this.stdlRedis.setLiveDto(live);
+    if (!(await this.stdlRedis.getLive(live.id))) {
+      await this.stdlRedis.setLive(live);
     }
     await this.stdl.startRecording(node.endpoint, live.id);
 
@@ -150,6 +152,26 @@ export class LiveRegistrar {
 
     log.info(logMsg, liveNodeAttr(live, node));
     return live.id;
+  }
+
+  private async createDisabledLive(
+    live: LiveDto | undefined,
+    liveInfo: LiveInfo,
+    createOpts: LiveCreateOptions,
+    headMessage: string,
+    tx: Tx,
+  ) {
+    if (live) {
+      await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true });
+    }
+    createOpts.isDisabled = true;
+    const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
+
+    const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
+    this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
+    log.info(headMessage, liveNodeAttr(newDisabledLive));
+
+    return newDisabledLive.id;
   }
 
   async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {

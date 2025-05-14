@@ -30,7 +30,7 @@ export class StdlRedisImpl extends StdlRedis {
   async set(state: LiveState): Promise<void> {
     const key = `${LIVE_PREFIX}:${state.id}`;
     if (await this.client.get(key)) {
-      throw new ValidationError(`liveId ${state.liveId} already exists`);
+      throw new ValidationError(`liveId ${state.id} already exists`);
     }
     await this.client.set(key, JSON.stringify(state), { EX: EXPIRATION_TIME_SEC });
     await this.client.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });

@@ -8,6 +8,8 @@ import { subLists } from '../../utils/list.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 
+const INIT_WAIT_THRESHOLD_MS = 60 * 1000; // 1 min
+
 @Injectable()
 export class LiveStateCleaner {
   constructor(
@@ -25,11 +27,21 @@ export class LiveStateCleaner {
 
   async getTargetIds() {
     const liveIds = await this.stdlRedis.getLivesIds();
-    const targetIds = [];
+    const promises = [];
     for (const liveId of liveIds) {
-      const exists = await this.liveFinder.findById(liveId);
+      promises.push(this.stdlRedis.getLive(liveId));
+    }
+    const states = (await Promise.all(promises)).filter((s) => s !== undefined);
+    const targetIds = [];
+    for (const state of states) {
+      const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
+      // TODO: remove null check
+      if (state.createdAt && state.createdAt >= threshold) {
+        continue;
+      }
+      const exists = await this.liveFinder.findById(state.id);
       if (!exists) {
-        targetIds.push(liveId);
+        targetIds.push(state.id);
       }
     }
     return targetIds;

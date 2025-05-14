@@ -16,6 +16,8 @@ export const liveState = z.object({
   headers: headers.nullable(),
   videoName: nonempty,
   isInvalid: z.boolean(),
+  createdAt: z.coerce.date().optional(), // TODO: update
+  updatedAt: z.coerce.date().optional(), // TODO: update
 });
 
 export type LiveState = z.infer<typeof liveState>;

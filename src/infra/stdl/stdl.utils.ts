@@ -17,5 +17,7 @@ export function liveDtoToState(dto: LiveDto): LiveState {
     headers: dto.headers,
     videoName: dto.videoName,
     isInvalid: false,
+    createdAt: dto.createdAt,
+    updatedAt: dto.updatedAt,
   };
 }

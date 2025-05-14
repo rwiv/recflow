@@ -27,6 +27,12 @@ it('test set', async () => {
   console.log(liveIds);
 });
 
+it('test get', async () => {
+  const redis = await createRedisClient(env.stdlRedis);
+  const client = new StdlRedisImpl(redis);
+  console.log(await client.getLive(''));
+});
+
 it('test getLivesIds', async () => {
   const redis = await createRedisClient(env.stdlRedis);
   const client = new StdlRedisImpl(redis);

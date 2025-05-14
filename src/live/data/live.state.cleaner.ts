@@ -8,7 +8,7 @@ import { subLists } from '../../utils/list.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 
-const INIT_WAIT_THRESHOLD_MS = 60 * 1000; // 1 min
+const INIT_WAIT_THRESHOLD_MS = 3 * 60 * 1000; // 3 min
 
 @Injectable()
 export class LiveStateCleaner {

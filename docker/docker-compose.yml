@@ -25,4 +25,4 @@ services:
     ports:
       - "${APP_PORT}:${APP_PORT}"
     volumes:
-      - ../kube/app/conf.yaml:/app/conf.yaml
+      - ../kube/server/conf.yaml:/app/conf.yaml

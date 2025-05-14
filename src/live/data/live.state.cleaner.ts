@@ -55,6 +55,6 @@ export class LiveStateCleaner {
     await this.stdlRedis.deleteLive(liveId);
 
     const duration = Date.now() - start;
-    log.info('Cleaned live', { liveId, duration, nums: nums.length });
+    log.debug('Cleaned live', { liveId, duration, nums: nums.length });
   }
 }

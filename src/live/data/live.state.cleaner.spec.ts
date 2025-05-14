@@ -10,3 +10,8 @@ it('test getTargetIds', async () => {
   console.log(targetIds.length);
   console.log(targetIds);
 });
+
+it('test clearLive', async () => {
+  const liveId = '';
+  await cleaner.clearLive(liveId);
+});

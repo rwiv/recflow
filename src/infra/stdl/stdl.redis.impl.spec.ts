@@ -11,3 +11,11 @@ it('test getLivesIds', async () => {
   const liveIds = await client.getLivesIds();
   console.log(liveIds);
 });
+
+it('test getSuccessSegNums', async () => {
+  const liveId = '';
+  const redis = await createRedisClient(env.stdlRedis);
+  const client = new StdlRedisImpl(redis);
+  const nums = await client.getSuccessSegNums(liveId);
+  console.log(nums);
+});

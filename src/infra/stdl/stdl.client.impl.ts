@@ -35,6 +35,7 @@ export class StdlImpl extends Stdl {
       signal: AbortSignal.timeout(this.env.httpTimeout),
     });
     if (res.status >= 400) {
+      log.error(`Failed to cancel recording`, { status: res.status, body: await res.text() });
       throw new HttpRequestError(`Error requesting recording`, res.status);
     }
   }

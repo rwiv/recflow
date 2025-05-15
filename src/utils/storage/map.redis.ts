@@ -10,7 +10,7 @@ export class RedisMap<T> implements AsyncMap<string, T> {
 
   async get(id: string) {
     const value = await this.client.get(this.keyPrefix + id);
-    if (!value) return undefined;
+    if (!value) return null;
     return JSON.parse(value) as T;
   }
 
@@ -48,7 +48,7 @@ export class RedisMap<T> implements AsyncMap<string, T> {
 
   async values(): Promise<T[]> {
     const values = await Promise.all((await this.keys()).map((key) => this.get(key)));
-    return values.filter((value) => value !== undefined);
+    return values.filter((value) => value !== null);
   }
 
   async entries(): Promise<[string, T][]> {

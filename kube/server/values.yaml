@@ -35,7 +35,7 @@ app:
     endpoint: http://stmgr:80
   redis:
     host: stmgr-redis-master.media.svc.cluster.local
-    port: 30225
+    port: 6379
     secrets:
       auth:
         name: stmgr-redis-auth

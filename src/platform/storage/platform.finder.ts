@@ -22,7 +22,7 @@ export class PlatformFinder {
 
   async findById(id: string, tx: Tx = db) {
     const ent = await this.pfRepo.findById(id, tx);
-    if (!ent) return undefined;
+    if (!ent) return null;
     return platformDto.parse(ent);
   }
 
@@ -34,7 +34,7 @@ export class PlatformFinder {
 
   async findByName(name: PlatformName, tx: Tx = db) {
     const ent = await this.pfRepo.findByName(name, tx);
-    if (!ent) return undefined;
+    if (!ent) return null;
     return platformDto.parse(ent);
   }
 }

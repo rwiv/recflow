@@ -27,7 +27,7 @@ export class LiveStateCleaner {
 
   async getTargetIds() {
     const liveIds = await this.stdlRedis.getLivesIds();
-    const states = (await this.stdlRedis.getLives(liveIds)).filter((s) => s !== undefined);
+    const states = (await this.stdlRedis.getLives(liveIds)).filter((s) => s !== null);
     const targetIds = [];
     for (const state of states) {
       const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);

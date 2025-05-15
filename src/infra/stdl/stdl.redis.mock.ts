@@ -8,12 +8,12 @@ export class StdlRedisMock extends StdlRedis {
     return Promise.resolve();
   }
 
-  async getLive(liveId: string): Promise<LiveState | undefined> {
+  async getLive(liveId: string): Promise<LiveState | null> {
     log.info(`StdlRedisMock.getLive(${liveId})`);
-    return Promise.resolve(undefined);
+    return Promise.resolve(null);
   }
 
-  async getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]> {
+  async getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
     log.info(`StdlRedisMock.getLives(...)`);
     return Promise.resolve([]);
   }

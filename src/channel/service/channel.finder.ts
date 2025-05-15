@@ -28,7 +28,7 @@ export class ChannelFinder {
   async findById(channelId: string, withTags: boolean = false, tx: Tx = db) {
     const ent = await this.chQuery.findById(channelId, tx);
     const channel = await this.chMapper.mapNullable(ent, tx);
-    if (!channel) return undefined;
+    if (!channel) return null;
     if (!withTags) return channel;
     return {
       ...channel,
@@ -36,10 +36,10 @@ export class ChannelFinder {
     };
   }
 
-  async findEarliestRefreshedOne(opts: ChannelMapOptions): Promise<ChannelDto | undefined> {
+  async findEarliestRefreshedOne(opts: ChannelMapOptions): Promise<ChannelDto | null> {
     const entities = await this.chQuery.findEarliestRefreshed(1);
     if (entities.length === 0) {
-      return undefined;
+      return null;
     }
     if (entities.length !== 1) {
       throw new ConflictError(`Invalid channel entities: length=${entities.length}`);
@@ -57,7 +57,7 @@ export class ChannelFinder {
     const platform = await this.pfFinder.findByNameNotNull(platformName, tx);
     const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id, tx);
     const channels = await this.chMapper.mapAll(entities, tx);
-    if (channels.length === 0) return undefined;
+    if (channels.length === 0) return null;
     if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
     return this.chMapper.loadRelation(channels[0], opts, tx);
   }

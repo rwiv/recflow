@@ -4,8 +4,8 @@ import { NotFoundError } from '../errors/errors/NotFoundError.js';
 export class MemoryMap<K, V> implements AsyncMap<K, V> {
   private map = new Map<K, V>();
 
-  get(key: K): Promise<V | undefined> {
-    return Promise.resolve(this.map.get(key));
+  get(key: K): Promise<V | null> {
+    return Promise.resolve(this.map.get(key) ?? null);
   }
 
   async set(key: K, value: V): Promise<void> {

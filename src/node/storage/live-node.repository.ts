@@ -42,13 +42,13 @@ export class LiveNodeRepository {
     return oneNotNull(ent);
   }
 
-  async findByLiveIdAndNodeId(liveId: string, nodeId: string, tx: Tx = db): Promise<LiveNodeEnt | undefined> {
+  async findByLiveIdAndNodeId(liveId: string, nodeId: string, tx: Tx = db): Promise<LiveNodeEnt | null> {
     const entities = await tx
       .select()
       .from(liveNodeTable)
       .where(and(eq(liveNodeTable.liveId, liveId), eq(liveNodeTable.nodeId, nodeId)));
     if (entities.length === 0) {
-      return undefined;
+      return null;
     }
     if (entities.length > 1) {
       throw new ValidationError(`Duplicated live node entities: liveId=${liveId}, nodeId=${nodeId}`);

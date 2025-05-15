@@ -21,21 +21,21 @@ export class LiveFinder {
   async findById(id: string, opts: FindOptions = {}, tx: Tx = db) {
     if (opts.forUpdate) {
       const ent = await this.liveRepo.findByIdForUpdate(id, tx);
-      if (!ent) return undefined;
+      if (!ent) return null;
       return this.mapper.map(ent, tx, opts);
     } else {
       const ent = await this.liveRepo.findById(id, tx);
-      if (!ent) return undefined;
+      if (!ent) return null;
       return this.mapper.map(ent, tx, opts);
     }
   }
 
   async findByPid(pid: string, tx: Tx = db, opts: FindOptions = {}) {
     const entities = await this.liveRepo.findByPid(pid, tx);
-    if (entities.length === 0) return undefined;
+    if (entities.length === 0) return null;
     if (entities.length > 1) throw new ValidationError(`Duplicated live entities: pid=${pid}`);
     const ent = entities[0];
-    if (!ent) return undefined;
+    if (!ent) return null;
     return this.mapper.map(ent, tx, opts);
   }
 
@@ -47,10 +47,10 @@ export class LiveFinder {
     return this.mapper.mapAll(await this.liveRepo.findByIsDisabled(false), tx, opt);
   }
 
-  async findEarliestUpdatedOne(tx: Tx = db): Promise<LiveDto | undefined> {
+  async findEarliestUpdatedOne(tx: Tx = db): Promise<LiveDto | null> {
     const entities = await this.liveRepo.findEarliestUpdated(1, tx);
     if (entities.length === 0) {
-      return undefined;
+      return null;
     }
     if (entities.length !== 1) {
       throw new ConflictError(`Invalid live entities: length=${entities.length}`);

@@ -25,9 +25,9 @@ export class CriterionFinder {
     return Promise.all(promises);
   }
 
-  async findById(id: string, tx: Tx = db): Promise<PlatformCriterionDto | undefined> {
+  async findById(id: string, tx: Tx = db): Promise<PlatformCriterionDto | null> {
     const ent = await this.crRepo.findById(id, tx);
-    if (!ent) return undefined;
+    if (!ent) return null;
     const platform = await this.pfFinder.findByIdNotNull(ent.platformId);
     return this.map(ent, platform, tx);
   }

@@ -20,8 +20,8 @@ export class ChannelMapper {
     return Promise.all(entities.map((ent) => this.map(ent, tx)));
   }
 
-  async mapNullable(ent: ChannelEnt | undefined, tx: Tx = db) {
-    if (!ent) return undefined;
+  async mapNullable(ent: ChannelEnt | null, tx: Tx = db) {
+    if (!ent) return null;
     return this.map(ent, tx);
   }
 

@@ -11,9 +11,9 @@ export function oneNotNull<T>(list: T[]): T {
   return list[0];
 }
 
-export function oneNullable<T>(list: T[]): T | undefined {
+export function oneNullable<T>(list: T[]): T | null {
   if (list.length === 0) {
-    return undefined;
+    return null;
   }
   if (list.length > 1) {
     throw new ValidationError('Element is not unique');

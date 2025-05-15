@@ -55,13 +55,13 @@ export class PriorityRepository {
     return tx.select().from(channelPriorityTable);
   }
 
-  async findById(priorityId: string, tx: Tx = db): Promise<PriorityEnt | undefined> {
+  async findById(priorityId: string, tx: Tx = db): Promise<PriorityEnt | null> {
     return oneNullable(
       await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.id, priorityId)),
     );
   }
 
-  async findByName(priorityName: string, tx: Tx = db): Promise<PriorityEnt | undefined> {
+  async findByName(priorityName: string, tx: Tx = db): Promise<PriorityEnt | null> {
     return oneNullable(
       await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.name, priorityName)),
     );

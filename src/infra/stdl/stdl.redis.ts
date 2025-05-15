@@ -24,8 +24,8 @@ export type LiveState = z.infer<typeof liveState>;
 
 export abstract class StdlRedis {
   abstract setLive(live: LiveDto): Promise<void>;
-  abstract getLive(id: string): Promise<LiveState | undefined>;
-  abstract getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]>;
+  abstract getLive(id: string): Promise<LiveState | null>;
+  abstract getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]>;
   abstract deleteLive(id: string): Promise<void>;
   abstract dropAllLives(): Promise<void>;
 

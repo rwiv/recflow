@@ -15,13 +15,13 @@ export class NodeFinder {
 
   async findById(id: string, req: NodeFieldsReq, tx: Tx = db) {
     const ent = await this.nodeRepo.findById(id, tx);
-    if (!ent) return undefined;
+    if (!ent) return null;
     return this.mapper.map(ent, req, tx);
   }
 
   async findByName(name: string, req: NodeFieldsReq, tx: Tx = db) {
     const ent = await this.nodeRepo.findByName(name);
-    if (!ent) return undefined;
+    if (!ent) return null;
     return this.mapper.map(ent, req, tx);
   }
 

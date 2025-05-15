@@ -12,12 +12,12 @@ export class TagQueryRepository {
     return tx.select().from(channelTagTable);
   }
 
-  async findById(tagId: string, tx: Tx = db): Promise<TagEnt | undefined> {
+  async findById(tagId: string, tx: Tx = db): Promise<TagEnt | null> {
     const ent = await tx.select().from(channelTagTable).where(eq(channelTagTable.id, tagId));
     return oneNullable(ent);
   }
 
-  async findByName(tagName: string, tx: Tx = db): Promise<TagEnt | undefined> {
+  async findByName(tagName: string, tx: Tx = db): Promise<TagEnt | null> {
     const ent = await tx.select().from(channelTagTable).where(eq(channelTagTable.name, tagName));
     return oneNullable(ent);
   }

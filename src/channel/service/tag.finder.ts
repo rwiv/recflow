@@ -10,7 +10,7 @@ export class TagFinder {
     return this.tagQuery.findAll();
   }
 
-  findById(tagId: string): Promise<TagDto | undefined> {
+  findById(tagId: string): Promise<TagDto | null> {
     return this.tagQuery.findById(tagId);
   }
 }

@@ -44,7 +44,7 @@ export class LiveRepository {
     platformId: string,
     sourceId: string,
     tx: Tx = db,
-  ): Promise<LiveEnt | undefined> {
+  ): Promise<LiveEnt | null> {
     const cond = and(eq(liveTable.platformId, platformId), eq(liveTable.sourceId, sourceId));
     return oneNullable(await tx.select().from(liveTable).where(cond));
   }

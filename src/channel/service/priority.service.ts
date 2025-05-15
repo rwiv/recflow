@@ -19,7 +19,7 @@ export class PriorityService {
     return this.priRepo.findAll();
   }
 
-  findById(id: string, tx: Tx = db): Promise<PriorityDto | undefined> {
+  findById(id: string, tx: Tx = db): Promise<PriorityDto | null> {
     return this.priRepo.findById(id, tx);
   }
 
@@ -29,7 +29,7 @@ export class PriorityService {
     return priority;
   }
 
-  findByName(name: string, tx: Tx = db): Promise<PriorityDto | undefined> {
+  findByName(name: string, tx: Tx = db): Promise<PriorityDto | null> {
     return this.priRepo.findByName(name, tx);
   }
 

@@ -1,15 +1,13 @@
 import amqplib, { Channel, Connection } from 'amqplib';
 import { AmqpConfig } from '../../common/config/config.types.js';
-import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
+import { Injectable } from '@nestjs/common';
 import { Amqp } from './amqp.interface.js';
 import { UninitializedError } from '../../utils/errors/errors/UninitializedError.js';
 
 @Injectable()
 export class AmqpImpl implements Amqp {
-  private conn: Connection | undefined = undefined;
-  private ch: Channel | undefined = undefined;
+  private conn: Connection | null = null;
+  private ch: Channel | null = null;
 
   constructor(private readonly conf: AmqpConfig) {}
 
@@ -20,14 +18,14 @@ export class AmqpImpl implements Amqp {
   }
 
   createChannel() {
-    if (this.conn === undefined) {
+    if (this.conn === null) {
       throw new UninitializedError('Connection is not initialized');
     }
     return this.conn.createChannel();
   }
 
   async assertQueue(queue: string) {
-    if (this.ch === undefined) {
+    if (this.ch === null) {
       throw new UninitializedError('Channel is not initialized');
     }
     return this.ch.assertQueue(queue, {
@@ -38,7 +36,7 @@ export class AmqpImpl implements Amqp {
   }
 
   publish(queue: string, content: object) {
-    if (this.ch === undefined) {
+    if (this.ch === null) {
       throw new UninitializedError('Channel is not initialized');
     }
     return this.ch.sendToQueue(queue, Buffer.from(JSON.stringify(content)));

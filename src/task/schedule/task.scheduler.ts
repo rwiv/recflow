@@ -25,7 +25,7 @@ export class TaskScheduler {
 
   getPeriodTaskStatus(taskName: string) {
     const periodTask = this.periodTaskMap.get(taskName);
-    if (!periodTask) return undefined;
+    if (!periodTask) return null;
     return this.toTaskStatus(periodTask);
   }
 

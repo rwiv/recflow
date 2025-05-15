@@ -1,5 +1,5 @@
 export interface AsyncMap<K, V> {
-  get(key: K): Promise<V | undefined>;
+  get(key: K): Promise<V | null>;
   set(key: K, value: V): Promise<void>;
   delete(key: K): Promise<void>;
   clear(): Promise<void>;

@@ -37,16 +37,16 @@ export class StdlRedisImpl extends StdlRedis {
     await this.client.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
   }
 
-  async getLive(liveRecordId: string): Promise<LiveState | undefined> {
+  async getLive(liveRecordId: string): Promise<LiveState | null> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
     const liveData = await this.client.get(key);
     if (!liveData) {
-      return undefined;
+      return null;
     }
     return liveState.parse(JSON.parse(liveData));
   }
 
-  async getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]> {
+  async getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
     if (liveRecordIds.length === 0) {
       return [];
     }
@@ -54,7 +54,7 @@ export class StdlRedisImpl extends StdlRedis {
     const data = await this.client.mGet(keys);
     return data.map((item) => {
       if (!item) {
-        return undefined;
+        return null;
       }
       return liveState.parse(JSON.parse(item));
     });

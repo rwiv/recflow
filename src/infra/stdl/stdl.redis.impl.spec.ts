@@ -17,11 +17,15 @@ const state: LiveState = {
   streamUrl: 'asd',
   headers: null,
   isInvalid: false,
+  createdAt: new Date(),
+  updatedAt: null,
 };
+
+const exSec = 3600 * 24;
 
 it('test set', async () => {
   const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis);
+  const client = new StdlRedisImpl(redis, exSec);
   await client.set(state);
   const liveIds = await client.getLivesIds();
   console.log(liveIds);
@@ -29,13 +33,13 @@ it('test set', async () => {
 
 it('test get', async () => {
   const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis);
+  const client = new StdlRedisImpl(redis, exSec);
   console.log(await client.getLive(''));
 });
 
 it('test getLivesIds', async () => {
   const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis);
+  const client = new StdlRedisImpl(redis, exSec);
   const liveIds = await client.getLivesIds();
   console.log(liveIds);
 });
@@ -43,7 +47,7 @@ it('test getLivesIds', async () => {
 it('test getSuccessSegNums', async () => {
   const liveId = '';
   const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis);
+  const client = new StdlRedisImpl(redis, exSec);
   const nums = await client.getSuccessSegNums(liveId);
   console.log(nums);
 });

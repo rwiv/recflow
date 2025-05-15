@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
+import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
@@ -17,6 +17,8 @@ import { Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { stacktrace } from '../../utils/errors/utils.js';
+import { Notifier } from '../../infra/notify/notifier.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -36,6 +38,7 @@ export class LiveRecoveryManager {
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
+    @Inject(NOTIFIER) private readonly notifier: Notifier,
     private readonly stlink: Stlink,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
@@ -117,16 +120,25 @@ export class LiveRecoveryManager {
 
     if (invalidNode.failureCnt >= this.env.nodeFailureThreshold) {
       await this.nodeUpdater.update(invalidNode.id, { failureCnt: 0, isCordoned: true });
+      const alertMsg = `Node ${invalidNode.name} is cordoned due to failure count exceeded threshold`;
+      this.notifier.notify(this.env.untf.topic, alertMsg);
     } else {
       await this.nodeUpdater.update(invalidNode.id, { failureCnt: invalidNode.failureCnt + 1 });
     }
 
     await this.liveRegistrar.deregister(tgLive, invalidNode);
-    await this.liveRegistrar.register({
-      channelInfo,
-      ignoreNodeIds: [invalidNode.id],
-      reusableLive: tgLive,
-    });
+    try {
+      await this.liveRegistrar.register({
+        channelInfo,
+        ignoreNodeIds: [invalidNode.id],
+        reusableLive: tgLive,
+      });
+    } catch (ex) {
+      const message = `Live recovery failed`;
+      log.error(message, { ...liveNodeAttr(tgLive, invalidNode), stacktrace: stacktrace(ex) });
+      this.notifier.notify(this.env.untf.topic, `${message}: channel: ${tgLive.channel.username}`);
+      await this.finishLive(tgLive.id, message);
+    }
   }
 
   private async retrieveInvalidNodes(): Promise<Map<string, TargetLive>> {

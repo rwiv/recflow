@@ -90,7 +90,6 @@ export class LiveRegistrar {
       channel = await this.chWriter.createWithInfo(append, req.channelInfo);
     }
 
-    // Register live
     return db.transaction(async (tx) => {
       return this._register(req, channel, streamInfo, tx);
     });

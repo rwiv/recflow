@@ -23,7 +23,7 @@ export class StdlRedisMock extends StdlRedis {
     return Promise.resolve();
   }
 
-  async dropAllLives(): Promise<void> {
+  async deleteAllLives(): Promise<void> {
     log.info(`StdlRedisMock.dropAll()`);
     return Promise.resolve();
   }
@@ -43,8 +43,8 @@ export class StdlRedisMock extends StdlRedis {
     return Promise.resolve();
   }
 
-  async deleteSegmentState(liveId: string, num: string): Promise<void> {
-    log.info(`StdlRedisMock.deleteSegmentState(${liveId}, ${num})`);
+  async deleteSegmentStates(liveId: string, nums: string[]): Promise<void> {
+    log.info(`StdlRedisMock.deleteSegmentStates(${liveId}, ${nums})`);
     return Promise.resolve();
   }
 }

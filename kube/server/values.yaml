@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.2.6
+  tag: 1.2.7
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -52,7 +52,7 @@ app:
     nodeFailureThreshold: 3
     nodeResetCycleSec: 43200 # 12 hours
     liveRecoveryWaitTimeMs: 40000
-    liveClearBatchSize: 50
+    liveClearBatchSize: 100
     liveExpireSec: 604800 # 7 days
     recordExpireSec: 86400 # 24 hours
 

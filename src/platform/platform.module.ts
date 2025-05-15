@@ -7,11 +7,23 @@ import { PlatformRepository } from './storage/platform.repository.js';
 import { PlatformFinder } from './storage/platform.finder.js';
 import { PlatformController } from './storage/platform.controller.js';
 import { Stlink } from './stlink/stlink.js';
+import { PlatformWriter } from './storage/platform.writer.js';
+import { PlatformCacheStore } from './storage/platform.cache.store.js';
+import { InfraModule } from '../infra/infra.module.js';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, InfraModule],
   controllers: [PlatformController],
-  providers: [PlatformFetcher, ChzzkFetcher, SoopFetcher, PlatformRepository, PlatformFinder, Stlink],
-  exports: [PlatformFetcher, PlatformRepository, PlatformFinder, Stlink],
+  providers: [
+    PlatformFetcher,
+    ChzzkFetcher,
+    SoopFetcher,
+    PlatformRepository,
+    PlatformFinder,
+    PlatformWriter,
+    PlatformCacheStore,
+    Stlink,
+  ],
+  exports: [PlatformFetcher, PlatformRepository, PlatformFinder, PlatformWriter, PlatformCacheStore, Stlink],
 })
 export class PlatformModule {}

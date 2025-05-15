@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 import { PlatformName, platformNameEnum } from '../spec/storage/platform.enum.schema.js';
 import { z } from 'zod';
 import { uuid } from '../../utils/uuid.js';
-import { platformEnt } from './platform.entity.schema.js';
+import { PlatformEnt, platformEnt } from './platform.entity.schema.js';
 
 export const platformEntAppend = platformEnt
   .partial({ id: true, createdAt: true, updatedAt: true })
@@ -19,7 +19,7 @@ type PlatformEntAppendReq = z.infer<typeof platformEntAppendReq>;
 
 @Injectable()
 export class PlatformRepository {
-  async create(append: PlatformEntAppend, tx: Tx = db) {
+  async create(append: PlatformEntAppend, tx: Tx = db): Promise<PlatformEnt> {
     const entReq: PlatformEntAppendReq = {
       ...append,
       id: append.id ?? uuid(),
@@ -29,15 +29,15 @@ export class PlatformRepository {
     return oneNotNull(ent);
   }
 
-  async findAll(tx: Tx = db) {
+  async findAll(tx: Tx = db): Promise<PlatformEnt[]> {
     return tx.select().from(platformTable);
   }
 
-  async findById(id: string, tx: Tx = db) {
+  async findById(id: string, tx: Tx = db): Promise<PlatformEnt | null> {
     return oneNullable(await tx.select().from(platformTable).where(eq(platformTable.id, id)));
   }
 
-  async findByName(name: PlatformName, tx: Tx = db) {
+  async findByName(name: PlatformName, tx: Tx = db): Promise<PlatformEnt | null> {
     return oneNullable(await tx.select().from(platformTable).where(eq(platformTable.name, name)));
   }
 }

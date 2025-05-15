@@ -10,11 +10,12 @@ import {
   soopCriterionRuleNameEnum,
 } from '../../criterion/spec/criterion.rule.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
+import { PlatformWriter } from '../../platform/storage/platform.writer.js';
 
 @Injectable()
 export class DevInitializer {
   constructor(
-    private readonly pfRepo: PlatformRepository,
+    private readonly pfWriter: PlatformWriter,
     private readonly priService: PriorityService,
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
@@ -35,7 +36,7 @@ export class DevInitializer {
 
   private async addPlatforms() {
     for (const name of platformNameEnum.options) {
-      await this.pfRepo.create({ name });
+      await this.pfWriter.create({ name });
     }
   }
 

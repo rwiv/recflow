@@ -68,7 +68,7 @@ export class StdlRedisImpl extends StdlRedis {
     await this.client.zRem(LIVES_KEY, liveRecordId);
   }
 
-  async dropAllLives(): Promise<void> {
+  async deleteAllLives(): Promise<void> {
     const keys = await this.client.keys(`*`);
     for (const key of keys) {
       await this.client.del(key);
@@ -92,7 +92,7 @@ export class StdlRedisImpl extends StdlRedis {
     return await this.client.get(`${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`);
   }
 
-  async deleteSegmentState(liveId: string, num: string) {
-    await this.client.del(`${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`);
+  async deleteSegmentStates(liveId: string, nums: string[]): Promise<void> {
+    await this.client.del(nums.map((num) => `${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`));
   }
 }

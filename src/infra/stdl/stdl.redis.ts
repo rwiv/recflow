@@ -27,12 +27,12 @@ export abstract class StdlRedis {
   abstract getLive(id: string): Promise<LiveState | null>;
   abstract getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]>;
   abstract deleteLive(id: string): Promise<void>;
-  abstract dropAllLives(): Promise<void>;
+  abstract deleteAllLives(): Promise<void>;
 
   abstract getLivesIds(): Promise<string[]>;
   abstract getSuccessSegNums(liveId: string): Promise<string[]>;
   abstract deleteSuccessSegNumSet(liveId: string): Promise<void>;
-  abstract deleteSegmentState(liveId: string, num: string): Promise<void>;
+  abstract deleteSegmentStates(liveId: string, nums: string[]): Promise<void>;
 
   async isInvalidLive(live: LiveDto): Promise<boolean> {
     const liveState = await this.getLive(live.id);

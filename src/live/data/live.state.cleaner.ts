@@ -51,12 +51,8 @@ export class LiveStateCleaner {
 
     const start = Date.now();
     const nums = await this.stdlRedis.getSuccessSegNums(liveId);
-    for (const batch of subLists(nums, this.env.liveClearBatchSize)) {
-      const promises = [];
-      for (const num of batch) {
-        promises.push(this.stdlRedis.deleteSegmentState(liveId, num));
-      }
-      await Promise.all(promises);
+    for (const batchNums of subLists(nums, this.env.liveClearBatchSize)) {
+      await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
     }
     await this.stdlRedis.deleteSuccessSegNumSet(liveId);
     await this.stdlRedis.deleteLive(liveId);

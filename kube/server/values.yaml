@@ -34,15 +34,12 @@ app:
   server:
     endpoint: http://stmgr:80
   redis:
-    host: stdl-redis.rwiv.xyz
-    port: 30211
+    host: stmgr-redis-master.media.svc.cluster.local
+    port: 30225
     secrets:
       auth:
-        name: stdl-redis-auth
+        name: stmgr-redis-auth
         passwordKey: password
-      tls:
-        name: stdl-redis-tls
-        caKey: ca.crt
   postgres:
     host: stmgr-postgresql.media.svc.cluster.local
     port: 5432
@@ -58,6 +55,17 @@ app:
     liveClearBatchSize: 50
 
 externals:
+  stdl:
+    redis:
+      host: stdl-redis.rwiv.xyz
+      port: 30211
+      secrets:
+        auth:
+          name: stdl-redis-auth
+          passwordKey: password
+        tls:
+          name: stdl-redis-tls
+          caKey: ca.crt
   streamq:
     url: http://streamq-vpn.media.svc.cluster.local
     qsize: 200

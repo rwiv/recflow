@@ -3,6 +3,7 @@ helm-dep:
 	-@helm dependency update ../kube/postgresql-exporter
 
 
+# postgresql
 helm-pg-prod-run:
 	helm install stmgr-postgresql ../kube/postgresql -n media
 
@@ -31,3 +32,26 @@ helm-pg-stage-run:
 helm-pg-stage-rm:
 	-@helm uninstall stmgr-postgresql -n stage
 	-@kubectl delete pvc data-stmgr-postgresql-0 -n stage
+
+
+# redis
+helm-redis-dep:
+	-@helm dependency update ./redis
+
+helm-prod-redis-run:
+	-@helm install stmgr-redis ../kube/redis -n media
+
+helm-prod-redis-rm:
+	-@helm uninstall stmgr-redis -n media
+
+delete-prod-redis-pvc:
+	-@kubectl delete pvc redis-data-stmgr-redis-master-0 -n media
+
+helm-stage-redis-run:
+	-@helm install stmgr-redis ../kube/redis -n stage \
+		--set metadata.namespace=stage \
+		--set redis.master.persistence.enabled=false \
+		--set redis.master.service.nodePorts.redis=30228
+
+helm-stage-redis-rm:
+	-@helm uninstall stmgr-redis -n stage

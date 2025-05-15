@@ -1,0 +1,28 @@
+metadata:
+  name: stmgr-redis
+  namespace: media
+vault:
+  mount: kube
+  path: media/stmgr/redis
+  version: 1
+  secretName: stmgr-redis-auth
+  refreshAfter: 30s
+
+redis:
+  global:
+    storageClass: rook-ceph-block
+  auth:
+    existingSecret: stmgr-redis-auth
+    existingSecretPasswordKey: password
+  master:
+    count: 1
+    service:
+      type: NodePort
+      nodePorts:
+        redis: 30215
+    persistence:
+      enabled: true
+  replica:
+    replicaCount: 0
+  tls:
+    enabled: false

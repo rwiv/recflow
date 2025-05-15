@@ -39,7 +39,6 @@ export class LiveController {
   @Get('/')
   allActives(): Promise<LiveDto[]> {
     const opt: LiveFieldsReq = {
-      channelTags: false,
       nodes: true,
       nodeGroup: true,
     };
@@ -49,7 +48,6 @@ export class LiveController {
   @Get('/all')
   all(): Promise<LiveDto[]> {
     const opt: LiveFieldsReq = {
-      channelTags: false,
       nodes: true,
       nodeGroup: true,
     };

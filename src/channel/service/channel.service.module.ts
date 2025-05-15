@@ -20,6 +20,14 @@ import { PriorityService } from './priority.service.js';
     ChannelMapper,
     PriorityService,
   ],
-  exports: [TagWriter, TagFinder, ChannelWriter, ChannelFinder, ChannelSearcher, PriorityService],
+  exports: [
+    TagWriter,
+    TagFinder,
+    ChannelWriter,
+    ChannelFinder,
+    ChannelMapper,
+    ChannelSearcher,
+    PriorityService,
+  ],
 })
 export class ChannelServiceModule {}

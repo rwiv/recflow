@@ -5,9 +5,11 @@ import { ChannelSearchRepository } from './channel.search.js';
 import { PriorityRepository } from './priority.repository.js';
 import { TagCommandRepository } from './tag.command.js';
 import { TagQueryRepository } from './tag.query.js';
+import { ChannelCacheStore } from './channel.cache.store.js';
+import { InfraModule } from '../../infra/infra.module.js';
 
 @Module({
-  imports: [],
+  imports: [InfraModule],
   providers: [
     PriorityRepository,
     ChannelCommandRepository,
@@ -15,6 +17,7 @@ import { TagQueryRepository } from './tag.query.js';
     ChannelSearchRepository,
     TagCommandRepository,
     TagQueryRepository,
+    ChannelCacheStore,
   ],
   exports: [
     PriorityRepository,
@@ -23,6 +26,7 @@ import { TagQueryRepository } from './tag.query.js';
     ChannelSearchRepository,
     TagCommandRepository,
     TagQueryRepository,
+    ChannelCacheStore,
   ],
 })
 export class ChannelStorageModule {}

@@ -10,6 +10,7 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityService } from './priority.service.js';
 import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 import { PriorityDto } from '../spec/priority.schema.js';
+import { ChannelMapper } from './channel.mapper.js';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
@@ -18,6 +19,7 @@ const priService = app.get(PriorityService);
 const chFinder = app.get(ChannelFinder);
 const chSearcher = app.get(ChannelSearcher);
 const chWriter = app.get(ChannelWriter);
+const chMapper = app.get(ChannelMapper);
 
 describe('ChannelService', () => {
   let pf: PlatformDto | undefined = undefined;
@@ -87,12 +89,12 @@ describe('ChannelService', () => {
     const page = { page: 1, size: 20 };
 
     // const result = await chSearcher.findByQuery(page, sorted, prioirty, undefined, true);
-    const result = await chSearcher.findByAllTags(includes, excludes, page, sorted, prioirty, true);
+    const result = await chSearcher.findByAllTags(includes, excludes, page, sorted, prioirty, { tags: true });
     // const result = await chSearcher.findByAnyTag(includes, excludes, page, sorted, prioirty, true);
     console.log(result.total);
     console.log(result.channels.map((r) => r.username));
 
-    const all = await chFinder.findAll(true);
+    const all = await chMapper.loadRelations(await chFinder.findAll(), { tags: true });
     for (const r of all) {
       console.log(`${r.username}: [${r.tags?.map((t) => t.name).join(',')}]`);
     }

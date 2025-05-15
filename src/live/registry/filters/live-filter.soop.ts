@@ -38,7 +38,7 @@ export class SoopLiveFilter {
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop', {});
+    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop');
     if (channel) {
       if (channel.priority.shouldNotify) {
         return liveInfo;

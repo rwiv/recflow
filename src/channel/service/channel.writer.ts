@@ -6,6 +6,7 @@ import {
   ChannelDto,
   ChannelAppend,
   ChannelUpdate,
+  MappedChannelDto,
 } from '../spec/channel.dto.schema.js';
 import { TagDetachment, TagDto } from '../spec/tag.dto.schema.js';
 import { Injectable } from '@nestjs/common';
@@ -23,10 +24,10 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { ChannelsToTagsEntAppend } from '../spec/tag.entity.schema.js';
 import { TagCommandRepository } from '../storage/tag.command.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { PriorityService } from './priority.service.js';
 import { ChannelFinder } from './channel.finder.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { log } from 'jslog';
+import { ChannelCacheStore } from '../storage/channel.cache.store.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -34,14 +35,27 @@ export class ChannelWriter {
     private readonly chCmd: ChannelCommandRepository,
     private readonly chQuery: ChannelQueryRepository,
     private readonly pfFinder: PlatformFinder,
-    private readonly priService: PriorityService,
     private readonly tagWriter: TagWriter,
     private readonly tagQuery: TagQueryRepository,
     private readonly chFinder: ChannelFinder,
     private readonly chMapper: ChannelMapper,
     private readonly fetcher: PlatformFetcher,
     private readonly tagCmd: TagCommandRepository,
+    private readonly cache: ChannelCacheStore,
   ) {}
+
+  async createWithFetch(appendFetch: ChannelAppendWithFetch) {
+    const platform = await this.pfFinder.findByIdNotNull(appendFetch.platformId);
+    const info = await this.fetcher.fetchChannelNotNull(platform.name, appendFetch.pid, false);
+    const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
+    return this.createWithInfo(appendInfo, info);
+  }
+
+  async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo, tx: Tx = db) {
+    const platform = await this.pfFinder.findByNameNotNull(info.platform, tx);
+    const append: ChannelAppend = { ...appendInfo, ...info, platformId: platform.id };
+    return this.createWithTagNames(append, appendInfo.tagNames, tx);
+  }
 
   async createWithTagNames(append: ChannelAppend, tagNames?: string[], tx: Tx = db) {
     return tx.transaction(async (txx) => {
@@ -60,73 +74,87 @@ export class ChannelWriter {
     });
   }
 
-  async createWithTagIds(append: ChannelAppend, tagIds?: string[], tx: Tx = db) {
+  async createWithTagIds(append: ChannelAppend, tagIds?: string[], tx: Tx = db): Promise<MappedChannelDto> {
     if (tagIds && hasDuplicates(tagIds)) {
       throw new ConflictError('Duplicate tag names');
     }
-    const platform = await this.pfFinder.findByIdNotNull(append.platformId);
-    const entities = await this.chQuery.findByPidAndPlatform(append.pid, platform.id);
-    if (entities.length > 0) {
+
+    const platform = await this.pfFinder.findByIdNotNull(append.platformId, tx);
+    if (await this.chFinder.findByPidAndPlatform(append.pid, platform.name, tx)) {
       throw new ConflictError(`Channel already exist ${append.username}`);
     }
-    const priority = await this.priService.findByIdNotNull(append.priorityId);
 
-    const entAppend: ChannelEntAppend = {
-      ...append,
-      platformId: platform.id,
-      priorityId: priority.id,
-    };
     return tx.transaction(async (txx) => {
-      const ent = await this.chCmd.create(entAppend, txx);
-      const channel = await this.chMapper.map(ent);
-      let result: ChannelDto = { ...channel };
+      const entAppend: ChannelEntAppend = {
+        ...append,
+        platformId: platform.id,
+        priorityId: append.priorityId,
+      };
+      const channel = await this.chMapper.map(await this.chCmd.create(entAppend, txx));
+
+      let mappedChannel: MappedChannelDto = { ...channel, tags: [] };
       const tags: TagDto[] = [];
       if (tagIds && tagIds.length > 0) {
         for (const tagId of tagIds) {
           const bind: ChannelsToTagsEntAppend = { channelId: channel.id, tagId };
           tags.push(await this.tagWriter.bind(bind, txx));
         }
-        result = { ...channel, tags };
+        mappedChannel = { ...channel, tags };
       }
-      return result;
+
+      await this.cache.set(channel);
+      if (channel.isFollowed) {
+        await this.cache.addFollowedChannel(channel.id);
+      }
+
+      return mappedChannel;
     });
-  }
-
-  async createWithFetch(appendFetch: ChannelAppendWithFetch) {
-    const platform = await this.pfFinder.findByIdNotNull(appendFetch.platformId);
-    const info = await this.fetcher.fetchChannelNotNull(platform.name, appendFetch.pid, false);
-    const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
-    return this.createWithInfo(appendInfo, info);
-  }
-
-  async createWithInfo(appendInfo: ChannelAppendWithInfo, info: ChannelInfo, tx: Tx = db) {
-    const platform = await this.pfFinder.findByNameNotNull(info.platform, tx);
-    const append: ChannelAppend = { ...appendInfo, ...info, platformId: platform.id };
-    return this.createWithTagNames(append, appendInfo.tagNames, tx);
   }
 
   async update(id: string, req: ChannelUpdate, isRefresh: boolean, tx: Tx = db) {
     const ent = await this.chCmd.update(id, req, isRefresh, tx);
-    return this.chMapper.map(ent);
+    const dto = await this.chMapper.map(ent);
+
+    if (!isRefresh) {
+      await this.cache.set(dto);
+    }
+    if (isRefresh && (await this.cache.findById(dto.id))) {
+      await this.cache.set(dto, { keepEx: true });
+    }
+
+    if (req.isFollowed == true) {
+      await this.cache.addFollowedChannel(dto.id);
+    }
+    if (req.isFollowed == false) {
+      await this.cache.removeFollowedChannel(dto.id);
+    }
+
+    return dto;
   }
 
   async delete(channelId: string, tx: Tx = db): Promise<ChannelDto> {
-    const ent = await this.chQuery.findById(channelId, tx);
-    const channel = await this.chMapper.mapNullable(ent);
-    if (!channel) throw NotFoundError.from('Channel', 'id', channelId);
-    const tags = await this.tagQuery.findTagsByChannelId(channel.id, tx);
     return tx.transaction(async (txx) => {
+      const ent = await this.chQuery.findById(channelId, txx);
+      const channel = await this.chMapper.mapNullable(ent);
+      if (!channel) throw NotFoundError.from('Channel', 'id', channelId);
+
+      const tags = await this.tagQuery.findTagsByChannelId(channel.id, txx);
       for (const tag of tags) {
         const detach: TagDetachment = { channelId: channel.id, tagId: tag.id };
         await this.tagWriter.detach(detach, txx);
       }
       await this.chCmd.delete(channel.id, txx);
+
+      await this.cache.deleteByDto(channel);
+      if (channel.isFollowed) {
+        await this.cache.removeFollowedChannel(channel.id);
+      }
       return channel;
     });
   }
 
   async refresh(): Promise<ChannelDto> {
-    const channel = await this.chFinder.findEarliestRefreshedOne({});
+    const channel = await this.chFinder.findEarliestRefreshedOne();
     if (!channel) {
       throw new NotFoundError('earliest refreshed channel not found');
     }

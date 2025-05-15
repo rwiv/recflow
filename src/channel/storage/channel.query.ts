@@ -38,6 +38,14 @@ export class ChannelQueryRepository {
     return tx.select().from(channelTable).where(eq(channelTable.priorityId, priorityId));
   }
 
+  async findIdsByPriorityId(priorityId: string, tx: Tx = db) {
+    const records = await tx
+      .select({ id: channelTable.id })
+      .from(channelTable)
+      .where(eq(channelTable.priorityId, priorityId));
+    return records.map((record) => record.id);
+  }
+
   async findByFollowedFlag(isFollowed: boolean, tx: Tx = db): Promise<ChannelEnt[]> {
     const rows = await tx
       .select()

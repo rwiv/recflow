@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelDto } from '../spec/channel.dto.schema.js';
+import { ChannelDto, MappedChannelDto } from '../spec/channel.dto.schema.js';
 import { ChannelEnt } from '../spec/channel.entity.schema.js';
 import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
@@ -31,20 +31,25 @@ export class ChannelMapper {
     return { ...ent, platform: await platformP, priority: await priorityP };
   }
 
-  async loadRelations(channels: ChannelDto[], opts: ChannelMapOptions, tx: Tx = db): Promise<ChannelDto[]> {
+  async loadRelations(
+    channels: ChannelDto[],
+    opts: ChannelMapOptions,
+    tx: Tx = db,
+  ): Promise<MappedChannelDto[]> {
     const withTags = opts.tags ?? false;
     const withTopics = opts.topics ?? false;
-    if (!withTags && !withTopics) return channels;
-    const promises = channels.map(async (channel) => {
-      return this.loadRelation(channel, opts, tx);
-    });
-    return Promise.all(promises);
+    if (!withTags && !withTopics) {
+      return channels;
+    }
+    return Promise.all(channels.map((channel) => this.loadRelation(channel, opts, tx)));
   }
 
-  async loadRelation(channel: ChannelDto, opts: ChannelMapOptions, tx: Tx = db): Promise<ChannelDto> {
+  async loadRelation(channel: ChannelDto, opts: ChannelMapOptions, tx: Tx = db): Promise<MappedChannelDto> {
     const withTags = opts.tags ?? false;
     const withTopics = opts.topics ?? false;
-    if (!withTags && !withTopics) return channel;
+    if (!withTags && !withTopics) {
+      return channel;
+    }
     return {
       ...channel,
       tags: await this.tagQuery.findTagsByChannelId(channel.id, tx),

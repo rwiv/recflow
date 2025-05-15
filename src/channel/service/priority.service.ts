@@ -7,12 +7,14 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PriorityAppend, PriorityDto, PriorityUpdate } from '../spec/priority.schema.js';
+import { ChannelCacheStore } from '../storage/channel.cache.store.js';
 
 @Injectable()
 export class PriorityService {
   constructor(
     private readonly priRepo: PriorityRepository,
     private readonly channelRepo: ChannelQueryRepository,
+    private readonly channelCache: ChannelCacheStore,
   ) {}
 
   findAll(): Promise<PriorityDto[]> {
@@ -56,6 +58,16 @@ export class PriorityService {
   }
 
   async update(id: string, update: PriorityUpdate, tx: Tx = db) {
-    return this.priRepo.update(id, update, tx);
+    const result = await this.priRepo.update(id, update, tx);
+
+    // Invalidate cache for channels with this priority
+    const ids = await this.channelRepo.findIdsByPriorityId(id, tx);
+    const promises = [];
+    for (const channelId of ids) {
+      promises.push(this.channelCache.delete(channelId));
+    }
+    await Promise.all(promises);
+
+    return result;
   }
 }

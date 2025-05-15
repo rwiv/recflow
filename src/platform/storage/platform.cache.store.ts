@@ -23,8 +23,8 @@ export class PlatformCacheStore {
 
   async set(data: PlatformDto): Promise<void> {
     const text = JSON.stringify(data);
-    const p1 = this.redis.set(`${KEY_PREFIX}:${data.id}`, text);
-    const p2 = this.redis.set(`${KEY_PREFIX}:${data.name}`, text);
+    const p1 = this.redis.set(`${KEY_PREFIX}:${data.id}`, text, {});
+    const p2 = this.redis.set(`${KEY_PREFIX}:${data.name}`, text, {});
     await Promise.all([p1, p2]);
   }
 

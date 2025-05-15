@@ -7,9 +7,13 @@ import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js'
 export const channelDto = channelEnt.omit({ platformId: true, priorityId: true }).extend({
   platform: platformDto,
   priority: priorityDto,
-  tags: z.array(tagDto).optional(),
 });
 export type ChannelDto = z.infer<typeof channelDto>;
+
+export const mappedChannelDto = channelDto.extend({
+  tags: z.array(tagDto).optional(),
+});
+export type MappedChannelDto = z.infer<typeof mappedChannelDto>;
 
 export const channelAppend = channelEntAppend;
 export type ChannelAppend = z.infer<typeof channelAppend>;
@@ -40,6 +44,6 @@ export type ChannelSortType = z.infer<typeof channelSortTypeEnum>;
 
 export const channelPageResult = z.object({
   total: z.number().nonnegative(),
-  channels: z.array(channelDto),
+  channels: z.array(mappedChannelDto),
 });
 export type ChannelPageResult = z.infer<typeof channelPageResult>;

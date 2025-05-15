@@ -9,34 +9,68 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { ChannelDto } from '../spec/channel.dto.schema.js';
 import { ChannelMapOptions } from '../spec/channel.types.js';
+import { ChannelCacheStore } from '../storage/channel.cache.store.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class ChannelFinder {
   constructor(
     private readonly chQuery: ChannelQueryRepository,
     private readonly chMapper: ChannelMapper,
-    private readonly tagQuery: TagQueryRepository,
     private readonly pfFinder: PlatformFinder,
+    private readonly cache: ChannelCacheStore,
   ) {}
 
-  async findAll(opts: ChannelMapOptions) {
-    const entities = await this.chQuery.findAll();
-    const channels = await this.chMapper.mapAll(entities);
-    return this.chMapper.loadRelations(channels, opts);
+  async findAll(): Promise<ChannelDto[]> {
+    return this.chMapper.mapAll(await this.chQuery.findAll());
   }
 
-  async findById(channelId: string, withTags: boolean = false, tx: Tx = db) {
-    const ent = await this.chQuery.findById(channelId, tx);
-    const channel = await this.chMapper.mapNullable(ent, tx);
+  async findById(channelId: string, tx: Tx = db): Promise<ChannelDto | null> {
+    const cache = await this.cache.findById(channelId);
+    if (cache) return cache;
+
+    const entity = await this.chQuery.findById(channelId, tx);
+    const channel = await this.chMapper.mapNullable(entity, tx);
     if (!channel) return null;
-    if (!withTags) return channel;
-    return {
-      ...channel,
-      tags: await this.tagQuery.findTagsByChannelId(channelId, tx),
-    };
+
+    await this.cache.set(channel);
+    return channel;
   }
 
-  async findEarliestRefreshedOne(opts: ChannelMapOptions): Promise<ChannelDto | null> {
+  async findByPidAndPlatform(
+    pid: string,
+    platformName: PlatformName,
+    tx: Tx = db,
+  ): Promise<ChannelDto | null> {
+    const cache = await this.cache.findByPlatformAndPid(pid, platformName);
+    if (cache) return cache;
+
+    const platform = await this.pfFinder.findByNameNotNull(platformName, tx);
+    const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id, tx);
+    const channels = await this.chMapper.mapAll(entities, tx);
+    if (channels.length === 0) return null;
+    if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
+    const dto = channels[0];
+
+    await this.cache.set(dto);
+    return dto;
+  }
+
+  async findFollowedChannels(tx: Tx = db): Promise<ChannelDto[]> {
+    const ids = await this.cache.getFollowedChannelIds();
+    if (ids.length === 0) return [];
+
+    const result: ChannelDto[] = [];
+    for (const channel of await Promise.all(ids.map((id) => this.findById(id, tx)))) {
+      if (!channel) {
+        throw new NotFoundError(`Followed Channel not found in cache`);
+      }
+      result.push(channel);
+    }
+    return result;
+  }
+
+  async findEarliestRefreshedOne(): Promise<ChannelDto | null> {
     const entities = await this.chQuery.findEarliestRefreshed(1);
     if (entities.length === 0) {
       return null;
@@ -44,32 +78,14 @@ export class ChannelFinder {
     if (entities.length !== 1) {
       throw new ConflictError(`Invalid channel entities: length=${entities.length}`);
     }
-    return this.chMapper.loadRelation(await this.chMapper.map(entities[0]), opts);
+    return await this.chMapper.map(entities[0]);
   }
 
-  async findByPid(pid: string, opts: ChannelMapOptions) {
-    const entities = await this.chQuery.findByPid(pid);
-    const channels = await this.chMapper.mapAll(entities);
-    return this.chMapper.loadRelations(channels, opts);
+  async findByPid(pid: string, tx: Tx = db): Promise<ChannelDto[]> {
+    return this.chMapper.mapAll(await this.chQuery.findByPid(pid, tx), tx);
   }
 
-  async findByPidAndPlatform(pid: string, platformName: PlatformName, opts: ChannelMapOptions, tx: Tx = db) {
-    const platform = await this.pfFinder.findByNameNotNull(platformName, tx);
-    const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id, tx);
-    const channels = await this.chMapper.mapAll(entities, tx);
-    if (channels.length === 0) return null;
-    if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
-    return this.chMapper.loadRelation(channels[0], opts, tx);
-  }
-
-  async findByUsernameLike(username: string, opts: ChannelMapOptions, tx: Tx = db) {
-    const entities = await this.chQuery.findByUsernameLike(username, tx);
-    const channels = await this.chMapper.mapAll(entities, tx);
-    return this.chMapper.loadRelations(channels, opts, tx);
-  }
-
-  async findFollowedChannels(tx: Tx = db) {
-    const entities = await this.chQuery.findByFollowedFlag(true, tx);
-    return this.chMapper.mapAll(entities, tx);
+  async findByUsernameLike(username: string, tx: Tx = db): Promise<ChannelDto[]> {
+    return this.chMapper.mapAll(await this.chQuery.findByUsernameLike(username, tx), tx);
   }
 }

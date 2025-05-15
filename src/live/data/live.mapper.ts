@@ -11,7 +11,6 @@ import { NodeFinder } from '../../node/service/node.finder.js';
 import { headers } from '../../common/data/common.schema.js';
 
 export interface LiveFieldsReq {
-  channelTags?: boolean;
   nodes?: boolean;
   nodeGroup?: boolean;
 }
@@ -30,8 +29,10 @@ export class LiveMapper {
   }
 
   async map(liveEnt: LiveEnt, tx: Tx = db, opt: LiveFieldsReq = {}): Promise<LiveDtoWithNodes> {
-    const platform = await this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
-    const channel = await this.channelFinder.findById(liveEnt.channelId, opt.channelTags ?? false, tx);
+    const platformP = this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
+    const channelP = this.channelFinder.findById(liveEnt.channelId, tx);
+    const platform = await platformP;
+    const channel = await channelP;
     if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
     let result: LiveDtoWithNodes = {
@@ -42,10 +43,7 @@ export class LiveMapper {
     };
 
     if (opt.nodes) {
-      const req: NodeFieldsReq = {
-        group: opt.nodeGroup ?? false,
-        lives: false,
-      };
+      const req: NodeFieldsReq = { group: opt.nodeGroup ?? false, lives: false };
       const nodes = await this.nodeFinder.findByLiveId(liveEnt.id, req, tx);
       result = { ...result, nodes };
     }

@@ -28,6 +28,7 @@ import { ChannelSearcher } from '../service/channel.searcher.js';
 import { PageQuery, pageQuery } from '../../common/data/common.schema.js';
 import { PriorityService } from '../service/priority.service.js';
 import { ChannelMapOptions } from '../spec/channel.types.js';
+import { ChannelMapper } from '../service/channel.mapper.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -37,6 +38,7 @@ export class ChannelController {
     private readonly chFinder: ChannelFinder,
     private readonly chSearcher: ChannelSearcher,
     private readonly priService: PriorityService,
+    private readonly chMapper: ChannelMapper,
   ) {}
 
   @Get('/')
@@ -57,11 +59,13 @@ export class ChannelController {
     };
 
     if (pid) {
-      const channels = await this.chFinder.findByPid(pid, opts);
+      const dtos = await this.chFinder.findByPid(pid);
+      const channels = await this.chMapper.loadRelations(dtos, opts);
       return channelPageResult.parse({ channels, total: 1 });
     }
     if (username) {
-      const channels = await this.chFinder.findByUsernameLike(username, opts);
+      const dtos = await this.chFinder.findByUsernameLike(username);
+      const channels = await this.chMapper.loadRelations(dtos, opts);
       return channelPageResult.parse({ channels, total: 1 });
     }
 

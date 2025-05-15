@@ -36,8 +36,10 @@ export class NodeMapper {
       const liveEntities = await this.liveRepo.findByNodeId(ent.id, tx);
       const lives: LiveDto[] = [];
       for (const liveEnt of liveEntities) {
-        const platform = await this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
-        const channel = await this.channelFinder.findById(liveEnt.channelId, false, tx);
+        const platformP = this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
+        const channelP = this.channelFinder.findById(liveEnt.channelId, tx);
+        const platform = await platformP;
+        const channel = await channelP;
         if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
         lives.push({
           ...liveEnt,

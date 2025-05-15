@@ -30,8 +30,8 @@ export class PlatformFinder {
 
     const ent = await this.pfRepo.findById(id, tx);
     if (!ent) return null;
-
     const dto = platformDto.parse(ent);
+
     await this.cache.set(dto);
     return dto;
   }
@@ -48,8 +48,8 @@ export class PlatformFinder {
 
     const ent = await this.pfRepo.findByName(name, tx);
     if (!ent) return null;
-
     const dto = platformDto.parse(ent);
+
     await this.cache.set(dto);
     return dto;
   }

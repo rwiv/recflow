@@ -7,7 +7,7 @@ import { StdlMock } from './stdl/stdl.client.mock.js';
 import { StdlImpl } from './stdl/stdl.client.impl.js';
 import { AuthedMock } from './authed/authed.mock.js';
 import { AuthedImpl } from './authed/authed.impl.js';
-import { AUTHED, NOTIFIER, STDL, STDL_REDIS, VTASK } from './infra.tokens.js';
+import { AUTHED, NOTIFIER, SERVER_REDIS, STDL, STDL_REDIS, VTASK } from './infra.tokens.js';
 import { VtaskImpl } from './vtask/vtask.impl.js';
 import { VtaskMock } from './vtask/vtask.mock.js';
 
@@ -15,6 +15,13 @@ import { VtaskMock } from './vtask/vtask.mock.js';
   imports: [ConfigModule],
   providers: [
     InfraFactory,
+    {
+      provide: SERVER_REDIS,
+      useFactory: (factory: InfraFactory) => {
+        return factory.createServerRedis();
+      },
+      inject: [InfraFactory],
+    },
     {
       provide: AUTHED,
       useClass: process.env.NODE_ENV === 'dev' ? AuthedMock : AuthedImpl,
@@ -39,6 +46,6 @@ import { VtaskMock } from './vtask/vtask.mock.js';
       useClass: process.env.NODE_ENV === 'dev' ? VtaskMock : VtaskImpl,
     },
   ],
-  exports: [STDL, STDL_REDIS, AUTHED, NOTIFIER, VTASK],
+  exports: [SERVER_REDIS, STDL, STDL_REDIS, AUTHED, NOTIFIER, VTASK],
 })
 export class InfraModule {}

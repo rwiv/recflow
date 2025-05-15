@@ -45,6 +45,17 @@ export class StdlRedisImpl extends StdlRedis {
     return liveState.parse(JSON.parse(liveData));
   }
 
+  async getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]> {
+    const keys = liveRecordIds.map((id) => `${LIVE_PREFIX}:${id}`);
+    const data = await this.client.mGet(keys);
+    return data.map((item) => {
+      if (!item) {
+        return undefined;
+      }
+      return liveState.parse(JSON.parse(item));
+    });
+  }
+
   async deleteLive(liveRecordId: string): Promise<void> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
     if (await this.client.get(key)) {

@@ -13,7 +13,8 @@ import path from 'path';
 import {
   readAuthedConfig,
   readPgConfig,
-  readRedisConfig,
+  readServerRedisConfig,
+  readStdlRedisConfig,
   readStlinkConfig,
   readStreamqConfig,
   readUntfConfig,
@@ -32,6 +33,7 @@ export interface Env {
   untf: UntfConfig;
   vtask: VtaskConfig;
   pg: PostgresConfig;
+  serverRedis: RedisConfig;
   stdlRedis: RedisConfig;
   httpTimeout: number;
   nodeFailureThreshold: number;
@@ -66,7 +68,8 @@ export function readEnv(): Env {
     untf: readUntfConfig(),
     vtask: readVtaskConfig(),
     pg: readPgConfig(),
-    stdlRedis: readRedisConfig(),
+    serverRedis: readServerRedisConfig(),
+    stdlRedis: readStdlRedisConfig(),
     httpTimeout: nnint.parse(process.env.HTTP_TIMEOUT_MS),
     liveRecoveryWaitTimeMs: nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS),
     nodeFailureThreshold: nnint.parse(process.env.NODE_FAILURE_THRESHOLD),

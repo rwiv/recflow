@@ -16,8 +16,8 @@ export const liveState = z.object({
   headers: headers.nullable(),
   videoName: nonempty,
   isInvalid: z.boolean(),
-  createdAt: z.coerce.date().optional(), // TODO: update
-  updatedAt: z.coerce.date().nullable().optional(), // TODO: update
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 });
 
 export type LiveState = z.infer<typeof liveState>;
@@ -25,6 +25,7 @@ export type LiveState = z.infer<typeof liveState>;
 export abstract class StdlRedis {
   abstract setLive(live: LiveDto): Promise<void>;
   abstract getLive(id: string): Promise<LiveState | undefined>;
+  abstract getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]>;
   abstract deleteLive(id: string): Promise<void>;
   abstract dropAllLives(): Promise<void>;
 

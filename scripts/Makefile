@@ -1,9 +1,8 @@
-helm-dep:
+# postgresql
+helm-pg-dep:
 	-@helm dependency update ../kube/postgresql
 	-@helm dependency update ../kube/postgresql-exporter
 
-
-# postgresql
 helm-pg-prod-run:
 	helm install stmgr-postgresql ../kube/postgresql -n media
 

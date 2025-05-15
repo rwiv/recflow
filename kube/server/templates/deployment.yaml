@@ -55,6 +55,15 @@ spec:
               value: {{ .Values.externals.untf.topic }}
             - name: VTASK_ENDPOINT
               value: {{ .Values.externals.vtask.endpoint }}
+            - name: SERVER_REDIS_HOST
+              value: {{ .Values.app.redis.host }}
+            - name: SERVER_REDIS_PORT
+              value: "{{ .Values.app.redis.port }}"
+            - name: SERVER_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.redis.secrets.auth.name }}
+                  key: {{ .Values.app.redis.secrets.auth.passwordKey }}
             - name: STDL_REDIS_HOST
               value: {{ .Values.externals.stdl.redis.host }}
             - name: STDL_REDIS_PORT

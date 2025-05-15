@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 import { createRedisClient } from './redis.js';
 import { AsyncMap } from './interface.js';
 import { RedisMap } from './map.redis.js';
-import { readRedisConfig } from '../../common/config/env.utils.js';
+import { readStdlRedisConfig } from '../../common/config/env.utils.js';
 
 dotenv.config({ path: path.resolve('dev', '.env') });
-const conf = readRedisConfig();
+const conf = readStdlRedisConfig();
 
 describe('RedisMap (with real Redis client)', async () => {
   const keysKey = 'test:keys';

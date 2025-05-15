@@ -13,6 +13,11 @@ export class StdlRedisMock extends StdlRedis {
     return Promise.resolve(undefined);
   }
 
+  async getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]> {
+    log.info(`StdlRedisMock.getLives(...)`);
+    return Promise.resolve([]);
+  }
+
   async deleteLive(liveId: string): Promise<void> {
     log.info(`StdlRedisMock.delete(${liveId})`);
     return Promise.resolve();

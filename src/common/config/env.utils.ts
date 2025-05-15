@@ -13,7 +13,17 @@ import { DEFAULT_UNTF_TOPIC } from '../data/constants.js';
 
 const nnint = z.coerce.number().int().nonnegative();
 
-export function readRedisConfig(): RedisConfig {
+export function readServerRedisConfig(): RedisConfig {
+  const host = process.env.SERVER_REDIS_HOST;
+  const password = process.env.SERVER_REDIS_PASSWORD;
+  if (host === undefined || password === undefined) {
+    throw Error('redis data is undefined');
+  }
+  const port = nnint.parse(process.env.SERVER_REDIS_PORT);
+  return { host, port, password };
+}
+
+export function readStdlRedisConfig(): RedisConfig {
   const host = process.env.STDL_REDIS_HOST;
   const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {

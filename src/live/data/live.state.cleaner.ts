@@ -27,16 +27,11 @@ export class LiveStateCleaner {
 
   async getTargetIds() {
     const liveIds = await this.stdlRedis.getLivesIds();
-    const promises = [];
-    for (const liveId of liveIds) {
-      promises.push(this.stdlRedis.getLive(liveId));
-    }
-    const states = (await Promise.all(promises)).filter((s) => s !== undefined);
+    const states = (await this.stdlRedis.getLives(liveIds)).filter((s) => s !== undefined);
     const targetIds = [];
     for (const state of states) {
       const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
-      // TODO: remove null check
-      if (state.createdAt && state.createdAt >= threshold) {
+      if (state.createdAt >= threshold) {
         continue;
       }
       const exists = await this.liveFinder.findById(state.id);

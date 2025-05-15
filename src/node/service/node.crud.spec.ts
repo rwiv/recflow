@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { dropAll } from '../../infra/db/utils.js';
+import { dropTables } from '../../infra/db/utils.js';
 import { mockNode } from '../../common/helpers/node.mocks.js';
 import { notNull } from '../../utils/null.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
@@ -20,7 +20,7 @@ describe('ChannelService', () => {
   });
 
   afterAll(async () => {
-    await dropAll();
+    await dropTables();
   });
 
   it('create', async () => {

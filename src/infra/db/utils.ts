@@ -14,7 +14,7 @@ import {
   liveNodeTable,
 } from './schema.js';
 
-export async function dropAll() {
+export async function dropTables() {
   await db.delete(liveCriterionUnitTable);
   await db.delete(liveCriterionRuleTable);
   await db.delete(liveCriterionTable);

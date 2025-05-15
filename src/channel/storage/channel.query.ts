@@ -1,5 +1,5 @@
 import { db } from '../../infra/db/db.js';
-import { channelTagMapTable, channelTable, platformTable } from '../../infra/db/schema.js';
+import { channelTagMapTable, channelTable } from '../../infra/db/schema.js';
 import { and, eq, like, sql } from 'drizzle-orm';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
@@ -46,13 +46,12 @@ export class ChannelQueryRepository {
     return records.map((record) => record.id);
   }
 
-  async findByFollowedFlag(isFollowed: boolean, tx: Tx = db): Promise<ChannelEnt[]> {
+  async findIdsByFollowedFlag(isFollowed: boolean, tx: Tx = db): Promise<string[]> {
     const rows = await tx
-      .select()
+      .select({ id: channelTable.id })
       .from(channelTable)
-      .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
       .where(and(eq(channelTable.isFollowed, isFollowed)));
-    return rows.map((row) => row.channel);
+    return rows.map((row) => row.id);
   }
 
   async findByTagId(tagId: string, limit: number, tx: Tx = db): Promise<ChannelEnt[]> {

@@ -12,3 +12,10 @@ export async function allKeys(client: RedisClientType, pattern: string, cnt: num
 
   return keys;
 }
+
+export async function dropAllKeys(client: RedisClientType) {
+  const keys = await allKeys(client, '*');
+  if (keys.length > 0) {
+    await client.del(keys);
+  }
+}

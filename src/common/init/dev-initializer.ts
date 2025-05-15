@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { PlatformRepository } from '../../platform/storage/platform.repository.js';
-import { dropAll } from '../../infra/db/utils.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { dropTables } from '../../infra/db/utils.js';
 import { DevChannelInserter } from './insert/insert.channel.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
@@ -11,6 +10,9 @@ import {
 } from '../../criterion/spec/criterion.rule.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { PlatformWriter } from '../../platform/storage/platform.writer.js';
+import { dropAllKeys } from '../../infra/redis/redis.utils.js';
+import { SERVER_REDIS } from '../../infra/infra.tokens.js';
+import { RedisStore } from '../../infra/redis/redis.store.js';
 
 @Injectable()
 export class DevInitializer {
@@ -20,10 +22,12 @@ export class DevInitializer {
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
     private readonly devInjector: DevChannelInserter,
+    @Inject(SERVER_REDIS) private readonly redis: RedisStore,
   ) {}
 
   async initDev() {
-    await dropAll();
+    await dropTables();
+    await dropAllKeys(this.redis.client);
 
     await this.addPlatforms();
     await this.addPriorities();

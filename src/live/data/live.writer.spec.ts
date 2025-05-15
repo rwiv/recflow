@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, afterAll } from 'vitest';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
-import { dropAll } from '../../infra/db/utils.js';
+import { dropTables } from '../../infra/db/utils.js';
 import { LiveCreateOptions, LiveWriter } from './live.writer.js';
 import { mockLiveInfo } from '../../common/helpers/live.mocks.js';
 import { NodeWriter } from '../../node/service/node.writer.js';
@@ -28,7 +28,7 @@ describe('ChannelService', () => {
   });
 
   afterAll(async () => {
-    await dropAll();
+    await dropTables();
   });
 
   it('create', async () => {

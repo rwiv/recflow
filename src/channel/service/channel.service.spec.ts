@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { dropAll } from '../../infra/db/utils.js';
+import { dropTables } from '../../infra/db/utils.js';
 import { mockChannel } from '../../common/helpers/channel.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { ChannelFinder } from './channel.finder.js';
@@ -35,7 +35,7 @@ describe('ChannelService', () => {
   });
 
   afterAll(async () => {
-    await dropAll();
+    await dropTables();
   });
 
   function add(n: number, priority: PriorityDto | undefined, followerCnt: number, tagNames: string[]) {

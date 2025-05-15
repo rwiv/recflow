@@ -6,8 +6,8 @@ export interface SetOptions {
 
 export class RedisStore {
   constructor(
-    private readonly client: RedisClientType,
-    private readonly exSec: number,
+    public readonly client: RedisClientType,
+    public readonly exSec: number,
   ) {}
 
   async get(key: string): Promise<string | null> {

@@ -16,3 +16,13 @@ export function processSets<T>(
 
   return { intersection, newSetA, newSetB };
 }
+
+export function isEqualSet<T>(setA: Set<T>, setB: Set<T>) {
+  if (setA.size !== setB.size) {
+    return false;
+  }
+  for (let item of setA) {
+    if (!setB.has(item)) return false;
+  }
+  return true;
+}

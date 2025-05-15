@@ -7,14 +7,17 @@ export interface RedisStore {
 }
 
 export class RedisStoreImpl implements RedisStore {
-  constructor(private readonly client: RedisClientType) {}
+  constructor(
+    private readonly client: RedisClientType,
+    private readonly exSec: number,
+  ) {}
 
   async get(key: string): Promise<string | null> {
     return await this.client.get(key);
   }
 
   async set(key: string, value: string): Promise<void> {
-    await this.client.set(key, value);
+    await this.client.set(key, value, { EX: this.exSec });
   }
 
   async del(key: string): Promise<void> {

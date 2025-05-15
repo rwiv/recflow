@@ -11,10 +11,11 @@ export const LIVES_KEY = 'lives';
 export const SEGMENTS_PREFIX = 'segments';
 export const SEGMENT_PREFIX = 'segment';
 
-export const EXPIRATION_TIME_SEC = 60 * 60 * 24 * 7; // 7 day
-
 export class StdlRedisImpl extends StdlRedis {
-  constructor(private readonly client: RedisClientType) {
+  constructor(
+    private readonly client: RedisClientType,
+    private readonly exSec: number,
+  ) {
     super();
   }
 
@@ -32,7 +33,7 @@ export class StdlRedisImpl extends StdlRedis {
     if (await this.client.get(key)) {
       throw new ValidationError(`liveId ${state.id} already exists`);
     }
-    await this.client.set(key, JSON.stringify(state), { EX: EXPIRATION_TIME_SEC });
+    await this.client.set(key, JSON.stringify(state), { EX: this.exSec });
     await this.client.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
   }
 
@@ -46,6 +47,9 @@ export class StdlRedisImpl extends StdlRedis {
   }
 
   async getLives(liveRecordIds: string[]): Promise<(LiveState | undefined)[]> {
+    if (liveRecordIds.length === 0) {
+      return [];
+    }
     const keys = liveRecordIds.map((id) => `${LIVE_PREFIX}:${id}`);
     const data = await this.client.mGet(keys);
     return data.map((item) => {

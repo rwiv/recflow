@@ -53,6 +53,8 @@ app:
     nodeResetCycleSec: 43200 # 12 hours
     liveRecoveryWaitTimeMs: 40000
     liveClearBatchSize: 50
+    liveExpireSec: 604800 # 7 days
+    recordExpireSec: 86400 # 24 hours
 
 externals:
   stdl:

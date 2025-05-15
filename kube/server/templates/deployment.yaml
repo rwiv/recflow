@@ -101,6 +101,10 @@ spec:
               value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
             - name: LIVE_CLEAR_BATCH_SIZE
               value: "{{ .Values.app.configs.liveClearBatchSize }}"
+            - name: LIVE_EXPIRE_SEC
+              value: "{{ .Values.app.configs.liveExpireSec }}"
+            - name: RECORD_EXPIRE_SEC
+              value: "{{ .Values.app.configs.recordExpireSec }}"
           volumeMounts:
             - name: stdl-redis-tls
               mountPath: "/mnt/stdl-redis-tls/{{ .Values.externals.stdl.redis.secrets.tls.caKey }}"

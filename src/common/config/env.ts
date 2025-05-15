@@ -40,6 +40,8 @@ export interface Env {
   nodeResetCycleSec: number;
   liveRecoveryWaitTimeMs: number;
   liveClearBatchSize: number;
+  liveExpireSec: number;
+  recordExpireSec: number;
 }
 
 const nnint = z.coerce.number().int().nonnegative();
@@ -75,5 +77,7 @@ export function readEnv(): Env {
     nodeFailureThreshold: nnint.parse(process.env.NODE_FAILURE_THRESHOLD),
     nodeResetCycleSec: nnint.parse(process.env.NODE_RESET_CYCLE_SEC),
     liveClearBatchSize: nnint.parse(process.env.LIVE_CLEAR_BATCH_SIZE),
+    liveExpireSec: nnint.parse(process.env.LIVE_EXPIRE_SEC),
+    recordExpireSec: nnint.parse(process.env.RECORD_EXPIRE_SEC),
   };
 }

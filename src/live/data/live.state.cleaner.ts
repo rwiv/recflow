@@ -47,7 +47,7 @@ export class LiveStateCleaner {
 
   async clearLive(liveId: string) {
     const exists = await this.liveFinder.findById(liveId);
-    if (exists) {
+    if (exists && !exists.isDisabled) {
       log.error('Live still exists', liveNodeAttr(exists));
       return;
     }

@@ -16,7 +16,6 @@ import assert from 'assert';
 import { StreamInfo } from '../../platform/stlink/stlink.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 export interface LiveCreateOptions {
   isDisabled: boolean;

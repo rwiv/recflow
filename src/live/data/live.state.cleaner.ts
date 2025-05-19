@@ -38,6 +38,9 @@ export class LiveStateCleaner {
       if (!exists) {
         targetIds.push(state.id);
       }
+      if (exists && exists.isDisabled && exists.deletedAt && exists.deletedAt < threshold) {
+        targetIds.push(state.id);
+      }
     }
     return targetIds;
   }

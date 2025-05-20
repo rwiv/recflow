@@ -126,8 +126,8 @@ export class LiveRecoveryManager {
       await this.nodeUpdater.update(invalidNode.id, { failureCnt: invalidNode.failureCnt + 1 });
     }
 
-    await this.liveRegistrar.deregister(tgLive, invalidNode);
     try {
+      await this.liveRegistrar.deregister(tgLive, invalidNode);
       await this.liveRegistrar.register({
         channelInfo,
         ignoreNodeIds: [invalidNode.id],

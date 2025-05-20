@@ -196,14 +196,14 @@ export class LiveRegistrar {
 
     // If exitCmd != delete, request live finish operation by http
     if (exitCmd !== 'delete') {
-      await this.liveWriter.disable(live.id, false); // if Live is not disabled, it will become a recovery target and cause an error.
+      await this.liveWriter.disable(live.id, false); // if Live is not disabled, it will become a recovery target and cause an error
       await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg });
       return live; // not delete live record
     }
 
     // Else Delete live record
     return db.transaction(async (tx) => {
-      const deleted = await this.liveWriter.delete(recordId, true, isPurge, tx);
+      const deleted = await this.liveWriter.delete(recordId, isPurge, tx);
       log.info(msg, { ...liveNodeAttr(deleted), cmd: exitCmd });
       return deleted;
     });

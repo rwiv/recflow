@@ -89,13 +89,13 @@ export class LiveWriter {
     return this.update(id, { ...live }, tx);
   }
 
-  async delete(liveId: string, removeLives: boolean, isPurge: boolean, tx: Tx = db) {
+  async delete(liveId: string, isPurge: boolean, tx: Tx = db) {
     if (isPurge) {
       // hard delete
       return this.hardDelete(liveId, tx);
     } else {
       // soft delete
-      return this.disable(liveId, removeLives, tx);
+      return this.disable(liveId, true, tx);
     }
   }
 

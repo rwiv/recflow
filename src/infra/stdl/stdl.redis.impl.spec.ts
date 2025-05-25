@@ -18,7 +18,7 @@ const state: LiveState = {
   headers: null,
   isInvalid: false,
   createdAt: new Date(),
-  updatedAt: null,
+  updatedAt: new Date(),
 };
 
 const exSec = 3600 * 24;
@@ -34,7 +34,7 @@ it('test set', async () => {
 it('test get', async () => {
   const redis = await createRedisClient(env.stdlRedis);
   const client = new StdlRedisImpl(redis, exSec);
-  console.log(await client.getLive(''));
+  console.log(await client.getLiveState(''));
 });
 
 it('test getLivesIds', async () => {

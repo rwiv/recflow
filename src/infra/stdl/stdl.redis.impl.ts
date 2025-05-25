@@ -2,7 +2,6 @@ import { liveState, LiveState, StdlRedis } from './stdl.redis.js';
 import { RedisClientType } from 'redis';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { liveDtoToState } from './stdl.utils.js';
 import { log } from 'jslog';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 
@@ -19,13 +18,28 @@ export class StdlRedisImpl extends StdlRedis {
     super();
   }
 
-  async setLive(live: LiveDto): Promise<void> {
+  async createLiveState(live: LiveDto): Promise<void> {
     if (!live.streamUrl) {
       const errMsg = `streamUrl is required for liveDto`;
       log.error(errMsg, liveNodeAttr(live));
       throw new ValidationError(errMsg);
     }
-    return this.set(liveDtoToState(live));
+    const now = new Date();
+    const state: LiveState = {
+      id: live.id,
+      platform: live.platform.name,
+      channelId: live.channel.pid,
+      channelName: live.channel.username,
+      liveId: live.sourceId,
+      liveTitle: live.liveTitle,
+      streamUrl: live.streamUrl,
+      headers: live.headers,
+      videoName: live.videoName,
+      isInvalid: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+    return this.set(state);
   }
 
   async set(state: LiveState): Promise<void> {
@@ -37,7 +51,7 @@ export class StdlRedisImpl extends StdlRedis {
     await this.client.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
   }
 
-  async getLive(liveRecordId: string): Promise<LiveState | null> {
+  async getLiveState(liveRecordId: string): Promise<LiveState | null> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
     const liveData = await this.client.get(key);
     if (!liveData) {
@@ -46,7 +60,7 @@ export class StdlRedisImpl extends StdlRedis {
     return liveState.parse(JSON.parse(liveData));
   }
 
-  async getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
+  async getLiveStates(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
     if (liveRecordIds.length === 0) {
       return [];
     }
@@ -60,7 +74,7 @@ export class StdlRedisImpl extends StdlRedis {
     });
   }
 
-  async deleteLive(liveRecordId: string): Promise<void> {
+  async deleteLiveState(liveRecordId: string): Promise<void> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
     if (await this.client.get(key)) {
       await this.client.del(key);
@@ -68,7 +82,7 @@ export class StdlRedisImpl extends StdlRedis {
     await this.client.zRem(LIVES_KEY, liveRecordId);
   }
 
-  async deleteAllLives(): Promise<void> {
+  async deleteAllLivesStates(): Promise<void> {
     const keys = await this.client.keys(`*`);
     for (const key of keys) {
       await this.client.del(key);

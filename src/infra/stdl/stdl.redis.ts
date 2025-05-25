@@ -17,17 +17,17 @@ export const liveState = z.object({
   videoName: nonempty,
   isInvalid: z.boolean(),
   createdAt: z.coerce.date().optional(), // TODO: remove optional()
-  updatedAt: z.coerce.date().nullable().optional(), // TODO: remove optional()
+  updatedAt: z.coerce.date().optional(), // TODO: remove optional()
 });
 
 export type LiveState = z.infer<typeof liveState>;
 
 export abstract class StdlRedis {
-  abstract setLive(live: LiveDto): Promise<void>;
-  abstract getLive(id: string): Promise<LiveState | null>;
-  abstract getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]>;
-  abstract deleteLive(id: string): Promise<void>;
-  abstract deleteAllLives(): Promise<void>;
+  abstract createLiveState(live: LiveDto): Promise<void>;
+  abstract getLiveState(id: string): Promise<LiveState | null>;
+  abstract getLiveStates(liveRecordIds: string[]): Promise<(LiveState | null)[]>;
+  abstract deleteLiveState(id: string): Promise<void>;
+  abstract deleteAllLivesStates(): Promise<void>;
 
   abstract getLivesIds(): Promise<string[]>;
   abstract getSuccessSegNums(liveId: string): Promise<string[]>;
@@ -35,7 +35,7 @@ export abstract class StdlRedis {
   abstract deleteSegmentStates(liveId: string, nums: string[]): Promise<void>;
 
   async isInvalidLive(live: LiveDto): Promise<boolean> {
-    const liveState = await this.getLive(live.id);
+    const liveState = await this.getLiveState(live.id);
     if (!liveState) {
       log.error(`Live not found in STDL`, liveNodeAttr(live));
       return true;

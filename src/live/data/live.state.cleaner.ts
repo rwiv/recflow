@@ -27,7 +27,7 @@ export class LiveStateCleaner {
 
   async getTargetIds() {
     const liveIds = await this.stdlRedis.getLivesIds();
-    const states = (await this.stdlRedis.getLives(liveIds)).filter((s) => s !== null);
+    const states = (await this.stdlRedis.getLiveStates(liveIds)).filter((s) => s !== null);
     const targetIds = [];
     for (const state of states) {
       const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
@@ -59,7 +59,7 @@ export class LiveStateCleaner {
       await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
     }
     await this.stdlRedis.deleteSuccessSegNumSet(liveId);
-    await this.stdlRedis.deleteLive(liveId);
+    await this.stdlRedis.deleteLiveState(liveId);
 
     const duration = Date.now() - start;
     log.debug('Cleaned live', { liveId, duration, nums: nums.length });

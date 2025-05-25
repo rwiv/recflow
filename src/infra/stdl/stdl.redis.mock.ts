@@ -3,27 +3,27 @@ import { log } from 'jslog';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 
 export class StdlRedisMock extends StdlRedis {
-  async setLive(live: LiveDto): Promise<void> {
+  async createLiveState(live: LiveDto): Promise<void> {
     log.info(`StdlRedisMock.setLiveDto(...)`);
     return Promise.resolve();
   }
 
-  async getLive(liveId: string): Promise<LiveState | null> {
+  async getLiveState(liveId: string): Promise<LiveState | null> {
     log.info(`StdlRedisMock.getLive(${liveId})`);
     return Promise.resolve(null);
   }
 
-  async getLives(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
+  async getLiveStates(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
     log.info(`StdlRedisMock.getLives(...)`);
     return Promise.resolve([]);
   }
 
-  async deleteLive(liveId: string): Promise<void> {
+  async deleteLiveState(liveId: string): Promise<void> {
     log.info(`StdlRedisMock.delete(${liveId})`);
     return Promise.resolve();
   }
 
-  async deleteAllLives(): Promise<void> {
+  async deleteAllLivesStates(): Promise<void> {
     log.info(`StdlRedisMock.dropAll()`);
     return Promise.resolve();
   }

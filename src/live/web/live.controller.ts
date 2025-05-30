@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseFilters } from '@nestjs/common';
 import { LiveRegistrar } from '../registry/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../spec/event.schema.js';
@@ -17,13 +17,7 @@ import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveFinishRequest, liveFinishRequest, LiveFinalizer } from '../registry/live.finalizer.js';
 import { log } from 'jslog';
 import { stacktrace } from '../../utils/errors/utils.js';
-import {
-  LiveRebalancer,
-  nodeAdjustRequest,
-  NodeAdjustRequest,
-  nodeGroupAdjustRequest,
-  NodeGroupAdjustRequest,
-} from '../registry/live.rebalancer.js';
+import { LiveRebalancer } from '../registry/live.rebalancer.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
@@ -78,17 +72,17 @@ export class LiveController {
     return 'ok';
   }
 
-  @Post('/tasks/adjust/node-group')
-  adjustNodeGroup(@Body() req: NodeGroupAdjustRequest) {
-    this.rebalancer.adjustByNodeGroup(nodeGroupAdjustRequest.parse(req)).catch((err) => {
+  @Post('/tasks/adjust/node-group/:groupId')
+  adjustNodeGroup(@Param('groupId') groupId: string) {
+    this.rebalancer.drainByNodeGroup(groupId).catch((err) => {
       log.error('Error while adjusting nodeGroup', { stacktrace: stacktrace(err) });
     });
     return 'ok';
   }
 
-  @Post('/tasks/adjust/node')
-  adjustNode(@Body() req: NodeAdjustRequest) {
-    this.rebalancer.adjustByNode(nodeAdjustRequest.parse(req), []).catch((err) => {
+  @Post('/tasks/adjust/node/:nodeId')
+  adjustNode(@Param('nodeId') nodeId: string) {
+    this.rebalancer.drainByNode(nodeId).catch((err) => {
       log.error('Error while adjusting node', { stacktrace: stacktrace(err) });
     });
     return 'ok';

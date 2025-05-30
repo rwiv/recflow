@@ -1,10 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LiveRegistrar } from './live.registrar.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import assert from 'assert';
 import { NodeGroupService } from '../../node/service/node-group.service.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
@@ -13,24 +11,10 @@ import { log } from 'jslog';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
-import { z } from 'zod';
-import { uuid } from '../../common/data/common.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { delay } from '../../utils/time.js';
 import { LiveFinder } from '../data/live.finder.js';
-
-export const nodeGroupAdjustRequest = z.object({
-  groupId: uuid,
-  isDrain: z.boolean(),
-});
-export type NodeGroupAdjustRequest = z.infer<typeof nodeGroupAdjustRequest>;
-
-export const nodeAdjustRequest = z.object({
-  nodeId: uuid,
-  isDrain: z.boolean(),
-});
-export type NodeAdjustRequest = z.infer<typeof nodeAdjustRequest>;
 
 const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
 const RECORDING_CLOSE_INTERVAL_DELAY_MS = 100; // 1 sec
@@ -43,35 +27,27 @@ export class LiveRebalancer {
     private readonly nodeFinder: NodeFinder,
     private readonly nodeGroupService: NodeGroupService,
     private readonly nodeUpdater: NodeUpdater,
-    private readonly fetcher: PlatformFetcher,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
-  async adjustByNodeGroup(req: NodeGroupAdjustRequest) {
-    const { groupId, isDrain } = req;
+  async drainByNodeGroup(groupId: string) {
     const groups = await this.nodeGroupService.findAll();
     const group = groups.find((g) => g.id === groupId);
     if (!group) throw NotFoundError.from('NodeGroup', 'name', groupId);
-    const ignoreGroupIds = [];
-    if (isDrain) {
-      ignoreGroupIds.push(group.id);
-    }
 
     const targetNodes = await this.nodeFinder.findByGroupId(group.id, {});
     if (targetNodes.length === 0) {
-      log.debug(`No nodes to adjust`, { groupId, groupName: group.name });
+      log.debug(`No nodes to drain`, { groupId, groupName: group.name });
       return;
     }
 
-    for (const node of targetNodes) {
-      await this.adjustByNode({ nodeId: node.id, isDrain }, ignoreGroupIds);
-    }
-    log.info(`Node group adjust completed`, { groupId, groupName: group.name });
+    await Promise.all(targetNodes.map((node) => this.nodeUpdater.update(node.id, { isCordoned: true })));
+    await Promise.all(targetNodes.map((node) => this.drainByNode(node.id)));
+    log.info(`Node group drain completed`, { groupId, groupName: group.name });
   }
 
-  async adjustByNode(req: NodeAdjustRequest, ignoreGroupIds: string[]) {
-    const { nodeId, isDrain } = req;
+  async drainByNode(nodeId: string) {
     const node = await this.nodeFinder.findById(nodeId, { lives: true });
     if (!node) {
       log.error(`Node not found`, { nodeId });
@@ -79,26 +55,25 @@ export class LiveRebalancer {
     }
 
     try {
-      if (isDrain) {
-        await this.nodeUpdater.update(node.id, { isCordoned: true });
-      }
-
       assert(node.lives);
       if (node.lives.length === 0) {
-        log.debug(`No lives to adjust`, { nodeId });
+        log.debug(`No lives to drain`, { nodeId });
         return;
       }
 
       for (const live of node.lives) {
-        await this.adjustByLive(live, node, ignoreGroupIds);
+        await this.drainByLive(live, node);
       }
-      log.info(`Node adjust completed`, { groupId: node.groupId, nodeId, nodeName: node.name });
+      for (const live of node.lives) {
+        await this.waitForCanceled(live, node);
+      }
+      log.info(`Node drain completed`, { groupId: node.groupId, nodeId, nodeName: node.name });
     } catch (e) {
-      log.error(`Failed to adjusting live`, { nodeId, stacktrace: stacktrace(e) });
+      log.error(`Failed to drain live`, { nodeId, stacktrace: stacktrace(e) });
     }
   }
 
-  async adjustByLive(reqLive: LiveDto, node: NodeDto, ignoreGroupIds: string[]) {
+  async drainByLive(reqLive: LiveDto, node: NodeDto) {
     const live = await this.liveFinder.findById(reqLive.id); // latest live dto
     if (!live) {
       log.error(`Live not found`, liveNodeAttr(reqLive, node));
@@ -117,23 +92,10 @@ export class LiveRebalancer {
     }
 
     try {
-      const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-      await this.liveRegistrar.register({
-        channelInfo: channelLiveInfo.parse(channelInfo),
-        reusableLive: live,
-        ignoreNodeIds: [node.id],
-        ignoreGroupIds,
-      });
-      const ok = await this.waitForRecording(live, node);
-      if (!ok) {
-        log.error(`Failed to wait for recording`, liveNodeAttr(live, node));
-        return;
-      }
-
       await this.liveRegistrar.deregister(live, node);
-      log.debug(`Live adjust completed`, liveNodeAttr(live, node));
+      log.debug(`Live drain completed`, liveNodeAttr(live, node));
     } catch (e) {
-      log.error(`Failed to adjusting live`, { ...liveNodeAttr(live, node), stacktrace: stacktrace(e) });
+      log.error(`Failed to drain live`, { ...liveNodeAttr(live, node), stacktrace: stacktrace(e) });
     }
   }
 

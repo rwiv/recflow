@@ -14,9 +14,13 @@ export async function createNodeGroup(append: NodeGroupAppend) {
   return (await res.json()) as NodeGroupDto;
 }
 
-export async function adjustNodeGroup(groupId: string, isDrain: boolean) {
-  const { method, headers, body } = getIngredients('POST', { groupId, isDrain });
-  await request(`${configs.endpoint}/api/lives/tasks/adjust/node-group`, { method, headers, body });
+export async function drainNodeGroup(groupId: string) {
+  const { method, headers, body } = getIngredients('POST');
+  await request(`${configs.endpoint}/api/lives/tasks/adjust/node-group/${groupId}`, {
+    method,
+    headers,
+    body,
+  });
 }
 
 export async function deleteNodeGroup(nodeGroupId: string) {

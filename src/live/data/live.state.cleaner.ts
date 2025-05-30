@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL_REDIS } from '../../infra/infra.tokens.js';
-import { LiveState, segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { log } from 'jslog';
 import { LiveFinder } from './live.finder.js';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
@@ -28,29 +28,24 @@ export class LiveStateCleaner {
   async getTargetIds() {
     const liveIds = await this.stdlRedis.getLivesIds();
 
-    const states: LiveState[] = [];
-    const rawStates = await this.stdlRedis.getLiveStates(liveIds);
-    for (let i = 0; i < rawStates.length; i++) {
-      const state = rawStates[i];
-      if (state) {
-        states.push(state);
-      } else {
-        await this.stdlRedis.deleteLiveState(liveIds[i]);
-      }
-    }
-
     const targetIds = [];
-    for (const state of states) {
-      const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
-      if (state.createdAt >= threshold) {
+    const rawLiveStates = await this.stdlRedis.getLiveStates(liveIds);
+    for (let i = 0; i < rawLiveStates.length; i++) {
+      const liveState = rawLiveStates[i];
+      if (!liveState) {
+        await this.stdlRedis.deleteLiveState(liveIds[i]);
         continue;
       }
-      const exists = await this.liveFinder.findById(state.id);
+      const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
+      if (liveState.createdAt >= threshold) {
+        continue;
+      }
+      const exists = await this.liveFinder.findById(liveState.id);
       if (!exists) {
-        targetIds.push(state.id);
+        targetIds.push(liveState.id);
       }
       if (exists && exists.isDisabled && exists.deletedAt && exists.deletedAt < threshold) {
-        targetIds.push(state.id);
+        targetIds.push(liveState.id);
       }
     }
     return targetIds;

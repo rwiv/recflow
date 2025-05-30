@@ -55,6 +55,7 @@ app:
     liveClearBatchSize: 100
     liveExpireSec: 604800 # 7 days
     recordExpireSec: 86400 # 24 hours
+    maxConcurrentLive: 3
 
 externals:
   stdl:

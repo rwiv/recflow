@@ -16,11 +16,13 @@ export const liveState = z.object({
   headers: headers.nullable(),
   videoName: nonempty,
   isInvalid: z.boolean(),
-  createdAt: z.coerce.date().optional(), // TODO: remove optional()
-  updatedAt: z.coerce.date().optional(), // TODO: remove optional()
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
-
 export type LiveState = z.infer<typeof liveState>;
+
+export const segmentKeyword = z.enum(['success', 'failed', 'retrying']);
+export type SegmentKeyword = z.infer<typeof segmentKeyword>;
 
 export abstract class StdlRedis {
   abstract createLiveState(live: LiveDto): Promise<void>;
@@ -30,8 +32,8 @@ export abstract class StdlRedis {
   abstract deleteAllLivesStates(): Promise<void>;
 
   abstract getLivesIds(): Promise<string[]>;
-  abstract getSuccessSegNums(liveId: string): Promise<string[]>;
-  abstract deleteSuccessSegNumSet(liveId: string): Promise<void>;
+  abstract getSegNums(liveId: string, keyword: SegmentKeyword): Promise<string[]>;
+  abstract deleteSegNumSet(liveId: string, keyword: SegmentKeyword): Promise<void>;
   abstract deleteSegmentStates(liveId: string, nums: string[]): Promise<void>;
 
   async isInvalidLive(live: LiveDto): Promise<boolean> {

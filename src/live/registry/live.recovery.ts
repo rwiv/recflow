@@ -17,7 +17,6 @@ import { Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
-import { stacktrace } from '../../utils/errors/utils.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 
 interface InvalidNode {
@@ -91,9 +90,8 @@ export class LiveRecoveryManager {
     }
 
     // Recovery invalid nodes in live
-    const chanLiveInfo = channelLiveInfo.parse(chanInfo);
     for (const invalidNode of tgLive.invalidNodes) {
-      await this.checkInvalidNode(live, invalidNode.node, chanLiveInfo);
+      await this.checkInvalidNode(live, invalidNode.node);
     }
   }
 
@@ -105,7 +103,7 @@ export class LiveRecoveryManager {
     });
   }
 
-  private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto, channelInfo: ChannelLiveInfo) {
+  private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto) {
     const live = await this.liveFinder.findById(tgLive.id); // latest live dto
     if (!live) {
       log.error(`Live not found`, liveNodeAttr(tgLive, invalidNode));
@@ -114,7 +112,7 @@ export class LiveRecoveryManager {
 
     // Skip already finished live
     if (tgLive.isDisabled) {
-      log.error('Live is disabled', liveNodeAttr(tgLive, invalidNode));
+      log.error('Live is already disabled', liveNodeAttr(tgLive, invalidNode));
       return;
     }
 
@@ -126,19 +124,7 @@ export class LiveRecoveryManager {
       await this.nodeUpdater.update(invalidNode.id, { failureCnt: invalidNode.failureCnt + 1 });
     }
 
-    try {
-      await this.liveRegistrar.deregister(tgLive, invalidNode);
-      await this.liveRegistrar.register({
-        channelInfo,
-        ignoreNodeIds: [invalidNode.id],
-        reusableLive: tgLive,
-      });
-    } catch (ex) {
-      const message = `Live recovery failed`;
-      log.error(message, { ...liveNodeAttr(tgLive, invalidNode), stacktrace: stacktrace(ex) });
-      this.notifier.notify(this.env.untf.topic, `${message}: channel: ${tgLive.channel.username}`);
-      await this.finishLive(tgLive.id, message);
-    }
+    await this.liveRegistrar.deregister(tgLive, invalidNode);
   }
 
   private async retrieveInvalidNodes(): Promise<Map<string, TargetLive>> {

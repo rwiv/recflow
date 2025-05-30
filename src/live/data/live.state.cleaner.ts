@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL_REDIS } from '../../infra/infra.tokens.js';
-import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { LiveState, segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { log } from 'jslog';
 import { LiveFinder } from './live.finder.js';
 import { liveNodeAttr } from '../../common/attr/attr.live.js';
@@ -27,12 +27,22 @@ export class LiveStateCleaner {
 
   async getTargetIds() {
     const liveIds = await this.stdlRedis.getLivesIds();
-    const states = (await this.stdlRedis.getLiveStates(liveIds)).filter((s) => s !== null);
+
+    const states: LiveState[] = [];
+    const rawStates = await this.stdlRedis.getLiveStates(liveIds);
+    for (let i = 0; i < rawStates.length; i++) {
+      const state = rawStates[i];
+      if (state) {
+        states.push(state);
+      } else {
+        await this.stdlRedis.deleteLiveState(liveIds[i]);
+      }
+    }
+
     const targetIds = [];
     for (const state of states) {
       const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
-      // TODO: remove state.createdAt
-      if (state.createdAt && state.createdAt >= threshold) {
+      if (state.createdAt >= threshold) {
         continue;
       }
       const exists = await this.liveFinder.findById(state.id);
@@ -53,15 +63,16 @@ export class LiveStateCleaner {
       return;
     }
 
-    const start = Date.now();
-    const nums = await this.stdlRedis.getSuccessSegNums(liveId);
-    for (const batchNums of subLists(nums, this.env.liveClearBatchSize)) {
-      await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
+    for (const keyword of segmentKeyword.options) {
+      const start = Date.now();
+      const nums = await this.stdlRedis.getSegNums(liveId, keyword);
+      for (const batchNums of subLists(nums, this.env.liveClearBatchSize)) {
+        await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
+      }
+      await this.stdlRedis.deleteSegNumSet(liveId, keyword);
+      const duration = Date.now() - start;
+      log.debug('Cleaned live', { liveId, duration, keyword, nums: nums.length });
     }
-    await this.stdlRedis.deleteSuccessSegNumSet(liveId);
     await this.stdlRedis.deleteLiveState(liveId);
-
-    const duration = Date.now() - start;
-    log.debug('Cleaned live', { liveId, duration, nums: nums.length });
   }
 }

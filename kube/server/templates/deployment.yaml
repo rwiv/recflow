@@ -105,6 +105,8 @@ spec:
               value: "{{ .Values.app.configs.liveExpireSec }}"
             - name: RECORD_EXPIRE_SEC
               value: "{{ .Values.app.configs.recordExpireSec }}"
+            - name: MAX_CONCURRENT_LIVE
+              value: "{{ .Values.app.configs.maxConcurrentLive }}"
           volumeMounts:
             - name: stdl-redis-tls
               mountPath: "/mnt/stdl-redis-tls/{{ .Values.externals.stdl.redis.secrets.tls.caKey }}"

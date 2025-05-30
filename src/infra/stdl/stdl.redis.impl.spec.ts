@@ -48,6 +48,6 @@ it('test getSuccessSegNums', async () => {
   const liveId = '';
   const redis = await createRedisClient(env.stdlRedis);
   const client = new StdlRedisImpl(redis, exSec);
-  const nums = await client.getSuccessSegNums(liveId);
+  const nums = await client.getSegNums(liveId, 'success');
   console.log(nums);
 });

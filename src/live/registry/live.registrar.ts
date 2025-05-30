@@ -46,6 +46,7 @@ export interface LiveRegisterRequest {
   criterion?: CriterionDto;
   domesticOnly?: boolean;
   overseasFirst?: boolean;
+  mustExistNode?: boolean;
 }
 
 @Injectable()
@@ -103,6 +104,7 @@ export class LiveRegistrar {
   ): Promise<string | null> {
     let live = req.reusableLive;
     const liveInfo = req.channelInfo.liveInfo;
+    const mustExistNode = req.mustExistNode ?? true;
 
     const selectOpts = this.getNodeSelectOpts(req, live, channel);
     const { domesticOnly, overseasFirst } = selectOpts;
@@ -113,9 +115,18 @@ export class LiveRegistrar {
 
     // If there is no available node, notify and create a disabled live
     if (!node) {
-      const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-      const headMessage = 'No available nodes for assignment';
-      return this.createDisabledLive(live, liveInfo, createOpts, headMessage, tx);
+      if (mustExistNode) {
+        const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
+        const headMessage = 'No available nodes for assignment';
+        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, tx);
+      } else {
+        log.error('No available nodes for assignment', {
+          platform: liveInfo.type,
+          pid: liveInfo.pid,
+          channelName: liveInfo.channelName,
+        });
+        return null;
+      }
     }
 
     // If m3u8 is not available, create a disabled live
@@ -129,7 +140,7 @@ export class LiveRegistrar {
     }
 
     // Create live if not exists
-    let logMsg = 'Change node in live';
+    let logMsg = 'New LiveNode';
     if (!live) {
       logMsg = 'New Live';
       const createOpts: LiveCreateOptions = { isDisabled: false, domesticOnly, overseasFirst };

@@ -15,6 +15,7 @@ import { LiveCleaner } from './live.cleaner.js';
 import { InfraModule } from '../../infra/infra.module.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { LiveRebalancer } from './live.rebalancer.js';
+import { LiveAllocator } from './live.allocator.js';
 
 @Module({
   imports: [
@@ -36,7 +37,16 @@ import { LiveRebalancer } from './live.rebalancer.js';
     LiveRecoveryManager,
     LiveFinalizer,
     LiveRebalancer,
+    LiveAllocator,
   ],
-  exports: [LiveRegistrar, LiveCoordinator, LiveCleaner, LiveRecoveryManager, LiveRebalancer, LiveFinalizer],
+  exports: [
+    LiveRegistrar,
+    LiveCoordinator,
+    LiveCleaner,
+    LiveRecoveryManager,
+    LiveRebalancer,
+    LiveFinalizer,
+    LiveAllocator,
+  ],
 })
 export class LiveRegistryModule {}

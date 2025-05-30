@@ -16,10 +16,13 @@ import {
   DEFAULT_REGISTER_CHECK_CYCLE,
   DEFAULT_REGISTER_CYCLE,
   DEFAULT_LIVE_STATE_CLEANUP_CYCLE,
+  DEFAULT_LIVE_ALLOCATION_CYCLE,
 } from './spec/live.task.contants.js';
 import { LiveFollowedRegisterTask } from './tasks/live.register-followed-task.js';
 import { LiveStateCleanupTask } from './tasks/live-state.cleanup-task.js';
 import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
+import { LiveAllocationTask } from './tasks/live.allocation-task.js';
+import { LiveAllocator } from '../../live/registry/live.allocator.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -30,6 +33,7 @@ export class LiveTaskInitializer {
     private readonly liveRefresher: LiveRefresher,
     private readonly liveStateCleaner: LiveStateCleaner,
     private readonly liveRecoveryManager: LiveRecoveryManager,
+    private readonly liveAllocator: LiveAllocator,
     private readonly scheduler: TaskScheduler,
   ) {}
 
@@ -51,5 +55,8 @@ export class LiveTaskInitializer {
 
     const liveStateCleanupTask = new LiveStateCleanupTask(this.liveStateCleaner);
     this.scheduler.addPeriodTask(liveStateCleanupTask, DEFAULT_LIVE_STATE_CLEANUP_CYCLE, true);
+
+    const liveAllocationTask = new LiveAllocationTask(this.liveAllocator);
+    this.scheduler.addPeriodTask(liveAllocationTask, DEFAULT_LIVE_ALLOCATION_CYCLE, true);
   }
 }

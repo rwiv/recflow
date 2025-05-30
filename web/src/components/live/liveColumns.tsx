@@ -14,7 +14,8 @@ export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
 
 const DISABLED_CN = 'opacity-40';
-const DEFAULT_WIDTH = '15rem';
+const DEFAULT_WIDTH = '12rem';
+const NODES_WIDTH = '15rem';
 
 const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'channel',
@@ -60,8 +61,8 @@ const titleColumn: ColumnDef<LiveDtoWithNodes> = {
 };
 
 const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
-  accessorKey: 'node',
-  header: () => <div className="justify-self-center">Node</div>,
+  accessorKey: 'nodes',
+  header: () => <div className="justify-self-center">Nodes</div>,
   cell: ({ row }) => {
     const live = row.original;
     const nodes = row.original.nodes;
@@ -70,13 +71,15 @@ const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
     }
     return nodes.map((node) => {
       return (
-        <div key={node.id} className={cn('my-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
-          {node.name}
-        </div>
+        <span key={node.id} className={cn('my-1 mx-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
+          <Badge variant="outline" className="cursor-pointer">
+            {node.name}
+          </Badge>
+        </span>
       );
     });
   },
-  meta: { header: { width: DEFAULT_WIDTH } },
+  meta: { header: { width: NODES_WIDTH } },
 };
 
 export const liveColumns: ColumnDef<LiveDtoWithNodes>[] = [

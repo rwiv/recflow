@@ -1,4 +1,4 @@
-import { liveState, LiveState, StdlRedis } from './stdl.redis.js';
+import { liveState, LiveState, SegmentKeyword, StdlRedis } from './stdl.redis.js';
 import { RedisClientType } from 'redis';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
@@ -94,16 +94,12 @@ export class StdlRedisImpl extends StdlRedis {
     return await this.client.zRange(LIVES_KEY, 0, -1);
   }
 
-  async getSuccessSegNums(liveId: string) {
-    return await this.client.zRange(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:success`, 0, -1);
+  async getSegNums(liveId: string, keyword: SegmentKeyword) {
+    return await this.client.zRange(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`, 0, -1);
   }
 
-  async deleteSuccessSegNumSet(liveId: string) {
-    await this.client.del(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:success`);
-  }
-
-  async getSegmentState(liveId: string, num: string) {
-    return await this.client.get(`${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`);
+  async deleteSegNumSet(liveId: string, keyword: SegmentKeyword) {
+    await this.client.del(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`);
   }
 
   async deleteSegmentStates(liveId: string, nums: string[]): Promise<void> {

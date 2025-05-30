@@ -33,13 +33,23 @@ export class StdlRedisMock extends StdlRedis {
     return Promise.resolve([]);
   }
 
-  async getSuccessSegNums(liveId: string): Promise<string[]> {
-    log.info(`StdlRedisMock.getSuccessSegNums(${liveId})`);
+  async getSegNums(liveId: string, keyword: 'success' | 'failed' | 'retrying'): Promise<string[]> {
+    log.info(`StdlRedisMock.getSegNums(${liveId}, ${keyword})`);
     return Promise.resolve([]);
   }
 
-  async deleteSuccessSegNumSet(liveId: string): Promise<void> {
-    log.info(`StdlRedisMock.deleteSuccessSegNumSet(${liveId})`);
+  async deleteSegNumSet(liveId: string, keyword: 'success' | 'failed' | 'retrying'): Promise<void> {
+    log.info(`StdlRedisMock.deleteSegNumSet(${liveId}, ${keyword})`);
+    return Promise.resolve();
+  }
+
+  async getRetryingSegNums(liveId: string): Promise<string[]> {
+    log.info(`StdlRedisMock.getRetryingSegNums(${liveId})`);
+    return Promise.resolve([]);
+  }
+
+  async deleteRetryingSegNumSet(liveId: string): Promise<void> {
+    log.info(`StdlRedisMock.deleteRetryingSegNumSet(${liveId})`);
     return Promise.resolve();
   }
 

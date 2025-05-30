@@ -42,6 +42,7 @@ export interface Env {
   liveClearBatchSize: number;
   liveExpireSec: number;
   recordExpireSec: number;
+  maxConcurrentLive: number;
 }
 
 const nnint = z.coerce.number().int().nonnegative();
@@ -79,5 +80,6 @@ export function readEnv(): Env {
     liveClearBatchSize: nnint.parse(process.env.LIVE_CLEAR_BATCH_SIZE),
     liveExpireSec: nnint.parse(process.env.LIVE_EXPIRE_SEC),
     recordExpireSec: nnint.parse(process.env.RECORD_EXPIRE_SEC),
+    maxConcurrentLive: nnint.parse(process.env.MAX_CONCURRENT_LIVE),
   };
 }

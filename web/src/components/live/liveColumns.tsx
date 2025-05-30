@@ -14,8 +14,10 @@ export const selectCid = 'select';
 export const viewCntCid = 'viewCnt';
 
 const DISABLED_CN = 'opacity-40';
-const DEFAULT_WIDTH = '12rem';
-const NODES_WIDTH = '15rem';
+const DEFAULT_WIDTH = '10rem';
+const CHANNEL_WIDTH = '15rem';
+const PRIORITY_WIDTH = '9rem';
+const NODES_WIDTH = '18rem';
 
 const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'channel',
@@ -27,7 +29,7 @@ const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   filterFn: (rows, _, filterValue) => {
     return rows.original.channel.username.includes(filterValue);
   },
-  meta: { header: { width: DEFAULT_WIDTH } },
+  meta: { header: { width: CHANNEL_WIDTH } },
 };
 
 const priorityColumn: ColumnDef<LiveDtoWithNodes> = {
@@ -41,7 +43,7 @@ const priorityColumn: ColumnDef<LiveDtoWithNodes> = {
   filterFn: (rows, _, filterValue) => {
     return rows.original.channel.priority.name.includes(filterValue);
   },
-  meta: { header: { width: '9rem' } },
+  meta: { header: { width: PRIORITY_WIDTH } },
 };
 
 const titleColumn: ColumnDef<LiveDtoWithNodes> = {
@@ -87,7 +89,12 @@ export const liveColumns: ColumnDef<LiveDtoWithNodes>[] = [
   channelColumn,
   priorityColumn,
   titleColumn,
-  sortableColumnDef(viewCntCid, 'Viewers', (live) => (live.isDisabled ? DISABLED_CN : undefined)),
+  sortableColumnDef(
+    viewCntCid,
+    'Viewers',
+    (live) => (live.isDisabled ? DISABLED_CN : undefined),
+    DEFAULT_WIDTH,
+  ),
   dateColumnDef<LiveDtoWithNodes>(
     'createdAt',
     'CreatedAt',

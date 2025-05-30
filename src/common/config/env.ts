@@ -39,6 +39,7 @@ export interface Env {
   nodeFailureThreshold: number;
   nodeResetCycleSec: number;
   liveRecoveryWaitTimeMs: number;
+  liveFinishTimeoutSec: number;
   liveClearBatchSize: number;
   liveExpireSec: number;
   recordExpireSec: number;
@@ -75,6 +76,7 @@ export function readEnv(): Env {
     stdlRedis: readStdlRedisConfig(),
     httpTimeout: nnint.parse(process.env.HTTP_TIMEOUT_MS),
     liveRecoveryWaitTimeMs: nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS),
+    liveFinishTimeoutSec: nnint.parse(process.env.LIVE_FINISH_TIMEOUT_SEC),
     nodeFailureThreshold: nnint.parse(process.env.NODE_FAILURE_THRESHOLD),
     nodeResetCycleSec: nnint.parse(process.env.NODE_RESET_CYCLE_SEC),
     liveClearBatchSize: nnint.parse(process.env.LIVE_CLEAR_BATCH_SIZE),

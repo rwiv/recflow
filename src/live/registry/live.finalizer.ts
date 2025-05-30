@@ -20,6 +20,7 @@ import { Env } from '../../common/config/env.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { LiveWriter } from '../data/live.writer.js';
 import { db } from '../../infra/db/db.js';
+import { HttpError } from '../../utils/errors/base/HttpError.js';
 
 interface TargetRecorder {
   status: RecorderStatus;
@@ -39,8 +40,7 @@ export const liveFinishRequest = z.object({
 });
 export type LiveFinishRequest = z.infer<typeof liveFinishRequest>;
 
-const TASK_WAIT_INTERVAL_MS = 1000; // 1 sec
-const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
+const WAIT_INTERVAL_MS = 1000; // 1 sec
 const RETRY_LIMIT = 3;
 const RETRY_DELAY_MS = 3000; // 3 sec
 
@@ -155,13 +155,14 @@ export class LiveFinalizer {
 
     const startTime = Date.now();
     while (true) {
-      if (Date.now() - startTime > RECORDING_CLOSE_WAIT_TIMEOUT_MS) {
-        log.error(`Timeout while waiting for recording to finish`, liveNodeAttr(live));
-        break;
+      if (Date.now() - startTime > this.env.liveFinishTimeoutSec * 1000) {
+        const msg = `Timeout while waiting for recording to finish`;
+        log.error(msg, liveNodeAttr(live));
+        throw new HttpError(msg, 500);
       }
       const isComplete = await this.isCompleteRecording(live, tgRecs);
       if (!isComplete) {
-        await delay(TASK_WAIT_INTERVAL_MS);
+        await delay(WAIT_INTERVAL_MS);
         continue;
       }
       await this.vtask.addTask(doneMsg);

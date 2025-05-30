@@ -99,6 +99,8 @@ spec:
               value: "{{ .Values.app.configs.nodeResetCycleSec }}"
             - name: LIVE_RECOVERY_WAIT_TIME_MS
               value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
+            - name: LIVE_FINISH_TIMEOUT_SEC
+              value: "{{ .Values.app.configs.liveFinishTimeoutSec }}"
             - name: LIVE_CLEAR_BATCH_SIZE
               value: "{{ .Values.app.configs.liveClearBatchSize }}"
             - name: LIVE_EXPIRE_SEC

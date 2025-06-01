@@ -26,7 +26,7 @@ import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
-import { liveInfoAttr, liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveInfoAttr, liveAttr } from '../../common/attr/attr.live.js';
 import assert from 'assert';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 
@@ -78,7 +78,7 @@ export class LiveRegistrar {
     }
     const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, useCred);
     if (!streamInfo.openLive) {
-      log.debug('This live is inaccessible', { platform, pid, username });
+      log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
       // live record is not created as it may normalize later
       return null;
     }
@@ -126,14 +126,14 @@ export class LiveRegistrar {
     }
 
     if (!streamInfo.best || !streamInfo.headers) {
-      log.error('Stream info is not available');
+      log.error('Stream info is not available', liveInfoAttr(liveInfo));
       return null;
     }
     // If m3u8 is not available (e.g. standby mode in Soop)
     const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
     if (!m3u8) {
       // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-      log.debug('M3U8 not available', liveInfoAttr(liveInfo));
+      // log.debug('M3U8 not available', liveInfoAttr(liveInfo));
       return null;
     }
 
@@ -158,7 +158,7 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(this.env.untf.topic, live);
     }
 
-    log.info(logMsg, liveNodeAttr(live, node));
+    log.info(logMsg, liveAttr(live, node));
     return live.id;
   }
 
@@ -181,14 +181,14 @@ export class LiveRegistrar {
       this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
     }
 
-    log.info(headMessage, liveNodeAttr(newDisabledLive));
+    log.info(headMessage, liveAttr(newDisabledLive));
     return newDisabledLive.id;
   }
 
   async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
     await this.liveWriter.unbind(live.id, node.id, tx);
     await this.finalizer.cancelRecorder(live, node);
-    log.debug('Deregister node in live', liveNodeAttr(live, node));
+    log.debug('Deregister node in live', liveAttr(live, node));
   }
 
   async finishLive(recordId: string, opts: LiveFinishOptions = {}) {
@@ -216,7 +216,7 @@ export class LiveRegistrar {
     // Else Delete live record
     return db.transaction(async (tx) => {
       const deleted = await this.liveWriter.delete(recordId, isPurge, tx);
-      log.info(msg, { ...liveNodeAttr(deleted), cmd: exitCmd });
+      log.info(msg, { ...liveAttr(deleted), cmd: exitCmd });
       return deleted;
     });
   }

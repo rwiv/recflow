@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { headers, nonempty, uuid } from '../../common/data/common.schema.js';
 import { log } from 'jslog';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 
 export const liveState = z.object({
   id: uuid,
@@ -39,11 +39,11 @@ export abstract class StdlRedis {
   async isInvalidLive(live: LiveDto): Promise<boolean> {
     const liveState = await this.getLiveState(live.id);
     if (!liveState) {
-      log.error(`Live not found in STDL`, liveNodeAttr(live));
+      log.error(`Live not found in STDL`, liveAttr(live));
       return true;
     }
     if (liveState.isInvalid) {
-      log.error(`Live is invalid`, liveNodeAttr(live));
+      log.error(`Live is invalid`, liveAttr(live));
       return true;
     }
     return false;

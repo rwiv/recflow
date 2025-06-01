@@ -3,7 +3,7 @@ import { RedisClientType } from 'redis';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { log } from 'jslog';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
@@ -21,7 +21,7 @@ export class StdlRedisImpl extends StdlRedis {
   async createLiveState(live: LiveDto): Promise<void> {
     if (!live.streamUrl) {
       const errMsg = `streamUrl is required for liveDto`;
-      log.error(errMsg, liveNodeAttr(live));
+      log.error(errMsg, liveAttr(live));
       throw new ValidationError(errMsg);
     }
     const now = new Date();

@@ -8,7 +8,7 @@ import { NodeGroupService } from '../../node/service/node-group.service.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { log } from 'jslog';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
@@ -76,13 +76,13 @@ export class LiveRebalancer {
   async drainByLive(reqLive: LiveDto, node: NodeDto) {
     const live = await this.liveFinder.findById(reqLive.id); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveNodeAttr(reqLive, node));
+      log.error(`Live not found`, liveAttr(reqLive, node));
       return;
     }
 
     // Skip already finished live
     if (live.isDisabled) {
-      log.error('Live is disabled', liveNodeAttr(live));
+      log.error('Live is disabled', liveAttr(live));
       return;
     }
 
@@ -93,9 +93,9 @@ export class LiveRebalancer {
 
     try {
       await this.liveRegistrar.deregister(live, node);
-      log.debug(`Live drain completed`, liveNodeAttr(live, node));
+      log.debug(`Live drain completed`, liveAttr(live, node));
     } catch (e) {
-      log.error(`Failed to drain live`, { ...liveNodeAttr(live, node), stacktrace: stacktrace(e) });
+      log.error(`Failed to drain live`, { ...liveAttr(live, node), stacktrace: stacktrace(e) });
     }
   }
 
@@ -111,7 +111,7 @@ export class LiveRebalancer {
     const startTime = Date.now();
     while (true) {
       if (Date.now() - startTime > RECORDING_CLOSE_WAIT_TIMEOUT_MS) {
-        log.error(`Timeout while waiting for recording to finish`, liveNodeAttr(live));
+        log.error(`Timeout while waiting for recording to finish`, liveAttr(live));
         return false;
       }
 

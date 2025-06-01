@@ -15,7 +15,7 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 
@@ -56,13 +56,13 @@ export class LiveRecoveryManager {
   private async checkInvalidLive(tgLive: TargetLive) {
     const live = await this.liveFinder.findById(tgLive.live.id); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveNodeAttr(tgLive.live));
+      log.error(`Live not found`, liveAttr(tgLive.live));
       return;
     }
 
     // Skip already finished live
     if (live.isDisabled) {
-      log.error('Live is disabled', liveNodeAttr(live));
+      log.error('Live is disabled', liveAttr(live));
       return;
     }
 
@@ -106,13 +106,13 @@ export class LiveRecoveryManager {
   private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto) {
     const live = await this.liveFinder.findById(tgLive.id); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveNodeAttr(tgLive, invalidNode));
+      log.error(`Live not found`, liveAttr(tgLive, invalidNode));
       return;
     }
 
     // Skip already finished live
     if (tgLive.isDisabled) {
-      log.error('Live is already disabled', liveNodeAttr(tgLive, invalidNode));
+      log.error('Live is already disabled', liveAttr(tgLive, invalidNode));
       return;
     }
 
@@ -147,7 +147,7 @@ export class LiveRecoveryManager {
         }
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
         if (!liveNode) {
-          log.error('LiveNode Not Found', liveNodeAttr(live, node));
+          log.error('LiveNode Not Found', liveAttr(live, node));
           continue;
         }
         if (liveNode.createdAt >= threshold) {

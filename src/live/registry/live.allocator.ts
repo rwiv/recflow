@@ -11,7 +11,7 @@ import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { log } from 'jslog';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 
 const INIT_WAIT_THRESHOLD_MS = 5 * 1000; // 5 seconds
 
@@ -46,7 +46,7 @@ export class LiveAllocator {
     }
 
     if (live.nodes.length === 0) {
-      log.info('Live has no nodes', liveNodeAttr(live));
+      log.info('Live has no nodes', liveAttr(live));
     }
     if (live.nodes.length > 0) {
       const first = live.nodes[0];
@@ -55,7 +55,7 @@ export class LiveAllocator {
         throw NotFoundError.from('LiveStatus', 'id', first.id);
       }
       if (status.status !== 'recording') {
-        log.debug('Live is not recording', liveNodeAttr(live));
+        log.debug('Live is not recording', liveAttr(live));
         return;
       }
     }

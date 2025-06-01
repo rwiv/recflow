@@ -3,7 +3,7 @@ import { STDL_REDIS } from '../../infra/infra.tokens.js';
 import { segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { log } from 'jslog';
 import { LiveFinder } from './live.finder.js';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 import { subLists } from '../../utils/list.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
@@ -54,7 +54,7 @@ export class LiveStateCleaner {
   async clearLive(liveId: string) {
     const exists = await this.liveFinder.findById(liveId);
     if (exists && !exists.isDisabled) {
-      log.error('Live still exists', liveNodeAttr(exists));
+      log.error('Live still exists', liveAttr(exists));
       return;
     }
 

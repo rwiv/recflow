@@ -7,7 +7,7 @@ import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 import { delay } from '../../utils/time.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { LiveFinder } from '../data/live.finder.js';
@@ -57,12 +57,12 @@ export class LiveFinalizer {
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
     const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
     if (!recStatus) {
-      log.debug(`Live already finished`, liveNodeAttr(live, node));
+      log.debug(`Live already finished`, liveAttr(live, node));
       return null;
     }
 
     // Close recorder
-    log.debug('Close recorder', liveNodeAttr(live, node));
+    log.debug('Close recorder', liveAttr(live, node));
     await this.stdl.cancelRecording(node.endpoint, recStatus.id);
 
     return { status: recStatus, node };
@@ -95,18 +95,18 @@ export class LiveFinalizer {
           // LiveCleaner may have already removed live
           if (live) {
             const deleted = await this.liveWriter.delete(live.id, req.isPurge, tx);
-            log.info(req.msg, { ...liveNodeAttr(deleted), cmd: req.exitCmd });
+            log.info(req.msg, { ...liveAttr(deleted), cmd: req.exitCmd });
           }
         });
         return;
       } catch (e) {
         if (retryCnt === RETRY_LIMIT) {
-          log.error(`Failed to finish live`, { ...liveNodeAttr(live), stacktrace: stacktrace(e) });
+          log.error(`Failed to finish live`, { ...liveAttr(live), stacktrace: stacktrace(e) });
           await this.liveWriter.delete(live.id, true);
           return;
         }
         log.warn(`Retrying to finish live`, {
-          ...liveNodeAttr(live),
+          ...liveAttr(live),
           cmd: req.exitCmd,
           attempt: retryCnt + 1,
           stacktrace: stacktrace(e),
@@ -151,13 +151,13 @@ export class LiveFinalizer {
       fsName: live.fsName,
     };
 
-    log.debug(`Start adding StdlDone task`, liveNodeAttr(live));
+    log.debug(`Start adding StdlDone task`, liveAttr(live));
 
     const startTime = Date.now();
     while (true) {
       if (Date.now() - startTime > this.env.liveFinishTimeoutSec * 1000) {
         const msg = `Timeout while waiting for recording to finish`;
-        log.error(msg, liveNodeAttr(live));
+        log.error(msg, liveAttr(live));
         throw new HttpError(msg, 500);
       }
       const isComplete = await this.isCompleteRecording(live, tgRecs);
@@ -168,7 +168,7 @@ export class LiveFinalizer {
       await this.vtask.addTask(doneMsg);
       break;
     }
-    log.debug(`Complete adding StdlDone task`, liveNodeAttr(live));
+    log.debug(`Complete adding StdlDone task`, liveAttr(live));
   }
 
   private async isCompleteRecording(live: LiveDto, tgRecs: TargetRecorder[]) {

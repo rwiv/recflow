@@ -26,7 +26,7 @@ import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
-import { liveNodeAttr } from '../../common/attr/attr.live.js';
+import { liveInfoAttr, liveNodeAttr } from '../../common/attr/attr.live.js';
 import assert from 'assert';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 
@@ -113,15 +113,14 @@ export class LiveRegistrar {
       node = null;
     }
 
-    // If there is no available node, notify and create a disabled live
+    // If there is no available node
     if (!node) {
       const headMessage = 'No available nodes for assignment';
       if (mustExistNode) {
         const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
         return this.createDisabledLive(live, liveInfo, createOpts, headMessage, true, tx);
       } else {
-        const { type: platform, pid, channelName } = liveInfo;
-        log.error(headMessage, { platform, pid, channelName });
+        log.error(headMessage, liveInfoAttr(liveInfo));
         return null;
       }
     }
@@ -130,12 +129,12 @@ export class LiveRegistrar {
       log.error('Stream info is not available');
       return null;
     }
-    // If m3u8 is not available, create a disabled live
+    // If m3u8 is not available (e.g. standby mode in Soop)
     const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
     if (!m3u8) {
-      const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-      const headMessage = 'M3U8 not available';
-      return this.createDisabledLive(live, liveInfo, createOpts, headMessage, false, tx);
+      // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
+      log.debug('M3U8 not available', liveInfoAttr(liveInfo));
+      return null;
     }
 
     // Create live if not exists

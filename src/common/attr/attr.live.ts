@@ -1,12 +1,13 @@
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
+import { LiveInfo } from '../../platform/spec/wapper/live.js';
 
 interface LiveNodeAttr {
   liveId: string;
   platform: string;
   channelId: string;
   channelName: string;
-  title: string;
+  liveTitle: string;
   node?: string;
   assigned?: number;
   stacktrace?: string;
@@ -18,7 +19,7 @@ export function liveNodeAttr(live: LiveDto, node: NodeDtoWithLives | null = null
     platform: live.platform.name,
     channelId: live.channel.pid,
     channelName: live.channel.username,
-    title: live.liveTitle,
+    liveTitle: live.liveTitle,
   };
   if (node) {
     attr.node = node.name;
@@ -27,4 +28,13 @@ export function liveNodeAttr(live: LiveDto, node: NodeDtoWithLives | null = null
     }
   }
   return attr;
+}
+
+export function liveInfoAttr(liveInfo: LiveInfo) {
+  return {
+    platform: liveInfo.type,
+    channelId: liveInfo.pid,
+    channelName: liveInfo.channelName,
+    liveTitle: liveInfo.liveTitle,
+  };
 }

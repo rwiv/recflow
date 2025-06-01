@@ -39,6 +39,7 @@ export interface LiveFinishOptions {
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
   reusableLive?: LiveDtoWithNodes;
+  logMessage?: string;
 
   // node selection options
   ignoreNodeIds?: string[];
@@ -138,9 +139,9 @@ export class LiveRegistrar {
     }
 
     // Create live if not exists
-    let logMsg = 'New LiveNode';
+    let logMessage = req.logMessage ?? 'New LiveNode';
     if (!live) {
-      logMsg = 'New Live';
+      logMessage = 'New Live';
       const createOpts: LiveCreateOptions = { isDisabled: false, domesticOnly, overseasFirst };
       live = await this.liveWriter.createByLive(liveInfo, streamInfo, createOpts, tx);
     }
@@ -158,7 +159,7 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(this.env.untf.topic, live);
     }
 
-    log.info(logMsg, liveAttr(live, node));
+    log.info(logMessage, liveAttr(live, node));
     return live.id;
   }
 

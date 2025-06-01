@@ -66,6 +66,7 @@ export class LiveAllocator {
       channelInfo: channelLiveInfo.parse(channelInfo),
       ignoreGroupIds: live.nodes.map((it) => it.groupId),
       mustExistNode: false,
+      logMessage: 'Reallocation Live',
     });
   }
 }

@@ -55,7 +55,7 @@ export class LiveAllocator {
         throw NotFoundError.from('LiveStatus', 'id', first.id);
       }
       if (status.status !== 'recording') {
-        log.warn('Live is not recording', liveNodeAttr(live));
+        log.debug('Live is not recording', liveNodeAttr(live));
         return;
       }
     }

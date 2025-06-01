@@ -115,28 +115,27 @@ export class LiveRegistrar {
 
     // If there is no available node, notify and create a disabled live
     if (!node) {
+      const headMessage = 'No available nodes for assignment';
       if (mustExistNode) {
         const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-        const headMessage = 'No available nodes for assignment';
-        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, tx);
+        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, true, tx);
       } else {
-        log.error('No available nodes for assignment', {
-          platform: liveInfo.type,
-          pid: liveInfo.pid,
-          channelName: liveInfo.channelName,
-        });
+        const { type: platform, pid, channelName } = liveInfo;
+        log.error(headMessage, { platform, pid, channelName });
         return null;
       }
     }
 
+    if (!streamInfo.best || !streamInfo.headers) {
+      log.error('Stream info is not available');
+      return null;
+    }
     // If m3u8 is not available, create a disabled live
-    if (streamInfo.best && streamInfo.headers) {
-      const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
-      if (!m3u8) {
-        const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-        const headMessage = 'M3U8 not available';
-        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, tx);
-      }
+    const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
+    if (!m3u8) {
+      const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
+      const headMessage = 'M3U8 not available';
+      return this.createDisabledLive(live, liveInfo, createOpts, headMessage, false, tx);
     }
 
     // Create live if not exists
@@ -169,6 +168,7 @@ export class LiveRegistrar {
     liveInfo: LiveInfo,
     createOpts: LiveCreateOptions,
     headMessage: string,
+    withNotify: boolean,
     tx: Tx,
   ) {
     if (live) {
@@ -177,10 +177,12 @@ export class LiveRegistrar {
     createOpts.isDisabled = true;
     const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
 
-    const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
-    this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
-    log.info(headMessage, liveNodeAttr(newDisabledLive));
+    if (withNotify) {
+      const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
+      this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
+    }
 
+    log.info(headMessage, liveNodeAttr(newDisabledLive));
     return newDisabledLive.id;
   }
 

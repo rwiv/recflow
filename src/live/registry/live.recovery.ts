@@ -66,9 +66,9 @@ export class LiveRecoveryManager {
       return;
     }
 
-    // Finish if live is not invalid
+    // Finish if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
-      return this.finishLive(live.id, 'Live is not invalid');
+      return this.finishLive(live.id, 'Live is invalid');
     }
 
     // Finish if live not open

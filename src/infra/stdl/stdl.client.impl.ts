@@ -12,12 +12,16 @@ export class StdlImpl extends Stdl {
   }
 
   async getStatus(endpoint: string): Promise<RecorderStatus[]> {
-    const res = await fetch(`${endpoint}`, { signal: AbortSignal.timeout(this.env.httpTimeout) });
+    const res = await fetch(this.getRecordingsUrl(endpoint), {
+      method: 'GET',
+      headers: { 'content-type': 'application/json' },
+      signal: AbortSignal.timeout(this.env.httpTimeout),
+    });
     return nodeStatusResponse.parse(await res.json()).recorders;
   }
 
   async startRecording(endpoint: string, recordId: string): Promise<void> {
-    const res = await fetch(`${endpoint}/${recordId}`, {
+    const res = await fetch(`${this.getRecordingsUrl(endpoint)}/${recordId}`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       signal: AbortSignal.timeout(this.env.httpTimeout),
@@ -29,7 +33,7 @@ export class StdlImpl extends Stdl {
   }
 
   async cancelRecording(endpoint: string, recordId: string): Promise<void> {
-    const res = await fetch(`${endpoint}/${recordId}`, {
+    const res = await fetch(`${this.getRecordingsUrl(endpoint)}/${recordId}`, {
       method: 'DELETE',
       headers: { 'content-type': 'application/json' },
       signal: AbortSignal.timeout(this.env.httpTimeout),
@@ -38,5 +42,9 @@ export class StdlImpl extends Stdl {
       log.error(`Failed to cancel recording`, { status: res.status, body: await res.text() });
       throw new HttpRequestError(`Error requesting recording`, res.status);
     }
+  }
+
+  private getRecordingsUrl(endpoint: string) {
+    return `${endpoint}/api/recordings`;
   }
 }

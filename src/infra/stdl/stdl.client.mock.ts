@@ -50,22 +50,6 @@ export class StdlMock extends Stdl {
     });
   }
 
-  async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecorderStatus[]>> {
-    const promises = [];
-    for (const node of nodes) {
-      promises.push(this.getStatus(node.endpoint));
-    }
-    const nodeStatusList: RecorderStatus[][] = await Promise.all(promises);
-    if (nodeStatusList.length !== nodes.length) {
-      throw new ValidationError('Node status list length mismatch');
-    }
-    const nodeStatusMap = new Map<string, RecorderStatus[]>();
-    for (let i = 0; i < nodeStatusList.length; i++) {
-      nodeStatusMap.set(nodes[i].id, nodeStatusList[i]);
-    }
-    return nodeStatusMap;
-  }
-
   async startRecording(endpoint: string, recordId: string): Promise<void> {
     log.info(`MockStdlClient.requestRecording(...)`, { endpoint, recordId });
     await Promise.resolve(undefined);

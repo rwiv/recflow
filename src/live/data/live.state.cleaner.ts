@@ -28,10 +28,10 @@ export class LiveStateCleaner {
   }
 
   async getTargetIds() {
-    const liveIds = await this.stdlRedis.getLivesIds();
+    const liveIds = await this.stdlRedis.getLivesIds(false);
 
     const targetIds = [];
-    const rawLiveStates = await this.stdlRedis.getLiveStates(liveIds);
+    const rawLiveStates = await this.stdlRedis.getLiveStates(liveIds, false);
     for (let i = 0; i < rawLiveStates.length; i++) {
       const liveState = rawLiveStates[i];
       if (!liveState) {
@@ -62,7 +62,7 @@ export class LiveStateCleaner {
 
     for (const keyword of segmentKeyword.options) {
       const start = Date.now();
-      const nums = await this.stdlRedis.getSegNums(liveId, keyword);
+      const nums = await this.stdlRedis.getSegNums(liveId, keyword, false);
       if (keyword == 'retrying' && nums.length > 0) {
         this.notifier.notify(this.env.untf.topic, `Invalid retrying segments found: liveId=${liveId}`);
       }
@@ -70,8 +70,7 @@ export class LiveStateCleaner {
         await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
       }
       await this.stdlRedis.deleteSegNumSet(liveId, keyword);
-      const duration = Date.now() - start;
-      log.debug('Cleaned live', { liveId, duration, keyword, nums: nums.length });
+      log.debug('Cleaned live', { liveId, keyword, duration: Date.now() - start, nums: nums.length });
     }
     await this.stdlRedis.deleteLiveState(liveId);
   }

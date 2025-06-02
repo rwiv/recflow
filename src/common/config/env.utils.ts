@@ -23,13 +23,24 @@ export function readServerRedisConfig(): RedisConfig {
   return { host, port, password };
 }
 
-export function readStdlRedisConfig(): RedisConfig {
-  const host = process.env.STDL_REDIS_HOST;
+export function readStdlRedisMasterConfig(): RedisConfig {
+  const host = process.env.STDL_REDIS_MASTER_HOST;
+  const port = nnint.parse(process.env.STDL_REDIS_MASTER_PORT);
   const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
     throw Error('redis data is undefined');
   }
-  const port = nnint.parse(process.env.STDL_REDIS_PORT);
+  const caPath = process.env.STDL_REDIS_CA_PATH;
+  return { host, port, password, caPath };
+}
+
+export function readStdlRedisReplicaConfig(): RedisConfig {
+  const host = process.env.STDL_REDIS_REPLICA_HOST;
+  const port = nnint.parse(process.env.STDL_REDIS_REPLICA_PORT);
+  const password = process.env.STDL_REDIS_PASSWORD;
+  if (host === undefined || password === undefined) {
+    throw Error('redis data is undefined');
+  }
   const caPath = process.env.STDL_REDIS_CA_PATH;
   return { host, port, password, caPath };
 }

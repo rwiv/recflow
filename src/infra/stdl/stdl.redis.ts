@@ -26,18 +26,17 @@ export type SegmentKeyword = z.infer<typeof segmentKeyword>;
 
 export abstract class StdlRedis {
   abstract createLiveState(live: LiveDto): Promise<void>;
-  abstract getLiveState(id: string): Promise<LiveState | null>;
-  abstract getLiveStates(liveRecordIds: string[]): Promise<(LiveState | null)[]>;
+  abstract getLiveState(id: string, useMaster: boolean): Promise<LiveState | null>;
+  abstract getLiveStates(liveRecordIds: string[], useMaster: boolean): Promise<(LiveState | null)[]>;
   abstract deleteLiveState(id: string): Promise<void>;
-  abstract deleteAllLivesStates(): Promise<void>;
 
-  abstract getLivesIds(): Promise<string[]>;
-  abstract getSegNums(liveId: string, keyword: SegmentKeyword): Promise<string[]>;
+  abstract getLivesIds(useMaster: boolean): Promise<string[]>;
+  abstract getSegNums(liveId: string, keyword: SegmentKeyword, useMaster: boolean): Promise<string[]>;
   abstract deleteSegNumSet(liveId: string, keyword: SegmentKeyword): Promise<void>;
   abstract deleteSegmentStates(liveId: string, nums: string[]): Promise<void>;
 
   async isInvalidLive(live: LiveDto): Promise<boolean> {
-    const liveState = await this.getLiveState(live.id);
+    const liveState = await this.getLiveState(live.id, false);
     if (!liveState) {
       log.error(`Live not found in STDL`, liveAttr(live));
       return true;

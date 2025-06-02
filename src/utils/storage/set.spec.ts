@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 import { createRedisClient } from './redis.js';
 import { AsyncSet } from './interface.js';
 import { RedisSet } from './set.redis.js';
-import { readStdlRedisConfig } from '../../common/config/env.utils.js';
+import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
 
 dotenv.config({ path: path.resolve('dev', '.env') });
-const conf = readStdlRedisConfig();
+const conf = readStdlRedisMasterConfig();
 
 describe('RedisSet', async () => {
   const testKey = 'test:set';

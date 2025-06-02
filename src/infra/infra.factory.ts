@@ -18,7 +18,8 @@ export class InfraFactory {
     // if (this.env.nodeEnv === 'dev') {
     //   return new StdlRedisMock();
     // }
-    const client = await createRedisClient(this.env.stdlRedis);
-    return new StdlRedisImpl(client, this.env.liveExpireSec);
+    const master = await createRedisClient(this.env.stdlRedisMaster);
+    const replica = await createRedisClient(this.env.stdlRedisReplica);
+    return new StdlRedisImpl(master, replica, this.env.liveExpireSec);
   }
 }

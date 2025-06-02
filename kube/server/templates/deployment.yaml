@@ -64,10 +64,14 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.redis.secrets.auth.name }}
                   key: {{ .Values.app.redis.secrets.auth.passwordKey }}
-            - name: STDL_REDIS_HOST
-              value: {{ .Values.externals.stdl.redis.host }}
-            - name: STDL_REDIS_PORT
-              value: "{{ .Values.externals.stdl.redis.port }}"
+            - name: STDL_REDIS_MASTER_HOST
+              value: {{ .Values.externals.stdl.redis.masterHost }}
+            - name: STDL_REDIS_MASTER_PORT
+              value: "{{ .Values.externals.stdl.redis.masterPort }}"
+            - name: STDL_REDIS_REPLICA_HOST
+              value: {{ .Values.externals.stdl.redis.replicaHost }}
+            - name: STDL_REDIS_REPLICA_PORT
+              value: "{{ .Values.externals.stdl.redis.replicaPort }}"
             - name: STDL_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:

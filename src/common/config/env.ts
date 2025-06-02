@@ -14,7 +14,8 @@ import {
   readAuthedConfig,
   readPgConfig,
   readServerRedisConfig,
-  readStdlRedisConfig,
+  readStdlRedisMasterConfig,
+  readStdlRedisReplicaConfig,
   readStlinkConfig,
   readStreamqConfig,
   readUntfConfig,
@@ -34,7 +35,8 @@ export interface Env {
   vtask: VtaskConfig;
   pg: PostgresConfig;
   serverRedis: RedisConfig;
-  stdlRedis: RedisConfig;
+  stdlRedisMaster: RedisConfig;
+  stdlRedisReplica: RedisConfig;
   httpTimeout: number;
   nodeFailureThreshold: number;
   nodeResetCycleSec: number;
@@ -73,7 +75,8 @@ export function readEnv(): Env {
     vtask: readVtaskConfig(),
     pg: readPgConfig(),
     serverRedis: readServerRedisConfig(),
-    stdlRedis: readStdlRedisConfig(),
+    stdlRedisMaster: readStdlRedisMasterConfig(),
+    stdlRedisReplica: readStdlRedisReplicaConfig(),
     httpTimeout: nnint.parse(process.env.HTTP_TIMEOUT_MS),
     liveRecoveryWaitTimeMs: nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS),
     liveFinishTimeoutSec: nnint.parse(process.env.LIVE_FINISH_TIMEOUT_SEC),

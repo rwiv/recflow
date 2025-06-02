@@ -24,30 +24,34 @@ const state: LiveState = {
 const exSec = 3600 * 24;
 
 it('test set', async () => {
-  const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis, exSec);
+  const master = await createRedisClient(env.stdlRedisMaster);
+  const replica = await createRedisClient(env.stdlRedisReplica);
+  const client = new StdlRedisImpl(master, replica, exSec);
   await client.set(state);
-  const liveIds = await client.getLivesIds();
+  const liveIds = await client.getLivesIds(true);
   console.log(liveIds);
 });
 
 it('test get', async () => {
-  const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis, exSec);
-  console.log(await client.getLiveState(''));
+  const master = await createRedisClient(env.stdlRedisMaster);
+  const replica = await createRedisClient(env.stdlRedisReplica);
+  const client = new StdlRedisImpl(master, replica, exSec);
+  console.log(await client.getLiveState('', true));
 });
 
 it('test getLivesIds', async () => {
-  const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis, exSec);
-  const liveIds = await client.getLivesIds();
+  const master = await createRedisClient(env.stdlRedisMaster);
+  const replica = await createRedisClient(env.stdlRedisReplica);
+  const client = new StdlRedisImpl(master, replica, exSec);
+  const liveIds = await client.getLivesIds(true);
   console.log(liveIds);
 });
 
 it('test getSuccessSegNums', async () => {
   const liveId = '';
-  const redis = await createRedisClient(env.stdlRedis);
-  const client = new StdlRedisImpl(redis, exSec);
-  const nums = await client.getSegNums(liveId, 'success');
+  const master = await createRedisClient(env.stdlRedisMaster);
+  const replica = await createRedisClient(env.stdlRedisReplica);
+  const client = new StdlRedisImpl(master, replica, exSec);
+  const nums = await client.getSegNums(liveId, 'success', true);
   console.log(nums);
 });

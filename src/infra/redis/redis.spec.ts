@@ -2,11 +2,11 @@ import { it } from 'vitest';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createRedisClient } from './redis.client.js';
-import { readStdlRedisConfig } from '../../common/config/env.utils.js';
+import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
 import { allKeys } from './redis.utils.js';
 
 dotenv.config({ path: path.resolve('dev', '.env') });
-const conf = readStdlRedisConfig();
+const conf = readStdlRedisMasterConfig();
 
 const pattern = '*';
 // const pattern = 'stmgr:*';

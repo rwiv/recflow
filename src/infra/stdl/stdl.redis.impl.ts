@@ -12,7 +12,8 @@ export const SEGMENT_PREFIX = 'segment';
 
 export class StdlRedisImpl extends StdlRedis {
   constructor(
-    private readonly client: RedisClientType,
+    private readonly master: RedisClientType,
+    private readonly replica: RedisClientType,
     private readonly exSec: number,
   ) {
     super();
@@ -44,28 +45,28 @@ export class StdlRedisImpl extends StdlRedis {
 
   async set(state: LiveState): Promise<void> {
     const key = `${LIVE_PREFIX}:${state.id}`;
-    if (await this.client.get(key)) {
+    if (await this.master.get(key)) {
       throw new ValidationError(`liveId ${state.id} already exists`);
     }
-    await this.client.set(key, JSON.stringify(state), { EX: this.exSec });
-    await this.client.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
+    await this.master.set(key, JSON.stringify(state), { EX: this.exSec });
+    await this.master.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
   }
 
-  async getLiveState(liveRecordId: string): Promise<LiveState | null> {
+  async getLiveState(liveRecordId: string, useMaster: boolean): Promise<LiveState | null> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
-    const liveData = await this.client.get(key);
+    const liveData = await this.getClient(useMaster).get(key);
     if (!liveData) {
       return null;
     }
     return liveState.parse(JSON.parse(liveData));
   }
 
-  async getLiveStates(liveRecordIds: string[]): Promise<(LiveState | null)[]> {
+  async getLiveStates(liveRecordIds: string[], useMaster: boolean): Promise<(LiveState | null)[]> {
     if (liveRecordIds.length === 0) {
       return [];
     }
     const keys = liveRecordIds.map((id) => `${LIVE_PREFIX}:${id}`);
-    const data = await this.client.mGet(keys);
+    const data = await this.getClient(useMaster).mGet(keys);
     return data.map((item) => {
       if (!item) {
         return null;
@@ -76,33 +77,30 @@ export class StdlRedisImpl extends StdlRedis {
 
   async deleteLiveState(liveRecordId: string): Promise<void> {
     const key = `${LIVE_PREFIX}:${liveRecordId}`;
-    if (await this.client.get(key)) {
-      await this.client.del(key);
+    if (await this.replica.get(key)) {
+      await this.master.del(key);
     }
-    await this.client.zRem(LIVES_KEY, liveRecordId);
+    await this.master.zRem(LIVES_KEY, liveRecordId);
   }
 
-  async deleteAllLivesStates(): Promise<void> {
-    const keys = await this.client.keys(`*`);
-    for (const key of keys) {
-      await this.client.del(key);
-    }
-    await this.client.del(LIVES_KEY);
+  async getLivesIds(useMaster: boolean) {
+    return await this.getClient(useMaster).zRange(LIVES_KEY, 0, -1);
   }
 
-  async getLivesIds() {
-    return await this.client.zRange(LIVES_KEY, 0, -1);
-  }
-
-  async getSegNums(liveId: string, keyword: SegmentKeyword) {
-    return await this.client.zRange(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`, 0, -1);
+  async getSegNums(liveId: string, keyword: SegmentKeyword, useMaster: boolean) {
+    const key = `${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`;
+    return await this.getClient(useMaster).zRange(key, 0, -1);
   }
 
   async deleteSegNumSet(liveId: string, keyword: SegmentKeyword) {
-    await this.client.del(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`);
+    await this.master.del(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`);
   }
 
   async deleteSegmentStates(liveId: string, nums: string[]): Promise<void> {
-    await this.client.del(nums.map((num) => `${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`));
+    await this.master.del(nums.map((num) => `${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`));
+  }
+
+  private getClient(useMaster: boolean = false) {
+    return useMaster ? this.master : this.replica;
   }
 }

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL_REDIS } from '../../infra/infra.tokens.js';
+import { NOTIFIER, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { log } from 'jslog';
 import { LiveFinder } from './live.finder.js';
@@ -7,6 +7,7 @@ import { liveAttr } from '../../common/attr/attr.live.js';
 import { subLists } from '../../utils/list.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { Notifier } from '../../infra/notify/notifier.js';
 
 const INIT_WAIT_THRESHOLD_MS = 3 * 60 * 1000; // 3 min
 
@@ -15,6 +16,7 @@ export class LiveStateCleaner {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
+    @Inject(NOTIFIER) private readonly notifier: Notifier,
     private readonly liveFinder: LiveFinder,
   ) {}
 
@@ -61,6 +63,9 @@ export class LiveStateCleaner {
     for (const keyword of segmentKeyword.options) {
       const start = Date.now();
       const nums = await this.stdlRedis.getSegNums(liveId, keyword);
+      if (keyword == 'retrying' && nums.length > 0) {
+        this.notifier.notify(this.env.untf.topic, `Invalid retrying segments found: liveId=${liveId}`);
+      }
       for (const batchNums of subLists(nums, this.env.liveClearBatchSize)) {
         await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
       }

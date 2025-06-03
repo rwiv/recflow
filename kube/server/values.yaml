@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.5.1
+  tag: 1.5.2
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -49,13 +49,15 @@ app:
     passwordKey: password
   configs:
     httpTimeoutMs: 5000
-    nodeFailureThreshold: 3
+    liveAllocationInitWaitSec: 15
+    liveRecoveryInitWaitSec: 40
+    liveFinishTimeoutSec: 180 # 3 minutes
     nodeResetCycleSec: 43200 # 12 hours
-    liveRecoveryWaitTimeMs: 40000
-    liveFinishTimeoutSec: 180
-    liveClearBatchSize: 100
-    liveExpireSec: 604800 # 7 days
-    recordExpireSec: 86400 # 24 hours
+    nodeFailureThreshold: 10
+    liveStateInitWaitSec: 120 # 2 minutes
+    liveStateExpireSec: 604800 # 7 days
+    stdlClearBatchSize: 50
+    cacheExpireSec: 86400 # 24 hours
     maxConcurrentLive: 3
 
 externals:

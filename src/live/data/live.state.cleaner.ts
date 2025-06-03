@@ -9,8 +9,6 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 
-const INIT_WAIT_THRESHOLD_MS = 3 * 60 * 1000; // 3 min
-
 @Injectable()
 export class LiveStateCleaner {
   constructor(
@@ -38,7 +36,8 @@ export class LiveStateCleaner {
         await this.stdlRedis.deleteLiveState(liveIds[i]);
         continue;
       }
-      const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
+      const initWaitMs = this.env.liveStateInitWaitSec * 1000;
+      const threshold = new Date(Date.now() - initWaitMs);
       if (liveState.createdAt >= threshold) {
         continue;
       }
@@ -66,7 +65,7 @@ export class LiveStateCleaner {
       if (keyword == 'retrying' && nums.length > 0) {
         this.notifier.notify(this.env.untf.topic, `Invalid retrying segments found: liveId=${liveId}`);
       }
-      for (const batchNums of subLists(nums, this.env.liveClearBatchSize)) {
+      for (const batchNums of subLists(nums, this.env.stdlClearBatchSize)) {
         await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
       }
       await this.stdlRedis.deleteSegNumSet(liveId, keyword);

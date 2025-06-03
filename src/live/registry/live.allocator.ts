@@ -13,8 +13,6 @@ import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 
-const INIT_WAIT_THRESHOLD_MS = 5 * 1000; // 5 seconds
-
 @Injectable()
 export class LiveAllocator {
   constructor(
@@ -31,7 +29,8 @@ export class LiveAllocator {
       if (live.isDisabled) {
         continue;
       }
-      const threshold = new Date(Date.now() - INIT_WAIT_THRESHOLD_MS);
+      const initWaitMs = this.env.liveAllocationInitWaitSec * 1000;
+      const threshold = new Date(Date.now() - initWaitMs);
       if (live.createdAt >= threshold) {
         continue;
       }

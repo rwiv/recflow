@@ -17,7 +17,7 @@ import { delay } from '../../utils/time.js';
 import { LiveFinder } from '../data/live.finder.js';
 
 const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
-const RECORDING_CLOSE_INTERVAL_DELAY_MS = 100; // 1 sec
+const RECORDING_CLOSE_INTERVAL_DELAY_MS = 1000; // 1 sec
 
 @Injectable()
 export class LiveRebalancer {

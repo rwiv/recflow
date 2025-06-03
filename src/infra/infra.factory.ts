@@ -11,7 +11,7 @@ export class InfraFactory {
 
   async createServerRedis() {
     const client = await createRedisClient(this.env.serverRedis);
-    return new RedisStore(client, this.env.recordExpireSec);
+    return new RedisStore(client, this.env.cacheExpireSec);
   }
 
   async createStdlRedis() {
@@ -20,6 +20,6 @@ export class InfraFactory {
     // }
     const master = await createRedisClient(this.env.stdlRedisMaster);
     const replica = await createRedisClient(this.env.stdlRedisReplica);
-    return new StdlRedisImpl(master, replica, this.env.liveExpireSec);
+    return new StdlRedisImpl(master, replica, this.env.liveStateExpireSec);
   }
 }

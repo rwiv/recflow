@@ -97,20 +97,24 @@ spec:
                   key: {{ .Values.app.postgres.passwordKey }}
             - name: HTTP_TIMEOUT_MS
               value: "{{ .Values.app.configs.httpTimeoutMs }}"
-            - name: NODE_FAILURE_THRESHOLD
-              value: "{{ .Values.app.configs.nodeFailureThreshold }}"
-            - name: NODE_RESET_CYCLE_SEC
-              value: "{{ .Values.app.configs.nodeResetCycleSec }}"
-            - name: LIVE_RECOVERY_WAIT_TIME_MS
-              value: "{{ .Values.app.configs.liveRecoveryWaitTimeMs }}"
+            - name: LIVE_ALLOCATION_INIT_WAIT_SEC
+              value: "{{ .Values.app.configs.liveAllocationInitWaitSec }}"
+            - name: LIVE_RECOVERY_INIT_WAIT_SEC
+              value: "{{ .Values.app.configs.liveRecoveryInitWaitSec }}"
             - name: LIVE_FINISH_TIMEOUT_SEC
               value: "{{ .Values.app.configs.liveFinishTimeoutSec }}"
-            - name: LIVE_CLEAR_BATCH_SIZE
-              value: "{{ .Values.app.configs.liveClearBatchSize }}"
-            - name: LIVE_EXPIRE_SEC
-              value: "{{ .Values.app.configs.liveExpireSec }}"
-            - name: RECORD_EXPIRE_SEC
-              value: "{{ .Values.app.configs.recordExpireSec }}"
+            - name: NODE_RESET_CYCLE_SEC
+              value: "{{ .Values.app.configs.nodeResetCycleSec }}"
+            - name: NODE_FAILURE_THRESHOLD
+              value: "{{ .Values.app.configs.nodeFailureThreshold }}"
+            - name: LIVE_STATE_INIT_WAIT_SEC
+              value: "{{ .Values.app.configs.liveStateInitWaitSec }}"
+            - name: LIVE_STATE_EXPIRE_SEC
+              value: "{{ .Values.app.configs.liveStateExpireSec }}"
+            - name: STDL_CLEAR_BATCH_SIZE
+              value: "{{ .Values.app.configs.stdlClearBatchSize }}"
+            - name: CACHE_EXPIRE_SEC
+              value: "{{ .Values.app.configs.cacheExpireSec }}"
             - name: MAX_CONCURRENT_LIVE
               value: "{{ .Values.app.configs.maxConcurrentLive }}"
           volumeMounts:

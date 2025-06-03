@@ -37,14 +37,19 @@ export interface Env {
   serverRedis: RedisConfig;
   stdlRedisMaster: RedisConfig;
   stdlRedisReplica: RedisConfig;
+
   httpTimeout: number;
-  nodeFailureThreshold: number;
-  nodeResetCycleSec: number;
-  liveRecoveryWaitTimeMs: number;
+  liveAllocationInitWaitSec: number;
+  liveRecoveryInitWaitSec: number;
   liveFinishTimeoutSec: number;
-  liveClearBatchSize: number;
-  liveExpireSec: number;
-  recordExpireSec: number;
+  nodeResetCycleSec: number;
+  nodeFailureThreshold: number;
+
+  liveStateInitWaitSec: number;
+  liveStateExpireSec: number;
+  stdlClearBatchSize: number;
+  cacheExpireSec: number;
+
   maxConcurrentLive: number;
 }
 
@@ -77,14 +82,19 @@ export function readEnv(): Env {
     serverRedis: readServerRedisConfig(),
     stdlRedisMaster: readStdlRedisMasterConfig(),
     stdlRedisReplica: readStdlRedisReplicaConfig(),
+
     httpTimeout: nnint.parse(process.env.HTTP_TIMEOUT_MS),
-    liveRecoveryWaitTimeMs: nnint.parse(process.env.LIVE_RECOVERY_WAIT_TIME_MS),
+    liveAllocationInitWaitSec: nnint.parse(process.env.LIVE_ALLOCATION_INIT_WAIT_SEC),
+    liveRecoveryInitWaitSec: nnint.parse(process.env.LIVE_RECOVERY_INIT_WAIT_SEC),
     liveFinishTimeoutSec: nnint.parse(process.env.LIVE_FINISH_TIMEOUT_SEC),
-    nodeFailureThreshold: nnint.parse(process.env.NODE_FAILURE_THRESHOLD),
     nodeResetCycleSec: nnint.parse(process.env.NODE_RESET_CYCLE_SEC),
-    liveClearBatchSize: nnint.parse(process.env.LIVE_CLEAR_BATCH_SIZE),
-    liveExpireSec: nnint.parse(process.env.LIVE_EXPIRE_SEC),
-    recordExpireSec: nnint.parse(process.env.RECORD_EXPIRE_SEC),
+    nodeFailureThreshold: nnint.parse(process.env.NODE_FAILURE_THRESHOLD),
+
+    liveStateInitWaitSec: nnint.parse(process.env.LIVE_STATE_INIT_WAIT_SEC),
+    liveStateExpireSec: nnint.parse(process.env.LIVE_STATE_EXPIRE_SEC),
+    stdlClearBatchSize: nnint.parse(process.env.STDL_CLEAR_BATCH_SIZE),
+    cacheExpireSec: nnint.parse(process.env.CACHE_EXPIRE_SEC),
+
     maxConcurrentLive: nnint.parse(process.env.MAX_CONCURRENT_LIVE),
   };
 }

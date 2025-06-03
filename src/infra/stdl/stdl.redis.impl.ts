@@ -14,7 +14,7 @@ export class StdlRedisImpl extends StdlRedis {
   constructor(
     private readonly master: RedisClientType,
     private readonly replica: RedisClientType,
-    private readonly exSec: number,
+    private readonly liveStateExpireSec: number,
   ) {
     super();
   }
@@ -48,7 +48,7 @@ export class StdlRedisImpl extends StdlRedis {
     if (await this.master.get(key)) {
       throw new ValidationError(`liveId ${state.id} already exists`);
     }
-    await this.master.set(key, JSON.stringify(state), { EX: this.exSec });
+    await this.master.set(key, JSON.stringify(state), { EX: this.liveStateExpireSec });
     await this.master.zAdd(LIVES_KEY, { score: Date.now(), value: state.id });
   }
 

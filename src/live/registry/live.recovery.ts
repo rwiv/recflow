@@ -8,7 +8,6 @@ import { Env } from '../../common/config/env.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
-import { ChannelLiveInfo, channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -131,7 +130,8 @@ export class LiveRecoveryManager {
     const nodes: NodeDto[] = await this.nodeFinder.findAll({});
     const nodeRecsMap: Map<string, RecorderStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
 
-    const threshold = new Date(Date.now() - this.env.liveRecoveryWaitTimeMs);
+    const initWaitMs = this.env.liveRecoveryInitWaitSec * 1000;
+    const threshold = new Date(Date.now() - initWaitMs);
 
     const invalidLiveMap = new Map<string, TargetLive>();
     for (const live of await this.liveFinder.findAllActives({ nodes: true })) {

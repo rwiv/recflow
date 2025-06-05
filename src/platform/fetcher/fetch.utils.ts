@@ -8,7 +8,7 @@ export async function checkResponse(res: Response) {
     try {
       body = JSON.parse(await res.text()) as string;
     } catch (e) {
-      log.error('Http request failure: unknown', { stacktrace: stacktrace(e) });
+      log.error('Http request failure: unknown', { stack: stacktrace(e) });
     }
     log.debug(`Failed to fetch`, { status: res.status, url: res.url, body });
     throw new HttpRequestError('Failed to fetch', res.status);

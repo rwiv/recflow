@@ -109,12 +109,12 @@ export class LiveRecoveryManager {
   private async checkInvalidNode(tgtLive: LiveDto, invalidNode: NodeDto) {
     const live = await this.liveFinder.findById(tgtLive.id, {}); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveAttr(tgtLive, invalidNode));
+      log.error(`Live not found`, liveAttr(tgtLive, { node: invalidNode }));
       return;
     }
     // Skip already finished live
     if (live.isDisabled) {
-      log.error('Live is already disabled', liveAttr(live, invalidNode));
+      log.error('Live is already disabled', liveAttr(live, { node: invalidNode }));
       return;
     }
 
@@ -123,7 +123,7 @@ export class LiveRecoveryManager {
     await db.transaction(async (tx: Tx) => {
       const node = await this.nodeFinder.findByIdForUpdate(invalidNode.id, {}, tx);
       if (!node) {
-        log.error(`Node not found`, liveAttr(live, node));
+        log.error(`Node not found`, liveAttr(live, { node }));
         return;
       }
       if (node.failureCnt >= this.env.nodeFailureThreshold) {
@@ -157,7 +157,7 @@ export class LiveRecoveryManager {
         }
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
         if (!liveNode) {
-          log.error('LiveNode Not Found', liveAttr(live, node));
+          log.error('LiveNode Not Found', liveAttr(live, { node }));
           continue;
         }
         if (liveNode.createdAt >= threshold) {
@@ -165,11 +165,7 @@ export class LiveRecoveryManager {
         }
 
         // Add invalid node to invalidLiveMap
-        const invalidNode: InvalidNode = {
-          node,
-          status: recStatus ?? null,
-          mappedAt: liveNode.createdAt,
-        };
+        const invalidNode: InvalidNode = { node, status: recStatus ?? null, mappedAt: liveNode.createdAt };
         const invalidLive = invalidLiveMap.get(live.id);
         if (invalidLive) {
           invalidLive.invalidNodes.push(invalidNode);

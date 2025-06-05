@@ -55,7 +55,7 @@ export class AmqpHttpImpl implements AmqpHttp {
     try {
       return queueStates.parse(JSON.parse(text));
     } catch (e) {
-      log.error('Failed to parse', { source: text, stacktrace: stacktrace(e) });
+      log.error('Failed to parse', { source: text, stack: stacktrace(e) });
       throw e;
     }
   }

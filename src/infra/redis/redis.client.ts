@@ -16,7 +16,7 @@ export async function createRedisClient(conf: RedisConfig, logging: boolean = fa
     opts.socket = { tls: true, ca };
   }
   const client = await createClient(opts)
-    .on('error', (err) => log.error('Redis Client Error', { stacktrace: stacktrace(err) }))
+    .on('error', (err) => log.error('Redis Client Error', { stack: stacktrace(err) }))
     .connect();
   if (logging) {
     log.info('Redis Client Connected');

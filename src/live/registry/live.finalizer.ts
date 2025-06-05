@@ -58,19 +58,18 @@ export class LiveFinalizer {
     try {
       const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
       if (!recStatus) {
-        log.debug(`Live already finished`, liveAttr(live, node));
+        log.debug(`Live already finished`, liveAttr(live, { node }));
         return null;
       }
 
       // Close recorder
-      log.debug('Close recorder', liveAttr(live, node));
+      log.debug('Close recorder', liveAttr(live, { node }));
       await this.stdl.cancelRecording(node.endpoint, recStatus.id);
 
       return { status: recStatus, node };
-    } catch (e) {
-      const attr = { ...liveAttr(live, node), stacktrace: stacktrace(e) };
-      log.error(`Failed to cancel recorder`, attr);
-      throw e;
+    } catch (err) {
+      log.error(`Failed to cancel recorder`, liveAttr(live, { node, err }));
+      throw err;
     }
   }
 
@@ -105,17 +104,16 @@ export class LiveFinalizer {
           }
         });
         return;
-      } catch (e) {
+      } catch (err) {
         if (retryCnt === RETRY_LIMIT) {
-          log.error(`Failed to finish live`, { ...liveAttr(live), stacktrace: stacktrace(e) });
+          log.error(`Failed to finish live`, liveAttr(live, { err }));
           await this.liveWriter.delete(live.id, true);
           return;
         }
         log.warn(`Retrying to finish live`, {
-          ...liveAttr(live),
+          ...liveAttr(live, { err }),
           cmd: req.exitCmd,
           attempt: retryCnt + 1,
-          stacktrace: stacktrace(e),
         });
         await delay(RETRY_DELAY_MS);
       }

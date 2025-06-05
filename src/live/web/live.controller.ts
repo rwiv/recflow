@@ -67,7 +67,7 @@ export class LiveController {
   @Post('/tasks/finish')
   finish(@Body() req: LiveFinishRequest) {
     this.finalizer.finishLive(liveFinishRequest.parse(req)).catch((err) => {
-      log.error('Error while finishing live', { stacktrace: stacktrace(err) });
+      log.error('Error while finishing live', { stack: stacktrace(err) });
     });
     return 'ok';
   }
@@ -75,7 +75,7 @@ export class LiveController {
   @Post('/tasks/adjust/node-group/:groupId')
   adjustNodeGroup(@Param('groupId') groupId: string) {
     this.rebalancer.drainByNodeGroup(groupId).catch((err) => {
-      log.error('Error while adjusting nodeGroup', { stacktrace: stacktrace(err) });
+      log.error('Error while adjusting nodeGroup', { stack: stacktrace(err) });
     });
     return 'ok';
   }
@@ -83,7 +83,7 @@ export class LiveController {
   @Post('/tasks/adjust/node/:nodeId')
   adjustNode(@Param('nodeId') nodeId: string) {
     this.rebalancer.drainByNode(nodeId).catch((err) => {
-      log.error('Error while adjusting node', { stacktrace: stacktrace(err) });
+      log.error('Error while adjusting node', { stack: stacktrace(err) });
     });
     return 'ok';
   }

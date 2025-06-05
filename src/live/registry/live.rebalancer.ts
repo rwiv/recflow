@@ -69,14 +69,14 @@ export class LiveRebalancer {
       }
       log.info(`Node drain completed`, { groupId: node.groupId, nodeId, nodeName: node.name });
     } catch (e) {
-      log.error(`Failed to drain live`, { nodeId, stacktrace: stacktrace(e) });
+      log.error(`Failed to drain live`, { nodeId, stack: stacktrace(e) });
     }
   }
 
   async drainByLive(reqLive: LiveDto, node: NodeDto) {
     const live = await this.liveFinder.findById(reqLive.id); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveAttr(reqLive, node));
+      log.error(`Live not found`, liveAttr(reqLive, { node }));
       return;
     }
 
@@ -93,9 +93,9 @@ export class LiveRebalancer {
 
     try {
       await this.liveRegistrar.deregister(live, node);
-      log.debug(`Live drain completed`, liveAttr(live, node));
-    } catch (e) {
-      log.error(`Failed to drain live`, { ...liveAttr(live, node), stacktrace: stacktrace(e) });
+      log.debug(`Live drain completed`, liveAttr(live, { node }));
+    } catch (err) {
+      log.error(`Failed to drain live`, liveAttr(live, { node, err }));
     }
   }
 

@@ -159,7 +159,7 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(this.env.untf.topic, live);
     }
 
-    log.info(logMessage, liveAttr(live, node));
+    log.info(logMessage, liveAttr(live, { node }));
     return live.id;
   }
 
@@ -189,7 +189,7 @@ export class LiveRegistrar {
   async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
     await this.liveWriter.unbind(live.id, node.id, tx);
     await this.finalizer.cancelRecorder(live, node);
-    log.debug('Deregister node in live', liveAttr(live, node));
+    log.debug('Deregister node in live', liveAttr(live, { node }));
   }
 
   async finishLive(recordId: string, opts: LiveFinishOptions = {}) {

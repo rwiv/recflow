@@ -25,7 +25,7 @@ export class UntfNotifier extends Notifier {
 
   notify(topic: string, message: string): void {
     this._notify(topic, message).catch((err) => {
-      log.error('Notification failure', { stacktrace: stacktrace(err) });
+      log.error('Notification failure', { stack: stacktrace(err) });
     });
   }
 

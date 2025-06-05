@@ -1,6 +1,7 @@
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { stacktrace } from '../../utils/errors/utils.js';
 
 interface LiveAttr {
   liveId: string;
@@ -10,10 +11,15 @@ interface LiveAttr {
   liveTitle: string;
   node?: string;
   assigned?: number;
-  stacktrace?: string;
+  stack?: string;
 }
 
-export function liveAttr(live: LiveDto, node: NodeDtoWithLives | null = null) {
+interface Options {
+  node?: NodeDtoWithLives | null;
+  err?: unknown;
+}
+
+export function liveAttr(live: LiveDto, opts?: Options) {
   const attr: LiveAttr = {
     liveId: live.id,
     platform: live.platform.name,
@@ -21,10 +27,16 @@ export function liveAttr(live: LiveDto, node: NodeDtoWithLives | null = null) {
     channelName: live.channel.username,
     liveTitle: live.liveTitle,
   };
-  if (node) {
-    attr.node = node.name;
-    if (node.lives) {
-      attr.assigned = node.lives.length;
+  if (opts) {
+    const { node, err } = opts;
+    if (node) {
+      attr.node = node.name;
+      if (node.lives) {
+        attr.assigned = node.lives.length;
+      }
+    }
+    if (err) {
+      attr.stack = stacktrace(err);
     }
   }
   return attr;

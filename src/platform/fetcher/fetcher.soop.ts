@@ -48,7 +48,8 @@ export class SoopFetcher {
       url += `?${params.toString()}`;
     }
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    await checkResponse(res, { channel_uid: pid, status: res.status, url: res.url });
+    const attr = { channel_uid: pid, status: res.status, url: res.url };
+    await checkResponse(res, attr, 'Failed to fetch channel');
     return channelFromSoop(soopChannelInfo.parse(await res.json()));
   }
 
@@ -77,7 +78,8 @@ export class SoopFetcher {
 
   private async requestLives(url: string) {
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    await checkResponse(res, { status: res.status, url: res.url });
+    const attr = { status: res.status, url: res.url };
+    await checkResponse(res, attr, 'Failed to fetch lives');
     return soopLiveInfoResponse.parse(await res.json());
   }
 }

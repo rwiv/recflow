@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RecorderStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+import { RecordingStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { log } from 'jslog';
+import { checkResponse, getHttpRequestError } from '../../utils/http.js';
 
 @Injectable()
 export class StdlImpl extends Stdl {
@@ -11,36 +10,52 @@ export class StdlImpl extends Stdl {
     super();
   }
 
-  async getStatus(endpoint: string): Promise<RecorderStatus[]> {
-    const res = await fetch(this.getRecordingsUrl(endpoint), {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-      signal: AbortSignal.timeout(this.env.httpTimeout),
-    });
-    return nodeStatusResponse.parse(await res.json()).recorders;
-  }
-
-  async startRecording(endpoint: string, recordId: string): Promise<void> {
-    const res = await fetch(`${this.getRecordingsUrl(endpoint)}/${recordId}`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      signal: AbortSignal.timeout(this.env.httpTimeout),
-    });
-    if (res.status >= 400) {
-      log.error(`Failed to start recording`, { status: res.status, body: await res.text() });
-      throw new HttpRequestError(`Failed to start recording`, res.status);
+  async getStatus(endpoint: string): Promise<RecordingStatus[]> {
+    const url = this.getRecordingsUrl(endpoint);
+    const attr = { url };
+    const failureMsg = 'Failed to get recording status';
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'content-type': 'application/json' },
+        signal: AbortSignal.timeout(this.env.httpTimeout),
+      });
+      await checkResponse(res, attr, failureMsg);
+      return nodeStatusResponse.parse(await res.json()).recorders;
+    } catch (err) {
+      throw getHttpRequestError(failureMsg, err, attr);
     }
   }
 
-  async cancelRecording(endpoint: string, recordId: string): Promise<void> {
-    const res = await fetch(`${this.getRecordingsUrl(endpoint)}/${recordId}`, {
-      method: 'DELETE',
-      headers: { 'content-type': 'application/json' },
-      signal: AbortSignal.timeout(this.env.httpTimeout),
-    });
-    if (res.status >= 400) {
-      log.error(`Failed to cancel recording`, { status: res.status, body: await res.text() });
-      throw new HttpRequestError(`Error requesting recording`, res.status);
+  async startRecording(endpoint: string, liveRecordId: string): Promise<void> {
+    const url = `${this.getRecordingsUrl(endpoint)}/${liveRecordId}`;
+    const attr = { url, live_record_id: liveRecordId };
+    const failureMsg = 'Failed to start recording';
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        signal: AbortSignal.timeout(this.env.httpTimeout),
+      });
+      await checkResponse(res, attr, failureMsg);
+    } catch (err) {
+      throw getHttpRequestError(failureMsg, err, attr);
+    }
+  }
+
+  async cancelRecording(endpoint: string, liveRecordId: string): Promise<void> {
+    const url = `${this.getRecordingsUrl(endpoint)}/${liveRecordId}`;
+    const attr = { url, live_record_id: liveRecordId };
+    const failureMsg = 'Failed to cancel recording';
+    try {
+      const res = await fetch(url, {
+        method: 'DELETE',
+        headers: { 'content-type': 'application/json' },
+        signal: AbortSignal.timeout(this.env.httpTimeout),
+      });
+      await checkResponse(res, attr, failureMsg);
+    } catch (err) {
+      throw getHttpRequestError(failureMsg, err, attr);
     }
   }
 

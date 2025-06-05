@@ -10,6 +10,7 @@ import {
   soopCriterionDto,
 } from '../../criterion/spec/criterion.dto.schema.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+import { getHttpRequestError } from '../../utils/http.js';
 
 @Injectable()
 export class PlatformFetcher {
@@ -18,35 +19,44 @@ export class PlatformFetcher {
     private readonly soopFetcher: SoopFetcher,
   ) {}
 
-  fetchLives(cr: PlatformCriterionDto): Promise<LiveInfo[]> {
-    if (cr.platform.name === 'chzzk') {
-      return this.chzzkFetcher.fetchLives(chzzkCriterionDto.parse(cr));
-    } else if (cr.platform.name === 'soop') {
-      return this.soopFetcher.fetchLives(soopCriterionDto.parse(cr));
-    } else {
-      throw new BaseError(`Invalid PlatformType: ${cr.platform.name}`);
+  async fetchLives(cr: PlatformCriterionDto): Promise<LiveInfo[]> {
+    try {
+      if (cr.platform.name === 'chzzk') {
+        return await this.chzzkFetcher.fetchLives(chzzkCriterionDto.parse(cr));
+      } else if (cr.platform.name === 'soop') {
+        return await this.soopFetcher.fetchLives(soopCriterionDto.parse(cr));
+      } else {
+        throw new BaseError(`Invalid PlatformType: ${cr.platform.name}`);
+      }
+    } catch (err) {
+      const attr = { platform: cr.platform, cr_name: cr.name };
+      throw getHttpRequestError('Failed to fetch lives', err, attr);
     }
   }
 
   async fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
     try {
       return await this.fetchChannelNotNull(platform, pid, hasLiveInfo);
-    } catch (e) {
-      if (e instanceof HttpRequestError && e.status === 404) {
+    } catch (err) {
+      if (err instanceof HttpRequestError && err.status === 404) {
         return null;
       } else {
-        throw e;
+        throw err;
       }
     }
   }
 
-  fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
-    if (platform === 'chzzk') {
-      return this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);
-    } else if (platform === 'soop') {
-      return this.soopFetcher.fetchChannel(pid, hasLiveInfo);
-    } else {
-      throw new BaseError(`Invalid PlatformType: ${platform}`);
+  async fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
+    try {
+      if (platform === 'chzzk') {
+        return await this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);
+      } else if (platform === 'soop') {
+        return await this.soopFetcher.fetchChannel(pid, hasLiveInfo);
+      } else {
+        throw new BaseError(`Invalid PlatformType: ${platform}`);
+      }
+    } catch (err) {
+      throw getHttpRequestError('Failed to fetch channel', err, { platform, channel_uid: pid });
     }
   }
 }

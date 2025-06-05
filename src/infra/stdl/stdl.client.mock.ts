@@ -1,12 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { RecorderStatus, Stdl } from './stdl.client.js';
+import { RecordingStatus, Stdl } from './stdl.client.js';
 import { nodeDtoListWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import assert from 'assert';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 const FAILURE_CNT_THRESHOLD = 10;
 // const FAILURE_ENABLED = true;
@@ -19,7 +17,7 @@ export class StdlMock extends Stdl {
     super();
   }
 
-  async getStatus(endpoint: string): Promise<RecorderStatus[]> {
+  async getStatus(endpoint: string): Promise<RecordingStatus[]> {
     if (FAILURE_ENABLED) {
       this.failureCnt++;
       if (this.failureCnt >= FAILURE_CNT_THRESHOLD) {

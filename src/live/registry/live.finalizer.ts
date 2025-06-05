@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { STDL, VTASK } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
-import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
+import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
@@ -9,7 +9,6 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { delay } from '../../utils/time.js';
-import { stacktrace } from '../../utils/errors/utils.js';
 import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
@@ -21,15 +20,16 @@ import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js'
 import { LiveWriter } from '../data/live.writer.js';
 import { db } from '../../infra/db/db.js';
 import { HttpError } from '../../utils/errors/base/HttpError.js';
+import { getHttpRequestError } from '../../utils/http.js';
 
 interface TargetRecorder {
-  status: RecorderStatus;
+  status: RecordingStatus;
   node: NodeDto;
 }
 
 interface NodeStats {
   node: NodeDto;
-  statusList: RecorderStatus[];
+  statusList: RecordingStatus[];
 }
 
 export const liveFinishRequest = z.object({
@@ -58,18 +58,16 @@ export class LiveFinalizer {
     try {
       const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
       if (!recStatus) {
-        log.debug(`Live already finished`, liveAttr(live, { node }));
+        log.debug(`Recording already finished`, liveAttr(live, { node }));
         return null;
       }
 
-      // Close recorder
-      log.debug('Close recorder', liveAttr(live, { node }));
+      log.debug('Cancel Recording', liveAttr(live, { node }));
       await this.stdl.cancelRecording(node.endpoint, recStatus.id);
 
       return { status: recStatus, node };
     } catch (err) {
-      log.error(`Failed to cancel recorder`, liveAttr(live, { node, err }));
-      throw err;
+      throw getHttpRequestError(`Failed to cancel recording`, err, liveAttr(live, { node, err }));
     }
   }
 
@@ -126,7 +124,7 @@ export class LiveFinalizer {
       return;
     }
 
-    // Cancel all recorders
+    // Cancel all recordings
     const cancelPromises = live.nodes.map((n) => this.cancelRecorder(live, n));
     const tgRecs: TargetRecorder[] = (await Promise.all(cancelPromises)).filter((r) => r !== null);
 

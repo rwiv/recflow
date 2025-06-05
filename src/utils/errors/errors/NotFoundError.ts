@@ -5,7 +5,7 @@ export class NotFoundError extends BaseError {
     super(message, details, { type: 'Not Found' });
   }
 
-  static from(name: string, queryKeyName: string, queryKey: string) {
-    return new NotFoundError(`${name} not found: ${queryKeyName}=${queryKey}`);
+  static from(name: string, queryKeyName: string, queryKey: string, attr?: Record<string, any>) {
+    return new NotFoundError(`${name} not found: ${queryKeyName}=${queryKey}`, { attr });
   }
 }

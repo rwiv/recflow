@@ -8,7 +8,7 @@ import { Env } from '../../common/config/env.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
-import { RecorderStatus, Stdl } from '../../infra/stdl/stdl.client.js';
+import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
@@ -22,8 +22,8 @@ import { db } from '../../infra/db/db.js';
 
 interface InvalidNode {
   node: NodeDto;
-  // if status is null, it means the recorder has already been canceled.
-  status: RecorderStatus | null;
+  // if status is null, it means the recording has already been canceled.
+  status: RecordingStatus | null;
   mappedAt: Date;
 }
 
@@ -138,7 +138,7 @@ export class LiveRecoveryManager {
 
   private async retrieveInvalidNodes(): Promise<TargetLive[]> {
     const nodes: NodeDto[] = await this.nodeFinder.findAll({});
-    const nodeRecsMap: Map<string, RecorderStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
+    const nodeRecsMap: Map<string, RecordingStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
 
     const initWaitMs = this.env.liveRecoveryInitWaitSec * 1000;
     const threshold = new Date(Date.now() - initWaitMs);
@@ -147,10 +147,10 @@ export class LiveRecoveryManager {
     for (const live of await this.liveFinder.findAllActives({ nodes: true })) {
       assert(live.nodes);
       for (const node of live.nodes) {
-        const nodeRecs: RecorderStatus[] | undefined = nodeRecsMap.get(node.id);
+        const nodeRecs: RecordingStatus[] | undefined = nodeRecsMap.get(node.id);
         assert(nodeRecs);
 
-        // Filter valid recorders in node
+        // Filter valid recordings in node
         const recStatus = nodeRecs.find((status) => status.id === live.id);
         if (recStatus && ['recording', 'done'].includes(recStatus.status)) {
           continue;

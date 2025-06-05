@@ -5,29 +5,29 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export abstract class Stdl {
-  abstract getStatus(endpoint: string): Promise<RecorderStatus[]>;
+  abstract getStatus(endpoint: string): Promise<RecordingStatus[]>;
 
-  async findStatus(endpoint: string, liveId: string): Promise<RecorderStatus | null> {
+  async findStatus(endpoint: string, liveId: string): Promise<RecordingStatus | null> {
     const recs = (await this.getStatus(endpoint)).filter((status) => status.id === liveId);
     if (recs.length === 0) {
       return null;
     }
     if (recs.length > 1) {
-      throw new ValidationError('Multiple recorders found');
+      throw new ValidationError('Multiple recordings found');
     }
     return recs[0];
   }
 
-  async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecorderStatus[]>> {
-    const promises: Promise<RecorderStatus[]>[] = [];
+  async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecordingStatus[]>> {
+    const promises: Promise<RecordingStatus[]>[] = [];
     for (const node of nodes) {
       promises.push(this.getStatus(node.endpoint));
     }
-    const nodeStatusList: RecorderStatus[][] = await Promise.all(promises);
+    const nodeStatusList: RecordingStatus[][] = await Promise.all(promises);
     if (nodeStatusList.length !== nodes.length) {
       throw new ValidationError('Node status list length mismatch');
     }
-    const nodeStatusMap = new Map<string, RecorderStatus[]>();
+    const nodeStatusMap = new Map<string, RecordingStatus[]>();
     for (let i = 0; i < nodeStatusList.length; i++) {
       nodeStatusMap.set(nodes[i].id, nodeStatusList[i]);
     }
@@ -40,7 +40,7 @@ export abstract class Stdl {
 
 export const stdlStreamStatusEnum = z.enum(['wait', 'recording', 'done', 'failed']);
 
-export const recorderStatus = z.object({
+export const recordingStatus = z.object({
   id: uuid,
   platform: platformNameEnum,
   channelId: nonempty,
@@ -50,9 +50,9 @@ export const recorderStatus = z.object({
   num: nnint,
   status: stdlStreamStatusEnum,
 });
-export type RecorderStatus = z.infer<typeof recorderStatus>;
+export type RecordingStatus = z.infer<typeof recordingStatus>;
 
 export const nodeStatusResponse = z.object({
-  recorders: z.array(recorderStatus),
+  recorders: z.array(recordingStatus), // TODO: change to `recordings`
 });
 export type NodeStatusResponse = z.infer<typeof nodeStatusResponse>;

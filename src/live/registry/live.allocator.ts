@@ -51,7 +51,7 @@ export class LiveAllocator {
       const first = live.nodes[0];
       const status = await this.stdl.findStatus(first.endpoint, live.id);
       if (!status) {
-        throw NotFoundError.from('LiveStatus', 'id', first.id);
+        throw NotFoundError.from('LiveStatus', 'id', first.id, liveAttr(live));
       }
       if (status.status !== 'recording') {
         log.debug('Live is not recording', liveAttr(live));

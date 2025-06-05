@@ -13,7 +13,7 @@ export interface Metadata {
 export class BaseError extends Error {
   readonly type: ErrorType | undefined;
   readonly code: string | undefined;
-  readonly attr: Record<string, any> | undefined;
+  attr: Record<string, any> | undefined;
 
   constructor(message: string, details?: Details, meta?: Metadata) {
     let options: ErrorOptions | undefined = undefined;
@@ -38,5 +38,13 @@ export class BaseError extends Error {
         this.code = meta.code;
       }
     }
+  }
+
+  extendAttr(attr: Record<string, any>) {
+    this.attr = { ...this.attr, ...attr };
+  }
+
+  updateMessage(message: string) {
+    this.message = message;
   }
 }

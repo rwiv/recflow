@@ -1,7 +1,7 @@
-import { BaseError } from '../base/BaseError.js';
+import { BaseError, Details } from '../base/BaseError.js';
 
 export class EnumCheckError extends BaseError {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options, 'Unprocessable Entity');
+  constructor(message: string, details?: Details) {
+    super(message, details, { type: 'Unprocessable Entity' });
   }
 }

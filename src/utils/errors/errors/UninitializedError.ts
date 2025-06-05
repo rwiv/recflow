@@ -1,8 +1,7 @@
-import { BaseError } from '../base/BaseError.js';
-import { ErrorType } from '../types/types.js';
+import { BaseError, Details, Metadata } from '../base/BaseError.js';
 
 export class UninitializedError extends BaseError {
-  constructor(message: string, options?: ErrorOptions, code?: ErrorType) {
-    super(message, options, code);
+  constructor(message: string, details?: Details, meta?: Metadata) {
+    super(message, details, meta);
   }
 }

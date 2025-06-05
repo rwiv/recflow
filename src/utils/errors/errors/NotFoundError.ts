@@ -1,8 +1,8 @@
-import { BaseError } from '../base/BaseError.js';
+import { BaseError, Details } from '../base/BaseError.js';
 
 export class NotFoundError extends BaseError {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options, 'Not Found');
+  constructor(message: string, details?: Details) {
+    super(message, details, { type: 'Not Found' });
   }
 
   static from(name: string, queryKeyName: string, queryKey: string) {

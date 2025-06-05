@@ -13,13 +13,13 @@ export class BaseErrorResolver {
 
     if (err instanceof ZodError) {
       const message = zodErrMsg(err);
-      return new BaseError(message, { cause: err }, 'Unprocessable Entity');
+      return new BaseError(message, { cause: err }, { type: 'Unprocessable Entity' });
     }
 
     if (err instanceof Error) {
-      return new BaseError(err.message, { cause: err }, BASE_ERROR_TYPE);
+      return new BaseError(err.message, { cause: err }, { type: BASE_ERROR_TYPE });
     }
 
-    return new BaseError('UnknownError', { cause: err }, BASE_ERROR_TYPE);
+    return new BaseError('UnknownError', { cause: err }, { type: BASE_ERROR_TYPE });
   }
 }

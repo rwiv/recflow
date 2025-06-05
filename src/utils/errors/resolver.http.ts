@@ -23,6 +23,8 @@ export class HttpErrorResolver {
     if (err.type) {
       status = ErrorTypeToHttpStatus[err.type];
     }
-    return new HttpError(err.message, status, { cause: err }, err.type, err.code);
+    const details = { cause: err, attr: err.attr };
+    const meta = { type: err.type, code: err.code };
+    return new HttpError(err.message, status, details, meta);
   }
 }

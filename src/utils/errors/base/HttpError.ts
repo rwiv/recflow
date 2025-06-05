@@ -1,11 +1,10 @@
-import { BaseError } from './BaseError.js';
-import { ErrorType } from '../types/types.js';
+import { BaseError, Details, Metadata } from './BaseError.js';
 
 export class HttpError extends BaseError {
   readonly status: number;
 
-  constructor(message: string, status: number, options?: ErrorOptions, type?: ErrorType, code?: string) {
-    super(message, options, type, code);
+  constructor(message: string, status: number, details?: Details, meta?: Metadata) {
+    super(message, details, meta);
     this.status = status;
   }
 }

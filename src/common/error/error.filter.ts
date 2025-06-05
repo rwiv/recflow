@@ -17,8 +17,7 @@ export class HttpErrorFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const err = this.resolver.resolve(raw);
-    const { message, status, code } = err;
-    log.error(err.name, { message, status, code, stacktrace: stacktrace(err) });
+    log.error(err.message, { ...err.attr, stacktrace: stacktrace(err) });
 
     let body: ErrorResponse = {
       statusCode: err.status,

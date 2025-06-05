@@ -11,7 +11,7 @@ export interface RedisConfig {
 export async function createRedisClient(conf: RedisConfig, logging: boolean = false) {
   const url = `redis://${conf.host}:${conf.port}`;
   const client = await createClient({ url, password: conf.password })
-    .on('error', (err) => log.error('Redis Client Error', { stack: stacktrace(err) }))
+    .on('error', (err) => log.error('Redis Client Error', { stack_trace: stacktrace(err) }))
     .connect();
   if (logging) {
     log.info('Redis Client Connected');

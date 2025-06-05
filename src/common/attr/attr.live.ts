@@ -4,14 +4,14 @@ import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 
 interface LiveAttr {
-  liveId: string;
+  live_id: string;
   platform: string;
-  channelId: string;
-  channelName: string;
-  liveTitle: string;
+  channel_uid: string;
+  channel_name: string;
+  live_title: string;
   node?: string;
   assigned?: number;
-  stack?: string;
+  stack_trace?: string;
 }
 
 interface Options {
@@ -21,11 +21,11 @@ interface Options {
 
 export function liveAttr(live: LiveDto, opts?: Options) {
   const attr: LiveAttr = {
-    liveId: live.id,
+    live_id: live.id,
     platform: live.platform.name,
-    channelId: live.channel.pid,
-    channelName: live.channel.username,
-    liveTitle: live.liveTitle,
+    channel_uid: live.channel.pid,
+    channel_name: live.channel.username,
+    live_title: live.liveTitle,
   };
   if (opts) {
     const { node, err } = opts;
@@ -36,7 +36,7 @@ export function liveAttr(live: LiveDto, opts?: Options) {
       }
     }
     if (err) {
-      attr.stack = stacktrace(err);
+      attr.stack_trace = stacktrace(err);
     }
   }
   return attr;

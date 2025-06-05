@@ -69,7 +69,12 @@ export class LiveStateCleaner {
         await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
       }
       await this.stdlRedis.deleteSegNumSet(liveId, keyword);
-      log.debug('Cleaned live', { liveId, keyword, duration: Date.now() - start, nums: nums.length });
+      log.debug('Cleaned live', {
+        live_id: liveId,
+        keyword,
+        duration: Date.now() - start,
+        nums: nums.length,
+      });
     }
     await this.stdlRedis.deleteLiveState(liveId);
   }

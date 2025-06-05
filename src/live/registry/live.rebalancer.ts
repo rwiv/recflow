@@ -44,7 +44,7 @@ export class LiveRebalancer {
 
     await Promise.all(targetNodes.map((node) => this.nodeUpdater.update(node.id, { isCordoned: true })));
     await Promise.all(targetNodes.map((node) => this.drainByNode(node.id)));
-    log.info(`Node group drain completed`, { groupId, groupName: group.name });
+    log.info(`Node group drain completed`, { group_id: groupId, group_name: group.name });
   }
 
   async drainByNode(nodeId: string) {
@@ -57,7 +57,7 @@ export class LiveRebalancer {
     try {
       assert(node.lives);
       if (node.lives.length === 0) {
-        log.debug(`No lives to drain`, { nodeId });
+        log.debug(`No lives to drain`, { node_id: nodeId });
         return;
       }
 
@@ -67,9 +67,9 @@ export class LiveRebalancer {
       for (const live of node.lives) {
         await this.waitForCanceled(live, node);
       }
-      log.info(`Node drain completed`, { groupId: node.groupId, nodeId, nodeName: node.name });
+      log.info(`Node drain completed`, { group_id: node.groupId, node_id: nodeId, node_name: node.name });
     } catch (e) {
-      log.error(`Failed to drain live`, { nodeId, stack: stacktrace(e) });
+      log.error(`Failed to drain live`, { node_id: nodeId, stack_trace: stacktrace(e) });
     }
   }
 

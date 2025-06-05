@@ -51,12 +51,12 @@ export class StdlMock extends Stdl {
   }
 
   async startRecording(endpoint: string, recordId: string): Promise<void> {
-    log.info(`MockStdlClient.requestRecording(...)`, { endpoint, recordId });
+    log.info(`MockStdlClient.requestRecording(...)`, { endpoint, record_id: recordId });
     await Promise.resolve(undefined);
   }
 
   async cancelRecording(endpoint: string, recordId: string): Promise<void> {
-    log.info(`MockStdlClient.cancel(...)`, { endpoint, recordId });
+    log.info(`MockStdlClient.cancel(...)`, { endpoint, record_id: recordId });
     await Promise.resolve(undefined);
   }
 }

@@ -2,7 +2,7 @@ import { ErrorType } from '../types/types.js';
 
 export interface Details {
   cause?: unknown;
-  attr?: object;
+  attr?: Record<string, any>;
 }
 
 export interface Metadata {
@@ -13,7 +13,7 @@ export interface Metadata {
 export class BaseError extends Error {
   readonly type: ErrorType | undefined;
   readonly code: string | undefined;
-  readonly attr: object | undefined;
+  readonly attr: Record<string, any> | undefined;
 
   constructor(message: string, details?: Details, meta?: Metadata) {
     let options: ErrorOptions | undefined = undefined;

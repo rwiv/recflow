@@ -2,10 +2,10 @@ import { channelFromSoop, ChannelInfo } from '../spec/wapper/channel.js';
 import { liveFromSoop, LiveInfo } from '../spec/wapper/live.js';
 import { Env } from '../../common/config/env.js';
 import { soopChannelInfo, SoopLiveInfo, soopLiveInfoResponse } from '../spec/raw/soop.js';
-import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { SoopCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { checkResponse } from '../../utils/http.js';
 
 @Injectable()
 export class SoopFetcher {
@@ -48,7 +48,7 @@ export class SoopFetcher {
       url += `?${params.toString()}`;
     }
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    await checkChannelResponse(res, pid);
+    await checkResponse(res, { channel_uid: pid, status: res.status, url: res.url });
     return channelFromSoop(soopChannelInfo.parse(await res.json()));
   }
 
@@ -77,7 +77,7 @@ export class SoopFetcher {
 
   private async requestLives(url: string) {
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    await checkResponse(res);
+    await checkResponse(res, { status: res.status, url: res.url });
     return soopLiveInfoResponse.parse(await res.json());
   }
 }

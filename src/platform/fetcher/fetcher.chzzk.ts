@@ -2,11 +2,11 @@ import { channelFromChzzk, ChannelInfo } from '../spec/wapper/channel.js';
 import { liveFromChzzk, LiveInfo } from '../spec/wapper/live.js';
 import { chzzkChannelInfo, ChzzkLiveInfo, chzzkLiveInfoResponse } from '../spec/raw/chzzk.js';
 import { Env } from '../../common/config/env.js';
-import { checkChannelResponse, checkResponse } from './fetch.utils.js';
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { ChzzkCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { nnint } from '../../common/data/common.schema.js';
+import { checkResponse } from '../../utils/http.js';
 
 @Injectable()
 export class ChzzkFetcher {
@@ -45,7 +45,7 @@ export class ChzzkFetcher {
       url += `?${params.toString()}`;
     }
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    await checkChannelResponse(res, pid);
+    await checkResponse(res, { channel_uid: pid, status: res.status, url: res.url });
     return channelFromChzzk(chzzkChannelInfo.parse(await res.json()));
   }
 
@@ -70,7 +70,7 @@ export class ChzzkFetcher {
 
   private async requestLives(url: string) {
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    await checkResponse(res);
+    await checkResponse(res, { status: res.status, url: res.url });
     return chzzkLiveInfoResponse.parse(await res.json());
   }
 }

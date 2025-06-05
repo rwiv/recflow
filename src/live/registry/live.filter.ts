@@ -17,11 +17,11 @@ export class PlatformLiveFilter {
     private readonly soopLiveFilter: SoopLiveFilter,
   ) {}
 
-  getFiltered(cr: PlatformCriterionDto, infos: LiveInfo[]): Promise<LiveInfo[]> {
+  getFiltered(cr: PlatformCriterionDto, liveInfos: LiveInfo[]): Promise<LiveInfo[]> {
     if (cr.platform.name === platformNameEnum.Values.chzzk) {
-      return this.chzzkLiveFiler.getFiltered(infos, chzzkCriterionDto.parse(cr));
+      return this.chzzkLiveFiler.getFiltered(liveInfos, chzzkCriterionDto.parse(cr));
     } else if (cr.platform.name === platformNameEnum.Values.soop) {
-      return this.soopLiveFilter.getFiltered(infos, soopCriterionDto.parse(cr));
+      return this.soopLiveFilter.getFiltered(liveInfos, soopCriterionDto.parse(cr));
     } else {
       throw new EnumCheckError(`Unknown platformName: platformName=${cr.platform.name}`);
     }

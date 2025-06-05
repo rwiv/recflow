@@ -55,17 +55,23 @@ export class LiveFinalizer {
   ) {}
 
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
-    const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
-    if (!recStatus) {
-      log.debug(`Live already finished`, liveAttr(live, node));
-      return null;
+    try {
+      const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
+      if (!recStatus) {
+        log.debug(`Live already finished`, liveAttr(live, node));
+        return null;
+      }
+
+      // Close recorder
+      log.debug('Close recorder', liveAttr(live, node));
+      await this.stdl.cancelRecording(node.endpoint, recStatus.id);
+
+      return { status: recStatus, node };
+    } catch (e) {
+      const attr = { ...liveAttr(live, node), stacktrace: stacktrace(e) };
+      log.error(`Failed to cancel recorder`, attr);
+      throw e;
     }
-
-    // Close recorder
-    log.debug('Close recorder', liveAttr(live, node));
-    await this.stdl.cancelRecording(node.endpoint, recStatus.id);
-
-    return { status: recStatus, node };
   }
 
   async requestFinishLive(req: LiveFinishRequest) {

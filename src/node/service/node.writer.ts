@@ -38,10 +38,7 @@ export class NodeWriter {
 
   async resetFailureCntAll() {
     const nodes = await this.nodeRepo.findAll();
-    const promises = [];
-    for (const node of nodes) {
-      promises.push(this.nodeRepo.update(node.id, { failureCnt: 0 }));
-    }
-    return Promise.all(promises);
+    const ps = nodes.map((node) => this.nodeRepo.update(node.id, { failureCnt: 0 }));
+    return Promise.all(ps);
   }
 }

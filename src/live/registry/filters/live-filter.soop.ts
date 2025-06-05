@@ -13,9 +13,9 @@ export class SoopLiveFilter {
     private readonly chFinder: ChannelFinder,
   ) {}
 
-  async getFiltered(lives: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {
-    const promises = lives.map((live) => this.filter(live, cr));
-    return (await Promise.all(promises)).filter((info) => info !== null);
+  async getFiltered(liveInfos: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {
+    const promises = liveInfos.map((liveInfo) => this.filter(liveInfo, cr));
+    return (await Promise.all(promises)).filter((liveInfo) => liveInfo !== null);
   }
 
   async filter(liveInfo: LiveInfo, cr: SoopCriterionDto): Promise<LiveInfo | null> {

@@ -40,6 +40,10 @@ export class NodeRepository {
     return oneNullable(await tx.select().from(nodeTable).where(eq(nodeTable.id, id)));
   }
 
+  async findByIdForUpdate(id: string, tx: Tx = db) {
+    return oneNullable(await tx.select().from(nodeTable).where(eq(nodeTable.id, id)).for('update'));
+  }
+
   async findByName(name: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(nodeTable).where(eq(nodeTable.name, name)));
   }

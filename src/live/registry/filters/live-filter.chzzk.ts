@@ -13,9 +13,9 @@ export class ChzzkLiveFilter {
     private readonly chFinder: ChannelFinder,
   ) {}
 
-  async getFiltered(lives: LiveInfo[], cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
-    const promises = lives.map((live) => this.filter(live, cr));
-    return (await Promise.all(promises)).filter((info) => info !== null);
+  async getFiltered(liveInfos: LiveInfo[], cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
+    const promises = liveInfos.map((liveInfo) => this.filter(liveInfo, cr));
+    return (await Promise.all(promises)).filter((liveInfo) => liveInfo !== null);
   }
 
   private async filter(liveInfo: LiveInfo, cr: ChzzkCriterionDto): Promise<LiveInfo | null> {

@@ -19,6 +19,12 @@ export class NodeFinder {
     return this.mapper.map(ent, req, tx);
   }
 
+  async findByIdForUpdate(id: string, req: NodeFieldsReq, tx: Tx = db) {
+    const ent = await this.nodeRepo.findByIdForUpdate(id, tx);
+    if (!ent) return null;
+    return this.mapper.map(ent, req, tx);
+  }
+
   async findByName(name: string, req: NodeFieldsReq, tx: Tx = db) {
     const ent = await this.nodeRepo.findByName(name);
     if (!ent) return null;

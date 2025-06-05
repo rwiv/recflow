@@ -17,6 +17,8 @@ import assert from 'assert';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { Notifier } from '../../infra/notify/notifier.js';
+import { Tx } from '../../infra/db/types.js';
+import { db } from '../../infra/db/db.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -47,15 +49,14 @@ export class LiveRecoveryManager {
   ) {}
 
   async check() {
-    for (const [liveId, tgLive] of await this.retrieveInvalidNodes()) {
-      await this.checkInvalidLive(tgLive);
-    }
+    const tgtLives = await this.retrieveInvalidNodes();
+    await Promise.all(tgtLives.map((tgtLive) => this.checkInvalidLive(tgtLive)));
   }
 
-  private async checkInvalidLive(tgLive: TargetLive) {
-    const live = await this.liveFinder.findById(tgLive.live.id); // latest live dto
+  private async checkInvalidLive(invalidLive: TargetLive) {
+    const live = await this.liveFinder.findById(invalidLive.live.id); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveAttr(tgLive.live));
+      log.error(`Live not found`, liveAttr(invalidLive.live));
       return;
     }
 
@@ -67,31 +68,34 @@ export class LiveRecoveryManager {
 
     // Finish if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
-      return this.finishLive(live.id, 'Live is invalid');
+      await this.finishLive(live.id, 'Live is invalid');
+      return;
     }
 
     // Finish if live not open
     const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
     if (!streamInfo.openLive) {
-      return this.finishLive(live.id, 'Delete uncleaned live');
+      await this.finishLive(live.id, 'Delete uncleaned live');
+      return;
     }
 
     // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     if (live.sourceId !== chanInfo.liveInfo?.liveId) {
-      return this.finishLive(live.id, 'Delete restarted live');
+      await this.finishLive(live.id, 'Delete restarted live');
+      return;
     }
 
     // Finish if live m3u8 is not valid
     const m3u8Text = await this.stlink.fetchM3u8ByLive(live);
     if (!m3u8Text) {
-      return this.finishLive(live.id, 'Delete live because m3u8 is not valid');
+      await this.finishLive(live.id, 'Delete live because m3u8 is not valid');
+      return;
     }
 
     // Recovery invalid nodes in live
-    for (const invalidNode of tgLive.invalidNodes) {
-      await this.checkInvalidNode(live, invalidNode.node);
-    }
+    const ps = invalidLive.invalidNodes.map((ivNode) => this.checkInvalidNode(live, ivNode.node));
+    await Promise.allSettled(ps);
   }
 
   private finishLive(liveId: string, message: string) {
@@ -102,31 +106,37 @@ export class LiveRecoveryManager {
     });
   }
 
-  private async checkInvalidNode(tgLive: LiveDto, invalidNode: NodeDto) {
-    const live = await this.liveFinder.findById(tgLive.id); // latest live dto
+  private async checkInvalidNode(tgtLive: LiveDto, invalidNode: NodeDto) {
+    const live = await this.liveFinder.findById(tgtLive.id, {}); // latest live dto
     if (!live) {
-      log.error(`Live not found`, liveAttr(tgLive, invalidNode));
+      log.error(`Live not found`, liveAttr(tgtLive, invalidNode));
       return;
     }
-
     // Skip already finished live
-    if (tgLive.isDisabled) {
-      log.error('Live is already disabled', liveAttr(tgLive, invalidNode));
+    if (live.isDisabled) {
+      log.error('Live is already disabled', liveAttr(live, invalidNode));
       return;
     }
 
-    if (invalidNode.failureCnt >= this.env.nodeFailureThreshold) {
-      await this.nodeUpdater.update(invalidNode.id, { failureCnt: 0, isCordoned: true });
-      const alertMsg = `Node ${invalidNode.name} is cordoned due to failure count exceeded threshold`;
-      this.notifier.notify(this.env.untf.topic, alertMsg);
-    } else {
-      await this.nodeUpdater.update(invalidNode.id, { failureCnt: invalidNode.failureCnt + 1 });
-    }
+    await this.liveRegistrar.deregister(live, invalidNode);
 
-    await this.liveRegistrar.deregister(tgLive, invalidNode);
+    await db.transaction(async (tx: Tx) => {
+      const node = await this.nodeFinder.findByIdForUpdate(invalidNode.id, {}, tx);
+      if (!node) {
+        log.error(`Node not found`, liveAttr(live, node));
+        return;
+      }
+      if (node.failureCnt >= this.env.nodeFailureThreshold) {
+        await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, tx);
+        const alertMsg = `Node ${node.name} is cordoned due to failure count exceeded threshold`;
+        this.notifier.notify(this.env.untf.topic, alertMsg);
+      } else {
+        await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, tx);
+      }
+    });
   }
 
-  private async retrieveInvalidNodes(): Promise<Map<string, TargetLive>> {
+  private async retrieveInvalidNodes(): Promise<TargetLive[]> {
     const nodes: NodeDto[] = await this.nodeFinder.findAll({});
     const nodeRecsMap: Map<string, RecorderStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
 
@@ -168,6 +178,6 @@ export class LiveRecoveryManager {
         }
       }
     }
-    return invalidLiveMap;
+    return Array.from(invalidLiveMap.values());
   }
 }

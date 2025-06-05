@@ -53,6 +53,6 @@ export const recordingStatus = z.object({
 export type RecordingStatus = z.infer<typeof recordingStatus>;
 
 export const nodeStatusResponse = z.object({
-  recorders: z.array(recordingStatus), // TODO: change to `recordings`
+  recordings: z.array(recordingStatus),
 });
 export type NodeStatusResponse = z.infer<typeof nodeStatusResponse>;

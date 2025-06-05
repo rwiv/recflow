@@ -21,7 +21,7 @@ export class StdlImpl extends Stdl {
         signal: AbortSignal.timeout(this.env.httpTimeout),
       });
       await checkResponse(res, attr, failureMsg);
-      return nodeStatusResponse.parse(await res.json()).recorders;
+      return nodeStatusResponse.parse(await res.json()).recordings;
     } catch (err) {
       throw getHttpRequestError(failureMsg, err, attr);
     }

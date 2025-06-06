@@ -27,8 +27,8 @@ service:
   targetPort: 8080
 
 ingress:
-  gateway: istio-system/internal-gateway
-  hostName: stmgr.home.rwiv.xyz
+  gateway: istio-system/external-gateway
+  hostName: stmgr.rwiv.xyz
 
 app:
   server:

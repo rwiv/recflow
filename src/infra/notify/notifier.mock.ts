@@ -4,7 +4,7 @@ import { Notifier } from './notifier.js';
 
 @Injectable()
 export class MockNotifier extends Notifier {
-  notify(topic: string, message: string): void {
-    log.info(`MockNotifier.notify(${topic}, ${message})`);
+  notify(message: string): void {
+    log.info(`MockNotifier.notify(${message})`);
   }
 }

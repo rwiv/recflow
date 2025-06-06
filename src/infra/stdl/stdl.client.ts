@@ -19,10 +19,7 @@ export abstract class Stdl {
   }
 
   async getNodeRecorderStatusListMap(nodes: NodeDto[]): Promise<Map<string, RecordingStatus[]>> {
-    const promises: Promise<RecordingStatus[]>[] = [];
-    for (const node of nodes) {
-      promises.push(this.getStatus(node.endpoint));
-    }
+    const promises = nodes.map((node) => this.getStatus(node.endpoint));
     const nodeStatusList: RecordingStatus[][] = await Promise.all(promises);
     if (nodeStatusList.length !== nodes.length) {
       throw new ValidationError('Node status list length mismatch');

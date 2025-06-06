@@ -7,6 +7,7 @@ import {
   CriterionActivationBadge,
   CriterionDomesticOnlyBadge,
   CriterionEnforceCredentialsBadge,
+  CriterionLoggingOnlyBadge,
   CriterionOverseasFirstBadge,
 } from '@/components/criterion/units/criterion_badges.tsx';
 
@@ -55,6 +56,13 @@ const overseasFirstColumn: ColumnDef<SoopCriterionDto> = {
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
+const loggingOnlyColumn: ColumnDef<SoopCriterionDto> = {
+  accessorKey: 'loggingOnly',
+  header: () => <div className="justify-self-center">LoggingOnly</div>,
+  cell: ({ row }) => <CriterionLoggingOnlyBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
 const sufficientUserCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'sufficientUserCnt',
   header: () => <div className="justify-self-center">SUC</div>,
@@ -91,7 +99,7 @@ function createUnitColumn(key: RuleKey, header: string): ColumnDef<SoopCriterion
     cell: ({ row }) => (
       <div className="justify-self-center space-x-1">
         {row.original[key].map((value, i) => (
-          <Badge key={i} className="cursor-default">
+          <Badge key={i} variant="secondary" className="cursor-default">
             {value}
           </Badge>
         ))}
@@ -108,6 +116,7 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   // adultOnlyColumn,
   domesticOnlyColumn,
   overseasFirstColumn,
+  loggingOnlyColumn,
   sufficientUserCntColumn,
   minUserCntColumn,
   minFollowCntColumn,

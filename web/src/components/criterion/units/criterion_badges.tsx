@@ -60,3 +60,12 @@ export function CriterionAdultOnlyBadge({ criterion }: { criterion: CriterionDto
   };
   return <SwitchBadge onClick={onClick} content={criterion.adultOnly ? 'ON' : 'OFF'} />;
 }
+
+export function CriterionLoggingOnlyBadge({ criterion }: { criterion: CriterionDto }) {
+  const queryClient = useQueryClient();
+  const onClick = async () => {
+    await updateCriterion(criterion.id, { loggingOnly: !criterion.loggingOnly });
+    await refresh(queryClient);
+  };
+  return <SwitchBadge onClick={onClick} content={criterion.loggingOnly ? 'ON' : 'OFF'} />;
+}

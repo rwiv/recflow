@@ -72,7 +72,7 @@ export class LiveRegistrar {
     const liveInfo = req.channelInfo.liveInfo;
 
     // Check if the live is accessible
-    const { platform, pid, username } = req.channelInfo;
+    const { platform, pid } = req.channelInfo;
     let useCred = liveInfo.isAdult;
     if (req.criterion?.enforceCreds) {
       useCred = true;
@@ -81,6 +81,17 @@ export class LiveRegistrar {
     if (!streamInfo.openLive) {
       log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
       // live record is not created as it may normalize later
+      return null;
+    }
+    if (!streamInfo.best || !streamInfo.headers) {
+      log.error('Stream info is not available', liveInfoAttr(liveInfo));
+      return null;
+    }
+    // If m3u8 is not available (e.g. standby mode in Soop)
+    const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
+    if (!m3u8) {
+      // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
+      log.debug('M3U8 not available', liveInfoAttr(liveInfo));
       return null;
     }
 
@@ -104,8 +115,16 @@ export class LiveRegistrar {
     tx: Tx,
   ): Promise<string | null> {
     let live = req.reusableLive;
+    const cr = req.criterion;
     const liveInfo = req.channelInfo.liveInfo;
     const mustExistNode = req.mustExistNode ?? true;
+    let logMessage = req.logMessage ?? 'New LiveNode';
+
+    if (cr?.loggingOnly) {
+      const headMessage = 'New Logging Only Live';
+      const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly: false, overseasFirst: false };
+      return this.createDisabledLive(live, liveInfo, createOpts, headMessage, false, cr, tx);
+    }
 
     const selectOpts = this.getNodeSelectOpts(req, live, channel);
     const { domesticOnly, overseasFirst } = selectOpts;
@@ -113,33 +132,19 @@ export class LiveRegistrar {
     if (!channel.priority.shouldSave) {
       node = null;
     }
-
     // If there is no available node
     if (!node) {
       const headMessage = 'No available nodes for assignment';
       if (mustExistNode) {
         const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, true, tx);
+        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, true, cr, tx);
       } else {
         log.error(headMessage, liveInfoAttr(liveInfo));
         return null;
       }
     }
 
-    if (!streamInfo.best || !streamInfo.headers) {
-      log.error('Stream info is not available', liveInfoAttr(liveInfo));
-      return null;
-    }
-    // If m3u8 is not available (e.g. standby mode in Soop)
-    const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
-    if (!m3u8) {
-      // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-      log.debug('M3U8 not available', liveInfoAttr(liveInfo));
-      return null;
-    }
-
     // Create live if not exists
-    let logMessage = req.logMessage ?? 'New LiveNode';
     if (!live) {
       logMessage = 'New Live';
       const createOpts: LiveCreateOptions = { isDisabled: false, domesticOnly, overseasFirst };
@@ -159,7 +164,7 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(this.env.untf.topic, live);
     }
 
-    log.info(logMessage, liveAttr(live, { node }));
+    log.info(logMessage, liveAttr(live, { cr, node }));
     return live.id;
   }
 
@@ -169,6 +174,7 @@ export class LiveRegistrar {
     createOpts: LiveCreateOptions,
     headMessage: string,
     withNotify: boolean,
+    cr: CriterionDto | undefined,
     tx: Tx,
   ) {
     if (live) {
@@ -182,7 +188,7 @@ export class LiveRegistrar {
       this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
     }
 
-    log.info(headMessage, liveAttr(newDisabledLive));
+    log.info(headMessage, liveAttr(newDisabledLive, { cr }));
     return newDisabledLive.id;
   }
 

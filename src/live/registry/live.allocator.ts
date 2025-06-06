@@ -6,12 +6,13 @@ import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
+
+const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
 
 @Injectable()
 export class LiveAllocator {
@@ -50,22 +51,23 @@ export class LiveAllocator {
     if (live.nodes.length > 0) {
       const first = live.nodes[0];
       const status = await this.stdl.findStatus(first.endpoint, live.id);
-      if (!status) {
-        throw NotFoundError.from('LiveStatus', 'id', first.id, liveAttr(live));
-      }
-      if (status.status !== 'recording') {
+      if (!status || status.status !== 'recording') {
         log.debug('Live is not recording', liveAttr(live));
         return;
       }
     }
 
+    let logMessage = 'Init allocation Live';
+    if (live.createdAt < new Date(Date.now() - INIT_THRESHOLD_SEC * 1000)) {
+      logMessage = 'Reallocation Live';
+    }
     const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     await this.liveRegistrar.register({
       reusableLive: live,
       channelInfo: channelLiveInfo.parse(channelInfo),
       ignoreGroupIds: live.nodes.map((it) => it.groupId),
       mustExistNode: false,
-      logMessage: 'Reallocation Live',
+      logMessage,
     });
   }
 }

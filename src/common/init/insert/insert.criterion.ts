@@ -58,6 +58,7 @@ export class DevCriterionInserter {
         adultOnly: false,
         domesticOnly: false,
         overseasFirst: false,
+        loggingOnly: false,
       };
       const parsed = chzzkCriterionAppend.parse(append);
       // parsed.isDeactivated = false;
@@ -71,6 +72,7 @@ export class DevCriterionInserter {
         adultOnly: false,
         domesticOnly: false,
         overseasFirst: false,
+        loggingOnly: false,
       };
       const created = await this.criterionWriter.createSoopCriterion(append);
       log.info(`Inserted criterion: ${created.name}`);

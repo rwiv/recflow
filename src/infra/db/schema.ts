@@ -203,6 +203,7 @@ export const liveCriterionTable = pgTable(
     adultOnly: boolean('adult_only').notNull(),
     domesticOnly: boolean('domestic_only').notNull(),
     overseasFirst: boolean('overseas_first').notNull(),
+    loggingOnly: boolean('logging_only').notNull(),
     sufficientUserCnt: integer('sufficient_user_cnt').notNull(),
     minUserCnt: integer('min_user_cnt').notNull(),
     minFollowCnt: integer('min_follow_cnt').notNull(),

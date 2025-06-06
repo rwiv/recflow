@@ -8,6 +8,7 @@ import { subLists } from '../../utils/list.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { Notifier } from '../../infra/notify/notifier.js';
+import { findMissingNums } from '../../utils/numbers.js';
 
 @Injectable()
 export class LiveStateCleaner {
@@ -69,12 +70,13 @@ export class LiveStateCleaner {
         await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
       }
       await this.stdlRedis.deleteSegNumSet(liveId, keyword);
-      log.debug('Cleaned live', {
-        live_id: liveId,
-        keyword,
-        duration: Date.now() - start,
-        nums: nums.length,
-      });
+
+      const missingNums = findMissingNums(nums.map((numStr) => parseInt(numStr)));
+      const live_id = liveId;
+      if (missingNums.length > 0) {
+        log.warn('Missing segment numbers found', { live_id, keyword, missing_nums: missingNums.join(', ') });
+      }
+      log.debug('Cleaned live', { live_id, keyword, duration: Date.now() - start, nums: nums.length });
     }
     await this.stdlRedis.deleteLiveState(liveId);
   }

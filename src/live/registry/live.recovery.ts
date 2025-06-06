@@ -128,8 +128,7 @@ export class LiveRecoveryManager {
       }
       if (node.failureCnt >= this.env.nodeFailureThreshold) {
         await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, tx);
-        const alertMsg = `Node ${node.name} is cordoned due to failure count exceeded threshold`;
-        this.notifier.notify(this.env.untf.topic, alertMsg);
+        this.notifier.notify(`Node ${node.name} is cordoned due to failure count exceeded threshold`);
       } else {
         await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, tx);
       }

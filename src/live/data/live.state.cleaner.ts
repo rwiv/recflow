@@ -63,20 +63,23 @@ export class LiveStateCleaner {
     for (const keyword of segmentKeyword.options) {
       const start = Date.now();
       const nums = await this.stdlRedis.getSegNums(liveId, keyword, false);
-      if (keyword == 'retrying' && nums.length > 0) {
-        this.notifier.notify(this.env.untf.topic, `Invalid retrying segments found: liveId=${liveId}`);
-      }
       for (const batchNums of subLists(nums, this.env.stdlClearBatchSize)) {
         await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
       }
       await this.stdlRedis.deleteSegNumSet(liveId, keyword);
 
-      const missingNums = findMissingNums(nums.map((numStr) => parseInt(numStr)));
       const live_id = liveId;
-      if (missingNums.length > 0) {
-        log.warn('Missing segment numbers found', { live_id, keyword, missing_nums: missingNums.join(', ') });
+      if (keyword == 'retrying' && nums.length > 0) {
+        this.notifier.notify(`Invalid retrying segments found: live_id=${liveId}`);
       }
-      log.debug('Cleaned live', { live_id, keyword, duration: Date.now() - start, nums: nums.length });
+      if (keyword === 'success') {
+        const missingNums = findMissingNums(nums.map((numStr) => parseInt(numStr)));
+        const missing_nums = missingNums.join(', ');
+        if (missingNums.length > 0) {
+          log.warn('Missing segment numbers found', { live_id, keyword, missing_nums });
+        }
+      }
+      log.debug('Cleaned live', { live_id, keyword, duration: Date.now() - start, nums_size: nums.length });
     }
     await this.stdlRedis.deleteLiveState(liveId);
   }

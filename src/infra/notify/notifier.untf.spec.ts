@@ -4,5 +4,7 @@ import { readEnv } from '../../common/config/env.js';
 
 it('test', async () => {
   const notifier = new UntfNotifier(readEnv());
-  await notifier.notify('test', 'Hello, World!');
+  notifier.updateTopic('test');
+  notifier.notify('Hello, World!');
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 });

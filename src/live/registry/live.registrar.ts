@@ -161,7 +161,7 @@ export class LiveRegistrar {
 
     // Send notification
     if (live.channel.priority.shouldNotify) {
-      this.notifier.sendLiveInfo(this.env.untf.topic, live);
+      this.notifier.sendLiveInfo(live);
     }
 
     log.info(logMessage, liveAttr(live, { cr, node }));
@@ -185,7 +185,7 @@ export class LiveRegistrar {
 
     if (withNotify) {
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
-      this.notifier.notify(this.env.untf.topic, `${headMessage}: ${messageFields}`);
+      this.notifier.notify(`${headMessage}: ${messageFields}`);
     }
 
     log.info(headMessage, liveAttr(newDisabledLive, { cr }));

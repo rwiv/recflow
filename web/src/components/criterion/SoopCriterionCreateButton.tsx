@@ -41,6 +41,7 @@ const formSchema = soopCriterionAppend.omit({ platformId: true }).extend({
   adultOnly: z.boolean(),
   domesticOnly: z.boolean(),
   overseasFirst: z.boolean(),
+  loggingOnly: z.boolean(),
   sufficientUserCnt: nonempty,
   minUserCnt: nonempty,
   minFollowCnt: nonempty,
@@ -75,6 +76,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       adultOnly: false,
       domesticOnly: false,
       overseasFirst: false,
+      loggingOnly: false,
       sufficientUserCnt: '',
       minUserCnt: '',
       minFollowCnt: '',
@@ -119,6 +121,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
         <CheckFormField form={form} name="adultOnly" label="Adult Only" />
         <CheckFormField form={form} name="domesticOnly" label="Domestic Only" />
         <CheckFormField form={form} name="overseasFirst" label="Overseas First " />
+        <CheckFormField form={form} name="loggingOnly" label="Logging Only" />
         <TextFormField form={form} name="description" label="Description" />
         <TextFormField form={form} name="sufficientUserCnt" label="Sufficient User Count" placeholder="0" />
         <TextFormField form={form} name="minUserCnt" label="Minimum User Count" placeholder="0" />

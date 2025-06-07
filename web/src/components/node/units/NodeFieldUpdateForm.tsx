@@ -14,7 +14,7 @@ interface NodeFieldUpdateForm {
 
 const stringSchema = z.string().nonempty();
 const numSchema = z.coerce.number().nonnegative();
-const endpointSize = 30;
+const endpointSize = 40;
 
 export function NodeFieldUpdateForm({ type, node }: NodeFieldUpdateForm) {
   const queryClient = useQueryClient();

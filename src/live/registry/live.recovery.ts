@@ -5,7 +5,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { LiveRegistrar } from './live.registrar.js';
+import { LiveFinishOptions, LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
@@ -19,6 +19,7 @@ import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { LogLevel } from '../../utils/log.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -68,28 +69,28 @@ export class LiveRecoveryManager {
 
     // Finish if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
-      await this.finishLive(live.id, 'Live is invalid');
+      await this.finishLive(live.id, 'Live is invalid', 'error');
       return;
     }
 
     // Finish if live not open
     const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
     if (!streamInfo.openLive) {
-      await this.finishLive(live.id, 'Delete uncleaned live');
+      await this.finishLive(live.id, 'Delete uncleaned live', 'info');
       return;
     }
 
     // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     if (live.sourceId !== chanInfo.liveInfo?.liveId) {
-      await this.finishLive(live.id, 'Delete restarted live');
+      await this.finishLive(live.id, 'Delete restarted live', 'warn');
       return;
     }
 
     // Finish if live m3u8 is not valid
     const m3u8Text = await this.stlink.fetchM3u8ByLive(live);
     if (!m3u8Text) {
-      await this.finishLive(live.id, 'Delete live because m3u8 is not valid');
+      await this.finishLive(live.id, 'Delete live because m3u8 is not valid', 'error');
       return;
     }
 
@@ -98,12 +99,9 @@ export class LiveRecoveryManager {
     await Promise.allSettled(ps);
   }
 
-  private finishLive(liveId: string, message: string) {
-    return this.liveRegistrar.finishLive(liveId, {
-      isPurge: true,
-      exitCmd: 'finish',
-      msg: message,
-    });
+  private finishLive(liveId: string, message: string, logLevel: LogLevel = 'info') {
+    const opts: LiveFinishOptions = { isPurge: true, exitCmd: 'finish', msg: message, logLevel };
+    return this.liveRegistrar.finishLive(liveId, opts);
   }
 
   private async checkInvalidNode(tgtLive: LiveDto, invalidNode: NodeDto) {

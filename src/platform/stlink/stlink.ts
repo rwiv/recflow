@@ -69,10 +69,8 @@ export class Stlink {
         return await res.text();
       } catch (e) {
         if (retryCnt === RETRY_LIMIT) {
-          log.error('Retry Limit Exceeded: Failed to request m3u8', { retryCnt, streamUrl });
           return null;
         }
-        log.debug('Retrying m3u8 request', { retryCnt, streamUrl });
         await delay(RETRY_DELAY_MS);
       }
     }

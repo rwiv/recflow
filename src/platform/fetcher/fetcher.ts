@@ -29,7 +29,7 @@ export class PlatformFetcher {
         throw new BaseError(`Invalid PlatformType: ${cr.platform.name}`);
       }
     } catch (err) {
-      const attr = { platform: cr.platform, cr_name: cr.name };
+      const attr = { platform: cr.platform.name, cr_name: cr.name };
       throw getHttpRequestError('Failed to fetch lives', err, attr);
     }
   }

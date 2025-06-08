@@ -17,8 +17,6 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinalizer } from './live.finalizer.js';
@@ -29,17 +27,20 @@ import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
 import { liveInfoAttr, liveAttr } from '../../common/attr/attr.live.js';
 import assert from 'assert';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { logging, LogLevel } from '../../utils/log.js';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
   exitCmd?: ExitCmd;
   msg?: string;
+  logLevel?: LogLevel;
 }
 
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
   reusableLive?: LiveDtoWithNodes;
   logMessage?: string;
+  logLevel?: LogLevel;
 
   // node selection options
   ignoreNodeIds?: string[];
@@ -62,7 +63,6 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
     private readonly finalizer: LiveFinalizer,
     private readonly stlink: Stlink,
-    @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
@@ -91,7 +91,7 @@ export class LiveRegistrar {
     const m3u8 = await this.stlink.fetchM3u8(streamInfo.best.mediaPlaylistUrl, streamInfo.headers);
     if (!m3u8) {
       // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-      log.debug('M3U8 not available', liveInfoAttr(liveInfo));
+      log.warn('M3U8 not available', liveInfoAttr(liveInfo));
       return null;
     }
 
@@ -119,6 +119,7 @@ export class LiveRegistrar {
     const liveInfo = req.channelInfo.liveInfo;
     const mustExistNode = req.mustExistNode ?? true;
     let logMessage = req.logMessage ?? 'New LiveNode';
+    const logLevel = req.logLevel ?? 'info';
 
     if (cr?.loggingOnly) {
       const headMessage = 'New Logging Only Live';
@@ -164,7 +165,7 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(live);
     }
 
-    log.info(logMessage, liveAttr(live, { cr, node }));
+    logging(logMessage, liveAttr(live, { cr, node }), logLevel);
     return live.id;
   }
 
@@ -178,7 +179,8 @@ export class LiveRegistrar {
     tx: Tx,
   ) {
     if (live) {
-      await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true });
+      const msg = 'Live already exists, but will be disabled';
+      await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true, msg, logLevel: 'warn' });
     }
     createOpts.isDisabled = true;
     const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
@@ -201,6 +203,7 @@ export class LiveRegistrar {
   async finishLive(recordId: string, opts: LiveFinishOptions = {}) {
     const isPurge = opts.isPurge ?? false;
     let exitCmd = opts.exitCmd ?? 'delete';
+    const logLevel = opts.logLevel ?? 'info';
     let msg = opts.msg ?? 'Delete live';
     if (!opts.msg && !isPurge) {
       msg = 'Disable live';
@@ -223,7 +226,7 @@ export class LiveRegistrar {
     // Else Delete live record
     return db.transaction(async (tx) => {
       const deleted = await this.liveWriter.delete(recordId, isPurge, tx);
-      log.info(msg, { ...liveAttr(deleted), cmd: exitCmd });
+      logging(msg, { ...liveAttr(deleted), cmd: exitCmd }, logLevel);
       return deleted;
     });
   }

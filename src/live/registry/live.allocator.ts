@@ -11,6 +11,7 @@ import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
+import { LogLevel } from '../../utils/log.js';
 
 const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
 
@@ -57,8 +58,10 @@ export class LiveAllocator {
       }
     }
 
+    let logLevel: LogLevel = 'debug';
     let logMessage = 'Init allocation Live';
     if (live.createdAt < new Date(Date.now() - INIT_THRESHOLD_SEC * 1000)) {
+      logLevel = 'warn';
       logMessage = 'Reallocation Live';
     }
     const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
@@ -68,6 +71,7 @@ export class LiveAllocator {
       ignoreGroupIds: live.nodes.map((it) => it.groupId),
       mustExistNode: false,
       logMessage,
+      logLevel,
     });
   }
 }

@@ -9,8 +9,7 @@ image:
 
 affinity: ~
 tolerations: ~
-podLabels:
-  sidecar.istio.io/inject: "true"
+podLabels: ~
 
 vault:
   mount: kube

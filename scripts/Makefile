@@ -56,9 +56,29 @@ helm-stage-redis-rm:
 	-@helm uninstall stmgr-redis -n stage
 
 
-# nodePorts
-helm-prod-nodeports-run:
-	-@helm install stmgr-nodeports ../kube/nodeports -n media
+# rabbitmq
+helm-rabbitmq-dep:
+	-@helm dependency update ../kube/rabbitmq
 
-helm-prod-nodeports-rm:
-	-@helm uninstall stmgr-nodeports -n media
+helm-rabbitmq-run:
+	-@helm install stmgr-rabbitmq ../kube/rabbitmq -n media
+
+helm-rabbitmq-rm:
+	-@helm uninstall stmgr-rabbitmq -n media
+
+delete-rabbitmq-pvc:
+	-@kubectl delete pvc data-stmgr-rabbitmq-0 -n media
+
+helm-rabbitmq-expose-run:
+	-@helm install stmgr-rabbitmq-expose ../kube/rabbitmq-expose -n media
+
+helm-rabbitmq-expose-rm:
+	-@helm uninstall stmgr-rabbitmq-expose -n media
+
+
+# expose
+helm-expose-run:
+	-@helm install stmgr-expose ../kube/expose -n media
+
+helm-expose-rm:
+	-@helm uninstall stmgr-expose -n media

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.rabbitmq.name }}
+  namespace: {{ .Values.rabbitmq.namespace }}
+spec:
+  tls:
+    - hosts:
+        - {{ .Values.rabbitmq.ingress.host }}
+      secretName: {{ .Values.rabbitmq.ingress.secretName }}
+  rules:
+    - host: {{ .Values.rabbitmq.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.rabbitmq.service.name }}
+                port:
+                  number: {{ .Values.rabbitmq.service.ports.http }}

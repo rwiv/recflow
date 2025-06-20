@@ -1,0 +1,26 @@
+metadata:
+  name: stmgr-rabbitmq
+  namespace: media
+ingress:
+  host: stmgr-rabbitmq.rwiv.xyz
+  secretName: cloudflare-certificate
+vault:
+  mount: kube
+  path: media/stmgr/rabbitmq
+  version: 1
+  secretName: stmgr-rabbitmq-auth
+  refreshAfter: 30s
+
+rabbitmq:
+  global:
+    defaultStorageClass: longhorn
+  auth:
+    username: admin
+    existingPasswordSecret: stmgr-rabbitmq-auth
+    existingSecretPasswordKey: password
+  service:
+    type: ClusterIP
+    ports:
+      amqp: 5672
+      manager: 15672
+  replicaCount: 1

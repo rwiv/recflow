@@ -31,11 +31,6 @@ export interface StlinkConfig {
   endpoint: string;
 }
 
-export interface AuthedConfig {
-  url: string;
-  apiKey: string;
-}
-
 export interface UntfConfig {
   endpoint: string;
   apiKey: string;

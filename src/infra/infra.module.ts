@@ -5,9 +5,7 @@ import { UntfNotifier } from './notify/notifier.untf.js';
 import { MockNotifier } from './notify/notifier.mock.js';
 import { StdlMock } from './stdl/stdl.client.mock.js';
 import { StdlImpl } from './stdl/stdl.client.impl.js';
-import { AuthedMock } from './authed/authed.mock.js';
-import { AuthedImpl } from './authed/authed.impl.js';
-import { AUTHED, NOTIFIER, SERVER_REDIS, STDL, STDL_REDIS, VTASK } from './infra.tokens.js';
+import { NOTIFIER, SERVER_REDIS, STDL, STDL_REDIS, VTASK } from './infra.tokens.js';
 import { VtaskImpl } from './vtask/vtask.impl.js';
 import { VtaskMock } from './vtask/vtask.mock.js';
 
@@ -21,10 +19,6 @@ import { VtaskMock } from './vtask/vtask.mock.js';
         return factory.createServerRedis();
       },
       inject: [InfraFactory],
-    },
-    {
-      provide: AUTHED,
-      useClass: process.env.NODE_ENV === 'dev' ? AuthedMock : AuthedImpl,
     },
     {
       provide: STDL,
@@ -46,6 +40,6 @@ import { VtaskMock } from './vtask/vtask.mock.js';
       useClass: process.env.NODE_ENV === 'dev' ? VtaskMock : VtaskImpl,
     },
   ],
-  exports: [SERVER_REDIS, STDL, STDL_REDIS, AUTHED, NOTIFIER, VTASK],
+  exports: [SERVER_REDIS, STDL, STDL_REDIS, NOTIFIER, VTASK],
 })
 export class InfraModule {}

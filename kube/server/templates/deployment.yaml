@@ -37,13 +37,6 @@ spec:
               value: "{{ .Values.externals.streamq.qsize }}"
             - name: STLINK_ENDPOINT
               value: {{ .Values.externals.stlink.endpoint }}
-            - name: AUTHED_URL
-              value: {{ .Values.externals.authed.url }}
-            - name: AUTHED_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.externals.authed.secretName }}
-                  key: {{ .Values.externals.authed.apiKeySecretKey }}
             - name: UNTF_ENDPOINT
               value: {{ .Values.externals.untf.endpoint }}
             - name: UNTF_API_KEY

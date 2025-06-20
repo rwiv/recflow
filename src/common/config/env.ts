@@ -1,5 +1,4 @@
 import {
-  AuthedConfig,
   UntfConfig,
   PostgresConfig,
   StreamqConfig,
@@ -11,7 +10,6 @@ import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
 import {
-  readAuthedConfig,
   readPgConfig,
   readServerRedisConfig,
   readStdlRedisMasterConfig,
@@ -30,7 +28,6 @@ export interface Env {
   fsName: string;
   streamq: StreamqConfig;
   stlink: StlinkConfig;
-  authed: AuthedConfig;
   untf: UntfConfig;
   vtask: VtaskConfig;
   pg: PostgresConfig;
@@ -75,7 +72,6 @@ export function readEnv(): Env {
     fsName: nonempty.parse(process.env.FS_NAME),
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),
-    authed: readAuthedConfig(),
     untf: readUntfConfig(),
     vtask: readVtaskConfig(),
     pg: readPgConfig(),

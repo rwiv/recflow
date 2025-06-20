@@ -1,6 +1,5 @@
 import {
   AmqpConfig,
-  AuthedConfig,
   PostgresConfig,
   RedisConfig,
   StlinkConfig,
@@ -104,13 +103,6 @@ export function readStlinkConfig(): StlinkConfig {
   const endpoint = process.env.STLINK_ENDPOINT;
   if (endpoint === undefined) throw Error('stlink data is undefined');
   return { endpoint };
-}
-
-export function readAuthedConfig(): AuthedConfig {
-  const url = process.env.AUTHED_URL;
-  const apiKey = process.env.AUTHED_API_KEY;
-  if (url === undefined || apiKey === undefined) throw Error('authed data is undefined');
-  return { url, apiKey };
 }
 
 export function readUntfConfig(): UntfConfig {

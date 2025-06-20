@@ -54,3 +54,11 @@ helm-stage-redis-run:
 
 helm-stage-redis-rm:
 	-@helm uninstall stmgr-redis -n stage
+
+
+# nodePorts
+helm-prod-nodeports-run:
+	-@helm install stmgr-nodeports ../kube/nodeports -n media
+
+helm-prod-nodeports-rm:
+	-@helm uninstall stmgr-nodeports -n media

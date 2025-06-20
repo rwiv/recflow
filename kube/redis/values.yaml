@@ -10,18 +10,19 @@ vault:
 
 redis:
   global:
-    storageClass: rook-ceph-block
+    storageClass: longhorn
   auth:
     existingSecret: stmgr-redis-auth
     existingSecretPasswordKey: password
   master:
     count: 1
     service:
-      type: NodePort
-      nodePorts:
-        redis: 30225
+      type: ClusterIP
+      ports:
+        redis: 6379
     persistence:
       enabled: true
+      size: 2Gi
   replica:
     replicaCount: 0
   tls:

@@ -26,8 +26,8 @@ service:
   targetPort: 8080
 
 ingress:
-  gateway: istio-system/external-gateway
-  hostName: stmgr.rwiv.xyz
+  host: stmgr.rwiv.xyz
+  secretName: cloudflare-certificate
 
 app:
   server:
@@ -80,7 +80,7 @@ externals:
     endpoint: http://stlink.media.svc.cluster.local
   authed:
     url: http://authed.common.svc.cluster.local
-    secretName: authed-app
+    secretName: authed-client
     apiKeySecretKey: api-key
   untf:
     endpoint: http://untf.common.svc.cluster.local

@@ -1,0 +1,10 @@
+global:
+  namespace: media
+redis:
+  name: stmgr-redis
+  port: 6379
+  nodePort: 30225
+postgres:
+  name: stmgr-postgresql
+  port: 5432
+  nodePort: 30221

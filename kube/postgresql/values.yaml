@@ -22,12 +22,12 @@ postgresql:
       userPasswordKey: password
   primary:
     service:
-      type: NodePort
-      nodePorts:
-        postgresql: 30221
+      type: ClusterIP
+      ports:
+        postgresql: 5432
     persistence:
       enabled: true
-      storageClass: rook-ceph-block
+      storageClass: longhorn
       accessModes:
         - ReadWriteOnce
-      size: 2Gi
+      size: 4Gi

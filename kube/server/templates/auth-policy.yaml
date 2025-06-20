@@ -1,17 +1,17 @@
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: {{ .Values.global.name }}
-  namespace: istio-system
-spec:
-  selector:
-    matchLabels:
-      istio: external-ingressgateway
-  action: CUSTOM
-  provider:
-    name: "authentik"
-  rules:
-    - to:
-        - operation:
-            hosts:
-              - {{ .Values.ingress.hostName }}
+{{/*apiVersion: security.istio.io/v1beta1*/}}
+{{/*kind: AuthorizationPolicy*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .Values.global.name }}*/}}
+{{/*  namespace: istio-system*/}}
+{{/*spec:*/}}
+{{/*  selector:*/}}
+{{/*    matchLabels:*/}}
+{{/*      istio: external-ingressgateway*/}}
+{{/*  action: CUSTOM*/}}
+{{/*  provider:*/}}
+{{/*    name: "authentik"*/}}
+{{/*  rules:*/}}
+{{/*    - to:*/}}
+{{/*        - operation:*/}}
+{{/*            hosts:*/}}
+{{/*              - {{ .Values.ingress.hostName }}*/}}

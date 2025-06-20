@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgres.name }}-nodeport
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: NodePort
+  ports:
+    - name: tcp-postgresql
+      protocol: TCP
+      port: {{ .Values.postgres.port }}
+      targetPort: {{ .Values.postgres.port }}
+      nodePort: {{ .Values.postgres.nodePort }}
+  selector:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: {{ .Values.postgres.name }}
+    app.kubernetes.io/name: postgresql

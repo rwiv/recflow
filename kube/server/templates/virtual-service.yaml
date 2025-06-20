@@ -1,16 +1,16 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: {{ .Values.global.name }}
-  namespace: {{ .Values.global.namespace }}
-spec:
-  hosts:
-    - {{ .Values.ingress.hostName }}
-  gateways:
-    - {{ .Values.ingress.gateway }}
-  http:
-    - route:
-        - destination:
-            port:
-              number: {{ .Values.service.port }}
-            host: {{ .Values.global.name }}
+{{/*apiVersion: networking.istio.io/v1alpha3*/}}
+{{/*kind: VirtualService*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ .Values.global.name }}*/}}
+{{/*  namespace: {{ .Values.global.namespace }}*/}}
+{{/*spec:*/}}
+{{/*  hosts:*/}}
+{{/*    - {{ .Values.ingress.hostName }}*/}}
+{{/*  gateways:*/}}
+{{/*    - {{ .Values.ingress.gateway }}*/}}
+{{/*  http:*/}}
+{{/*    - route:*/}}
+{{/*        - destination:*/}}
+{{/*            port:*/}}
+{{/*              number: {{ .Values.service.port }}*/}}
+{{/*            host: {{ .Values.global.name }}*/}}

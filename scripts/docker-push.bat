@@ -2,10 +2,8 @@ cd ..
 set IMG=harbor.rwiv.xyz/private/stmgr:1.5.9
 set DOCKERFILE=./docker/Dockerfile
 
-docker rmi %IMG%
+docker buildx build --platform linux/amd64,linux/arm64 -t %IMG% -f %DOCKERFILE% --push .
 
-docker build -t %IMG% -f %DOCKERFILE% .
-docker push %IMG%
-
-docker rmi %IMG%
+docker stop buildx_buildkit_multi-arch-builder0
+docker rm buildx_buildkit_multi-arch-builder0
 pause

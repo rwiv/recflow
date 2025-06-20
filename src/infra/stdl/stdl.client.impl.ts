@@ -3,6 +3,12 @@ import { RecordingStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { checkResponse, getHttpRequestError } from '../../utils/http.js';
+import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+import { z } from 'zod';
+
+const stdlErrorRes = z.object({
+  detail: z.string().nonempty(),
+});
 
 @Injectable()
 export class StdlImpl extends Stdl {
@@ -37,7 +43,15 @@ export class StdlImpl extends Stdl {
         headers: { 'content-type': 'application/json' },
         signal: AbortSignal.timeout(this.env.httpTimeout),
       });
-      await checkResponse(res, attr, failureMsg);
+      if (res.status >= 400) {
+        const bodyText = await res.text();
+        const body = stdlErrorRes.parse(JSON.parse(bodyText));
+        if (body.detail.includes('Already recording live')) {
+          return;
+        }
+        const newAttr = { ...attr, body: bodyText };
+        throw new HttpRequestError(failureMsg, res.status, { attr: newAttr });
+      }
     } catch (err) {
       throw getHttpRequestError(failureMsg, err, attr);
     }

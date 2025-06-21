@@ -8,16 +8,3 @@ postgres:
   name: stmgr-postgresql
   port: 5432
   nodePort: 30221
-rabbitmq:
-  name: stmgr-rabbitmq
-  namespace: media
-  ingress:
-    host: stmgr-rabbitmq.rwiv.xyz
-    secretName: cloudflare-certificate
-  service:
-    name: stmgr-rabbitmq
-    ports:
-      amqp: 5672
-      http: 15672
-    nodePorts:
-      amqp: 30223

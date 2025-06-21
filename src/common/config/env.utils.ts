@@ -45,51 +45,38 @@ export function readStdlRedisReplicaConfig(): RedisConfig {
 }
 
 export function readAmqpConfig(): AmqpConfig {
-  const amqpHost = process.env.AMQP_HOST;
-  const amqpUsername = process.env.AMQP_USERNAME;
-  const amqpPassword = process.env.AMQP_PASSWORD;
-  if (amqpHost === undefined || amqpUsername === undefined || amqpPassword === undefined) {
+  const host = process.env.AMQP_HOST;
+  const username = process.env.AMQP_USERNAME;
+  const password = process.env.AMQP_PASSWORD;
+  if (host === undefined || username === undefined || password === undefined) {
     throw Error('amqp data is undefined');
   }
-  const amqpPort = nnint.parse(process.env.AMQP_PORT);
-  const amqpHttpPort = nnint.parse(process.env.AMQP_HTTP_PORT);
-  return {
-    host: amqpHost,
-    port: amqpPort,
-    httpPort: amqpHttpPort,
-    username: amqpUsername,
-    password: amqpPassword,
-  };
+  const port = nnint.parse(process.env.AMQP_PORT);
+  const httpPort = nnint.parse(process.env.AMQP_HTTP_PORT);
+  return { host, port, httpPort, username, password };
 }
 
 export function readPgConfig(): PostgresConfig {
-  const pgHost = process.env.PG_HOST;
-  let pgPortStr = process.env.PG_PORT;
+  const host = process.env.PG_HOST;
+  let portStr = process.env.PG_PORT;
   if (process.env.USING_PG_PROD_PORT === 'true') {
-    pgPortStr = process.env.PG_PROD_PORT;
+    portStr = process.env.PG_PROD_PORT;
   }
-  const pgDatabase = process.env.PG_DATABASE;
-  const pgUsername = process.env.PG_USERNAME;
-  const pgPassword = process.env.PG_PASSWORD;
+  const database = process.env.PG_DATABASE;
+  const username = process.env.PG_USERNAME;
+  const password = process.env.PG_PASSWORD;
   if (
-    pgHost === undefined ||
-    pgPortStr === undefined ||
-    pgDatabase === undefined ||
-    pgUsername === undefined ||
-    pgPassword === undefined
+    host === undefined ||
+    portStr === undefined ||
+    database === undefined ||
+    username === undefined ||
+    password === undefined
   ) {
     throw Error('pg data is undefined');
   }
-  const pgPort = nnint.parse(pgPortStr);
-  const url = `postgres://${pgUsername}:${pgPassword}@${pgHost}:${pgPort}/${pgDatabase}`;
-  return {
-    host: pgHost,
-    port: pgPort,
-    database: pgDatabase,
-    username: pgUsername,
-    password: pgPassword,
-    url,
-  };
+  const port = nnint.parse(portStr);
+  const url = `postgres://${username}:${password}@${host}:${port}/${database}`;
+  return { host, port, database, username, password, url };
 }
 
 export function readStreamqConfig(): StreamqConfig {

@@ -22,6 +22,13 @@ export interface PostgresConfig {
   url: string;
 }
 
+export interface SQSConfig {
+  accessKey: string;
+  secretKey: string;
+  regionName: string;
+  queueUrl: string;
+}
+
 export interface StreamqConfig {
   url: string;
   qsize: number;

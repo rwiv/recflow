@@ -2,6 +2,7 @@ import {
   AmqpConfig,
   PostgresConfig,
   RedisConfig,
+  SQSConfig,
   StlinkConfig,
   StreamqConfig,
   UntfConfig,
@@ -16,7 +17,7 @@ export function readServerRedisConfig(): RedisConfig {
   const host = process.env.SERVER_REDIS_HOST;
   const password = process.env.SERVER_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
-    throw Error('redis data is undefined');
+    throw Error('server-redis env is not set');
   }
   const port = nnint.parse(process.env.SERVER_REDIS_PORT);
   return { host, port, password };
@@ -27,7 +28,7 @@ export function readStdlRedisMasterConfig(): RedisConfig {
   const port = nnint.parse(process.env.STDL_REDIS_MASTER_PORT);
   const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
-    throw Error('redis data is undefined');
+    throw Error('stdl-redis-master env is not set');
   }
   const caPath = process.env.STDL_REDIS_CA_PATH;
   return { host, port, password, caPath };
@@ -38,7 +39,7 @@ export function readStdlRedisReplicaConfig(): RedisConfig {
   const port = nnint.parse(process.env.STDL_REDIS_REPLICA_PORT);
   const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
-    throw Error('redis data is undefined');
+    throw Error('stdl-redis-replica env is not set');
   }
   const caPath = process.env.STDL_REDIS_CA_PATH;
   return { host, port, password, caPath };
@@ -49,7 +50,7 @@ export function readAmqpConfig(): AmqpConfig {
   const username = process.env.AMQP_USERNAME;
   const password = process.env.AMQP_PASSWORD;
   if (host === undefined || username === undefined || password === undefined) {
-    throw Error('amqp data is undefined');
+    throw Error('amqp env is not set');
   }
   const port = nnint.parse(process.env.AMQP_PORT);
   const httpPort = nnint.parse(process.env.AMQP_HTTP_PORT);
@@ -72,23 +73,39 @@ export function readPgConfig(): PostgresConfig {
     username === undefined ||
     password === undefined
   ) {
-    throw Error('pg data is undefined');
+    throw Error('pg env is not set');
   }
   const port = nnint.parse(portStr);
   const url = `postgres://${username}:${password}@${host}:${port}/${database}`;
   return { host, port, database, username, password, url };
 }
 
+export function readSQSConfig(): SQSConfig {
+  const accessKey = process.env.SQS_ACCESS_KEY;
+  const secretKey = process.env.SQS_SECRET_KEY;
+  const regionName = process.env.SQS_REGION_NAME;
+  const queueUrl = process.env.SQS_QUEUE_URL;
+  if (
+    accessKey === undefined ||
+    secretKey === undefined ||
+    regionName === undefined ||
+    queueUrl === undefined
+  ) {
+    throw Error('sqs env is not set');
+  }
+  return { accessKey, secretKey, regionName, queueUrl };
+}
+
 export function readStreamqConfig(): StreamqConfig {
   const url = process.env.STREAMQ_URL;
-  if (url === undefined) throw Error('streamq data is undefined');
+  if (url === undefined) throw Error('streamq env is not set');
   const qsize = nnint.parse(process.env.STREAMQ_QSIZE);
   return { url, qsize };
 }
 
 export function readStlinkConfig(): StlinkConfig {
   const endpoint = process.env.STLINK_ENDPOINT;
-  if (endpoint === undefined) throw Error('stlink data is undefined');
+  if (endpoint === undefined) throw Error('stlink env is not set');
   return { endpoint };
 }
 
@@ -97,13 +114,13 @@ export function readUntfConfig(): UntfConfig {
   const topic = process.env.UNTF_TOPIC ?? DEFAULT_UNTF_TOPIC;
   const apiKey = process.env.UNTF_API_KEY;
   if (endpoint === undefined || topic === undefined || apiKey === undefined) {
-    throw Error('untf configs are undefined');
+    throw Error('untf env is not set');
   }
   return { endpoint, apiKey, topic };
 }
 
 export function readVtaskConfig(): VtaskConfig {
   const endpoint = process.env.VTASK_ENDPOINT;
-  if (endpoint === undefined) throw Error('vtask url is undefined');
+  if (endpoint === undefined) throw Error('vtask env is not set');
   return { endpoint };
 }

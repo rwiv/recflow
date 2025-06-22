@@ -5,6 +5,7 @@ import {
   VtaskConfig,
   RedisConfig,
   StlinkConfig,
+  SQSConfig,
 } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
@@ -12,6 +13,7 @@ import path from 'path';
 import {
   readPgConfig,
   readServerRedisConfig,
+  readSQSConfig,
   readStdlRedisMasterConfig,
   readStdlRedisReplicaConfig,
   readStlinkConfig,
@@ -31,6 +33,7 @@ export interface Env {
   untf: UntfConfig;
   vtask: VtaskConfig;
   pg: PostgresConfig;
+  sqs: SQSConfig;
   serverRedis: RedisConfig;
   stdlRedisMaster: RedisConfig;
   stdlRedisReplica: RedisConfig;
@@ -75,6 +78,7 @@ export function readEnv(): Env {
     untf: readUntfConfig(),
     vtask: readVtaskConfig(),
     pg: readPgConfig(),
+    sqs: readSQSConfig(),
     serverRedis: readServerRedisConfig(),
     stdlRedisMaster: readStdlRedisMasterConfig(),
     stdlRedisReplica: readStdlRedisReplicaConfig(),

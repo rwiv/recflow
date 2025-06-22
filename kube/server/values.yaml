@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.6.1
+  tag: 1.6.2
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -76,6 +76,10 @@ externals:
         tls:
           name: stdl-redis-tls
           caKey: ca.crt
+    queue:
+      secretName: stdl-queue
+      regionNameKey: region-name
+      queueUrlKey: queue-url
   streamq:
     url: http://streamq-vpn.media.svc.cluster.local
     qsize: 200
@@ -86,3 +90,7 @@ externals:
     secretName: untf-client
     apiKeySecretKey: api-key
     topic: stmgr
+  sqs:
+    secretName: sqs-auth
+    accessKeyKey: access-key
+    secretKeyKey: secret-key

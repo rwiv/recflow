@@ -86,6 +86,26 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.postgres.secretName }}
                   key: {{ .Values.app.postgres.passwordKey }}
+            - name: SQS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externals.sqs.secretName }}
+                  key: {{ .Values.externals.sqs.accessKeyKey }}
+            - name: SQS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externals.sqs.secretName }}
+                  key: {{ .Values.externals.sqs.secretKeyKey }}
+            - name: SQS_REGION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externals.stdl.queue.secretName }}
+                  key: {{ .Values.externals.stdl.queue.regionNameKey }}
+            - name: SQS_QUEUE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.externals.stdl.queue.secretName }}
+                  key: {{ .Values.externals.stdl.queue.queueUrlKey }}
             - name: HTTP_TIMEOUT_MS
               value: "{{ .Values.app.configs.httpTimeoutMs }}"
             - name: LIVE_ALLOCATION_INIT_WAIT_SEC

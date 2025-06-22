@@ -6,7 +6,6 @@ import {
   StlinkConfig,
   StreamqConfig,
   UntfConfig,
-  VtaskConfig,
 } from './config.types.js';
 import { z } from 'zod';
 import { DEFAULT_UNTF_TOPIC } from '../data/constants.js';
@@ -117,10 +116,4 @@ export function readUntfConfig(): UntfConfig {
     throw Error('untf env is not set');
   }
   return { endpoint, apiKey, topic };
-}
-
-export function readVtaskConfig(): VtaskConfig {
-  const endpoint = process.env.VTASK_ENDPOINT;
-  if (endpoint === undefined) throw Error('vtask env is not set');
-  return { endpoint };
 }

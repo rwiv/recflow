@@ -5,9 +5,9 @@ import { UntfNotifier } from './notify/notifier.untf.js';
 import { MockNotifier } from './notify/notifier.mock.js';
 import { StdlMock } from './stdl/stdl.client.mock.js';
 import { StdlImpl } from './stdl/stdl.client.impl.js';
-import { NOTIFIER, SERVER_REDIS, STDL, STDL_REDIS, VTASK } from './infra.tokens.js';
-import { VtaskImpl } from './vtask/vtask.impl.js';
-import { VtaskMock } from './vtask/vtask.mock.js';
+import { NOTIFIER, SERVER_REDIS, SQS, STDL, STDL_REDIS } from './infra.tokens.js';
+import { SQSClientMock } from './sqs/sqs.client.mock.js';
+import { SQSClientImpl } from './sqs/sqs.client.impl.js';
 
 @Module({
   imports: [ConfigModule],
@@ -36,10 +36,10 @@ import { VtaskMock } from './vtask/vtask.mock.js';
       useClass: process.env.NODE_ENV === 'dev' ? MockNotifier : UntfNotifier,
     },
     {
-      provide: VTASK,
-      useClass: process.env.NODE_ENV === 'dev' ? VtaskMock : VtaskImpl,
+      provide: SQS,
+      useClass: process.env.NODE_ENV === 'dev' ? SQSClientMock : SQSClientImpl,
     },
   ],
-  exports: [SERVER_REDIS, STDL, STDL_REDIS, NOTIFIER, VTASK],
+  exports: [SERVER_REDIS, STDL, STDL_REDIS, NOTIFIER, SQS],
 })
 export class InfraModule {}

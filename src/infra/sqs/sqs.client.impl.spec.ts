@@ -1,9 +1,9 @@
 import { it } from 'vitest';
 import { readEnv } from '../../common/config/env.js';
-import { SQSClient } from './sqs.client.js';
+import { SQSClientImpl } from './sqs.client.impl.js';
 
 const env = readEnv();
-const client = new SQSClient(env);
+const client = new SQSClientImpl(env);
 
 it('test send', async () => {
   for (let i = 0; i < 2; i++) {

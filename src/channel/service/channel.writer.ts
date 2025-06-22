@@ -28,6 +28,7 @@ import { ChannelFinder } from './channel.finder.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { log } from 'jslog';
 import { ChannelCacheStore } from '../storage/channel.cache.store.js';
+import { channelAttr } from '../../common/attr/attr.live.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -162,23 +163,19 @@ export class ChannelWriter {
     try {
       const info = await this.fetcher.fetchChannel(channel.platform.name, channel.pid, false);
       if (!info) {
-        log.info(`During the refresh process, the fetched channelInfo is null`, {
-          platform: channel.platform.name,
-          pid: channel.pid,
-          channel: channel.username,
-        });
+        log.debug(`During the refresh process, fetched channelInfo is null`, channelAttr(channel));
         return this.update(channel.id, {}, true);
       }
 
-      const update: ChannelUpdate = {
+      const updateReq: ChannelUpdate = {
         username: info.username,
         profileImgUrl: info.profileImgUrl,
         followerCnt: info.followerCnt,
       };
-      return this.update(channel.id, update, true);
+      return this.update(channel.id, updateReq, true);
     } catch (e) {
       if (e instanceof HttpRequestError) {
-        log.debug(`During the refresh process, the fetched channelInfo is null`);
+        log.debug(`Failed to refresh channel`, channelAttr(channel));
         return this.update(channel.id, {}, true);
       } else {
         throw e;

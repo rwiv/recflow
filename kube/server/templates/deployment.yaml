@@ -46,8 +46,6 @@ spec:
                   key: {{ .Values.externals.untf.apiKeySecretKey }}
             - name: UNTF_TOPIC
               value: {{ .Values.externals.untf.topic }}
-            - name: VTASK_ENDPOINT
-              value: {{ .Values.externals.vtask.endpoint }}
             - name: SERVER_REDIS_HOST
               value: {{ .Values.app.redis.host }}
             - name: SERVER_REDIS_PORT

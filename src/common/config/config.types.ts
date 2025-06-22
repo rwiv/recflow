@@ -43,7 +43,3 @@ export interface UntfConfig {
   apiKey: string;
   topic: string;
 }
-
-export interface VtaskConfig {
-  endpoint: string;
-}

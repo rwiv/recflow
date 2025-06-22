@@ -2,7 +2,6 @@ import {
   UntfConfig,
   PostgresConfig,
   StreamqConfig,
-  VtaskConfig,
   RedisConfig,
   StlinkConfig,
   SQSConfig,
@@ -19,7 +18,6 @@ import {
   readStlinkConfig,
   readStreamqConfig,
   readUntfConfig,
-  readVtaskConfig,
 } from './env.utils.js';
 import { z } from 'zod';
 
@@ -31,7 +29,6 @@ export interface Env {
   streamq: StreamqConfig;
   stlink: StlinkConfig;
   untf: UntfConfig;
-  vtask: VtaskConfig;
   pg: PostgresConfig;
   sqs: SQSConfig;
   serverRedis: RedisConfig;
@@ -76,7 +73,6 @@ export function readEnv(): Env {
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),
     untf: readUntfConfig(),
-    vtask: readVtaskConfig(),
     pg: readPgConfig(),
     sqs: readSQSConfig(),
     serverRedis: readServerRedisConfig(),

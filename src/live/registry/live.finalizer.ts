@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL, VTASK } from '../../infra/infra.tokens.js';
+import { SQS, STDL } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
-import { StdlDoneMessage, StdlDoneStatus, Vtask } from '../../infra/vtask/types.js';
 import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -21,6 +20,21 @@ import { LiveWriter } from '../data/live.writer.js';
 import { db } from '../../infra/db/db.js';
 import { HttpError } from '../../utils/errors/base/HttpError.js';
 import { getHttpRequestError } from '../../utils/http.js';
+import { SQSClient } from '../../infra/sqs/sqs.client.js';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+
+export const stdlDoneStatusEnum = z.enum(['complete', 'canceled']);
+export type StdlDoneStatus = z.infer<typeof stdlDoneStatusEnum>;
+
+export const stdlDoneMessage = z.object({
+  status: stdlDoneStatusEnum,
+  platform: platformNameEnum,
+  uid: z.string().nonempty(),
+  videoName: z.string().nonempty(),
+  fsName: z.string().nonempty(),
+});
+
+export type StdlDoneMessage = z.infer<typeof stdlDoneMessage>;
 
 interface TargetRecorder {
   status: RecordingStatus;
@@ -47,9 +61,9 @@ const RETRY_DELAY_MS = 3000; // 3 sec
 @Injectable()
 export class LiveFinalizer {
   constructor(
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(VTASK) private readonly vtask: Vtask,
     @Inject(ENV) private readonly env: Env,
+    @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(SQS) private readonly sqs: SQSClient,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
   ) {}
@@ -167,7 +181,7 @@ export class LiveFinalizer {
         await delay(WAIT_INTERVAL_MS);
         continue;
       }
-      await this.vtask.addTask(doneMsg);
+      await this.sqs.send(JSON.stringify(doneMsg));
       break;
     }
     log.debug(`Complete adding StdlDone task`, liveAttr(live));

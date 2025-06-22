@@ -3,6 +3,7 @@ import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
+import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 
 interface LiveAttr {
   live_id: string;
@@ -51,8 +52,16 @@ export function liveAttr(live: LiveDto, opts?: Options) {
 export function liveInfoAttr(liveInfo: LiveInfo) {
   return {
     platform: liveInfo.type,
-    channelId: liveInfo.pid,
+    channelUid: liveInfo.pid,
     channelName: liveInfo.channelName,
     liveTitle: liveInfo.liveTitle,
+  };
+}
+
+export function channelAttr(channel: ChannelDto) {
+  return {
+    platform: channel.platform.name,
+    channelUid: channel.pid,
+    channelName: channel.username,
   };
 }

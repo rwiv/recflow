@@ -27,10 +27,7 @@ service:
 
 ingress:
   host: stmgr.rwiv.xyz
-  gateway: istio-system/external-gateway
-#ingress:
-#  host: stmgr.rwiv.xyz
-#  secretName: cloudflare-certificate
+  secretName: cloudflare-certificate
 
 app:
   server:

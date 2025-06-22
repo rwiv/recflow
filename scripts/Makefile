@@ -1,3 +1,11 @@
+# server
+helm-server-run:
+	helm install stmgr ../kube/server -n media
+
+helm-server-rm:
+	helm uninstall stmgr -n media
+
+
 # postgresql
 helm-pg-dep:
 	-@helm dependency update ../kube/postgresql

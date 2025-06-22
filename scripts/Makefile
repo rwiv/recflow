@@ -27,6 +27,7 @@ delete-pg-prod-pvc:
 helm-pg-stage-run:
 	helm install stmgr-postgresql ../kube/postgresql -n stage \
 		--set metadata.namespace=stage \
+		--set postgresql.primary.service.type=NodePort \
 		--set postgresql.primary.service.nodePorts.postgresql=30229 \
 		--set postgresql.primary.persistence.storageClass=rook-ceph-block
 
@@ -61,6 +62,7 @@ helm-stage-redis-run:
 	-@helm install stmgr-redis ../kube/redis -n stage \
 		--set metadata.namespace=stage \
 		--set redis.master.persistence.enabled=false \
+		--set redis.master.service.type=NodePort \
 		--set redis.master.service.nodePorts.redis=30228
 
 helm-stage-redis-rm:

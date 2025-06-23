@@ -47,7 +47,8 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    httpTimeoutMs: 7000
+#    httpTimeoutMs: 7000
+    httpTimeoutMs: 30000
     liveAllocationInitWaitSec: 15
     liveRecoveryInitWaitSec: 40
     liveFinishTimeoutSec: 180 # 3 minutes
@@ -62,17 +63,14 @@ app:
 externals:
   stdl:
     redis:
-      masterHost: stdl-redis.rwiv.xyz
-      masterPort: 30211
-      replicaHost: stdl-redis.rwiv.xyz
-      replicaPort: 30212
+      masterHost: stdl-redis-master.media.svc.cluster.local
+      masterPort: 6379
+      replicaHost: stdl-redis-replicas.media.svc.cluster.local
+      replicaPort: 6379
       secrets:
         auth:
           name: stdl-redis-auth
           passwordKey: password
-        tls:
-          name: stdl-redis-tls
-          caKey: ca.crt
     queue:
       secretName: stdl-queue
       regionNameKey: region-name

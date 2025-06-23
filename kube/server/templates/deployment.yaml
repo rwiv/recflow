@@ -68,8 +68,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.externals.stdl.redis.secrets.auth.name }}
                   key: {{ .Values.externals.stdl.redis.secrets.auth.passwordKey }}
-            - name: STDL_REDIS_CA_PATH
-              value: /mnt/stdl-redis-tls/{{ .Values.externals.stdl.redis.secrets.tls.caKey }}
             - name: PG_HOST
               value: {{ .Values.app.postgres.host }}
             - name: PG_PORT
@@ -128,10 +126,6 @@ spec:
               value: "{{ .Values.app.configs.cacheExpireSec }}"
             - name: MAX_CONCURRENT_LIVE
               value: "{{ .Values.app.configs.maxConcurrentLive }}"
-          volumeMounts:
-            - name: stdl-redis-tls
-              mountPath: "/mnt/stdl-redis-tls/{{ .Values.externals.stdl.redis.secrets.tls.caKey }}"
-              subPath: {{ .Values.externals.stdl.redis.secrets.tls.caKey }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- with .Values.affinity }}
@@ -142,7 +136,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      volumes:
-        - name: stdl-redis-tls
-          secret:
-            secretName: {{ .Values.externals.stdl.redis.secrets.tls.name }}

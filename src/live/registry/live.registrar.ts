@@ -73,11 +73,11 @@ export class LiveRegistrar {
 
     // Check if the live is accessible
     const { platform, pid } = req.channelInfo;
-    let useCred = liveInfo.isAdult;
+    let withAuth = liveInfo.isAdult;
     if (req.criterion?.enforceCreds) {
-      useCred = true;
+      withAuth = true;
     }
-    const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, useCred);
+    const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
     if (!streamInfo.openLive) {
       log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
       // live record is not created as it may normalize later

@@ -6,7 +6,6 @@ import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js'
 import { z } from 'zod';
 import { nonempty } from '../../common/data/common.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { log } from 'jslog';
 import { delay } from '../../utils/time.js';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 
@@ -23,6 +22,9 @@ export const streamInfo = z.object({
 });
 export type StreamInfo = z.infer<typeof streamInfo>;
 
+const proxyType = z.enum(['domestic', 'overseas']);
+export type ProxyType = z.infer<typeof proxyType>;
+
 const RETRY_LIMIT = 2;
 const RETRY_DELAY_MS = 100;
 const STLINK_HTTP_TIMEOUT_MS = 10000;
@@ -31,10 +33,33 @@ const STLINK_HTTP_TIMEOUT_MS = 10000;
 export class Stlink {
   constructor(@Inject(ENV) private readonly env: Env) {}
 
-  async fetchStreamInfo(platform: PlatformName, uid: string, withCred: boolean): Promise<StreamInfo> {
+  async fetchStreamInfo(platform: PlatformName, uid: string, withAuth: boolean): Promise<StreamInfo> {
+    if (platform === 'chzzk') {
+      return await this._fetchStreamInfo(platform, uid, withAuth, 'domestic');
+    } else if (platform === 'soop') {
+      const res = await this._fetchStreamInfo(platform, uid, withAuth, 'overseas');
+      if (res.openLive) {
+        return res;
+      } else {
+        return await this._fetchStreamInfo(platform, uid, withAuth, 'domestic');
+      }
+    } else {
+      throw new ValidationError(`Unsupported platform: ${platform}`);
+    }
+  }
+
+  private async _fetchStreamInfo(
+    platform: PlatformName,
+    uid: string,
+    withAuth: boolean,
+    proxy: ProxyType | null,
+  ): Promise<StreamInfo> {
     const params = new URLSearchParams({ fields: 'best,headers' });
-    if (withCred) {
-      params.set('useCredentials', 'true');
+    if (withAuth) {
+      params.set('withAuth', 'true');
+    }
+    if (proxy) {
+      params.set('proxy', proxy);
     }
     const url = `${this.env.stlink.endpoint}/api/streams/${platform}/${uid}?${params.toString()}`;
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(STLINK_HTTP_TIMEOUT_MS) });

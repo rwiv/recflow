@@ -53,24 +53,24 @@ export class SoopFetcher {
     return channelFromSoop(soopChannelInfo.parse(await res.json()));
   }
 
-  private async fetchLivesByTag(tag: string, withCred: boolean = false) {
-    const qs = this.liveQs('tag', tag, withCred);
+  private async fetchLivesByTag(tag: string, withAuth: boolean = false) {
+    const qs = this.liveQs('tag', tag, withAuth);
     return this.requestLives(`${this.baseUrl}/lives/v1/tag?${qs}`);
   }
 
-  private async fetchLivesByKeyword(keyword: string, withCred: boolean = false) {
-    const qs = this.liveQs('keyword', keyword, withCred);
+  private async fetchLivesByKeyword(keyword: string, withAuth: boolean = false) {
+    const qs = this.liveQs('keyword', keyword, withAuth);
     return this.requestLives(`${this.baseUrl}/lives/v1/keyword?${qs}`);
   }
 
-  private async fetchLivesByCategory(cateNo: string, withCred: boolean = false) {
-    const qs = this.liveQs('cateNo', cateNo, withCred);
+  private async fetchLivesByCategory(cateNo: string, withAuth: boolean = false) {
+    const qs = this.liveQs('cateNo', cateNo, withAuth);
     return this.requestLives(`${this.baseUrl}/lives/v1/category?${qs}`);
   }
 
-  private liveQs(key: string, value: string, withCred: boolean) {
+  private liveQs(key: string, value: string, withAuth: boolean) {
     const params = new URLSearchParams({ [key]: value, size: this.size.toString() });
-    if (withCred) {
+    if (withAuth) {
       params.set('withCred', 'true');
     }
     return params.toString();

@@ -3,13 +3,11 @@ import { readEnv } from './env.js';
 
 export const ENV = 'ENV';
 
-const env = readEnv();
-
 @Module({
   providers: [
     {
       provide: ENV,
-      useValue: env,
+      useValue: readEnv(),
     },
   ],
   exports: [ENV],

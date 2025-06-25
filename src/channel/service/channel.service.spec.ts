@@ -1,16 +1,16 @@
-import { describe, it, beforeEach, afterAll, expect } from 'vitest';
-import { dropTables } from '../../infra/db/utils.js';
-import { mockChannel } from '../../common/helpers/channel.mocks.js';
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { mockChannelAppend } from '../spec/channel.dto.schema.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
-import { ChannelFinder } from './channel.finder.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
-import { ChannelWriter } from './channel.writer.js';
-import { ChannelSearcher } from './channel.searcher.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { PriorityService } from './priority.service.js';
+import { dropTables } from '../../infra/db/utils.js';
 import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { PriorityDto } from '../spec/priority.schema.js';
+import { ChannelFinder } from './channel.finder.js';
 import { ChannelMapper } from './channel.mapper.js';
+import { ChannelSearcher } from './channel.searcher.js';
+import { ChannelWriter } from './channel.writer.js';
+import { PriorityService } from './priority.service.js';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
@@ -38,18 +38,24 @@ describe('ChannelService', () => {
     await dropTables();
   });
 
-  function add(n: number, priority: PriorityDto | undefined, followerCnt: number, tagNames: string[]) {
-    return chWriter.createWithTagNames(mockChannel(n, pf, priority, followerCnt), tagNames);
+  function add(n: number, priority: PriorityDto, followerCnt: number, tagNames: string[]) {
+    const ch = mockChannelAppend({
+      pid: `asd${n}`,
+      username: `asd${n}`,
+      priorityId: priority?.id,
+      followerCnt,
+    });
+    return chWriter.createWithTagNames(ch, tagNames);
   }
 
   it('create', async () => {
-    const channel = await chWriter.createWithTagNames(mockChannel(1, pf, must), ['tag1', 'tag2']);
+    const channel = await chWriter.createWithTagNames(mockChannelAppend(), ['tag1', 'tag2']);
     expect(channel.id).toBeDefined();
     expect(channel.tags).toHaveLength(2);
   });
 
   it('delete', async () => {
-    const channel = await chWriter.createWithTagNames(mockChannel(1, pf, must), ['tag1', 'tag2']);
+    const channel = await chWriter.createWithTagNames(mockChannelAppend(), ['tag1', 'tag2']);
     await chWriter.delete(channel.id);
     expect(await chFinder.findById(channel.id)).toBeUndefined();
   });

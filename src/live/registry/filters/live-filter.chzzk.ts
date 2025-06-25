@@ -35,15 +35,18 @@ export class ChzzkLiveFilter {
     }
 
     // by channel
-    const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
-    if (channel) {
-      if (channel.priority.shouldNotify) {
-        return liveInfo;
-      }
-      if (channel.priority.shouldSave) {
-        return liveInfo;
-      } else {
-        return null;
+    // TODO: Change based on tier
+    if (!cr.loggingOnly) {
+      const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
+      if (channel) {
+        if (channel.priority.shouldNotify) {
+          return liveInfo;
+        }
+        if (channel.priority.shouldSave) {
+          return liveInfo;
+        } else {
+          return null;
+        }
       }
     }
 

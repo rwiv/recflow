@@ -74,7 +74,7 @@ export class LiveRecoveryManager {
     }
 
     // Finish if live not open
-    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult); // TODO: change check live.headers
+    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult);
     if (!streamInfo.openLive) {
       await this.finishLive(live.id, 'Delete uncleaned live', 'info');
       return;

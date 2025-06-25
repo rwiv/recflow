@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { LiveRegistrar } from './live.registrar.js';
+import { log } from 'jslog';
+import { LiveInfo } from 'src/platform/spec/wapper/live.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { PlatformLiveFilter } from './live.filter.js';
+import { liveInfoAttr } from '../../common/attr/attr.live.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
+import { Tx } from '../../infra/db/types.js';
+import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { LiveFinder } from '../data/live.finder.js';
 import { LiveHistoryRepository } from '../storage/live.history.repository.js';
-import { log } from 'jslog';
-import { liveInfoAttr } from '../../common/attr/attr.live.js';
+import { PlatformLiveFilter } from './live.filter.js';
+import { LiveRegistrar } from './live.registrar.js';
 
 @Injectable()
 export class LiveCoordinator {
@@ -36,21 +37,35 @@ export class LiveCoordinator {
   async registerQueriedLives(criterion: PlatformCriterionDto) {
     const queriedLives = await this.fetcher.fetchLives(criterion);
     const filtered = await this.filter.getFiltered(criterion, queriedLives);
-    for (const live of filtered) {
-      if (criterion.loggingOnly) {
-        if (await this.historyRepo.exists(criterion.platform.name, live.liveId)) {
-          continue;
-        }
+    if (criterion.loggingOnly) {
+      await this.filterQueriedLoggingOnly(criterion, filtered);
+    } else {
+      await this.filterQueriedDefault(criterion, filtered);
+    }
+  }
+
+  private async filterQueriedDefault(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
+    for (const live of lives) {
+      const channelInfo = await this.fetchInfo(live.type, live.pid, false);
+      if (!channelInfo) continue;
+      await this.liveRegistrar.register({ channelInfo, criterion });
+    }
+  }
+
+  private async filterQueriedLoggingOnly(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
+    for (const live of lives) {
+      if (await this.historyRepo.exists(criterion.platform.name, live.liveId)) {
+        continue;
       }
 
-      if (!criterion.loggingOnly) {
-        const channelInfo = await this.fetchInfo(live.type, live.pid, false);
-        if (!channelInfo) continue;
-        await this.liveRegistrar.register({ channelInfo, criterion });
-      } else {
-        await this.historyRepo.set(criterion.platform.name, live);
-        log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion }));
+      let priority = null;
+      const channel = await this.channelFinder.findByPidAndPlatform(live.pid, criterion.platform.name);
+      if (channel) {
+        priority = channel.priority;
       }
+
+      await this.historyRepo.set(criterion.platform.name, live, priority);
+      log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion }));
     }
   }
 

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { LiveWriter } from './live.writer.js';
-import { LiveFinder } from './live.finder.js';
-import { Tx } from '../../infra/db/types.js';
+import { log } from 'jslog';
+import { liveAttr } from '../../common/attr/attr.live.js';
 import { db } from '../../infra/db/db.js';
-import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { Tx } from '../../infra/db/types.js';
+import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
+import { LiveFinder } from './live.finder.js';
+import { LiveWriter } from './live.writer.js';
 
 @Injectable()
 export class LiveRefresher {
@@ -16,16 +17,22 @@ export class LiveRefresher {
 
   async refreshEarliestOne(tx: Tx = db) {
     const live = await this.liveFinder.findEarliestUpdatedOne(tx);
-    if (!live) return;
+    if (!live) return; // db에 라이브가 하나도 존재하지 않는 경우
 
-    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+    const liveInfo = (await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true))
+      ?.liveInfo;
     // 방송이 종료되었으나 cleanup cycle 이전에 refresh가 진행되면 record는 active이지만 fetchedChannel.liveInfo는 null이 될 수 있다.
-    if (!chanInfo.liveInfo) return;
+    if (!liveInfo) return;
 
     return tx.transaction(async (txx) => {
-      const queried = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
-      if (!queried) return;
-      await this.liveWriter.updateByLive(live.id, channelLiveInfo.parse(chanInfo).liveInfo, txx);
+      const before = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
+      if (!before) return;
+
+      const updated = await this.liveWriter.updateByLive(live.id, liveInfo, txx);
+
+      if (before.liveTitle !== updated.liveTitle) {
+        log.info('Live Title Changed', liveAttr(updated));
+      }
     });
   }
 }

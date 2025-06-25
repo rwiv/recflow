@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { mockPlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.mocks.js';
-import { mockLiveInfoChzzk } from '../../platform/spec/wapper/live.mocks.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
+import { mockChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.mocks.js';
 import { LiveCoordinator } from './live.coordinator.js';
 
 describe('LiveCoordinator', () => {
@@ -31,185 +31,107 @@ describe('LiveCoordinator', () => {
   });
 
   describe('registerQueriedLives', () => {
-    it('정상적인 라이브 등록 시나리오를 테스트한다', async () => {
+    it('openLive가 true인 경우 등록', async () => {
       // Given
-      const mockCriterion = mockPlatformCriterionDto();
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const mockLive2 = mockLiveInfoChzzk({ channelId: 'pid2', liveId: 2 });
-      const queriedLives = [mockLive1, mockLive2];
-      const filteredLives = [mockLive1];
+      const mockChannel0 = mockChzzkChannelLiveInfo({ openLive: true });
+      const mockChannel1 = mockChzzkChannelLiveInfo({ openLive: false });
+      const mockChannel2 = mockChzzkChannelLiveInfo({ openLive: true });
+
+      mockChannelFinder.findFollowedChannels.mockResolvedValue([mockChannel0, mockChannel1, mockChannel2]);
+      mockFetcher.fetchChannel
+        .mockResolvedValueOnce(mockChannel0)
+        .mockResolvedValueOnce(mockChannel0)
+        .mockResolvedValueOnce(mockChannel1)
+        .mockResolvedValueOnce(mockChannel2)
+        .mockResolvedValueOnce(mockChannel2);
+
+      // When
+      await coordinator.registerFollowedLives();
+
+      // Then
+      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(1, { channelInfo: mockChannel0 });
+      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(2, { channelInfo: mockChannel2 });
+    });
+  });
+
+  describe('registerQueriedLives', () => {
+    it('정상적인 라이브 등록 시나리오', async () => {
+      // Given
+      const mockCriterion = mockPlatformCriterionDto({
+        platform: mockPlatformDto({ name: 'chzzk' }),
+        loggingOnly: false,
+      });
+
+      const mockChannel0 = mockChzzkChannelLiveInfo();
+      const mockChannel1 = mockChzzkChannelLiveInfo();
+      const mockChannel2 = mockChzzkChannelLiveInfo();
+
+      const queriedLives = [mockChannel0.liveInfo, mockChannel1.liveInfo, mockChannel2.liveInfo];
+      const filteredLives = [mockChannel0.liveInfo, mockChannel2.liveInfo];
 
       mockFetcher.fetchLives.mockResolvedValue(queriedLives);
       mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockLiveFinder.findByPid.mockResolvedValue(null);
-      mockFetcher.fetchChannel
-        .mockResolvedValueOnce({ openLive: true })
-        .mockResolvedValueOnce({ liveInfo: { liveId: 'test-live-id' } });
+      mockFetcher.fetchChannel.mockResolvedValueOnce(mockChannel0).mockResolvedValueOnce(mockChannel2);
 
       // When
       await coordinator.registerQueriedLives(mockCriterion);
 
       // Then
-      expect(mockFetcher.fetchLives).toHaveBeenCalledWith(mockCriterion);
-      expect(mockFilter.getFiltered).toHaveBeenCalledWith(mockCriterion, queriedLives);
-      expect(mockLiveFinder.findByPid).toHaveBeenCalledWith(mockLive1.pid, expect.anything());
-      expect(mockFetcher.fetchChannel).toHaveBeenCalledWith(mockLive1.type, mockLive1.pid, true);
-      expect(mockLiveRegistrar.register).toHaveBeenCalledWith({
-        channelInfo: expect.any(Object),
+      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(1, {
+        channelInfo: mockChannel0,
+        criterion: mockCriterion,
+      });
+      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(2, {
+        channelInfo: mockChannel2,
         criterion: mockCriterion,
       });
     });
 
-    it('loggingOnly가 true일 때 히스토리에만 저장한다', async () => {
+    it('loggingOnly가 true일 때', async () => {
       // Given
-      const mockCriterion = mockPlatformCriterionDto({ loggingOnly: true });
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const queriedLives = [mockLive1];
-      const filteredLives = [mockLive1];
+      const mockCriterion = mockPlatformCriterionDto({
+        platform: mockPlatformDto({ name: 'chzzk' }),
+        loggingOnly: true,
+      });
+
+      const mockChannel0 = mockChzzkChannelLiveInfo();
+      const mockChannel1 = mockChzzkChannelLiveInfo();
+      const mockChannel2 = mockChzzkChannelLiveInfo();
+      const mockChannel3 = mockChzzkChannelLiveInfo();
+
+      const queriedLives = [
+        mockChannel0.liveInfo,
+        mockChannel1.liveInfo,
+        mockChannel2.liveInfo,
+        mockChannel3.liveInfo,
+      ];
+      const filteredLives = [
+        mockChannel0.liveInfo,
+        mockChannel1.liveInfo,
+        mockChannel2.liveInfo,
+        mockChannel3.liveInfo,
+      ];
 
       mockFetcher.fetchLives.mockResolvedValue(queriedLives);
       mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockHistoryRepo.exists.mockResolvedValue(false);
-
-      // When
-      await coordinator.registerQueriedLives(mockCriterion);
-
-      // Then
-      expect(mockHistoryRepo.exists).toHaveBeenCalledWith(mockCriterion.platform.name, mockLive1.liveId);
-      expect(mockHistoryRepo.set).toHaveBeenCalledWith(mockCriterion.platform.name, mockLive1);
-      expect(mockLiveRegistrar.register).not.toHaveBeenCalled();
-    });
-
-    it('loggingOnly가 true이고 이미 히스토리에 존재하는 경우 건너뛴다', async () => {
-      // Given
-      const mockCriterion = mockPlatformCriterionDto({ loggingOnly: true });
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const queriedLives = [mockLive1];
-      const filteredLives = [mockLive1];
-
-      mockFetcher.fetchLives.mockResolvedValue(queriedLives);
-      mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockHistoryRepo.exists.mockResolvedValue(true);
-
-      // When
-      await coordinator.registerQueriedLives(mockCriterion);
-
-      // Then
-      expect(mockHistoryRepo.exists).toHaveBeenCalledWith(mockCriterion.platform.name, mockLive1.liveId);
-      expect(mockHistoryRepo.set).not.toHaveBeenCalled();
-      expect(mockLiveRegistrar.register).not.toHaveBeenCalled();
-    });
-
-    it('이미 존재하는 라이브는 건너뛴다', async () => {
-      // Given
-      const mockCriterion = mockPlatformCriterionDto();
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const queriedLives = [mockLive1];
-      const filteredLives = [mockLive1];
-
-      mockFetcher.fetchLives.mockResolvedValue(queriedLives);
-      mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockLiveFinder.findByPid.mockResolvedValue({ id: 'existing-live' } as any);
-
-      // When
-      await coordinator.registerQueriedLives(mockCriterion);
-
-      // Then
-      expect(mockLiveFinder.findByPid).toHaveBeenCalledWith(mockLive1.pid, expect.anything());
-      expect(mockFetcher.fetchChannel).not.toHaveBeenCalled();
-      expect(mockLiveRegistrar.register).not.toHaveBeenCalled();
-    });
-
-    it('채널 정보를 가져올 수 없는 경우 건너뛴다', async () => {
-      // Given
-      const mockCriterion = mockPlatformCriterionDto();
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const queriedLives = [mockLive1];
-      const filteredLives = [mockLive1];
-
-      mockFetcher.fetchLives.mockResolvedValue(queriedLives);
-      mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockLiveFinder.findByPid.mockResolvedValue(null);
-      mockFetcher.fetchChannel.mockResolvedValue(null);
-
-      // When
-      await coordinator.registerQueriedLives(mockCriterion);
-
-      // Then
-      expect(mockFetcher.fetchChannel).toHaveBeenCalledWith(mockLive1.type, mockLive1.pid, true);
-      expect(mockLiveRegistrar.register).not.toHaveBeenCalled();
-    });
-
-    it('라이브 정보가 없는 채널은 건너뛴다', async () => {
-      // Given
-      const mockCriterion = mockPlatformCriterionDto();
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const queriedLives = [mockLive1];
-      const filteredLives = [mockLive1];
-
-      mockFetcher.fetchLives.mockResolvedValue(queriedLives);
-      mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockLiveFinder.findByPid.mockResolvedValue(null);
-      mockFetcher.fetchChannel.mockResolvedValue({ liveInfo: null });
-
-      // When
-      await coordinator.registerQueriedLives(mockCriterion);
-
-      // Then
-      expect(mockFetcher.fetchChannel).toHaveBeenCalledWith(mockLive1.type, mockLive1.pid, true);
-      expect(mockLiveRegistrar.register).not.toHaveBeenCalled();
-    });
-
-    it('여러 라이브를 처리할 때 일부가 실패해도 나머지는 계속 처리한다', async () => {
-      // Given
-      const mockCriterion = mockPlatformCriterionDto();
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const mockLive2 = mockLiveInfoChzzk({ channelId: 'pid2', liveId: 2 });
-      const queriedLives = [mockLive1, mockLive2];
-      const filteredLives = [mockLive1, mockLive2];
-
-      mockFetcher.fetchLives.mockResolvedValue(queriedLives);
-      mockFilter.getFiltered.mockResolvedValue(filteredLives);
-
-      // 첫 번째 라이브는 실패
-      mockLiveFinder.findByPid
-        .mockResolvedValueOnce({ id: 'existing-live' } as any)
-        .mockResolvedValueOnce(null);
-
-      // 두 번째 라이브는 성공
       mockFetcher.fetchChannel
-        .mockResolvedValueOnce({ openLive: true })
-        .mockResolvedValueOnce({ liveInfo: { liveId: 'test-live-id' } });
+        .mockResolvedValueOnce(mockChannel0)
+        .mockResolvedValueOnce(mockChannel1)
+        .mockResolvedValueOnce(mockChannel2)
+        .mockResolvedValueOnce(mockChannel3);
+      mockHistoryRepo.exists
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false);
 
       // When
       await coordinator.registerQueriedLives(mockCriterion);
 
       // Then
-      expect(mockLiveFinder.findByPid).toHaveBeenCalledTimes(2);
-      expect(mockFetcher.fetchChannel).toHaveBeenCalledTimes(2);
-      expect(mockLiveRegistrar.register).toHaveBeenCalledTimes(1);
-    });
-
-    it('빈 필터링 결과에 대해 아무것도 처리하지 않는다', async () => {
-      // Given
-      const mockCriterion = mockPlatformCriterionDto();
-      const mockLive1 = mockLiveInfoChzzk({ channelId: 'pid1', liveId: 1 });
-      const mockLive2 = mockLiveInfoChzzk({ channelId: 'pid2', liveId: 2 });
-      const queriedLives = [mockLive1, mockLive2];
-      const filteredLives: LiveInfo[] = [];
-
-      mockFetcher.fetchLives.mockResolvedValue(queriedLives);
-      mockFilter.getFiltered.mockResolvedValue(filteredLives);
-
-      // When
-      await coordinator.registerQueriedLives(mockCriterion);
-
-      // Then
-      expect(mockFetcher.fetchLives).toHaveBeenCalledWith(mockCriterion);
-      expect(mockFilter.getFiltered).toHaveBeenCalledWith(mockCriterion, queriedLives);
-      expect(mockLiveFinder.findByPid).not.toHaveBeenCalled();
-      expect(mockFetcher.fetchChannel).not.toHaveBeenCalled();
-      expect(mockLiveRegistrar.register).not.toHaveBeenCalled();
+      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(1, 'chzzk', mockChannel0.liveInfo);
+      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(2, 'chzzk', mockChannel2.liveInfo);
+      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(3, 'chzzk', mockChannel3.liveInfo);
     });
   });
 });

@@ -1,33 +1,33 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ExitCmd } from '../spec/event.schema.js';
-import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selector.js';
-import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
-import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { PriorityService } from '../../channel/service/priority.service.js';
-import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
+import assert from 'assert';
 import { log } from 'jslog';
-import { NodeUpdater } from '../../node/service/node.updater.js';
-import { Tx } from '../../infra/db/types.js';
+import { ChannelFinder } from '../../channel/service/channel.finder.js';
+import { ChannelWriter } from '../../channel/service/channel.writer.js';
+import { PriorityService } from '../../channel/service/priority.service.js';
+import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
+import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
+import { liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
+import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
+import { Tx } from '../../infra/db/types.js';
 import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
-import { LiveFinalizer } from './live.finalizer.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selector.js';
+import { NodeUpdater } from '../../node/service/node.updater.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
-import { liveInfoAttr, liveAttr } from '../../common/attr/attr.live.js';
-import assert from 'assert';
+import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { Stlink, StreamInfo } from '../../platform/stlink/stlink.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { logging, LogLevel } from '../../utils/log.js';
+import { LiveFinder } from '../data/live.finder.js';
+import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
+import { ExitCmd } from '../spec/event.schema.js';
+import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { LiveDto } from '../spec/live.dto.schema.js';
+import { LiveFinalizer } from './live.finalizer.js';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
@@ -165,7 +165,11 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(live);
     }
 
-    logging(logMessage, liveAttr(live, { cr, node }), logLevel);
+    const attr = {
+      ...liveAttr(live, { cr, node }),
+      stream_url: streamInfo?.best?.mediaPlaylistUrl,
+    };
+    logging(logMessage, attr, logLevel);
     return live.id;
   }
 

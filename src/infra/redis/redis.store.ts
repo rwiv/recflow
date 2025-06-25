@@ -1,7 +1,9 @@
 import { RedisClientType } from 'redis';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface SetOptions {
   keepEx?: boolean;
+  exSec?: number;
 }
 
 export class RedisStore {
@@ -18,8 +20,19 @@ export class RedisStore {
     return await this.client.mGet(keys);
   }
 
+  async exists(key: string): Promise<boolean> {
+    const result = await this.client.exists(key);
+    return result === 1;
+  }
+
   async set(key: string, value: string, opts: SetOptions): Promise<void> {
     let ex = this.exSec;
+    if (opts.exSec && opts.keepEx) {
+      throw new ValidationError('Cannot set both exSec and keepEx options');
+    }
+    if (opts.exSec) {
+      ex = opts.exSec;
+    }
     if (opts.keepEx) {
       const ttl = await this.client.ttl(key);
       if (ttl > 0) {

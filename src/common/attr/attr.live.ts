@@ -17,6 +17,15 @@ interface LiveAttr {
   stack_trace?: string;
 }
 
+interface LiveInfoAttr {
+  platform: string;
+  channel_uid: string;
+  channel_name: string;
+  live_title: string;
+  live_id: string;
+  criterion_name?: string;
+}
+
 interface Options {
   cr?: CriterionDto;
   node?: NodeDtoWithLives | null;
@@ -49,13 +58,19 @@ export function liveAttr(live: LiveDto, opts?: Options) {
   return attr;
 }
 
-export function liveInfoAttr(liveInfo: LiveInfo) {
-  return {
+export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options) {
+  const attr: LiveInfoAttr = {
     platform: liveInfo.type,
-    channelUid: liveInfo.pid,
-    channelName: liveInfo.channelName,
-    liveTitle: liveInfo.liveTitle,
+    live_id: liveInfo.liveId,
+    channel_uid: liveInfo.pid,
+    channel_name: liveInfo.channelName,
+    live_title: liveInfo.liveTitle,
   };
+  const cr = opts?.cr;
+  if (cr) {
+    attr.criterion_name = cr.name;
+  }
+  return attr;
 }
 
 export function channelAttr(channel: ChannelDto) {

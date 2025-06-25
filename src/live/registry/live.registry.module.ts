@@ -16,11 +16,13 @@ import { InfraModule } from '../../infra/infra.module.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { LiveRebalancer } from './live.rebalancer.js';
 import { LiveAllocator } from './live.allocator.js';
+import { LiveStorageModule } from '../storage/live.storage.module.js';
 
 @Module({
   imports: [
     ConfigModule,
     InfraModule,
+    LiveStorageModule,
     LiveDataModule,
     ChannelServiceModule,
     NodeStorageModule,

@@ -104,11 +104,11 @@ export class LiveRegistrar {
     }
 
     return db.transaction(async (tx) => {
-      return this._register(req, channel, streamInfo, tx);
+      return this.registerWithTx(req, channel, streamInfo, tx);
     });
   }
 
-  private async _register(
+  private async registerWithTx(
     req: LiveRegisterRequest,
     channel: ChannelDto,
     streamInfo: StreamInfo,

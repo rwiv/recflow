@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { TagQueryRepository } from '../storage/tag.query.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
@@ -8,7 +7,6 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { ChannelDto } from '../spec/channel.dto.schema.js';
-import { ChannelMapOptions } from '../spec/channel.types.js';
 import { ChannelCacheStore } from '../storage/channel.cache.store.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 

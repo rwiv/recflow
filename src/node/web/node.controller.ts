@@ -29,7 +29,7 @@ export class NodeController {
     if (!node) {
       throw NotFoundError.from('Node', 'name', nodeName);
     }
-    return await this.stdl.getStatus(node.endpoint);
+    return await this.stdl.getStatusWithStats(node.endpoint);
   }
 
   @Get('/:nodeId')

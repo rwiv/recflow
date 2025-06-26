@@ -3,14 +3,14 @@ import { configs } from '@/common/configs.ts';
 import { NodeGroupAppend, NodeGroupDto, NodeGroupUpdate } from '@/client/node/node.schema.ts';
 
 export async function fetchNodeGroups() {
-  const res = await request(`${configs.endpoint}/api/nodes/groups`);
+  const res = await request(`${configs.endpoint}/api/node-groups`);
   const nodeGroups = (await res.json()) as NodeGroupDto[];
   return nodeGroups.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createNodeGroup(append: NodeGroupAppend) {
   const { method, headers, body } = getIngredients('POST', append);
-  const res = await request(`${configs.endpoint}/api/nodes/groups`, { method, headers, body });
+  const res = await request(`${configs.endpoint}/api/node-groups`, { method, headers, body });
   return (await res.json()) as NodeGroupDto;
 }
 
@@ -24,7 +24,7 @@ export async function drainNodeGroup(groupId: string) {
 }
 
 export async function deleteNodeGroup(nodeGroupId: string) {
-  await request(`${configs.endpoint}/api/nodes/groups/${nodeGroupId}`, { method: 'DELETE' });
+  await request(`${configs.endpoint}/api/node-groups/${nodeGroupId}`, { method: 'DELETE' });
 }
 
 export async function updateNodeGroupName(id: string, name: string) {
@@ -36,7 +36,7 @@ export function updateNodeGroupDescription(id: string, description: string | nul
 }
 
 async function updateTag(id: string, name?: string, description?: string | null) {
-  const url = `${configs.endpoint}/api/nodes/groups/${id}`;
+  const url = `${configs.endpoint}/api/node-groups/${id}`;
   const req: NodeGroupUpdate = { name, description };
   const { method, headers, body } = getIngredients('PUT', req);
   await request(url, { method, headers, body });

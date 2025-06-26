@@ -4,7 +4,7 @@ import { NodeGroupService } from '../service/node-group.service.js';
 import { NodeGroupAppend, nodeGroupAppend, nodeGroupUpdate, NodeGroupUpdate } from '../spec/node.entity.schema.js';
 
 @UseFilters(HttpErrorFilter)
-@Controller('/api/nodes/groups')
+@Controller('/api/node-groups')
 export class NodeGroupController {
   constructor(private readonly ngService: NodeGroupService) {}
 

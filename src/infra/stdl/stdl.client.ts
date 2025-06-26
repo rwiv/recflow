@@ -7,6 +7,7 @@ import { stdlLocationType } from './stdl.types.js';
 
 export abstract class Stdl {
   abstract getStatus(endpoint: string): Promise<RecordingStatus[]>;
+  abstract getStatusWithStats(endpoint: string): Promise<RecordingStatus[]>;
 
   async findStatus(endpoint: string, liveId: string): Promise<RecordingStatus | null> {
     const recs = (await this.getStatus(endpoint)).filter((status) => status.id === liveId);
@@ -48,6 +49,7 @@ export const recordingStatus = z.object({
   fsName: nonempty,
   num: nnint,
   status: stdlStreamStatusEnum,
+  stats: z.any().optional(),
 });
 export type RecordingStatus = z.infer<typeof recordingStatus>;
 

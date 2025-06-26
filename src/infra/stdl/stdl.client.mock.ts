@@ -49,6 +49,10 @@ export class StdlMock extends Stdl {
     });
   }
 
+  async getStatusWithStats(endpoint: string): Promise<RecordingStatus[]> {
+    return this.getStatus(endpoint);
+  }
+
   async startRecording(endpoint: string, recordId: string): Promise<void> {
     log.info(`MockStdlClient.requestRecording(...)`, { endpoint, record_id: recordId });
     await Promise.resolve(undefined);

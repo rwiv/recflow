@@ -27,6 +27,23 @@ export class StdlImpl extends Stdl {
     }
   }
 
+  async getStatusWithStats(endpoint: string): Promise<RecordingStatus[]> {
+    const url = `${this.getRecordingsUrl(endpoint)}?fields=stats`;
+    const attr = { url };
+    const failureMsg = 'Failed to get recording status with stats';
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'content-type': 'application/json' },
+        signal: AbortSignal.timeout(this.env.httpTimeout),
+      });
+      await checkResponse(res, attr, failureMsg);
+      return nodeStatusResponse.parse(await res.json()).recordings;
+    } catch (err) {
+      throw getHttpRequestError(failureMsg, err, attr);
+    }
+  }
+
   async startRecording(endpoint: string, liveRecordId: string): Promise<void> {
     const url = `${this.getRecordingsUrl(endpoint)}/${liveRecordId}`;
     const attr = { url, live_record_id: liveRecordId };

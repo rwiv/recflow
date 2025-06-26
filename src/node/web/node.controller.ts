@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
-import { NodeFinder } from '../service/node.finder.js';
-import { NodeWriter } from '../service/node.writer.js';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
+import { STDL } from '../../infra/infra.tokens.js';
+import { Stdl } from '../../infra/stdl/stdl.client.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NodeFinder } from '../service/node.finder.js';
 import { NodeUpdater } from '../service/node.updater.js';
+import { NodeWriter } from '../service/node.writer.js';
+import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/nodes')
@@ -12,11 +15,26 @@ export class NodeController {
     private readonly finder: NodeFinder,
     private readonly writer: NodeWriter,
     private readonly updater: NodeUpdater,
+    @Inject(STDL) private readonly stdl: Stdl,
   ) {}
 
   @Get('/')
-  nodes() {
+  async nodes() {
     return this.finder.findAll({ group: true, lives: true });
+  }
+
+  @Get('/status/:nodeName')
+  async status(@Param('nodeName') nodeName: string) {
+    const node = await this.finder.findByName(nodeName, {});
+    if (!node) {
+      throw NotFoundError.from('Node', 'name', nodeName);
+    }
+    return await this.stdl.getStatus(node.endpoint);
+  }
+
+  @Get('/:nodeId')
+  async node(@Param('nodeId') nodeId: string) {
+    return this.finder.findById(nodeId, { group: true, lives: true });
   }
 
   @Post('/')

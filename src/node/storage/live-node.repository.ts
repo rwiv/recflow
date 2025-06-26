@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import {
-  liveNodeEnt,
-  LiveNodeEnt,
-  LiveNodeEntAppend,
-  LiveNodeEntUpdate,
-} from '../spec/node.entity.schema.js';
+import { liveNodeEnt, LiveNodeEnt, LiveNodeEntAppend, LiveNodeEntUpdate } from '../spec/node.entity.schema.js';
 import { oneNotNull } from '../../utils/list.js';
 import { liveNodeTable } from '../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';

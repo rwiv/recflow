@@ -50,11 +50,7 @@ export class ChannelCommandRepository {
     } else {
       req.updatedAt = new Date();
     }
-    const ent = await tx
-      .update(channelTable)
-      .set(channelEnt.parse(req))
-      .where(eq(channelTable.id, id))
-      .returning();
+    const ent = await tx.update(channelTable).set(channelEnt.parse(req)).where(eq(channelTable.id, id)).returning();
     return oneNotNull(ent);
   }
 

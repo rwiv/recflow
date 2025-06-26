@@ -4,10 +4,7 @@ import { DevChannelInserter } from './insert/insert.channel.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
-import {
-  chzzkCriterionRuleNameEnum,
-  soopCriterionRuleNameEnum,
-} from '../../criterion/spec/criterion.rule.schema.js';
+import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../../criterion/spec/criterion.rule.schema.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { PlatformWriter } from '../../platform/storage/platform.writer.js';
 import { dropAllKeys } from '../../infra/redis/redis.utils.js';

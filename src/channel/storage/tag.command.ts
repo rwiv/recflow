@@ -48,11 +48,7 @@ export class TagCommandRepository {
       ...update,
       updatedAt: new Date(),
     };
-    const ent = await tx
-      .update(channelTagTable)
-      .set(tagEnt.parse(req))
-      .where(eq(channelTagTable.id, id))
-      .returning();
+    const ent = await tx.update(channelTagTable).set(tagEnt.parse(req)).where(eq(channelTagTable.id, id)).returning();
     return oneNotNull(ent);
   }
 

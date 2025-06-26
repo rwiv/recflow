@@ -99,12 +99,7 @@ describe('LiveCoordinator', () => {
       const mockChannel2 = mockChzzkChannelLiveInfo();
       const mockChannel3 = mockChzzkChannelLiveInfo();
 
-      const queriedLives = [
-        mockChannel0.liveInfo,
-        mockChannel1.liveInfo,
-        mockChannel2.liveInfo,
-        mockChannel3.liveInfo,
-      ];
+      const queriedLives = [mockChannel0.liveInfo, mockChannel1.liveInfo, mockChannel2.liveInfo, mockChannel3.liveInfo];
       const filteredLives = [
         mockChannel0.liveInfo,
         mockChannel1.liveInfo,

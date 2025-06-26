@@ -2,9 +2,7 @@ import { faker } from '@faker-js/faker';
 import { PlatformCriterionDto } from './criterion.dto.schema.js';
 import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
 
-export function mockPlatformCriterionDto(
-  overrides: Partial<PlatformCriterionDto> = {},
-): PlatformCriterionDto {
+export function mockPlatformCriterionDto(overrides: Partial<PlatformCriterionDto> = {}): PlatformCriterionDto {
   return {
     id: faker.string.uuid(),
     name: faker.lorem.words(2),

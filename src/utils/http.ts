@@ -1,11 +1,7 @@
 import { HttpRequestError } from './errors/errors/HttpRequestError.js';
 import { HttpError } from './errors/base/HttpError.js';
 
-export async function checkResponse(
-  res: Response,
-  attr?: Record<string, any>,
-  message: string = 'Failed to request',
-) {
+export async function checkResponse(res: Response, attr?: Record<string, any>, message: string = 'Failed to request') {
   if (res.status >= 400) {
     const body = await res.text();
     const newAttr = { ...attr, body };
@@ -13,12 +9,7 @@ export async function checkResponse(
   }
 }
 
-export function getHttpRequestError(
-  message: string,
-  err: unknown,
-  attr: Record<string, any>,
-  defaultStatus = 500,
-) {
+export function getHttpRequestError(message: string, err: unknown, attr: Record<string, any>, defaultStatus = 500) {
   if (err instanceof HttpRequestError) {
     err.extendAttr(attr);
     if (message !== err.message) {

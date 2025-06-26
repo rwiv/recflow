@@ -31,11 +31,7 @@ export class ChannelMapper {
     return { ...ent, platform: await platformP, priority: await priorityP };
   }
 
-  async loadRelations(
-    channels: ChannelDto[],
-    opts: ChannelMapOptions,
-    tx: Tx = db,
-  ): Promise<MappedChannelDto[]> {
+  async loadRelations(channels: ChannelDto[], opts: ChannelMapOptions, tx: Tx = db): Promise<MappedChannelDto[]> {
     const withTags = opts.tags ?? false;
     const withTopics = opts.topics ?? false;
     if (!withTags && !withTopics) {

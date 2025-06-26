@@ -35,11 +35,7 @@ export class ChannelFinder {
     return channel;
   }
 
-  async findByPidAndPlatform(
-    pid: string,
-    platformName: PlatformName,
-    tx: Tx = db,
-  ): Promise<ChannelDto | null> {
+  async findByPidAndPlatform(pid: string, platformName: PlatformName, tx: Tx = db): Promise<ChannelDto | null> {
     const cache = await this.cache.findByPlatformAndPid(pid, platformName);
     if (cache) return cache;
 

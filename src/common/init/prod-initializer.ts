@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
-import {
-  chzzkCriterionRuleNameEnum,
-  soopCriterionRuleNameEnum,
-} from '../../criterion/spec/criterion.rule.schema.js';
+import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../../criterion/spec/criterion.rule.schema.js';
 
 @Injectable()
 export class ProdInitializer {

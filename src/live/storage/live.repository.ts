@@ -40,11 +40,7 @@ export class LiveRepository {
     return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)));
   }
 
-  async findByPlatformAndSourceId(
-    platformId: string,
-    sourceId: string,
-    tx: Tx = db,
-  ): Promise<LiveEnt | null> {
+  async findByPlatformAndSourceId(platformId: string, sourceId: string, tx: Tx = db): Promise<LiveEnt | null> {
     const cond = and(eq(liveTable.platformId, platformId), eq(liveTable.sourceId, sourceId));
     return oneNullable(await tx.select().from(liveTable).where(cond));
   }
@@ -54,11 +50,7 @@ export class LiveRepository {
   }
 
   async findByIsDisabled(isDisabled: boolean, tx: Tx = db) {
-    return tx
-      .select()
-      .from(liveTable)
-      .where(eq(liveTable.isDisabled, isDisabled))
-      .orderBy(asc(liveTable.createdAt));
+    return tx.select().from(liveTable).where(eq(liveTable.isDisabled, isDisabled)).orderBy(asc(liveTable.createdAt));
   }
 
   async findByPid(pid: string, tx: Tx = db) {

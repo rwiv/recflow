@@ -28,9 +28,6 @@ export class CriterionUnitRepository {
   }
 
   async findByCriterionId(criterionId: string, tx: Tx = db) {
-    return tx
-      .select()
-      .from(liveCriterionUnitTable)
-      .where(eq(liveCriterionUnitTable.criterionId, criterionId));
+    return tx.select().from(liveCriterionUnitTable).where(eq(liveCriterionUnitTable.criterionId, criterionId));
   }
 }

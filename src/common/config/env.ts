@@ -1,11 +1,4 @@
-import {
-  UntfConfig,
-  PostgresConfig,
-  StreamqConfig,
-  RedisConfig,
-  StlinkConfig,
-  SQSConfig,
-} from './config.types.js';
+import { UntfConfig, PostgresConfig, StreamqConfig, RedisConfig, StlinkConfig, SQSConfig } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';

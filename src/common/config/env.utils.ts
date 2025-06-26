@@ -84,12 +84,7 @@ export function readSQSConfig(): SQSConfig {
   const secretKey = process.env.SQS_SECRET_KEY;
   const regionName = process.env.SQS_REGION_NAME;
   const queueUrl = process.env.SQS_QUEUE_URL;
-  if (
-    accessKey === undefined ||
-    secretKey === undefined ||
-    regionName === undefined ||
-    queueUrl === undefined
-  ) {
+  if (accessKey === undefined || secretKey === undefined || regionName === undefined || queueUrl === undefined) {
     throw Error('sqs env is not set');
   }
   return { accessKey, secretKey, regionName, queueUrl };

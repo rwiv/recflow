@@ -13,12 +13,7 @@ export class ChannelSearcher {
     private readonly chMapper: ChannelMapper,
   ) {}
 
-  async findByQuery(
-    page: PageQuery,
-    sortBy?: ChannelSortType,
-    priorityName?: string,
-    opts: ChannelMapOptions = {},
-  ) {
+  async findByQuery(page: PageQuery, sortBy?: ChannelSortType, priorityName?: string, opts: ChannelMapOptions = {}) {
     const entRet = await this.chSearch.findByQuery(page, sortBy, priorityName);
     return this.toPageResult(entRet, opts);
   }
@@ -43,13 +38,7 @@ export class ChannelSearcher {
     priority?: string,
     opts: ChannelMapOptions = {},
   ) {
-    const entRet = await this.chSearch.findByAllTags(
-      includeTagNames,
-      excludeTagNames,
-      page,
-      sortBy,
-      priority,
-    );
+    const entRet = await this.chSearch.findByAllTags(includeTagNames, excludeTagNames, page, sortBy, priority);
     return this.toPageResult(entRet, opts);
   }
 

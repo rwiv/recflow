@@ -56,14 +56,10 @@ export class PriorityRepository {
   }
 
   async findById(priorityId: string, tx: Tx = db): Promise<PriorityEnt | null> {
-    return oneNullable(
-      await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.id, priorityId)),
-    );
+    return oneNullable(await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.id, priorityId)));
   }
 
   async findByName(priorityName: string, tx: Tx = db): Promise<PriorityEnt | null> {
-    return oneNullable(
-      await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.name, priorityName)),
-    );
+    return oneNullable(await tx.select().from(channelPriorityTable).where(eq(channelPriorityTable.name, priorityName)));
   }
 }

@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { ChannelRefreshTask } from './channel.refresh.task.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
-import {
-  DEFAULT_CHANNEL_CACHE_CHECK_CYCLE,
-  DEFAULT_CHANNEL_REFRESH_CYCLE,
-} from './channel.tasks.constants.js';
+import { DEFAULT_CHANNEL_CACHE_CHECK_CYCLE, DEFAULT_CHANNEL_REFRESH_CYCLE } from './channel.tasks.constants.js';
 import { ChannelCacheCheckTask } from './channel.cache-check.task.js';
 import { ChannelCacheChecker } from '../../channel/service/channel.cache.checker.js';
 

@@ -1,14 +1,4 @@
-import {
-  boolean,
-  char,
-  index,
-  integer,
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core';
+import { boolean, char, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
 function uuid(name?: string) {
   if (name) {

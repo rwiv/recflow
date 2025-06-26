@@ -62,10 +62,7 @@ export class ChannelSearchRepository {
 
     const conds: SQLWrapper[] = [];
     for (const tagId of excludeIds) {
-      const cond = and(
-        eq(channelTagMapTable.channelId, channelTable.id),
-        eq(channelTagMapTable.tagId, tagId),
-      );
+      const cond = and(eq(channelTagMapTable.channelId, channelTable.id), eq(channelTagMapTable.tagId, tagId));
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(notExists(subQuery));
     }
@@ -98,18 +95,12 @@ export class ChannelSearchRepository {
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
     for (const tagId of includeIds) {
-      const cond = and(
-        eq(channelTagMapTable.channelId, channelTable.id),
-        eq(channelTagMapTable.tagId, tagId),
-      );
+      const cond = and(eq(channelTagMapTable.channelId, channelTable.id), eq(channelTagMapTable.tagId, tagId));
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(exists(subQuery));
     }
     for (const tagId of excludeIds) {
-      const cond = and(
-        eq(channelTagMapTable.channelId, channelTable.id),
-        eq(channelTagMapTable.tagId, tagId),
-      );
+      const cond = and(eq(channelTagMapTable.channelId, channelTable.id), eq(channelTagMapTable.tagId, tagId));
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(notExists(subQuery));
     }

@@ -36,10 +36,10 @@ describe('ChannelService', () => {
     const node = await nodeWriter.create(mockNodeAppend(), true);
     const pf = await pfFinder.findByNameNotNull('chzzk');
     const pri = await priService.findByNameNotNull('none');
-    const ch = await chWriter.createWithTagNames(
-      mockChannelAppend({ platformId: pf.id, priorityId: pri.id }),
-      ['tag1', 'tag2'],
-    );
+    const ch = await chWriter.createWithTagNames(mockChannelAppend({ platformId: pf.id, priorityId: pri.id }), [
+      'tag1',
+      'tag2',
+    ]);
     const opts: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
     const live1 = await liveWriter.createByLive(mockLiveInfoChzzk({ channelId: ch.pid }), null, opts);
     console.log(live1);

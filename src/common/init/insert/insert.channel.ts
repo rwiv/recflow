@@ -64,10 +64,7 @@ export class DevChannelInserter {
         isFollowed: false,
         description: null,
       };
-      await this.channelWriter.createWithTagNames(
-        channelAppend.parse(append),
-        Array.from(new Set(tagNames)).sort(),
-      );
+      await this.channelWriter.createWithTagNames(channelAppend.parse(append), Array.from(new Set(tagNames)).sort());
     }
   }
 }

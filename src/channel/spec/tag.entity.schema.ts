@@ -10,9 +10,7 @@ export const tagEnt = z.object({
 });
 export type TagEnt = z.infer<typeof tagEnt>;
 
-export const tagEntAppend = tagEnt
-  .omit({ createdAt: true, updatedAt: true })
-  .partial({ id: true, description: true });
+export const tagEntAppend = tagEnt.omit({ createdAt: true, updatedAt: true }).partial({ id: true, description: true });
 export type TagEntAppend = z.infer<typeof tagEntAppend>;
 
 export const tagEntUpdate = tagEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();

@@ -27,7 +27,6 @@ export type ProxyType = z.infer<typeof proxyType>;
 
 const RETRY_LIMIT = 2;
 const RETRY_DELAY_MS = 100;
-const STLINK_HTTP_TIMEOUT_MS = 10000;
 
 @Injectable()
 export class Stlink {

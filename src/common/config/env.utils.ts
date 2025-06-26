@@ -105,7 +105,8 @@ export function readStreamqConfig(): StreamqConfig {
 export function readStlinkConfig(): StlinkConfig {
   const endpoint = process.env.STLINK_ENDPOINT;
   if (endpoint === undefined) throw Error('stlink env is not set');
-  return { endpoint };
+  const httpTimeoutMs = nnint.parse(process.env.STLINK_HTTP_TIMEOUT_MS);
+  return { endpoint, httpTimeoutMs };
 }
 
 export function readUntfConfig(): UntfConfig {

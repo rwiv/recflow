@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.6.4
+  tag: 1.6.5
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -47,8 +47,7 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-#    httpTimeoutMs: 7000
-    httpTimeoutMs: 30000
+    httpTimeoutMs: 7000
     liveAllocationInitWaitSec: 15
     liveRecoveryInitWaitSec: 40
     liveFinishTimeoutSec: 180 # 3 minutes
@@ -80,6 +79,7 @@ externals:
     qsize: 200
   stlink:
     endpoint: http://stlink.media.svc.cluster.local
+    httpTimeoutMs: 30000
   untf:
     endpoint: http://untf.common.svc.cluster.local
     secretName: untf-client

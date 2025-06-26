@@ -37,6 +37,8 @@ spec:
               value: "{{ .Values.externals.streamq.qsize }}"
             - name: STLINK_ENDPOINT
               value: {{ .Values.externals.stlink.endpoint }}
+            - name: STLINK_HTTP_TIMEOUT_MS
+              value: "{{ .Values.externals.stlink.httpTimeoutMs }}"
             - name: UNTF_ENDPOINT
               value: {{ .Values.externals.untf.endpoint }}
             - name: UNTF_API_KEY

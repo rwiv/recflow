@@ -62,7 +62,10 @@ export class Stlink {
       params.set('proxy', proxy);
     }
     const url = `${this.env.stlink.endpoint}/api/streams/${platform}/${uid}?${params.toString()}`;
-    const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(STLINK_HTTP_TIMEOUT_MS) });
+    const res = await fetch(url, {
+      method: 'GET',
+      signal: AbortSignal.timeout(this.env.stlink.httpTimeoutMs),
+    });
     if (res.status >= 400) {
       throw new HttpRequestError(`Failed to fetch stream info from stlink`, res.status);
     }

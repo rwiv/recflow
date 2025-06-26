@@ -36,6 +36,7 @@ export interface StreamqConfig {
 
 export interface StlinkConfig {
   endpoint: string;
+  httpTimeoutMs: number;
 }
 
 export interface UntfConfig {

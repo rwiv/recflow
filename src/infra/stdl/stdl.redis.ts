@@ -4,6 +4,7 @@ import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { headers, nonempty, uuid } from '../../common/data/common.schema.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
+import { stdlLocationType } from './stdl.types.js';
 
 export const liveState = z.object({
   id: uuid,
@@ -15,6 +16,7 @@ export const liveState = z.object({
   streamUrl: nonempty,
   headers: headers.nullable(),
   videoName: nonempty,
+  location: stdlLocationType,
   isInvalid: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

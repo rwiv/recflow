@@ -41,6 +41,7 @@ export class StdlMock extends Stdl {
         channelName: dto.channel.username,
         liveId: dto.sourceId,
         videoName: dto.videoName,
+        location: 'local',
         fsName: dto.fsName,
         num: 0,
         status: 'recording',

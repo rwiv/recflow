@@ -4,6 +4,7 @@ import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
+import { StdlLocationType } from './stdl.types.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
@@ -25,6 +26,10 @@ export class StdlRedisImpl extends StdlRedis {
       log.error(errMsg, liveAttr(live));
       throw new ValidationError(errMsg);
     }
+    let location: StdlLocationType = 'local';
+    if (live.domesticOnly) {
+      location = 'proxy_domestic';
+    }
     const now = new Date();
     const state: LiveState = {
       id: live.id,
@@ -36,6 +41,7 @@ export class StdlRedisImpl extends StdlRedis {
       streamUrl: live.streamUrl,
       headers: live.headers,
       videoName: live.videoName,
+      location,
       isInvalid: false,
       createdAt: now,
       updatedAt: now,

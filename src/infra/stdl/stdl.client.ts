@@ -3,6 +3,7 @@ import { platformNameEnum } from '../../platform/spec/storage/platform.enum.sche
 import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { stdlLocationType } from './stdl.types.js';
 
 export abstract class Stdl {
   abstract getStatus(endpoint: string): Promise<RecordingStatus[]>;
@@ -43,6 +44,7 @@ export const recordingStatus = z.object({
   channelId: nonempty,
   liveId: nonempty,
   videoName: nonempty,
+  location: stdlLocationType,
   fsName: nonempty,
   num: nnint,
   status: stdlStreamStatusEnum,

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { LiveInfo } from 'src/platform/spec/wapper/live.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
+import { PriorityDto } from '../../channel/spec/priority.schema.js';
 import { liveInfoAttr } from '../../common/attr/attr.live.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
@@ -58,14 +59,14 @@ export class LiveCoordinator {
         continue;
       }
 
-      let priority = null;
+      let priority: PriorityDto | undefined = undefined;
       const channel = await this.channelFinder.findByPidAndPlatform(live.pid, criterion.platform.name);
       if (channel) {
         priority = channel.priority;
       }
 
-      await this.historyRepo.set(criterion.platform.name, live, priority);
-      log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion }));
+      await this.historyRepo.set(criterion.platform.name, live, priority ?? null);
+      log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion, pri: priority }));
     }
   }
 

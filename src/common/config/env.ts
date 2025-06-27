@@ -18,13 +18,15 @@ export interface Env {
   nodeEnv: string;
   appPort: number;
   appEndpoint: string;
-  fsName: string;
   streamq: StreamqConfig;
   stlink: StlinkConfig;
   untf: UntfConfig;
   pg: PostgresConfig;
   sqs: SQSConfig;
   serverRedis: RedisConfig;
+
+  fsName: string;
+  stdlDefaultLocation: string;
   stdlRedisMaster: RedisConfig;
   stdlRedisReplica: RedisConfig;
 
@@ -62,13 +64,15 @@ export function readEnv(): Env {
     nodeEnv,
     appPort: nnint.parse(process.env.APP_PORT),
     appEndpoint: nonempty.parse(process.env.APP_ENDPOINT),
-    fsName: nonempty.parse(process.env.FS_NAME),
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),
     untf: readUntfConfig(),
     pg: readPgConfig(),
     sqs: readSQSConfig(),
     serverRedis: readServerRedisConfig(),
+
+    fsName: nonempty.parse(process.env.FS_NAME),
+    stdlDefaultLocation: nonempty.parse(process.env.STDL_DEFAULT_LOCATION),
     stdlRedisMaster: readStdlRedisMasterConfig(),
     stdlRedisReplica: readStdlRedisReplicaConfig(),
 

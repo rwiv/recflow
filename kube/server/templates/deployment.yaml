@@ -26,11 +26,6 @@ spec:
               value: {{ .Values.app.server.endpoint }}
             - name: APP_PORT
               value: "{{ .Values.service.targetPort }}"
-            - name: FS_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.vault.secretName }}
-                  key: {{ .Values.vault.keys.fsName}}
             - name: STREAMQ_URL
               value: {{ .Values.externals.streamq.url }}
             - name: STREAMQ_QSIZE
@@ -57,6 +52,13 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.app.redis.secrets.auth.name }}
                   key: {{ .Values.app.redis.secrets.auth.passwordKey }}
+            - name: FS_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.vault.secretName }}
+                  key: {{ .Values.vault.keys.fsName}}
+            - name: STDL_DEFAULT_LOCATION
+              value: {{ .Values.externals.stdl.defaultLocation }}
             - name: STDL_REDIS_MASTER_HOST
               value: {{ .Values.externals.stdl.redis.masterHost }}
             - name: STDL_REDIS_MASTER_PORT

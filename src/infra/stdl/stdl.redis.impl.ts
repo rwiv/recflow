@@ -16,6 +16,7 @@ export class StdlRedisImpl extends StdlRedis {
     private readonly master: RedisClientType,
     private readonly replica: RedisClientType,
     private readonly liveStateExpireSec: number,
+    private readonly defaultLocation: StdlLocationType,
   ) {
     super();
   }
@@ -26,7 +27,7 @@ export class StdlRedisImpl extends StdlRedis {
       log.error(errMsg, liveAttr(live));
       throw new ValidationError(errMsg);
     }
-    let location: StdlLocationType = 'local';
+    let location = this.defaultLocation;
     if (live.domesticOnly) {
       location = 'proxy_domestic';
     }

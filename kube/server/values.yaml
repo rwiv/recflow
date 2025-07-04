@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.7.4
+  tag: 1.7.5
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -61,8 +61,7 @@ app:
 
 externals:
   stdl:
-    defaultLocation: local
-#    defaultLocation: proxy_overseas
+    defaultLocation: proxy_overseas
     redis:
       masterHost: stdl-redis-master.media.svc.cluster.local
       masterPort: 6379
@@ -81,7 +80,10 @@ externals:
     qsize: 200
   stlink:
     endpoint: http://stlink.media.svc.cluster.local
+    endpointDomestic: http://stlink-domestic.media.svc.cluster.local
+    endpointOverseas: http://stlink-overseas.media.svc.cluster.local
     httpTimeoutMs: 30000
+    useProxy: false
   untf:
     endpoint: http://untf.common.svc.cluster.local
     secretName: untf-client

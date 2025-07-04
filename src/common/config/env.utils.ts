@@ -99,9 +99,14 @@ export function readStreamqConfig(): StreamqConfig {
 
 export function readStlinkConfig(): StlinkConfig {
   const endpoint = process.env.STLINK_ENDPOINT;
-  if (endpoint === undefined) throw Error('stlink env is not set');
+  const endpointDomestic = process.env.STLINK_ENDPOINT_DOMESTIC;
+  const endpointOverseas = process.env.STLINK_ENDPOINT_OVERSEAS;
+  if (endpoint === undefined || endpointDomestic === undefined || endpointOverseas === undefined) {
+    throw Error('stlink env is not set');
+  }
+  const useProxy = process.env.STLINK_USE_PROXY === 'true';
   const httpTimeoutMs = nnint.parse(process.env.STLINK_HTTP_TIMEOUT_MS);
-  return { endpoint, httpTimeoutMs };
+  return { endpoint, endpointDomestic, endpointOverseas, httpTimeoutMs, useProxy };
 }
 
 export function readUntfConfig(): UntfConfig {

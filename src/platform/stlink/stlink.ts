@@ -22,7 +22,7 @@ export const streamInfo = z.object({
 });
 export type StreamInfo = z.infer<typeof streamInfo>;
 
-const proxyType = z.enum(['domestic', 'overseas']);
+export const proxyType = z.enum(['domestic', 'overseas']);
 export type ProxyType = z.infer<typeof proxyType>;
 
 const RETRY_LIMIT = 2;
@@ -57,10 +57,19 @@ export class Stlink {
     if (withAuth) {
       params.set('withAuth', 'true');
     }
+    let endpoint = this.env.stlink.endpoint;
     if (proxy) {
-      params.set('proxy', proxy);
+      if (this.env.stlink.useProxy) {
+        params.set('proxy', proxy);
+      } else {
+        if (proxy === 'domestic') {
+          endpoint = this.env.stlink.endpointDomestic;
+        } else if (proxy === 'overseas') {
+          endpoint = this.env.stlink.endpointOverseas;
+        }
+      }
     }
-    const url = `${this.env.stlink.endpoint}/api/streams/${platform}/${uid}?${params.toString()}`;
+    const url = `${endpoint}/api/streams/${platform}/${uid}?${params.toString()}`;
     const res = await fetch(url, {
       method: 'GET',
       signal: AbortSignal.timeout(this.env.stlink.httpTimeoutMs),

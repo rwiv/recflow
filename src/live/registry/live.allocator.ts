@@ -50,7 +50,9 @@ export class LiveAllocator {
       log.info('Live has no nodes', liveAttr(live));
     }
     if (live.nodes.length > 0) {
-      const first = live.nodes[0];
+      const first = live.nodes.sort((a, b) => {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      })[0];
       const status = await this.stdl.findStatus(first.endpoint, live.id);
       if (!status || status.status !== 'recording') {
         log.debug('Live is not recording', liveAttr(live));

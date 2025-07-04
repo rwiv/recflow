@@ -36,7 +36,10 @@ export interface StreamqConfig {
 
 export interface StlinkConfig {
   endpoint: string;
+  endpointDomestic: string;
+  endpointOverseas: string;
   httpTimeoutMs: number;
+  useProxy: boolean;
 }
 
 export interface UntfConfig {

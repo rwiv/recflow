@@ -16,6 +16,8 @@ import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx'
 const formSchema = z.object({
   type: platformNameEnum,
   uid: z.string().nonempty(),
+  streamUrl: z.string(),
+  headers: z.string(),
 });
 
 export function LiveCreateButton() {
@@ -35,11 +37,21 @@ export function CreateForm({ cb }: { cb: () => void }) {
     defaultValues: {
       type: 'chzzk',
       uid: '',
+      streamUrl: '',
+      headers: '',
     },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    await createLive(data.uid, data.type);
+    let streamUrl: string | null = data.streamUrl.trim();
+    if (streamUrl.length === 0) {
+      streamUrl = null;
+    }
+    let headers: string | null = data.headers.trim();
+    if (headers.length === 0) {
+      headers = null;
+    }
+    await createLive(data.uid, data.type, streamUrl, headers);
     await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
     cb();
   }
@@ -52,6 +64,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
           <SelectItem value="soop">SOOP</SelectItem>
         </SelectFormField>
         <TextFormField form={form} name="uid" label="Channel UID" />
+        <TextFormField form={form} name="streamUrl" label="Stream URL" />
+        <TextFormField form={form} name="headers" label="Headers" />
         <FormSubmitButton />
       </form>
     </Form>

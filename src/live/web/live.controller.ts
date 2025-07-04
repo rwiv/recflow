@@ -6,7 +6,6 @@ import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../data/live.finder.js';
-import { LiveFieldsReq } from '../data/live.mapper.js';
 import { liveAppendRequest, LiveAppendRequest, liveDeleteRequest, LiveDeleteRequest } from './live.web.schema.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveFinishRequest, liveFinishRequest, LiveFinalizer } from '../registry/live.finalizer.js';
@@ -27,20 +26,12 @@ export class LiveController {
 
   @Get('/')
   allActives(): Promise<LiveDto[]> {
-    const opt: LiveFieldsReq = {
-      nodes: true,
-      nodeGroup: true,
-    };
-    return this.liveFinder.findAllActives(opt);
+    return this.liveFinder.findAllActives({ nodes: true, nodeGroup: true });
   }
 
   @Get('/all')
   all(): Promise<LiveDto[]> {
-    const opt: LiveFieldsReq = {
-      nodes: true,
-      nodeGroup: true,
-    };
-    return this.liveFinder.findAll(opt);
+    return this.liveFinder.findAll({ nodes: true, nodeGroup: true });
   }
 
   @Post('/')
@@ -50,7 +41,11 @@ export class LiveController {
     if (!channel.liveInfo) {
       throw new NotFoundError('Channel is not live');
     }
-    return this.liveService.register({ channelInfo: channelLiveInfo.parse(channel) });
+    return this.liveService.register({
+      channelInfo: channelLiveInfo.parse(channel),
+      streamUrl: req.streamUrl ?? undefined,
+      headers: req.headers ?? undefined,
+    });
   }
 
   @Delete('/')

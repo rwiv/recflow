@@ -6,6 +6,8 @@ import { uuid } from '../../common/data/common.schema.js';
 export const liveAppendRequest = z.object({
   pid: z.string().nonempty(),
   platformName: platformNameEnum,
+  streamUrl: z.string().nonempty().nullable(),
+  headers: z.record(z.string()).nullable(),
 });
 export type LiveAppendRequest = z.infer<typeof liveAppendRequest>;
 

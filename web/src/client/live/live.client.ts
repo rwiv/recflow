@@ -10,9 +10,18 @@ export async function fetchAllLives() {
   return parseList(liveDtoWithNodes, await res.json());
 }
 
-export async function createLive(pid: string, platform: PlatformName) {
+export async function createLive(
+  pid: string,
+  platform: PlatformName,
+  streamUrl: string | null,
+  recHeaderStr: string | null,
+) {
   const url = `${configs.endpoint}/api/lives`;
-  const req = { pid, platformName: platform };
+  let recHeader = null;
+  if (recHeaderStr) {
+    recHeader = JSON.parse(recHeaderStr);
+  }
+  const req = { pid, platformName: platform, streamUrl, headers: recHeader };
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
   if (res.status >= 400) {

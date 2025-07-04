@@ -4,21 +4,15 @@ import { PriorityService } from '../../channel/service/priority.service.js';
 import { mockChannelAppend } from '../../channel/spec/channel.dto.schema.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { mockLiveInfoChzzk } from '../../platform/spec/wapper/live.mocks.js';
-import { mockNodeAppend } from '../../node/spec/node.dto.schema.mocks.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
-import { NodeWriter } from '../../node/service/node.writer.js';
-import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { notNull } from '../../utils/null.js';
 import { LiveCreateOptions, LiveWriter } from './live.writer.js';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
 const priService = app.get(PriorityService);
-const ngRepo = app.get(NodeGroupRepository);
-const nodeWriter = app.get(NodeWriter);
 const liveWriter = app.get(LiveWriter);
 const chWriter = app.get(ChannelWriter);
 
@@ -32,8 +26,6 @@ describe('ChannelService', () => {
   });
 
   it('create', async () => {
-    const ng = notNull(await ngRepo.findByName('main'));
-    const node = await nodeWriter.create(mockNodeAppend(), true);
     const pf = await pfFinder.findByNameNotNull('chzzk');
     const pri = await priService.findByNameNotNull('none');
     const ch = await chWriter.createWithTagNames(mockChannelAppend({ platformId: pf.id, priorityId: pri.id }), [
@@ -41,7 +33,7 @@ describe('ChannelService', () => {
       'tag2',
     ]);
     const opts: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
-    const live1 = await liveWriter.createByLive(mockLiveInfoChzzk({ channelId: ch.pid }), null, opts);
+    const live1 = await liveWriter.createByLive(mockLiveInfoChzzk({ channelId: ch.pid }), null, null, opts);
     console.log(live1);
 
     const live2 = await liveWriter.updateByLive(live1.id, mockLiveInfoChzzk({ channelId: ch.pid }));

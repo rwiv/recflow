@@ -13,7 +13,6 @@ import { getFormattedTimestamp } from '../../utils/time.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
-import { StreamInfo } from '../../platform/stlink/stlink.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 
@@ -37,7 +36,8 @@ export class LiveWriter {
 
   async createByLive(
     live: LiveInfo,
-    streamInfo: StreamInfo | null,
+    streamUrl: string | null,
+    headers: Record<string, string> | null,
     opts: LiveCreateOptions,
     tx: Tx = db,
   ): Promise<LiveDto> {
@@ -53,13 +53,13 @@ export class LiveWriter {
         channelId: channel.id,
         sourceId: live.liveId,
         videoName: getFormattedTimestamp(),
-        streamUrl: streamInfo?.best?.mediaPlaylistUrl ?? null,
-        headers: streamInfo?.headers ? JSON.stringify(streamInfo.headers) : null,
+        streamUrl,
+        headers: JSON.stringify(headers),
         fsName: this.env.fsName,
       };
       const ent = await this.liveRepo.create(req, tx);
 
-      return { ...ent, channel, platform, headers: streamInfo?.headers ?? null };
+      return { ...ent, channel, platform, headers };
     });
   }
 

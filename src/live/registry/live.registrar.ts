@@ -49,6 +49,7 @@ export interface LiveRegisterRequest {
   domesticOnly?: boolean;
   overseasFirst?: boolean;
   mustExistNode?: boolean;
+  isFollowed?: boolean;
 }
 
 @Injectable()
@@ -75,6 +76,9 @@ export class LiveRegistrar {
     const { platform, pid } = req.channelInfo;
     let withAuth = liveInfo.isAdult;
     if (req.criterion?.enforceCreds) {
+      withAuth = true;
+    }
+    if (req.isFollowed) {
       withAuth = true;
     }
     const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, withAuth);

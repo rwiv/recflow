@@ -31,7 +31,7 @@ export class LiveCoordinator {
     for (const ch of followedChannels) {
       const channelInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
       if (!channelInfo) continue;
-      await this.liveRegistrar.register({ channelInfo });
+      await this.liveRegistrar.register({ channelInfo, isFollowed: true });
     }
   }
 

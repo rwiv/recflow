@@ -29,7 +29,7 @@ export class StdlRedisImpl extends StdlRedis {
     }
     let location = this.defaultLocation;
     if (live.domesticOnly) {
-      location = 'proxy_domestic';
+      location = 'local';
     }
     const now = new Date();
     const state: LiveState = {

@@ -61,7 +61,7 @@ app:
 
 externals:
   stdl:
-    defaultLocation: proxy_overseas
+    defaultLocation: local
     redis:
       masterHost: stdl-redis-master.media.svc.cluster.local
       masterPort: 6379
@@ -76,7 +76,7 @@ externals:
       regionNameKey: region-name
       queueUrlKey: queue-url
   streamq:
-    url: http://streamq-vpn.media.svc.cluster.local
+    url: http://streamq.media.svc.cluster.local
     qsize: 200
   stlink:
     endpoint: http://stlink.media.svc.cluster.local

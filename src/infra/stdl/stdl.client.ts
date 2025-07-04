@@ -43,11 +43,12 @@ export const recordingStatus = z.object({
   id: uuid,
   platform: platformNameEnum,
   channelId: nonempty,
+  channelName: nonempty,
   liveId: nonempty,
   videoName: nonempty,
-  location: stdlLocationType,
   fsName: nonempty,
   num: nnint,
+  location: stdlLocationType,
   status: stdlStreamStatusEnum,
   stats: z.any().optional(),
 });

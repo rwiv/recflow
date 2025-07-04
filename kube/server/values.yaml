@@ -61,8 +61,8 @@ app:
 
 externals:
   stdl:
-#    defaultLocation: local
-    defaultLocation: proxy_overseas
+    defaultLocation: local
+#    defaultLocation: proxy_overseas
     redis:
       masterHost: stdl-redis-master.media.svc.cluster.local
       masterPort: 6379

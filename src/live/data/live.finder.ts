@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LiveRepository } from '../storage/live.repository.js';
 import { LiveFieldsReq, LiveMapper } from './live.mapper.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
@@ -32,19 +31,15 @@ export class LiveFinder {
 
   async findByPid(pid: string, tx: Tx = db, opts: FindOptions = {}) {
     const entities = await this.liveRepo.findByPid(pid, tx);
-    if (entities.length === 0) return null;
-    if (entities.length > 1) throw new ValidationError(`Duplicated live entities: pid=${pid}`);
-    const ent = entities[0];
-    if (!ent) return null;
-    return this.mapper.map(ent, tx, opts);
+    return this.mapper.mapAll(entities, tx, opts);
   }
 
-  async findAll(opt: LiveFieldsReq = {}, tx: Tx = db) {
-    return this.mapper.mapAll(await this.liveRepo.findAll(), tx, opt);
+  async findAll(opts: LiveFieldsReq = {}, tx: Tx = db) {
+    return this.mapper.mapAll(await this.liveRepo.findAll(), tx, opts);
   }
 
-  async findAllActives(opt: LiveFieldsReq = {}, tx: Tx = db) {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDisabled(false), tx, opt);
+  async findAllActives(opts: LiveFieldsReq = {}, tx: Tx = db) {
+    return this.mapper.mapAll(await this.liveRepo.findByIsDisabled(false), tx, opts);
   }
 
   async findEarliestUpdatedOne(tx: Tx = db): Promise<LiveDto | null> {

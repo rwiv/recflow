@@ -20,6 +20,8 @@ import { Notifier } from '../../infra/notify/notifier.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { LogLevel } from '../../utils/log.js';
+import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
+import { stacktrace } from '../../utils/errors/utils.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -70,6 +72,17 @@ export class LiveRecoveryManager {
     // Finish if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
       this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
+      try {
+        const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+        await this.liveRegistrar.register({
+          channelInfo: channelLiveInfo.parse(channelInfo),
+          streamUrl: live.streamUrl ?? undefined,
+          headers: live.headers ?? undefined,
+          logMessage: 'Reregister Live',
+        });
+      } catch (e) {
+        log.error('Failed to reregister live', { ...liveAttr(live), stack_trace: stacktrace(e) });
+      }
       await this.finishLive(live.id, 'Live is invalid', 'error');
       return;
     }

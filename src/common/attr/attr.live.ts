@@ -9,11 +9,12 @@ import { stacktrace } from '../../utils/errors/utils.js';
 interface LiveAttr {
   platform: string;
   live_id: string;
+  live_uid: string;
   live_title: string;
+  video_name: string;
   channel_uid: string;
   channel_name: string;
-  priority_name: string;
-  priority_tier: number;
+  grade_name: string;
   criterion_name?: string;
   node_name?: string;
   node_assigned_count?: number;
@@ -22,13 +23,13 @@ interface LiveAttr {
 
 interface LiveInfoAttr {
   platform: string;
-  live_id: string;
+  live_uid: string;
   live_title: string;
   channel_uid: string;
   channel_name: string;
-  priority_name?: string;
-  priority_tier?: number;
+  grade_name?: string;
   criterion_name?: string;
+  stack_trace?: string;
 }
 
 interface Options {
@@ -42,14 +43,15 @@ export function liveAttr(live: LiveDto, opts?: Options) {
   const attr: LiveAttr = {
     platform: live.platform.name,
     live_id: live.id,
+    live_uid: live.sourceId,
     live_title: live.liveTitle,
+    video_name: live.videoName,
     channel_uid: live.channel.pid,
     channel_name: live.channel.username,
-    priority_name: live.channel.priority.name,
-    priority_tier: live.channel.priority.tier,
+    grade_name: live.channel.priority.name,
   };
   if (opts) {
-    const { node, cr, pri, err } = opts;
+    const { node, cr, err } = opts;
     if (node) {
       attr.node_name = node.name;
       if (node.lives) {
@@ -69,19 +71,22 @@ export function liveAttr(live: LiveDto, opts?: Options) {
 export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options) {
   const attr: LiveInfoAttr = {
     platform: liveInfo.type,
-    live_id: liveInfo.liveId,
+    live_uid: liveInfo.liveId,
     live_title: liveInfo.liveTitle,
     channel_uid: liveInfo.pid,
     channel_name: liveInfo.channelName,
   };
-  const pri = opts?.pri;
-  if (pri) {
-    attr.priority_name = pri.name;
-    attr.priority_tier = pri.tier;
-  }
-  const cr = opts?.cr;
-  if (cr) {
-    attr.criterion_name = cr.name;
+  if (opts) {
+    const { cr, pri, err } = opts;
+    if (pri) {
+      attr.grade_name = pri.name;
+    }
+    if (cr) {
+      attr.criterion_name = cr.name;
+    }
+    if (err) {
+      attr.stack_trace = stacktrace(err);
+    }
   }
   return attr;
 }
@@ -92,7 +97,6 @@ export function channelAttr(channel: ChannelDto) {
     channel_id: channel.id,
     channel_uid: channel.pid,
     channel_name: channel.username,
-    priority_name: channel.priority.name,
-    priority_tier: channel.priority.tier,
+    grade_name: channel.priority.name,
   };
 }

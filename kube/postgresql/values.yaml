@@ -31,3 +31,10 @@ postgresql:
       accessModes:
         - ReadWriteOnce
       size: 4Gi
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 512Mi
+      limits:
+        cpu: 1500m
+        memory: 1024Mi

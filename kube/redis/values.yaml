@@ -23,6 +23,13 @@ redis:
     persistence:
       enabled: true
       size: 2Gi
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 512Mi
+      limits:
+        cpu: 1500m
+        memory: 1024Mi
   replica:
     replicaCount: 0
   tls:

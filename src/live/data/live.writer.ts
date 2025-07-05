@@ -15,11 +15,13 @@ import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 export interface LiveCreateOptions {
   isDisabled: boolean;
   domesticOnly: boolean;
   overseasFirst: boolean;
+  videoName?: string;
 }
 
 @Injectable()
@@ -45,22 +47,31 @@ export class LiveWriter {
     const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, tx);
     if (!channel) throw NotFoundError.from('Channel', 'pid', live.pid);
 
-    return tx.transaction(async (tx) => {
-      const req: LiveEntAppend = {
-        ...live,
-        ...opts,
-        platformId: platform.id,
-        channelId: channel.id,
-        sourceId: live.liveId,
-        videoName: getFormattedTimestamp(),
-        streamUrl,
-        headers: JSON.stringify(headers),
-        fsName: this.env.fsName,
-      };
-      const ent = await this.liveRepo.create(req, tx);
+    // Validate videoName
+    let videoName = opts.videoName;
+    if (!videoName) {
+      videoName = getFormattedTimestamp();
+    }
+    for (const live of await this.liveFinder.findByPid(channel.pid)) {
+      if (live.videoName === videoName) {
+        throw new ConflictError('A live stream with the same video name is already running on this channel');
+      }
+    }
 
-      return { ...ent, channel, platform, headers };
-    });
+    const req: LiveEntAppend = {
+      ...live,
+      ...opts,
+      platformId: platform.id,
+      channelId: channel.id,
+      sourceId: live.liveId,
+      videoName,
+      streamUrl,
+      headers: headers ? JSON.stringify(headers) : null,
+      fsName: this.env.fsName,
+    };
+    const ent = await this.liveRepo.create(req, tx);
+
+    return { ...ent, channel, platform, headers };
   }
 
   async bind(liveId: string, nodeId: string, tx: Tx = db) {

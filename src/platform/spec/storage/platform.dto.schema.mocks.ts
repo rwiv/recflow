@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { PlatformDto } from 'src/platform/spec/storage/platform.dto.schema.js';
 import { platformNameEnum } from './platform.enum.schema.js';
+import { PlatformDto } from './platform.dto.schema.js';
 
 export function mockPlatformDto(overrides: Partial<PlatformDto> = {}): PlatformDto {
   return {

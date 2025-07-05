@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { LiveInfo } from 'src/platform/spec/wapper/live.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { PriorityDto } from '../../channel/spec/priority.schema.js';
 import { liveInfoAttr } from '../../common/attr/attr.live.js';
@@ -14,6 +13,7 @@ import { LiveFinder } from '../data/live.finder.js';
 import { LiveHistoryRepository } from '../storage/live.history.repository.js';
 import { PlatformLiveFilter } from './live.filter.js';
 import { LiveRegistrar } from './live.registrar.js';
+import { LiveInfo } from '../../platform/spec/wapper/live.js';
 
 @Injectable()
 export class LiveCoordinator {

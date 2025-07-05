@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { mockPlatformDto } from 'src/platform/spec/storage/platform.dto.schema.mocks.js';
 import { ChannelAppend, ChannelDto } from './channel.dto.schema.js';
 import { mockPriorityDto } from './priority.schema.mocks.js';
+import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
 
 export function mockChannelAppend(overrides: Partial<ChannelAppend> = {}): ChannelAppend {
   return {

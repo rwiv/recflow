@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, it } from 'vitest';
+import { afterAll, beforeEach, describe, it, expect } from 'vitest';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { mockChannelAppend } from '../../channel/spec/channel.dto.schema.mocks.js';
@@ -8,6 +8,7 @@ import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { LiveCreateOptions, LiveWriter } from './live.writer.js';
+import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
@@ -28,15 +29,24 @@ describe('ChannelService', () => {
   it('create', async () => {
     const pf = await pfFinder.findByNameNotNull('chzzk');
     const pri = await priService.findByNameNotNull('none');
-    const ch = await chWriter.createWithTagNames(mockChannelAppend({ platformId: pf.id, priorityId: pri.id }), [
-      'tag1',
-      'tag2',
-    ]);
-    const opts: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
-    const live1 = await liveWriter.createByLive(mockLiveInfoChzzk({ channelId: ch.pid }), null, null, opts);
-    console.log(live1);
 
-    const live2 = await liveWriter.updateByLive(live1.id, mockLiveInfoChzzk({ channelId: ch.pid }));
-    console.log(live2);
+    const cha = mockChannelAppend({ platformId: pf.id, priorityId: pri.id });
+    const ch = await chWriter.createWithTagNames(cha, ['tag1', 'tag2']);
+
+    const cOpts1: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
+    const li1 = mockLiveInfoChzzk({ channelId: ch.pid });
+    const live1 = await liveWriter.createByLive(li1, null, null, cOpts1);
+    expect(live1.liveTitle).toBe(li1.liveTitle);
+
+    const li2 = mockLiveInfoChzzk({ channelId: ch.pid });
+    const live2 = await liveWriter.updateByLive(live1.id, li2);
+    expect(live2.liveTitle).not.toBe(live1.liveTitle);
+    expect(live2.liveTitle).toBe(li2.liveTitle);
+
+    await expect(() => {
+      const cOpts2 = { ...cOpts1, videoName: live1.videoName };
+      const li3 = mockLiveInfoChzzk({ channelId: ch.pid });
+      return liveWriter.createByLive(li3, null, null, cOpts2);
+    }).rejects.toThrowError(ConflictError);
   });
 });

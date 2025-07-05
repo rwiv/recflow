@@ -104,9 +104,10 @@ export function readStlinkConfig(): StlinkConfig {
   if (endpoint === undefined || endpointDomestic === undefined || endpointOverseas === undefined) {
     throw Error('stlink env is not set');
   }
-  const useProxy = process.env.STLINK_USE_PROXY === 'true';
   const httpTimeoutMs = nnint.parse(process.env.STLINK_HTTP_TIMEOUT_MS);
-  return { endpoint, endpointDomestic, endpointOverseas, httpTimeoutMs, useProxy };
+  const useProxy = process.env.STLINK_USE_PROXY === 'true';
+  const enforceAuthForFollowed = process.env.STLINK_ENFORCE_AUTH_FOR_FOLLOWED === 'true';
+  return { endpoint, endpointDomestic, endpointOverseas, httpTimeoutMs, enforceAuthForFollowed, useProxy };
 }
 
 export function readUntfConfig(): UntfConfig {

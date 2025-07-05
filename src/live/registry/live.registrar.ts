@@ -12,6 +12,8 @@ import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
 import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 import type { Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selector.js';
@@ -67,6 +69,7 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
     private readonly finalizer: LiveFinalizer,
     private readonly stlink: Stlink,
+    @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
@@ -82,10 +85,10 @@ export class LiveRegistrar {
     if (!streamUrl || !headers) {
       // Check if the live is accessible
       let withAuth = liveInfo.isAdult;
-      if (req.criterion?.enforceCreds) {
+      if (req.isFollowed && this.env.stlink.enforceAuthForFollowed) {
         withAuth = true;
       }
-      if (req.isFollowed) {
+      if (req.criterion?.enforceCreds) {
         withAuth = true;
       }
       const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, withAuth);

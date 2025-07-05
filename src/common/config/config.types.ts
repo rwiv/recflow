@@ -39,6 +39,7 @@ export interface StlinkConfig {
   endpointDomestic: string;
   endpointOverseas: string;
   httpTimeoutMs: number;
+  enforceAuthForFollowed: boolean;
   useProxy: boolean;
 }
 

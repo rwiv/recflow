@@ -88,7 +88,11 @@ export class LiveRecoveryManager {
     }
 
     // Finish if live not open
-    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, live.isAdult);
+    let withAuth = live.isAdult;
+    if (live.channel.isFollowed && this.env.stlink.enforceAuthForFollowed) {
+      withAuth = true;
+    }
+    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, withAuth);
     if (!streamInfo.openLive) {
       await this.finishLive(live.id, 'Delete uncleaned live', 'info');
       return;

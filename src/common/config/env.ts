@@ -27,6 +27,7 @@ export interface Env {
 
   fsName: string;
   stdlDefaultLocation: string;
+  stdlFollowedLocation: string;
   stdlRedisMaster: RedisConfig;
   stdlRedisReplica: RedisConfig;
 
@@ -73,6 +74,7 @@ export function readEnv(): Env {
 
     fsName: nonempty.parse(process.env.FS_NAME),
     stdlDefaultLocation: nonempty.parse(process.env.STDL_DEFAULT_LOCATION),
+    stdlFollowedLocation: nonempty.parse(process.env.STDL_FOLLOWED_LOCATION),
     stdlRedisMaster: readStdlRedisMasterConfig(),
     stdlRedisReplica: readStdlRedisReplicaConfig(),
 

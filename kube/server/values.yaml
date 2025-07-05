@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.7.6
+  tag: 1.7.7
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -61,7 +61,9 @@ app:
 
 externals:
   stdl:
-    defaultLocation: proxy_overseas
+    locations:
+      default: proxy_overseas
+      followed: local
     redis:
       masterHost: stdl-redis-master.media.svc.cluster.local
       masterPort: 6379

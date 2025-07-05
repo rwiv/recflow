@@ -21,8 +21,12 @@ export class InfraFactory {
     if (!defaultLocation.success) {
       throw new ValidationError(`Invalid stdlLocationType: ${this.env.stdlDefaultLocation}`);
     }
+    const followedLocation = stdlLocationType.safeParse(this.env.stdlFollowedLocation);
+    if (!followedLocation.success) {
+      throw new ValidationError(`Invalid stdlLocationType: ${this.env.stdlFollowedLocation}`);
+    }
     const master = await createRedisClient(this.env.stdlRedisMaster);
     const replica = await createRedisClient(this.env.stdlRedisReplica);
-    return new StdlRedisImpl(master, replica, this.env.liveStateExpireSec, defaultLocation.data);
+    return new StdlRedisImpl(master, replica, this.env.liveStateExpireSec, defaultLocation.data, followedLocation.data);
   }
 }

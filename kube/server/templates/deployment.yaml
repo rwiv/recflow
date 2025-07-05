@@ -64,7 +64,9 @@ spec:
                   name: {{ .Values.vault.secretName }}
                   key: {{ .Values.vault.keys.fsName}}
             - name: STDL_DEFAULT_LOCATION
-              value: {{ .Values.externals.stdl.defaultLocation }}
+              value: {{ .Values.externals.stdl.locations.default }}
+            - name: STDL_FOLLOWED_LOCATION
+              value: {{ .Values.externals.stdl.locations.followed }}
             - name: STDL_REDIS_MASTER_HOST
               value: {{ .Values.externals.stdl.redis.masterHost }}
             - name: STDL_REDIS_MASTER_PORT

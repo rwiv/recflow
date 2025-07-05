@@ -17,6 +17,7 @@ export class StdlRedisImpl extends StdlRedis {
     private readonly replica: RedisClientType,
     private readonly liveStateExpireSec: number,
     private readonly defaultLocation: StdlLocationType,
+    private readonly followedLocation: StdlLocationType,
   ) {
     super();
   }
@@ -28,6 +29,9 @@ export class StdlRedisImpl extends StdlRedis {
       throw new ValidationError(errMsg);
     }
     let location = this.defaultLocation;
+    if (live.channel.isFollowed) {
+      location = this.followedLocation;
+    }
     if (live.domesticOnly) {
       location = 'local';
     }

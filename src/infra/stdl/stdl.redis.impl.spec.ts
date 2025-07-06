@@ -6,16 +6,19 @@ import { LiveState } from './stdl.redis.js';
 
 const env = readEnv();
 
+const location = 'local';
+
 const state: LiveState = {
   id: '{id}',
   platform: 'chzzk',
   channelId: '{channelId}',
   channelName: 'asd',
   liveId: 'asd',
-  videoName: '{videoName}',
   liveTitle: 'asd',
   streamUrl: 'asd',
   headers: null,
+  videoName: '{videoName}',
+  location: location,
   isInvalid: false,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -26,7 +29,7 @@ const exSec = 3600 * 24;
 it('test set', async () => {
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location);
   await client.set(state);
   const liveIds = await client.getLivesIds(true);
   console.log(liveIds);
@@ -35,14 +38,14 @@ it('test set', async () => {
 it('test get', async () => {
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location);
   console.log(await client.getLiveState('', true));
 });
 
 it('test getLivesIds', async () => {
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location);
   const liveIds = await client.getLivesIds(true);
   console.log(liveIds);
 });
@@ -51,7 +54,7 @@ it('test getSuccessSegNums', async () => {
   const liveId = '';
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location);
   const nums = await client.getSegNums(liveId, 'success', true);
   console.log(nums);
 });

@@ -9,6 +9,7 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { findMissingNums } from '../../utils/numbers.js';
+import assert from 'assert';
 
 @Injectable()
 export class LiveStateCleaner {
@@ -42,11 +43,17 @@ export class LiveStateCleaner {
       if (liveState.createdAt >= threshold) {
         continue;
       }
-      const exists = await this.liveFinder.findById(liveState.id);
+      const exists = await this.liveFinder.findById(liveState.id, { nodes: true });
       if (!exists) {
         targetIds.push(liveState.id);
+        continue;
       }
-      if (exists && exists.isDisabled && exists.deletedAt && exists.deletedAt < threshold) {
+      assert(exists.nodes);
+      if (exists.nodes.length > 0) {
+        log.warn('Skip Recording Live', liveAttr(exists));
+        continue;
+      }
+      if (exists.isDisabled && exists.deletedAt && exists.deletedAt < threshold) {
         targetIds.push(liveState.id);
       }
     }

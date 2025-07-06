@@ -40,13 +40,9 @@ export abstract class StdlRedis {
   async isInvalidLive(live: LiveDto): Promise<boolean> {
     const liveState = await this.getLiveState(live.id, false);
     if (!liveState) {
-      log.error(`Live not found in STDL`, liveAttr(live));
+      log.error(`Live not found in redis`, liveAttr(live));
       return true;
     }
-    if (liveState.isInvalid) {
-      log.error(`Live is invalid`, liveAttr(live));
-      return true;
-    }
-    return false;
+    return liveState.isInvalid;
   }
 }

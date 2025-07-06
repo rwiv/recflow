@@ -4,7 +4,7 @@ import { HttpError } from './errors/base/HttpError.js';
 export async function checkResponse(res: Response, attr?: Record<string, any>, message: string = 'Failed to request') {
   if (res.status >= 400) {
     const body = await res.text();
-    const newAttr = { ...attr, body };
+    const newAttr = { ...attr, status: res.status, body };
     throw new HttpRequestError(message, res.status, { attr: newAttr });
   }
 }

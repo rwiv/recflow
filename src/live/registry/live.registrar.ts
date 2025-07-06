@@ -138,7 +138,6 @@ export class LiveRegistrar {
     const liveInfo = req.channelInfo.liveInfo;
     const mustExistNode = req.mustExistNode ?? true;
     let logMessage = req.logMessage ?? 'New LiveNode';
-    const logLevel = req.logLevel ?? 'info';
 
     if (cr?.loggingOnly) {
       const headMessage = 'New Logging Only Live';
@@ -185,7 +184,7 @@ export class LiveRegistrar {
     }
 
     const attr = { ...liveAttr(live, { cr, node }), stream_url: streamUrl };
-    logging(logMessage, attr, logLevel);
+    logging(logMessage, attr, req.logLevel ?? 'info');
     return live.id;
   }
 
@@ -222,8 +221,8 @@ export class LiveRegistrar {
 
   async finishLive(recordId: string, opts: LiveFinishOptions = {}) {
     const isPurge = opts.isPurge ?? false;
-    let exitCmd = opts.exitCmd ?? 'delete';
     const logLevel = opts.logLevel ?? 'info';
+    let exitCmd = opts.exitCmd ?? 'delete';
     let msg = opts.msg ?? 'Delete live';
     if (!opts.msg && !isPurge) {
       msg = 'Disable live';
@@ -239,10 +238,9 @@ export class LiveRegistrar {
     // If exitCmd != delete, request live finish operation by http
     if (exitCmd !== 'delete') {
       await this.liveWriter.disable(live.id, false); // if Live is not disabled, it will become a recovery target and cause an error
-      await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg });
+      await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
       return live; // not delete live record
     }
-
     // Else Delete live record
     return db.transaction(async (tx) => {
       const deleted = await this.liveWriter.delete(recordId, isPurge, tx);

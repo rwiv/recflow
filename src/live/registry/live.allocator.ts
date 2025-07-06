@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { STDL } from '../../infra/infra.tokens.js';
+import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
@@ -12,6 +12,7 @@ import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { LogLevel } from '../../utils/log.js';
+import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 
 const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
 
@@ -20,6 +21,7 @@ export class LiveAllocator {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
@@ -28,24 +30,30 @@ export class LiveAllocator {
   async check() {
     const lives = await this.liveFinder.findAll({ nodes: true });
     for (const live of lives) {
-      if (live.isDisabled) {
-        continue;
-      }
-      const initWaitMs = this.env.liveAllocationInitWaitSec * 1000;
-      const threshold = new Date(Date.now() - initWaitMs);
-      if (live.createdAt >= threshold) {
-        continue;
-      }
       await this.checkOne(live);
     }
   }
 
   private async checkOne(live: LiveDtoWithNodes) {
+    // Check if live is disabled or too recently created
+    if (live.isDisabled) {
+      return;
+    }
+    const initWaitMs = this.env.liveAllocationInitWaitSec * 1000;
+    const threshold = new Date(Date.now() - initWaitMs);
+    if (live.createdAt >= threshold) {
+      return;
+    }
     assert(live.nodes);
     if (live.nodes.length >= this.env.maxConcurrentLive) {
       return;
     }
+    if (await this.stdlRedis.isInvalidLive(live)) {
+      log.error(`Skip allocation task because Live is invalid`, liveAttr(live));
+      return;
+    }
 
+    // Check if existing nodes are recording properly
     if (live.nodes.length === 0) {
       log.info('Live has no nodes', liveAttr(live));
     }
@@ -60,6 +68,7 @@ export class LiveAllocator {
       }
     }
 
+    // Register new live allocation or reallocation
     let logLevel: LogLevel = 'debug';
     let logMessage = 'Init allocation Live';
     if (live.createdAt < new Date(Date.now() - INIT_THRESHOLD_SEC * 1000)) {

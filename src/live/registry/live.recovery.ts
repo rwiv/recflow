@@ -5,7 +5,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { LiveFinishOptions, LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
@@ -72,16 +72,8 @@ export class LiveRecoveryManager {
     // Finish if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
       this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
-      try {
-        const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-        await this.liveRegistrar.register({
-          channelInfo: channelLiveInfo.parse(channelInfo),
-          streamUrl: live.streamUrl ?? undefined,
-          headers: live.headers ?? undefined,
-          logMessage: 'Reregister Live',
-        });
-      } catch (e) {
-        log.error('Failed to reregister live', { ...liveAttr(live), stack_trace: stacktrace(e) });
+      if (live.platform.name === 'soop') {
+        await this.registerSameLive(live);
       }
       await this.finishLive(live.id, 'Live is invalid', 'error');
       return;
@@ -101,6 +93,9 @@ export class LiveRecoveryManager {
     // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     if (live.sourceId !== chanInfo.liveInfo?.liveId) {
+      if (live.platform.name === 'soop') {
+        await this.registerSameLive(live);
+      }
       await this.finishLive(live.id, 'Delete restarted live', 'warn');
       return;
     }
@@ -117,9 +112,27 @@ export class LiveRecoveryManager {
     await Promise.allSettled(ps);
   }
 
-  private finishLive(liveId: string, message: string, logLevel: LogLevel = 'info') {
-    const opts: LiveFinishOptions = { isPurge: true, exitCmd: 'finish', msg: message, logLevel };
-    return this.liveRegistrar.finishLive(liveId, opts);
+  private finishLive(liveId: string, message: string, logLevel: LogLevel) {
+    return this.liveRegistrar.finishLive(liveId, {
+      isPurge: true,
+      exitCmd: 'finish',
+      msg: message,
+      logLevel: logLevel,
+    });
+  }
+
+  private async registerSameLive(live: LiveDto) {
+    try {
+      const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+      return await this.liveRegistrar.register({
+        channelInfo: channelLiveInfo.parse(channelInfo),
+        streamUrl: live.streamUrl ?? undefined,
+        headers: live.headers ?? undefined,
+        logMessage: 'Reregister Live',
+      });
+    } catch (e) {
+      log.error('Failed to reregister live', { ...liveAttr(live), stack_trace: stacktrace(e) });
+    }
   }
 
   private async checkInvalidNode(tgtLive: LiveDto, invalidNode: NodeDto) {

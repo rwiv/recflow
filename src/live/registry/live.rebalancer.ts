@@ -88,6 +88,7 @@ export class LiveRebalancer {
 
     // Skip if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
+      log.error(`Live is invalid`, liveAttr(live));
       return;
     }
 
@@ -116,6 +117,7 @@ export class LiveRebalancer {
       }
 
       if (await this.stdlRedis.isInvalidLive(live)) {
+        log.error(`Live is invalid`, liveAttr(live));
         return false;
       }
 

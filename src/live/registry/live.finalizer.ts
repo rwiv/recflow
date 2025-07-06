@@ -22,6 +22,7 @@ import { HttpError } from '../../utils/errors/base/HttpError.js';
 import { getHttpRequestError } from '../../utils/http.js';
 import { SQSClient } from '../../infra/sqs/sqs.client.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+import { logging, logLevel } from '../../utils/log.js';
 
 export const stdlDoneStatusEnum = z.enum(['complete', 'canceled']);
 export type StdlDoneStatus = z.infer<typeof stdlDoneStatusEnum>;
@@ -51,6 +52,7 @@ export const liveFinishRequest = z.object({
   exitCmd: exitCmd,
   isPurge: z.boolean(),
   msg: z.string(),
+  logLevel: logLevel,
 });
 export type LiveFinishRequest = z.infer<typeof liveFinishRequest>;
 
@@ -112,7 +114,7 @@ export class LiveFinalizer {
           // LiveCleaner may have already removed live
           if (live) {
             const deleted = await this.liveWriter.delete(live.id, req.isPurge, tx);
-            log.info(req.msg, { ...liveAttr(deleted), cmd: req.exitCmd });
+            logging(req.msg, { ...liveAttr(deleted), cmd: req.exitCmd }, req.logLevel);
           }
         });
         return;
@@ -188,14 +190,17 @@ export class LiveFinalizer {
   }
 
   private async isCompleteRecording(live: LiveDto, tgRecs: TargetRecorder[]) {
+    if (this.env.nodeEnv === 'dev') {
+      return true;
+    }
+
     const promises: Promise<NodeStats>[] = tgRecs.map(async (target) => {
       return { node: target.node, statusList: await this.stdl.getStatus(target.node.endpoint) };
     });
-    const latest = await Promise.all(promises);
-    for (const candidate of latest) {
+    for (const candidate of await Promise.all(promises)) {
       for (const status of candidate.statusList) {
+        // if status exists
         if (status.id === live.id) {
-          // if status exists
           return false;
         }
       }

@@ -100,18 +100,18 @@ export class LiveWriter {
     return this.update(id, { ...live }, tx);
   }
 
-  async delete(liveId: string, isPurge: boolean, tx: Tx = db) {
+  async delete(liveId: string, isPurge: boolean, finished: boolean, tx: Tx = db) {
     if (isPurge) {
       // hard delete
       return this.hardDelete(liveId, tx);
     } else {
       // soft delete
-      return this.disable(liveId, true, tx);
+      return this.disable(liveId, true, finished, tx);
     }
   }
 
-  async disable(liveId: string, removeLives: boolean, tx: Tx = db) {
-    const live = await this.liveFinder.findById(liveId, { nodes: removeLives }, tx);
+  async disable(liveId: string, withLives: boolean, finished: boolean, tx: Tx = db) {
+    const live = await this.liveFinder.findById(liveId, { nodes: withLives }, tx);
     if (!live) throw NotFoundError.from('Live', 'id', liveId);
 
     return tx.transaction(async (txx) => {
@@ -119,6 +119,10 @@ export class LiveWriter {
         for (const node of live.nodes) {
           await this.liveNodeRepo.delete({ liveId, nodeId: node.id }, txx);
         }
+      }
+      const update: LiveUpdate = { isDisabled: true };
+      if (finished) {
+        update.deletedAt = new Date();
       }
       await this.update(liveId, { isDisabled: true, deletedAt: new Date() }, txx);
       return live;

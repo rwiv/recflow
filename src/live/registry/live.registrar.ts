@@ -219,7 +219,7 @@ export class LiveRegistrar {
     log.debug('Deregister node in live', liveAttr(live, { node }));
   }
 
-  async finishLive(recordId: string, opts: LiveFinishOptions = {}) {
+  async finishLive(recordId: string, opts: LiveFinishOptions = {}): Promise<LiveDto | null> {
     const isPurge = opts.isPurge ?? false;
     const logLevel = opts.logLevel ?? 'info';
     let exitCmd = opts.exitCmd ?? 'delete';
@@ -229,24 +229,28 @@ export class LiveRegistrar {
     }
 
     const live = await this.liveFinder.findById(recordId, { nodes: true });
-    if (!live) throw NotFoundError.from('LiveRecord', 'id', recordId);
+    if (!live) {
+      throw NotFoundError.from('LiveRecord', 'id', recordId);
+    }
+    if (live.deletedAt) {
+      log.warn('Live is already finished', liveAttr(live));
+      return null;
+    }
     assert(live.nodes);
     if (live.nodes.length === 0) {
       exitCmd = 'delete';
     }
 
-    // If exitCmd != delete, request live finish operation by http
-    if (exitCmd !== 'delete') {
-      await this.liveWriter.disable(live.id, false); // if Live is not disabled, it will become a recovery target and cause an error
-      await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
-      return live; // not delete live record
-    }
-    // Else Delete live record
-    return db.transaction(async (tx) => {
-      const deleted = await this.liveWriter.delete(recordId, isPurge, tx);
+    if (exitCmd === 'delete') {
+      const deleted = await this.liveWriter.delete(recordId, isPurge, true);
       logging(msg, { ...liveAttr(deleted), cmd: exitCmd }, logLevel);
       return deleted;
-    });
+    }
+
+    await this.liveWriter.disable(live.id, false, true); // if Live is not disabled, it will become a recovery target and cause an error
+    await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
+    logging(msg, { ...liveAttr(live), cmd: exitCmd }, logLevel);
+    return live; // not delete live record
   }
 
   private getNodeSelectOpts(

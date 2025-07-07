@@ -232,21 +232,21 @@ export class LiveRegistrar {
     if (!live) {
       throw NotFoundError.from('LiveRecord', 'id', recordId);
     }
-    if (live.deletedAt) {
-      log.warn('Live is already finished', liveAttr(live));
-      return null;
-    }
     assert(live.nodes);
     if (live.nodes.length === 0) {
       exitCmd = 'delete';
     }
 
     if (exitCmd === 'delete') {
-      const deleted = await this.liveWriter.delete(recordId, isPurge, true);
+      const deleted = await this.liveWriter.delete(recordId, isPurge, false);
       logging(msg, { ...liveAttr(deleted), cmd: exitCmd }, logLevel);
       return deleted;
     }
 
+    if (live.deletedAt) {
+      log.warn('Live is already finished', liveAttr(live));
+      return null;
+    }
     await this.liveWriter.disable(live.id, false, true); // if Live is not disabled, it will become a recovery target and cause an error
     await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
     logging(msg, { ...liveAttr(live), cmd: exitCmd }, logLevel);

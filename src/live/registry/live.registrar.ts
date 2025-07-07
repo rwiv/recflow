@@ -234,6 +234,7 @@ export class LiveRegistrar {
     }
     assert(live.nodes);
     if (live.nodes.length === 0) {
+      log.warn('Live is not assigned to any node', liveAttr(live));
       exitCmd = 'delete';
     }
 

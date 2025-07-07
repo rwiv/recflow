@@ -50,7 +50,6 @@ export class LiveStateCleaner {
       }
       assert(exists.nodes);
       if (exists.nodes.length > 0) {
-        log.warn('Skip Recording Live', liveAttr(exists));
         continue;
       }
       if (exists.isDisabled && exists.deletedAt && exists.deletedAt < threshold) {

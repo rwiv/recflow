@@ -33,8 +33,8 @@ postgresql:
       size: 4Gi
     resources:
       requests:
-        cpu: 1000m
-        memory: 512Mi
-      limits:
-        cpu: 1500m
+        cpu: 300m
         memory: 1024Mi
+      limits:
+        cpu: 600m
+        memory: 2048Mi

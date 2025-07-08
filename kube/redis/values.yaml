@@ -25,10 +25,10 @@ redis:
       size: 2Gi
     resources:
       requests:
-        cpu: 1000m
+        cpu: 200m
         memory: 512Mi
       limits:
-        cpu: 1500m
+        cpu: 400m
         memory: 1024Mi
   replica:
     replicaCount: 0

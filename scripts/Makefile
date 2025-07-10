@@ -1,6 +1,6 @@
 # server
 helm-server-run:
-	helm install stmgr ../kube/server -n media
+	helm install stmgr ../kube/server -n media -f ../dev/values.yaml
 
 helm-server-rm:
 	helm uninstall stmgr -n media

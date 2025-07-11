@@ -22,7 +22,7 @@ export class DevInitializer {
     @Inject(SERVER_REDIS) private readonly redis: RedisStore,
   ) {}
 
-  async initDev() {
+  async initDev(withInject: boolean = true) {
     await dropTables();
     await dropAllKeys(this.redis.client);
 
@@ -31,8 +31,10 @@ export class DevInitializer {
     await this.addNodeGroups();
     await this.addCriterionRules();
 
-    await this.devInjector.insertTestChannels();
-    await this.devInjector.insertTestNodes();
+    if (withInject) {
+      await this.devInjector.insertTestChannels();
+      await this.devInjector.insertTestNodes();
+    }
   }
 
   private async addPlatforms() {
@@ -42,12 +44,12 @@ export class DevInitializer {
   }
 
   private async addPriorities() {
-    await this.priService.create({ name: 'must', shouldSave: true, tier: 1, seq: 1 });
-    await this.priService.create({ name: 'should', shouldSave: true, tier: 1, seq: 2 });
-    await this.priService.create({ name: 'common', shouldSave: true, tier: 2, seq: 3 });
+    await this.priService.create({ name: 'great', shouldSave: true, tier: 1, seq: 1 });
+    await this.priService.create({ name: 'nice', shouldSave: true, tier: 1, seq: 2 });
+    await this.priService.create({ name: 'good', shouldSave: true, tier: 2, seq: 3 });
     await this.priService.create({ name: 'none', shouldSave: true, tier: 2, seq: 4 });
     await this.priService.create({ name: 'review', shouldSave: false, tier: 3, seq: 5 });
-    await this.priService.create({ name: 'skip', shouldSave: false, tier: 3, seq: 6 });
+    await this.priService.create({ name: 'ignore', shouldSave: false, tier: 3, seq: 6 });
   }
 
   private async addNodeGroups() {

@@ -38,7 +38,7 @@ export class ChannelSearcher {
     priority?: string,
     opts: ChannelMapOptions = {},
   ) {
-    const entRet = await this.chSearch.findByAllTags(includeTagNames, excludeTagNames, page, sortBy, priority);
+    const entRet = await this.chSearch.findByAllTags2(includeTagNames, excludeTagNames, page, sortBy, priority);
     return this.toPageResult(entRet, opts);
   }
 

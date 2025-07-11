@@ -1,7 +1,7 @@
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { channelTagMapTable, channelTable } from '../../infra/db/schema.js';
-import { and, desc, eq, exists, inArray, notExists } from 'drizzle-orm';
+import { and, desc, eq, exists, inArray, notExists, sql } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from './tag.query.js';
@@ -76,6 +76,48 @@ export class ChannelSearchRepository {
     return { total, channels: (await qb).map((r) => r.channels) };
   }
 
+  async findByAllTags2(
+    includeTagNames: string[],
+    excludeTagNames?: string[],
+    page?: PageQuery,
+    sortBy?: ChannelSortType,
+    priorityName?: string,
+    tx: Tx = db,
+  ): Promise<ChannelPageEntResult> {
+    const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
+    if (includeIds.length === 0) return { total: 0, channels: [] };
+    let excludeIds: string[] = [];
+    if (excludeTagNames && excludeTagNames.length > 0) {
+      this.checkDuplicatedTags(includeTagNames, excludeTagNames);
+      excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
+    }
+    const merged = [...includeIds, ...excludeIds];
+    const conds: SQLWrapper[] = [inArray(channelTagMapTable.tagId, merged)];
+
+    let qb = db
+      .select({ channels: channelTable })
+      .from(channelTable)
+      .leftJoin(channelTagMapTable, eq(channelTable.id, channelTagMapTable.channelId))
+      .$dynamic();
+
+    if (priorityName) await this.withPriority(conds, priorityName, tx);
+    qb = qb
+      .where(and(...conds))
+      .groupBy(channelTable.id)
+      .having(
+        and(
+          eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length),
+          eq(getSubCountSQL(excludeIds, channelTagMapTable.tagId), 0),
+        ),
+      );
+
+    const total = await tx.$count(qb);
+
+    if (sortBy) qb = this.withSorted(qb, sortBy);
+    if (page) qb = this.withPage(qb, page);
+    return { total, channels: (await qb).map((row) => row.channels) };
+  }
+
   async findByAllTags(
     includeTagNames: string[],
     excludeTagNames?: string[],
@@ -144,4 +186,8 @@ export class ChannelSearchRepository {
     }
     return qb;
   }
+}
+
+function getSubCountSQL(tags: string[], key: any) {
+  return sql<number>`COUNT(DISTINCT CASE WHEN ${key} IN ${tags} THEN ${key} END)`.mapWith(Number);
 }

@@ -54,8 +54,8 @@ export class DevChannelInserter {
       const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
       const platformId = platforms.find((pf) => pf.name === info.platform)?.id;
       if (!platformId) throw NotFoundError.from('Platform', 'name', info.platform);
-      const priorityId = priorities.find((pri) => pri.name === 'skip')?.id;
-      if (!priorityId) throw NotFoundError.from('Priority', 'name', 'skip');
+      const priorityId = priorities.find((pri) => pri.name === 'ignore')?.id;
+      if (!priorityId) throw NotFoundError.from('Priority', 'name', 'ignore');
       const append: ChannelAppend = {
         ...info,
         platformId,

@@ -26,18 +26,25 @@ type TagEntAppendRequest = z.infer<typeof tagEntAppendReq>;
 export class TagCommandRepository {
   constructor(private readonly tagQuery: TagQueryRepository) {}
 
+  private appendReq(append: TagEntAppend): TagEntAppendRequest {
+    return tagEntAppendReq.parse({
+      ...append,
+      id: append.id ?? uuid(),
+      createdAt: new Date(),
+      updatedAt: null,
+    });
+  }
+
   async create(append: TagEntAppend, tx: Tx = db): Promise<TagEnt> {
     const tag = await this.tagQuery.findByName(append.name, tx);
     if (tag) throw new ConflictError('Tag already exists');
-    const id = append.id ?? uuid();
-    const req: TagEntAppendRequest = {
-      ...append,
-      id,
-      createdAt: new Date(),
-      updatedAt: null,
-    };
-    const ent = await tx.insert(channelTagTable).values(tagEntAppendReq.parse(req)).returning();
+    const ent = await tx.insert(channelTagTable).values(this.appendReq(append)).returning();
     return oneNotNull(ent);
+  }
+
+  async createBatch(appends: TagEntAppend[], tx: Tx = db): Promise<string[]> {
+    const reqs = appends.map((append) => this.appendReq(append));
+    return (await tx.insert(channelTagTable).values(reqs).returning({ id: channelTagTable.id })).map((it) => it.id);
   }
 
   async update(id: string, update: TagEntUpdate, tx: Tx = db): Promise<TagEnt> {
@@ -56,9 +63,17 @@ export class TagCommandRepository {
     await tx.delete(channelTagTable).where(eq(channelTagTable.id, tagId));
   }
 
+  private bindReq(append: ChannelsToTagsEntAppend): ChannelsToTagsEnt {
+    return channelsToTagsEnt.parse({ ...append, createdAt: new Date() });
+  }
+
   async bind(append: ChannelsToTagsEntAppend, tx: Tx = db) {
-    const ent: ChannelsToTagsEnt = { ...append, createdAt: new Date() };
-    return tx.insert(channelTagMapTable).values(channelsToTagsEnt.parse(ent));
+    return tx.insert(channelTagMapTable).values(this.bindReq(append));
+  }
+
+  async bindBatch(appends: ChannelsToTagsEntAppend[], tx: Tx = db) {
+    const reqs: ChannelsToTagsEnt[] = appends.map((append) => this.bindReq(append));
+    return tx.insert(channelTagMapTable).values(reqs);
   }
 
   async unbind(channelId: string, tagId: string, tx: Tx = db) {

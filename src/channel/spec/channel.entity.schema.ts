@@ -35,7 +35,7 @@ export const channelEntUpdate = channelEnt.omit({ id: true, createdAt: true, upd
 export type ChannelEntUpdate = z.infer<typeof channelEntUpdate>;
 
 export const channelPageEntResult = z.object({
-  total: z.number().nonnegative(),
+  total: z.number().nonnegative().optional(),
   channels: z.array(channelEnt),
 });
 export type ChannelPageEntResult = z.infer<typeof channelPageEntResult>;

@@ -21,17 +21,25 @@ type ChannelEntAppendRequest = z.infer<typeof channelEntAppendReq>;
 export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
-  async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
-    const req: ChannelEntAppendRequest = {
+  private appendReq(append: ChannelEntAppend): ChannelEntAppendRequest {
+    return channelEntAppendReq.parse({
       ...append,
       id: append.id ?? uuid(),
       overseasFirst: append.overseasFirst ?? false,
       adultOnly: append.adultOnly ?? false,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? new Date(),
-    };
-    const ent = await tx.insert(channelTable).values(channelEntAppendReq.parse(req)).returning();
+    });
+  }
+
+  async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {
+    const ent = await tx.insert(channelTable).values(this.appendReq(append)).returning();
     return oneNotNull(ent);
+  }
+
+  async createBatch(appends: ChannelEntAppend[], tx: Tx = db): Promise<string[]> {
+    const reqs: ChannelEntAppendRequest[] = appends.map((append) => this.appendReq(append));
+    return (await tx.insert(channelTable).values(reqs).returning({ id: channelTable.id })).map((it) => it.id);
   }
 
   async setUpdatedAtNow(id: string, tx: Tx = db) {

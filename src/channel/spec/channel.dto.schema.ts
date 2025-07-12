@@ -43,7 +43,7 @@ export const channelSortTypeEnum = z.enum(['createdAt', 'updatedAt', 'followerCn
 export type ChannelSortType = z.infer<typeof channelSortTypeEnum>;
 
 export const channelPageResult = z.object({
-  total: z.number().nonnegative(),
+  total: z.number().nonnegative().optional(),
   channels: z.array(mappedChannelDto),
 });
 export type ChannelPageResult = z.infer<typeof channelPageResult>;

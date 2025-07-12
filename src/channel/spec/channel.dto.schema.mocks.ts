@@ -2,8 +2,9 @@ import { faker } from '@faker-js/faker';
 import { ChannelAppend, ChannelDto } from './channel.dto.schema.js';
 import { mockPriorityDto } from './priority.schema.mocks.js';
 import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
+import { ChannelEntAppend } from './channel.entity.schema.js';
 
-export function mockChannelAppend(overrides: Partial<ChannelAppend> = {}): ChannelAppend {
+export function mockChannelEntAppend(overrides: Partial<ChannelAppend> = {}): ChannelEntAppend {
   return {
     platformId: faker.string.uuid(),
     pid: faker.string.uuid(),
@@ -14,6 +15,10 @@ export function mockChannelAppend(overrides: Partial<ChannelAppend> = {}): Chann
     isFollowed: faker.datatype.boolean(),
     ...overrides,
   };
+}
+
+export function mockChannelAppend(overrides: Partial<ChannelAppend> = {}): ChannelAppend {
+  return mockChannelEntAppend(overrides);
 }
 
 export function mockChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto {

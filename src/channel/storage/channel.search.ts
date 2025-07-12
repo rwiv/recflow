@@ -24,6 +24,7 @@ export class ChannelSearchRepository {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priorityName?: string,
+    withTotal?: boolean,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     let qb = tx.select().from(channelTable).$dynamic();
@@ -32,9 +33,16 @@ export class ChannelSearchRepository {
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));
 
-    const total = await tx.$count(qb);
+    let total = undefined;
+    if (withTotal) {
+      total = total = await tx.$count(qb);
+    }
     if (page) qb = this.withPage(qb, page);
-    return { total, channels: await qb };
+    const result: ChannelPageEntResult = { channels: await qb };
+    if (total !== undefined) {
+      result.total = await tx.$count(qb);
+    }
+    return result;
   }
 
   // using OR condition
@@ -44,6 +52,7 @@ export class ChannelSearchRepository {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priorityName?: string,
+    withTotal?: boolean,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
@@ -67,13 +76,20 @@ export class ChannelSearchRepository {
       conds.push(notExists(subQuery));
     }
 
-    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds, inArray(channelTagMapTable.tagId, tagIds)));
 
-    const total = await tx.$count(qb);
+    let total = undefined;
+    if (withTotal) {
+      total = total = await tx.$count(qb);
+    }
+    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (page) qb = this.withPage(qb, page);
-    return { total, channels: (await qb).map((r) => r.channels) };
+    const result: ChannelPageEntResult = { channels: (await qb).map((r) => r.channels) };
+    if (total !== undefined) {
+      result.total = await tx.$count(qb);
+    }
+    return result;
   }
 
   async findByAllTags2(
@@ -82,6 +98,7 @@ export class ChannelSearchRepository {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priorityName?: string,
+    withTotal?: boolean,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
@@ -101,21 +118,30 @@ export class ChannelSearchRepository {
       .$dynamic();
 
     if (priorityName) await this.withPriority(conds, priorityName, tx);
+    let having: any = eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length);
+    if (excludeIds.length > 0) {
+      having = and(
+        eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length),
+        eq(getSubCountSQL(excludeIds, channelTagMapTable.tagId), 0),
+      );
+    }
     qb = qb
       .where(and(...conds))
       .groupBy(channelTable.id)
-      .having(
-        and(
-          eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length),
-          eq(getSubCountSQL(excludeIds, channelTagMapTable.tagId), 0),
-        ),
-      );
+      .having(having);
 
-    const total = await tx.$count(qb);
-
+    let total = undefined;
+    if (withTotal) {
+      total = total = await tx.$count(qb);
+    }
     if (sortBy) qb = this.withSorted(qb, sortBy);
     if (page) qb = this.withPage(qb, page);
-    return { total, channels: (await qb).map((row) => row.channels) };
+
+    const result: ChannelPageEntResult = { channels: (await qb).map((row) => row.channels) };
+    if (total !== undefined) {
+      result.total = total;
+    }
+    return result;
   }
 
   async findByAllTags(
@@ -124,6 +150,7 @@ export class ChannelSearchRepository {
     page?: PageQuery,
     sortBy?: ChannelSortType,
     priorityName?: string,
+    withTotal?: boolean,
     tx: Tx = db,
   ): Promise<ChannelPageEntResult> {
     const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
@@ -141,19 +168,29 @@ export class ChannelSearchRepository {
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(exists(subQuery));
     }
-    for (const tagId of excludeIds) {
-      const cond = and(eq(channelTagMapTable.channelId, channelTable.id), eq(channelTagMapTable.tagId, tagId));
+    if (excludeIds.length > 0) {
+      const cond = and(
+        eq(channelTagMapTable.channelId, channelTable.id),
+        inArray(channelTagMapTable.tagId, excludeIds),
+      );
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(notExists(subQuery));
     }
 
-    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));
 
-    const total = await tx.$count(qb);
+    let total = undefined;
+    if (withTotal) {
+      total = total = await tx.$count(qb);
+    }
+    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (page) qb = this.withPage(qb, page);
-    return { total, channels: await qb };
+    const result: ChannelPageEntResult = { channels: await qb };
+    if (total !== undefined) {
+      result.total = await tx.$count(qb);
+    }
+    return result;
   }
 
   private checkDuplicatedTags(includeTagNames: string[], excludeTagNames: string[]) {

@@ -29,7 +29,9 @@ helm-pg-stage-run:
 		--set metadata.namespace=stage \
 		--set postgresql.primary.service.type=NodePort \
 		--set postgresql.primary.service.nodePorts.postgresql=30229 \
-		--set postgresql.primary.persistence.storageClass=rook-ceph-block
+		--set postgresql.primary.persistence.storageClass=rook-ceph-block \
+		--set postgresql.primary.resources.requests.cpu=500m \
+		--set postgresql.primary.resources.limits.cpu=1000m
 
 helm-pg-stage-rm:
 	helm uninstall stmgr-postgresql -n stage

@@ -3,20 +3,20 @@ import { mockChannelAppend } from '../spec/channel.dto.schema.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
-import { PriorityDto } from '../spec/priority.schema.js';
 import { ChannelFinder } from './channel.finder.js';
 import { ChannelMapper } from './channel.mapper.js';
-import { ChannelSearcher } from './channel.searcher.js';
 import { ChannelWriter } from './channel.writer.js';
 import { PriorityService } from './priority.service.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
+import { ChannelSearchRepository } from '../storage/channel.search.js';
+import assert from 'assert';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
 const priService = app.get(PriorityService);
 const chFinder = app.get(ChannelFinder);
-const chSearcher = app.get(ChannelSearcher);
+const chSearchRepo = app.get(ChannelSearchRepository);
 const chWriter = app.get(ChannelWriter);
 const chMapper = app.get(ChannelMapper);
 
@@ -28,13 +28,11 @@ describe('ChannelService', () => {
   it('findPage', async () => {
     await dropTables();
     await init.initDev(false);
-    const great = await priService.findByNameNotNull('great');
-    const nice = await priService.findByNameNotNull('nice');
-    const good = await priService.findByNameNotNull('good');
+    const great = (await priService.findByNameNotNull('great'))?.id;
+    const nice = (await priService.findByNameNotNull('nice'))?.id;
+    const good = (await priService.findByNameNotNull('good'))?.id;
     const chzzk = (await pfFinder.findByName('chzzk'))?.id;
-    if (!chzzk) {
-      throw Error('not found chzzk platform');
-    }
+    assert(chzzk);
 
     for (let i = 1; i <= 15; i++) {
       if (i <= 5) {
@@ -70,7 +68,8 @@ describe('ChannelService', () => {
     const page = { page: 1, size: 20 };
 
     // const result = await chSearcher.findByQuery(page, sorted, prioirty, undefined, true);
-    const result = await chSearcher.findByAllTags(includes, excludes, page, sortedBy, prioirty, { tags: true });
+    const result = await chSearchRepo.findByAllTags(includes, excludes, page, sortedBy, prioirty);
+    // const result = await chSearchRepo.findByAllTags2(includes, excludes, page, sortedBy, prioirty, false);
     // const result = await chSearcher.findByAnyTag(includes, excludes, page, sorted, prioirty, true);
     console.log(result.total);
     console.log(result.channels.map((r) => r.username));
@@ -83,11 +82,11 @@ describe('ChannelService', () => {
   });
 });
 
-function add(n: number, priority: PriorityDto, platformId: string, followerCnt: number, tagNames: string[]) {
+function add(n: number, priorityId: string, platformId: string, followerCnt: number, tagNames: string[]) {
   const ch = mockChannelAppend({
-    pid: `asd${n}`,
-    username: `asd${n}`,
-    priorityId: priority?.id,
+    pid: `pid${n}`,
+    username: `user${n}`,
+    priorityId,
     followerCnt,
     platformId,
   });

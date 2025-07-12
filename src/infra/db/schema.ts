@@ -83,6 +83,7 @@ export const channelTagMapTable = pgTable(
       name: 'channel_tag_map_id',
       columns: [t.channelId, t.tagId],
     }),
+    uniqueIndex('channel_tag_map_multi_idx').on(t.tagId, t.channelId),
   ],
 );
 

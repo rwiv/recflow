@@ -62,7 +62,7 @@ app:
 externals:
   stdl:
     locations:
-      default: proxy_overseas
+      default: local
       followed: local
     redis:
       masterHost: stdl-redis-master.media.svc.cluster.local

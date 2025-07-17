@@ -17,8 +17,8 @@ export const liveState = z.object({
   streamUrl: nonempty,
   streamParams: queryParams.nullable(),
   streamHeaders: headers,
-  headers: headers, // TODO: remove
   videoName: nonempty,
+  fsName: nonempty,
   location: stdlLocationType,
   isInvalid: z.boolean(),
   createdAt: z.coerce.date(),

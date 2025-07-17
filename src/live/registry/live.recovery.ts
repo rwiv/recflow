@@ -130,7 +130,7 @@ export class LiveRecoveryManager {
       return await this.liveRegistrar.register({
         channelInfo: channelLiveInfo.parse(channelInfo),
         streamUrl: live.streamUrl ?? undefined,
-        headers: live.headers ?? undefined,
+        streamHeaders: live.headers ?? undefined,
         logMessage: 'Reregister Live',
       });
     } catch (e) {

@@ -78,6 +78,8 @@ export class LiveAllocator {
     const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     await this.liveRegistrar.register({
       reusableLive: live,
+      streamUrl: live.streamUrl ?? undefined,
+      streamHeaders: live.headers ?? undefined,
       channelInfo: channelLiveInfo.parse(channelInfo),
       ignoreGroupIds: live.nodes.map((it) => it.groupId),
       mustExistNode: false,

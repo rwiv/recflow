@@ -4,21 +4,12 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 1.8.4
+  tag: 1.8.5
   pullSecret: image-pull-secret
 
 affinity: ~
 tolerations: ~
 podLabels: ~
-
-vault:
-  mount: kube
-  path: media/stmgr/config
-  version: 1
-  secretName: stmgr-config
-  refreshAfter: 30s
-  keys:
-    fsName: fs-name
 
 service:
   type: ClusterIP
@@ -26,12 +17,13 @@ service:
   targetPort: 8080
 
 ingress:
-  host: stmgr.rwiv.xyz
+  host: ~
   secretName: cloudflare-certificate
 
 app:
   server:
     endpoint: http://stmgr:80
+  fsName: ~
   redis:
     host: stmgr-redis-master.media.svc.cluster.local
     port: 6379

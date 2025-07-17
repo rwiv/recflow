@@ -27,6 +27,13 @@ export class InfraFactory {
     }
     const master = await createRedisClient(this.env.stdlRedisMaster);
     const replica = await createRedisClient(this.env.stdlRedisReplica);
-    return new StdlRedisImpl(master, replica, this.env.liveStateExpireSec, defaultLocation.data, followedLocation.data);
+    return new StdlRedisImpl(
+      master,
+      replica,
+      this.env.liveStateExpireSec,
+      defaultLocation.data,
+      followedLocation.data,
+      this.env.fsName,
+    );
   }
 }

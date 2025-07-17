@@ -5,7 +5,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlLocationType } from './stdl.types.js';
-import { NotFoundError } from 'src/utils/errors/errors/NotFoundError.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
@@ -19,6 +19,7 @@ export class StdlRedisImpl extends StdlRedis {
     private readonly liveStateExpireSec: number,
     private readonly defaultLocation: StdlLocationType,
     private readonly followedLocation: StdlLocationType,
+    private readonly fsName: string,
   ) {
     super();
   }
@@ -57,8 +58,8 @@ export class StdlRedisImpl extends StdlRedis {
       streamUrl: live.streamUrl,
       streamParams: null,
       streamHeaders: live.headers,
-      headers: live.headers,
       videoName: live.videoName,
+      fsName: this.fsName,
       location,
       isInvalid: false,
       createdAt: now,

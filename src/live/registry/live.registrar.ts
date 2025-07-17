@@ -45,7 +45,7 @@ export interface LiveRegisterRequest {
   logLevel?: LogLevel;
 
   streamUrl?: string;
-  headers?: Record<string, string>;
+  streamHeaders?: Record<string, string>;
   isFollowed?: boolean;
 
   // node selection options
@@ -80,7 +80,7 @@ export class LiveRegistrar {
     const { platform, pid } = req.channelInfo;
 
     let streamUrl = req.streamUrl ?? null;
-    let headers = req.headers ?? null;
+    let headers = req.streamHeaders ?? null;
 
     if (!streamUrl || !headers) {
       // Check if the live is accessible

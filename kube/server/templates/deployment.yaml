@@ -61,10 +61,7 @@ spec:
                   name: {{ .Values.app.redis.secrets.auth.name }}
                   key: {{ .Values.app.redis.secrets.auth.passwordKey }}
             - name: FS_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.vault.secretName }}
-                  key: {{ .Values.vault.keys.fsName}}
+              value: {{ .Values.app.fsName }}
             - name: STDL_DEFAULT_LOCATION
               value: {{ .Values.externals.stdl.locations.default }}
             - name: STDL_FOLLOWED_LOCATION

@@ -6,7 +6,6 @@ import { platformTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { PlatformName, platformNameEnum } from '../spec/storage/platform.enum.schema.js';
 import { z } from 'zod';
-import { uuid } from '../../utils/uuid.js';
 import { PlatformEnt, platformEnt } from './platform.entity.schema.js';
 
 export const platformEntAppend = platformEnt
@@ -14,7 +13,7 @@ export const platformEntAppend = platformEnt
   .extend({ name: platformNameEnum });
 export type PlatformEntAppend = z.infer<typeof platformEntAppend>;
 
-const platformEntAppendReq = platformEnt.partial({ updatedAt: true }).extend({ name: platformNameEnum });
+const platformEntAppendReq = platformEnt.partial({ id: true, updatedAt: true }).extend({ name: platformNameEnum });
 type PlatformEntAppendReq = z.infer<typeof platformEntAppendReq>;
 
 @Injectable()
@@ -22,7 +21,7 @@ export class PlatformRepository {
   async create(append: PlatformEntAppend, tx: Tx = db): Promise<PlatformEnt> {
     const entReq: PlatformEntAppendReq = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(platformTable).values(platformEntAppendReq.parse(entReq)).returning();

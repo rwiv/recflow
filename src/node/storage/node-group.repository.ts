@@ -3,13 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { nodeGroupEnt, NodeGroupEnt, NodeGroupEntAppend, NodeGroupEntUpdate } from '../spec/node.entity.schema.js';
-import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { nodeGroupTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
-const nodeGroupEntAppendReq = nodeGroupEnt.partial({ description: true, updatedAt: true });
+const nodeGroupEntAppendReq = nodeGroupEnt.partial({ id: true, description: true, updatedAt: true });
 type NodeGroupEntAppendRequest = z.infer<typeof nodeGroupEntAppendReq>;
 
 @Injectable()
@@ -17,7 +16,7 @@ export class NodeGroupRepository {
   async create(append: NodeGroupEntAppend, tx: Tx = db): Promise<NodeGroupEnt> {
     const req: NodeGroupEntAppendRequest = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.createdAt ?? null,
     };

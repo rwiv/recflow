@@ -2,7 +2,6 @@ import { oneNotNull } from '../../utils/list.js';
 import { db } from '../../infra/db/db.js';
 import { channelTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelQueryRepository } from './channel.query.js';
@@ -11,6 +10,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
 const channelEntAppendReq = channelEnt.partial({
+  id: true,
   profileImgUrl: true,
   description: true,
   lastRefreshedAt: true,
@@ -22,14 +22,15 @@ export class ChannelCommandRepository {
   constructor(private readonly chQuery: ChannelQueryRepository) {}
 
   private appendReq(append: ChannelEntAppend): ChannelEntAppendRequest {
-    return channelEntAppendReq.parse({
+    const req: ChannelEntAppendRequest = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       overseasFirst: append.overseasFirst ?? false,
       adultOnly: append.adultOnly ?? false,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? new Date(),
-    });
+    };
+    return channelEntAppendReq.parse(req);
   }
 
   async create(append: ChannelEntAppend, tx: Tx = db): Promise<ChannelEnt> {

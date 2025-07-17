@@ -2,7 +2,6 @@ import { db } from '../../infra/db/db.js';
 import { channelTagMapTable, channelTagTable } from '../../infra/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import { oneNotNull } from '../../utils/list.js';
-import { uuid } from '../../utils/uuid.js';
 import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
 import { TagQueryRepository } from './tag.query.js';
@@ -19,7 +18,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { z } from 'zod';
 
-const tagEntAppendReq = tagEnt.partial({ description: true, updatedAt: true });
+const tagEntAppendReq = tagEnt.partial({ id: true, description: true, updatedAt: true });
 type TagEntAppendRequest = z.infer<typeof tagEntAppendReq>;
 
 @Injectable()
@@ -27,12 +26,13 @@ export class TagCommandRepository {
   constructor(private readonly tagQuery: TagQueryRepository) {}
 
   private appendReq(append: TagEntAppend): TagEntAppendRequest {
-    return tagEntAppendReq.parse({
+    const req: TagEntAppendRequest = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       createdAt: new Date(),
       updatedAt: null,
-    });
+    };
+    return tagEntAppendReq.parse(req);
   }
 
   async create(append: TagEntAppend, tx: Tx = db): Promise<TagEnt> {

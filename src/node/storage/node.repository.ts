@@ -4,12 +4,11 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { liveNodeTable, nodeTable } from '../../infra/db/schema.js';
 import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate } from '../spec/node.entity.schema.js';
-import { uuid } from '../../utils/uuid.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
-const nodeEntAppendReq = nodeEnt.partial({ description: true, updatedAt: true, lastAssignedAt: true });
+const nodeEntAppendReq = nodeEnt.partial({ id: true, description: true, updatedAt: true, lastAssignedAt: true });
 type NodeEntAppendRequest = z.infer<typeof nodeEntAppendReq>;
 
 @Injectable()
@@ -17,7 +16,7 @@ export class NodeRepository {
   async create(append: NodeEntAppend, tx: Tx = db) {
     const req: NodeEntAppendRequest = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       isCordoned: append.isCordoned ?? false,
       isDomestic: append.isDomestic ?? false,
       failureCnt: append.failureCnt ?? 0,

@@ -5,13 +5,12 @@ import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelPriorityTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { uuid } from '../../utils/uuid.js';
 import { PriorityEnt, priorityEnt, PriorityEntAppend, PriorityEntUpdate } from '../spec/priority.schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { DEFAULT_PRIORITY_NAME } from '../spec/priority.constants.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
-const priorityEntAppendReq = priorityEnt.partial({ description: true, updatedAt: true });
+const priorityEntAppendReq = priorityEnt.partial({ id: true, description: true, updatedAt: true });
 type PriorityEntAppendRequest = z.infer<typeof priorityEntAppendReq>;
 
 @Injectable()
@@ -19,7 +18,7 @@ export class PriorityRepository {
   async create(append: PriorityEntAppend, tx: Tx = db): Promise<PriorityEnt> {
     const reqEnt: PriorityEntAppendRequest = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       shouldNotify: append.shouldNotify ?? false,
       createdAt: append.createdAt ?? new Date(),
       updatedAt: append.updatedAt ?? null,

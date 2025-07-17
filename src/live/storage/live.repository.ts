@@ -5,11 +5,11 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { channelTable, liveNodeTable, liveTable } from '../../infra/db/schema.js';
-import { uuid } from '../../utils/uuid.js';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 const liveEntAppendReq = liveEnt.partial({
+  id: true,
   updatedAt: true,
   deletedAt: true,
 });
@@ -20,7 +20,7 @@ export class LiveRepository {
   async create(append: LiveEntAppend, tx: Tx = db) {
     const req: LiveEntAppendRequest = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       isDisabled: append.isDisabled ?? false,
       createdAt: append.createdAt ?? new Date(),
     };

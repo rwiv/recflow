@@ -3,14 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { criterionRuleEnt, CriterionRuleEntAppend } from '../spec/criterion.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { uuid } from '../../utils/uuid.js';
 import { liveCriterionRuleTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { criterionRuleNameUnion } from '../spec/criterion.rule.schema.js';
 
-const criterionRuleEntReq = criterionRuleEnt.partial({ updatedAt: true }).extend({ name: criterionRuleNameUnion });
+const criterionRuleEntReq = criterionRuleEnt
+  .partial({ id: true, updatedAt: true })
+  .extend({ name: criterionRuleNameUnion });
 type CriterionRuleEntReq = z.infer<typeof criterionRuleEntReq>;
 
 @Injectable()
@@ -18,7 +19,7 @@ export class CriterionRuleRepository {
   async create(append: CriterionRuleEntAppend, tx: Tx = db) {
     const entReq: CriterionRuleEntReq = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(liveCriterionRuleTable).values(criterionRuleEntReq.parse(entReq)).returning();

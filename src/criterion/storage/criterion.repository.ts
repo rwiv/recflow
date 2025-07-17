@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CriterionEnt, criterionEnt, CriterionEntAppend, CriterionEntUpdate } from '../spec/criterion.entity.schema.js';
-import { uuid } from '../../utils/uuid.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
 import { z } from 'zod';
@@ -9,7 +8,7 @@ import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
-const criterionEntAppendReq = criterionEnt.partial({ description: true, updatedAt: true });
+const criterionEntAppendReq = criterionEnt.partial({ id: true, description: true, updatedAt: true });
 type CriterionEntAppendReq = z.infer<typeof criterionEntAppendReq>;
 
 @Injectable()
@@ -17,7 +16,7 @@ export class CriterionRepository {
   async create(append: CriterionEntAppend, tx: Tx = db): Promise<CriterionEnt> {
     const entReq: CriterionEntAppendReq = {
       ...append,
-      id: append.id ?? uuid(),
+      id: append.id,
       isDeactivated: append.isDeactivated ?? true,
       createdAt: append.createdAt ?? new Date(),
     };

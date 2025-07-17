@@ -5,6 +5,7 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlLocationType } from './stdl.types.js';
+import { NotFoundError } from 'src/utils/errors/errors/NotFoundError.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
@@ -28,6 +29,7 @@ export class StdlRedisImpl extends StdlRedis {
       log.error(errMsg, liveAttr(live));
       throw new ValidationError(errMsg);
     }
+
     let location = this.defaultLocation;
     if (live.channel.isFollowed) {
       location = this.followedLocation;
@@ -35,6 +37,14 @@ export class StdlRedisImpl extends StdlRedis {
     if (live.domesticOnly) {
       location = 'local';
     }
+
+    if (live.streamUrl === null) {
+      throw NotFoundError.from('live.stream_url', 'id', live.id);
+    }
+    if (live.headers === null) {
+      throw NotFoundError.from('live.stream_headers', 'id', live.id);
+    }
+
     const now = new Date();
     const state: LiveState = {
       id: live.id,
@@ -43,7 +53,10 @@ export class StdlRedisImpl extends StdlRedis {
       channelName: live.channel.username,
       liveId: live.sourceId,
       liveTitle: live.liveTitle,
+      platformCookie: null,
       streamUrl: live.streamUrl,
+      streamParams: null,
+      streamHeaders: live.headers,
       headers: live.headers,
       videoName: live.videoName,
       location,

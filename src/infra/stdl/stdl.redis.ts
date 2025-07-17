@@ -1,7 +1,7 @@
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { z } from 'zod';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
-import { headers, nonempty, uuid } from '../../common/data/common.schema.js';
+import { headers, nonempty, queryParams, uuid } from '../../common/data/common.schema.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { stdlLocationType } from './stdl.types.js';
@@ -13,8 +13,11 @@ export const liveState = z.object({
   channelName: nonempty,
   liveId: nonempty,
   liveTitle: nonempty,
+  platformCookie: nonempty.nullable(),
   streamUrl: nonempty,
-  headers: headers.nullable(),
+  streamParams: queryParams.nullable(),
+  streamHeaders: headers,
+  headers: headers, // TODO: remove
   videoName: nonempty,
   location: stdlLocationType,
   isInvalid: z.boolean(),

@@ -4,6 +4,7 @@ export const uuid = z.string().uuid();
 export const nonempty = z.string().nonempty();
 export const nnint = z.coerce.number().int().nonnegative();
 export const headers = z.record(z.string());
+export const queryParams = z.record(z.array(z.string()));
 
 export const pageQuery = z.object({
   page: z.number().int().positive(),

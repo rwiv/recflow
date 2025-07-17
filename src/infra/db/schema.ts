@@ -1,17 +1,9 @@
-import { boolean, char, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
-
-function uuid(name?: string) {
-  if (name) {
-    return char(name, { length: 36 });
-  } else {
-    return char({ length: 36 });
-  }
-}
+import { boolean, index, uuid, integer, pgTable, primaryKey, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const platformTable = pgTable(
   'platform',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
@@ -22,7 +14,7 @@ export const platformTable = pgTable(
 export const channelPriorityTable = pgTable(
   'channel_priority',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     shouldSave: boolean('should_save').notNull(),
     description: text(),
@@ -38,7 +30,7 @@ export const channelPriorityTable = pgTable(
 export const channelTable = pgTable(
   'channel',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     platformId: uuid('platform_id')
       .notNull()
       .references(() => platformTable.id),
@@ -90,7 +82,7 @@ export const channelTagMapTable = pgTable(
 export const channelTagTable = pgTable(
   'channel_tag',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     description: text(),
     createdAt: timestamp('create_at').notNull(),
@@ -102,7 +94,7 @@ export const channelTagTable = pgTable(
 export const nodeGroupTable = pgTable(
   'node_group',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     description: text(),
     createdAt: timestamp('created_at').notNull(),
@@ -114,7 +106,7 @@ export const nodeGroupTable = pgTable(
 export const nodeTable = pgTable(
   'node',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     description: text(),
     endpoint: text().notNull(),
@@ -138,7 +130,7 @@ export const nodeTable = pgTable(
 );
 
 export const liveTable = pgTable('live', {
-  id: uuid().primaryKey(),
+  id: uuid().primaryKey().defaultRandom(),
   channelId: uuid('channel_id')
     .notNull()
     .references(() => channelTable.id),
@@ -183,7 +175,7 @@ export const liveNodeTable = pgTable(
 export const liveCriterionTable = pgTable(
   'live_criterion',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     description: text(),
     platformId: uuid('platform_id')
@@ -207,7 +199,7 @@ export const liveCriterionTable = pgTable(
 export const liveCriterionRuleTable = pgTable(
   'live_criterion_rule',
   {
-    id: uuid().primaryKey(),
+    id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
@@ -216,7 +208,7 @@ export const liveCriterionRuleTable = pgTable(
 );
 
 export const liveCriterionUnitTable = pgTable('live_criterion_unit', {
-  id: uuid().primaryKey(),
+  id: uuid().primaryKey().defaultRandom(),
   criterionId: uuid('criterion_id')
     .notNull()
     .references(() => liveCriterionTable.id),

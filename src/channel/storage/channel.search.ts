@@ -29,7 +29,6 @@ export class ChannelSearchRepository {
   ): Promise<ChannelPageEntResult> {
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
-    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (priorityName) await this.withPriority(conds, priorityName, tx);
     qb = qb.where(and(...conds));
 
@@ -37,10 +36,11 @@ export class ChannelSearchRepository {
     if (withTotal) {
       total = total = await tx.$count(qb);
     }
+    if (sortBy) qb = this.withSorted(qb, sortBy);
     if (page) qb = this.withPage(qb, page);
     const result: ChannelPageEntResult = { channels: await qb };
     if (total !== undefined) {
-      result.total = await tx.$count(qb);
+      result.total = total;
     }
     return result;
   }
@@ -87,7 +87,7 @@ export class ChannelSearchRepository {
     if (page) qb = this.withPage(qb, page);
     const result: ChannelPageEntResult = { channels: (await qb).map((r) => r.channels) };
     if (total !== undefined) {
-      result.total = await tx.$count(qb);
+      result.total = total;
     }
     return result;
   }
@@ -136,7 +136,6 @@ export class ChannelSearchRepository {
     }
     if (sortBy) qb = this.withSorted(qb, sortBy);
     if (page) qb = this.withPage(qb, page);
-
     const result: ChannelPageEntResult = { channels: (await qb).map((row) => row.channels) };
     if (total !== undefined) {
       result.total = total;
@@ -188,7 +187,7 @@ export class ChannelSearchRepository {
     if (page) qb = this.withPage(qb, page);
     const result: ChannelPageEntResult = { channels: await qb };
     if (total !== undefined) {
-      result.total = await tx.$count(qb);
+      result.total = total;
     }
     return result;
   }

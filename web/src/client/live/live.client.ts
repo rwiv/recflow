@@ -4,24 +4,16 @@ import { PlatformName } from '@/client/common/platform.schema.ts';
 import { ExitCmd } from '@/client/common/common.schema.ts';
 import { liveDtoWithNodes } from '@/client/live/live.mapped.schema.ts';
 import { parseList } from '@/common/utils.schema.ts';
+import { StreamInfo } from '@/client/live/live.schema.ts';
 
 export async function fetchAllLives() {
   const res = await request(`${configs.endpoint}/api/lives/all`);
   return parseList(liveDtoWithNodes, await res.json());
 }
 
-export async function createLive(
-  pid: string,
-  platform: PlatformName,
-  streamUrl: string | null,
-  recHeaderStr: string | null,
-) {
+export async function createLive(pid: string, platform: PlatformName, stream: StreamInfo | null) {
   const url = `${configs.endpoint}/api/lives`;
-  let recHeader = null;
-  if (recHeaderStr) {
-    recHeader = JSON.parse(recHeaderStr);
-  }
-  const req = { pid, platformName: platform, streamUrl, headers: recHeader };
+  const req = { pid, platformName: platform, stream };
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
   if (res.status >= 400) {

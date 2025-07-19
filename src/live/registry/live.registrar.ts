@@ -187,6 +187,8 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(live);
     }
 
+    await this.liveWriter.update(live.id, { status: 'recording' }, tx);
+
     const attr = { ...liveAttr(live, { cr, node }), stream_url: stream.url };
     logging(logMessage, attr, req.logLevel ?? 'info');
     return live.id;
@@ -251,6 +253,7 @@ export class LiveRegistrar {
       log.warn('Live is already finished', liveAttr(live));
       return null;
     }
+    await this.liveWriter.update(live.id, { status: 'finalizing' });
     await this.liveWriter.disable(live.id, false, true); // if Live is not disabled, it will become a recovery target and cause an error
     await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
     logging(msg, { ...liveAttr(live), cmd: exitCmd }, logLevel);

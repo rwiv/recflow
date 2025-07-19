@@ -7,11 +7,10 @@ const env = readEnv();
 it('test', async () => {
   const platform = 'chzzk';
   const uid = '';
-  const withCred = false;
+  const withAuth = false;
 
   const stlink = new Stlink(env);
-  const stream = await stlink.fetchStreamInfo(platform, uid, withCred);
-  console.log(stream);
+  const stream = await stlink.fetchStreamInfo(platform, uid, withAuth);
   const streamUrl = stream.best?.mediaPlaylistUrl;
   if (!streamUrl) {
     throw new Error('Stream URL not found');
@@ -20,6 +19,6 @@ it('test', async () => {
   if (!headers) {
     throw new Error('Headers not found');
   }
-  const m3u8 = await stlink.fetchM3u8(streamUrl, headers);
+  const m3u8 = await stlink.fetchM3u8({ url: streamUrl, headers: headers, params: null });
   console.log(m3u8);
 });

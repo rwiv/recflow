@@ -130,6 +130,8 @@ export const nodeTable = pgTable(
   ],
 );
 
+export const liveStatusEnum = ['initializing', 'recording', 'finalizing', 'deleted'] as const;
+
 export const liveTable = pgTable('live', {
   id: uuid().primaryKey().defaultRandom(),
   channelId: uuid('channel_id')
@@ -147,6 +149,7 @@ export const liveTable = pgTable('live', {
   videoName: text('video_name').notNull(),
   viewCnt: integer('view_cnt').notNull(),
   isAdult: boolean('is_adult').notNull(),
+  status: text('status', { enum: liveStatusEnum }).notNull(),
   isDisabled: boolean('is_disabled').notNull(),
   domesticOnly: boolean('domestic_only').notNull(),
   overseasFirst: boolean('overseas_first').notNull(),

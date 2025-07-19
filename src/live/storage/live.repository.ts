@@ -21,6 +21,7 @@ export class LiveRepository {
     const req: LiveEntAppendRequest = {
       ...append,
       id: append.id,
+      status: append.status ?? 'initializing',
       isDisabled: append.isDisabled ?? false,
       createdAt: append.createdAt ?? new Date(),
     };

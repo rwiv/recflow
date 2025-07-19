@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
+import { liveStatusEnum } from '../../infra/db/schema.js';
+
+export const liveStatus = z.enum(liveStatusEnum);
+export type LiveStatus = z.infer<typeof liveStatus>;
 
 export const liveEnt = z.object({
   id: uuid,
@@ -14,6 +18,7 @@ export const liveEnt = z.object({
   videoName: nonempty,
   viewCnt: nnint,
   isAdult: z.boolean(),
+  status: liveStatus,
   isDisabled: z.boolean(),
   domesticOnly: z.boolean(),
   overseasFirst: z.boolean(),
@@ -25,6 +30,7 @@ export type LiveEnt = z.infer<typeof liveEnt>;
 
 export const liveEntAppend = liveEnt.partial({
   id: true,
+  status: true,
   isDisabled: true,
   createdAt: true,
   updatedAt: true,

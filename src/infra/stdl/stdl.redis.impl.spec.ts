@@ -7,6 +7,7 @@ import { LiveState } from './stdl.redis.js';
 const env = readEnv();
 
 const location = 'local';
+const fsName = 'none';
 
 const state: LiveState = {
   id: '{id}',
@@ -15,9 +16,12 @@ const state: LiveState = {
   channelName: 'asd',
   liveId: 'asd',
   liveTitle: 'asd',
+  platformCookie: null,
   streamUrl: 'asd',
-  headers: null,
+  streamParams: null,
+  streamHeaders: {},
   videoName: '{videoName}',
+  fsName,
   location: location,
   isInvalid: false,
   createdAt: new Date(),
@@ -29,7 +33,7 @@ const exSec = 3600 * 24;
 it('test set', async () => {
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec, location, location);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location, fsName);
   await client.set(state);
   const liveIds = await client.getLivesIds(true);
   console.log(liveIds);
@@ -38,14 +42,14 @@ it('test set', async () => {
 it('test get', async () => {
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec, location, location);
-  console.log(await client.getLiveState('', true));
+  const client = new StdlRedisImpl(master, replica, exSec, location, location, fsName);
+  console.log(await client.getLiveState('b23eafac-4790-496b-8f9c-b928252da10f', true));
 });
 
 it('test getLivesIds', async () => {
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec, location, location);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location, fsName);
   const liveIds = await client.getLivesIds(true);
   console.log(liveIds);
 });
@@ -54,7 +58,7 @@ it('test getSuccessSegNums', async () => {
   const liveId = '';
   const master = await createRedisClient(env.stdlRedisMaster);
   const replica = await createRedisClient(env.stdlRedisReplica);
-  const client = new StdlRedisImpl(master, replica, exSec, location, location);
+  const client = new StdlRedisImpl(master, replica, exSec, location, location, fsName);
   const nums = await client.getSegNums(liveId, 'success', true);
   console.log(nums);
 });

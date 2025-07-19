@@ -1,7 +1,14 @@
 import { channelDto } from '@/client/channel/channel.types.ts';
 import { platformDto } from '@/client/common/platform.schema.ts';
 import { z } from 'zod';
-import { nnint, uuid } from '@/common/common.schema.ts';
+import { nnint, nonempty, uuid, headers, queryParams } from '@/common/common.schema.ts';
+
+export const streamInfo = z.object({
+  url: nonempty,
+  params: queryParams.nullable(),
+  headers: headers,
+});
+export type StreamInfo = z.infer<typeof streamInfo>;
 
 export const liveDto = z.object({
   id: uuid,

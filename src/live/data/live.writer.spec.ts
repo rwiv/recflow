@@ -35,7 +35,7 @@ describe('ChannelService', () => {
 
     const cOpts1: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
     const li1 = mockLiveInfoChzzk({ channelId: ch.pid });
-    const live1 = await liveWriter.createByLive(li1, null, null, cOpts1);
+    const live1 = await liveWriter.createByLive(li1, null, cOpts1);
     expect(live1.liveTitle).toBe(li1.liveTitle);
 
     const li2 = mockLiveInfoChzzk({ channelId: ch.pid });
@@ -46,7 +46,7 @@ describe('ChannelService', () => {
     await expect(() => {
       const cOpts2 = { ...cOpts1, videoName: live1.videoName };
       const li3 = mockLiveInfoChzzk({ channelId: ch.pid });
-      return liveWriter.createByLive(li3, null, null, cOpts2);
+      return liveWriter.createByLive(li3, null, cOpts2);
     }).rejects.toThrowError(ConflictError);
   });
 });

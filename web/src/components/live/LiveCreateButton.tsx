@@ -12,12 +12,14 @@ import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
+import { StreamInfo } from '@/client/live/live.schema';
 
 const formSchema = z.object({
   type: platformNameEnum,
   uid: z.string().nonempty(),
   streamUrl: z.string(),
-  headers: z.string(),
+  streamParams: z.string(),
+  streamHeaders: z.string(),
 });
 
 export function LiveCreateButton() {
@@ -38,7 +40,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
       type: 'chzzk',
       uid: '',
       streamUrl: '',
-      headers: '',
+      streamParams: '',
+      streamHeaders: '',
     },
   });
 
@@ -47,11 +50,24 @@ export function CreateForm({ cb }: { cb: () => void }) {
     if (streamUrl.length === 0) {
       streamUrl = null;
     }
-    let headers: string | null = data.headers.trim();
-    if (headers.length === 0) {
-      headers = null;
+    let paramsStr: string | null = data.streamParams.trim();
+    if (paramsStr.length === 0) {
+      paramsStr = null;
     }
-    await createLive(data.uid, data.type, streamUrl, headers);
+    let headersStr: string | null = data.streamHeaders.trim();
+    if (headersStr.length === 0) {
+      headersStr = null;
+    }
+    let stream: StreamInfo | null = null;
+    if (streamUrl && headersStr) {
+      stream = {
+        url: streamUrl,
+        params: paramsStr ? JSON.parse(paramsStr) : null,
+        headers: JSON.parse(headersStr),
+      };
+    }
+
+    await createLive(data.uid, data.type, stream);
     await queryClient.invalidateQueries({ queryKey: [LIVES_QUERY_KEY] });
     cb();
   }
@@ -65,7 +81,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
         </SelectFormField>
         <TextFormField form={form} name="uid" label="Channel UID" />
         <TextFormField form={form} name="streamUrl" label="Stream URL" />
-        <TextFormField form={form} name="headers" label="Headers" />
+        <TextFormField form={form} name="streamParams" label="Stream Params" />
+        <TextFormField form={form} name="streamHeaders" label="Stream Headers" />
         <FormSubmitButton />
       </form>
     </Form>

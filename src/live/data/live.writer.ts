@@ -122,7 +122,7 @@ export class LiveWriter {
       // hard delete
       return this.hardDelete(liveId, tx);
     } else {
-      // soft delete
+      // softly delete
       return this.disable(liveId, true, finished, tx);
     }
   }
@@ -141,7 +141,7 @@ export class LiveWriter {
       if (finished) {
         update.deletedAt = new Date();
       }
-      await this.update(liveId, { isDisabled: true, deletedAt: new Date() }, txx);
+      await this.update(liveId, update, txx);
       return live;
     });
   }

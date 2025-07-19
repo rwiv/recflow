@@ -17,7 +17,7 @@ export const stlinkStreamInfo = z.object({
       type: nonempty,
       name: nonempty,
       mediaPlaylistUrl: nonempty,
-      params: queryParams,
+      params: queryParams.optional(),
     })
     .optional(),
   headers: headers.optional(),

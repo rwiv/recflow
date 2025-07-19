@@ -116,6 +116,7 @@ export const nodeTable = pgTable(
     groupId: uuid('group_id')
       .notNull()
       .references(() => nodeGroupTable.id),
+    livesCnt: integer('lives_cnt').notNull(),
     failureCnt: integer('failure_cnt').notNull(),
     isDomestic: boolean('is_domestic').notNull(),
     createdAt: timestamp('created_at').notNull(),

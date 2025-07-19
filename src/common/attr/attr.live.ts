@@ -5,6 +5,7 @@ import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { stacktrace } from '../../utils/errors/utils.js';
+import { NodeDto } from '../../node/spec/node.dto.schema.js';
 
 interface LiveAttr {
   platform: string;
@@ -32,6 +33,13 @@ interface LiveInfoAttr {
   stack_trace?: string;
 }
 
+interface NodeAttr {
+  id: string;
+  group_id: string;
+  name: string;
+  lives_cnt: number;
+}
+
 interface Options {
   cr?: CriterionDto;
   node?: NodeDtoWithLives | null;
@@ -39,7 +47,16 @@ interface Options {
   err?: unknown;
 }
 
-export function liveAttr(live: LiveDto, opts?: Options) {
+export function nodeAttr(node: NodeDto): NodeAttr {
+  return {
+    id: node.id,
+    group_id: node.groupId,
+    name: node.name,
+    lives_cnt: node.livesCnt,
+  };
+}
+
+export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
   const attr: LiveAttr = {
     platform: live.platform.name,
     live_id: live.id,
@@ -68,7 +85,7 @@ export function liveAttr(live: LiveDto, opts?: Options) {
   return attr;
 }
 
-export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options) {
+export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options): LiveInfoAttr {
   const attr: LiveInfoAttr = {
     platform: liveInfo.type,
     live_uid: liveInfo.liveId,

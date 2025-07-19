@@ -23,6 +23,7 @@ export function mockNodeDto(overrides: Partial<NodeDto> = {}): NodeDto {
     capacity: faker.number.int({ min: 1, max: 100 }),
     isCordoned: faker.datatype.boolean(),
     isDomestic: faker.datatype.boolean(),
+    livesCnt: faker.number.int({ min: 0, max: 3 }),
     failureCnt: faker.number.int({ min: 0, max: 100 }),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),

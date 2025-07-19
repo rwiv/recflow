@@ -129,8 +129,7 @@ export class LiveRecoveryManager {
       const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
       return await this.liveRegistrar.register({
         channelInfo: channelLiveInfo.parse(channelInfo),
-        streamUrl: live.streamUrl ?? undefined,
-        streamHeaders: live.headers ?? undefined,
+        stream: live.stream ?? undefined,
         logMessage: 'Reregister Live',
       });
     } catch (e) {

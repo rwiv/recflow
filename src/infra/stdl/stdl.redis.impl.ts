@@ -25,10 +25,8 @@ export class StdlRedisImpl extends StdlRedis {
   }
 
   async createLiveState(live: LiveDto): Promise<void> {
-    if (!live.streamUrl) {
-      const errMsg = `streamUrl is required for liveDto`;
-      log.error(errMsg, liveAttr(live));
-      throw new ValidationError(errMsg);
+    if (!live.stream) {
+      throw NotFoundError.from('live.stream', 'id', live.id);
     }
 
     let location = this.defaultLocation;
@@ -37,13 +35,6 @@ export class StdlRedisImpl extends StdlRedis {
     }
     if (live.domesticOnly) {
       location = 'local';
-    }
-
-    if (live.streamUrl === null) {
-      throw NotFoundError.from('live.stream_url', 'id', live.id);
-    }
-    if (live.headers === null) {
-      throw NotFoundError.from('live.stream_headers', 'id', live.id);
     }
 
     const now = new Date();
@@ -55,9 +46,9 @@ export class StdlRedisImpl extends StdlRedis {
       liveId: live.sourceId,
       liveTitle: live.liveTitle,
       platformCookie: null,
-      streamUrl: live.streamUrl,
-      streamParams: null,
-      streamHeaders: live.headers,
+      streamUrl: live.stream.url,
+      streamParams: live.stream.params,
+      streamHeaders: live.stream.headers,
       videoName: live.videoName,
       fsName: this.fsName,
       location,

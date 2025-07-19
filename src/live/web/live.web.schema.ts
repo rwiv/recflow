@@ -2,12 +2,12 @@ import { z } from 'zod';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { exitCmd } from '../spec/event.schema.js';
 import { uuid } from '../../common/data/common.schema.js';
+import { streamInfo } from '../spec/live.dto.schema.js';
 
 export const liveAppendRequest = z.object({
   pid: z.string().nonempty(),
   platformName: platformNameEnum,
-  streamUrl: z.string().nonempty().nullable(),
-  headers: z.record(z.string()).nullable(),
+  stream: streamInfo.nullable(),
 });
 export type LiveAppendRequest = z.infer<typeof liveAppendRequest>;
 

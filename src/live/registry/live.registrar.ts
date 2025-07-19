@@ -28,8 +28,9 @@ import { LiveFinder } from '../data/live.finder.js';
 import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
 import { ExitCmd } from '../spec/event.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
+import { LiveDto, StreamInfo } from '../spec/live.dto.schema.js';
 import { LiveFinalizer } from './live.finalizer.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
@@ -41,11 +42,11 @@ export interface LiveFinishOptions {
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
   reusableLive?: LiveDtoWithNodes;
+
   logMessage?: string;
   logLevel?: LogLevel;
 
-  streamUrl?: string;
-  streamHeaders?: Record<string, string>;
+  stream?: StreamInfo;
   isFollowed?: boolean;
 
   // node selection options
@@ -79,10 +80,8 @@ export class LiveRegistrar {
     const liveInfo = req.channelInfo.liveInfo;
     const { platform, pid } = req.channelInfo;
 
-    let streamUrl = req.streamUrl ?? null;
-    let headers = req.streamHeaders ?? null;
-
-    if (!streamUrl || !headers) {
+    let stream = req.stream ?? null;
+    if (!stream) {
       // Check if the live is accessible
       let withAuth = liveInfo.isAdult;
       if (req.isFollowed && this.env.stlink.enforceAuthForFollowed) {
@@ -91,27 +90,33 @@ export class LiveRegistrar {
       if (req.criterion?.enforceCreds) {
         withAuth = true;
       }
-      const streamInfo = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
-      if (!streamInfo.openLive) {
+      const stRes = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
+      if (!stRes.openLive) {
         log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
         // live record is not created as it may normalize later
         return null;
       }
-      if (!streamInfo.best || !streamInfo.headers) {
+      if (!stRes.best || !stRes.headers) {
         log.error('Stream info is not available', liveInfoAttr(liveInfo));
         return null;
       }
-      streamUrl = streamInfo?.best?.mediaPlaylistUrl ?? null;
-      headers = streamInfo?.headers ?? null;
+
+      const streamUrl = stRes?.best?.mediaPlaylistUrl;
+      const streamHeaders = stRes?.headers;
+      if (!streamUrl || !streamHeaders) {
+        throw new ValidationError('Stream info is not available');
+      }
+      stream = { url: streamUrl, headers: streamHeaders, params: stRes?.best?.params ?? null };
     }
 
-    // If m3u8 is not available (e.g. standby mode in Soop)
-    const m3u8 = await this.stlink.fetchM3u8(streamUrl, headers);
-    if (!m3u8) {
-      // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-      log.warn('M3U8 not available', liveInfoAttr(liveInfo));
-      return null;
-    }
+    // TODO: remove
+    // // If m3u8 is not available (e.g. standby mode in Soop)
+    // const m3u8 = await this.stlink.fetchM3u8(streamUrl, headers);
+    // if (!m3u8) {
+    //   // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
+    //   log.warn('M3U8 not available', liveInfoAttr(liveInfo));
+    //   return null;
+    // }
 
     // If channel is not registered, create a new channel
     let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
@@ -122,15 +127,14 @@ export class LiveRegistrar {
     }
 
     return db.transaction(async (tx) => {
-      return this.registerWithTx(req, channel, streamUrl, headers, tx);
+      return this.registerWithTx(req, channel, stream, tx);
     });
   }
 
   private async registerWithTx(
     req: LiveRegisterRequest,
     channel: ChannelDto,
-    streamUrl: string | null,
-    headers: Record<string, string> | null,
+    stream: StreamInfo,
     tx: Tx,
   ): Promise<string | null> {
     let live = req.reusableLive;
@@ -167,7 +171,7 @@ export class LiveRegistrar {
     if (!live) {
       logMessage = 'New Live';
       const createOpts: LiveCreateOptions = { isDisabled: false, domesticOnly, overseasFirst };
-      live = await this.liveWriter.createByLive(liveInfo, streamUrl, headers, createOpts, tx);
+      live = await this.liveWriter.createByLive(liveInfo, stream, createOpts, tx);
     }
 
     // Set node
@@ -183,7 +187,7 @@ export class LiveRegistrar {
       this.notifier.sendLiveInfo(live);
     }
 
-    const attr = { ...liveAttr(live, { cr, node }), stream_url: streamUrl };
+    const attr = { ...liveAttr(live, { cr, node }), stream_url: stream.url };
     logging(logMessage, attr, req.logLevel ?? 'info');
     return live.id;
   }
@@ -202,7 +206,7 @@ export class LiveRegistrar {
       await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true, msg, logLevel: 'warn' });
     }
     createOpts.isDisabled = true;
-    const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, null, createOpts, tx);
+    const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
 
     if (withNotify) {
       const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;

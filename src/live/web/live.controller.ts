@@ -43,8 +43,7 @@ export class LiveController {
     }
     return this.liveService.register({
       channelInfo: channelLiveInfo.parse(channel),
-      streamUrl: req.streamUrl ?? undefined,
-      streamHeaders: req.headers ?? undefined,
+      stream: req.stream ?? undefined,
     });
   }
 

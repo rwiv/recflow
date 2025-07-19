@@ -4,23 +4,25 @@ import { Env } from '../../common/config/env.js';
 import { PlatformName } from '../spec/storage/platform.enum.schema.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { z } from 'zod';
-import { nonempty } from '../../common/data/common.schema.js';
+import { headers, nonempty, queryParams } from '../../common/data/common.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { delay } from '../../utils/time.js';
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
+import { LiveDto, StreamInfo } from '../../live/spec/live.dto.schema.js';
+import { liveAttr } from '../../common/attr/attr.live.js';
 
-export const streamInfo = z.object({
+export const stlinkStreamInfo = z.object({
   openLive: z.boolean(),
   best: z
     .object({
       type: nonempty,
       name: nonempty,
       mediaPlaylistUrl: nonempty,
+      params: queryParams,
     })
     .optional(),
-  headers: z.record(z.string()).optional(),
+  headers: headers.optional(),
 });
-export type StreamInfo = z.infer<typeof streamInfo>;
+export type StlinkStreamInfo = z.infer<typeof stlinkStreamInfo>;
 
 export const proxyType = z.enum(['domestic', 'overseas']);
 export type ProxyType = z.infer<typeof proxyType>;
@@ -32,7 +34,7 @@ const RETRY_DELAY_MS = 100;
 export class Stlink {
   constructor(@Inject(ENV) private readonly env: Env) {}
 
-  async fetchStreamInfo(platform: PlatformName, uid: string, withAuth: boolean): Promise<StreamInfo> {
+  async fetchStreamInfo(platform: PlatformName, uid: string, withAuth: boolean): Promise<StlinkStreamInfo> {
     if (platform === 'chzzk') {
       return await this._fetchStreamInfo(platform, uid, withAuth, 'domestic');
     } else if (platform === 'soop') {
@@ -52,7 +54,7 @@ export class Stlink {
     uid: string,
     withAuth: boolean,
     proxy: ProxyType | null,
-  ): Promise<StreamInfo> {
+  ): Promise<StlinkStreamInfo> {
     const params = new URLSearchParams({ fields: 'best,headers' });
     if (withAuth) {
       params.set('withAuth', 'true');
@@ -77,26 +79,21 @@ export class Stlink {
     if (res.status >= 400) {
       throw new HttpRequestError(`Failed to fetch stream info from stlink`, res.status);
     }
-    return streamInfo.parse(await res.json());
+    return stlinkStreamInfo.parse(await res.json());
   }
 
   async fetchM3u8ByLive(live: LiveDto): Promise<string | null> {
-    const streamUrl = live.streamUrl;
-    if (!streamUrl) {
-      throw new ValidationError('Stream URL not found');
+    if (!live.stream) {
+      throw new ValidationError('StreamInfo not found', { attr: liveAttr(live) });
     }
-    const headers = live.headers;
-    if (!headers) {
-      throw new ValidationError('Headers not found');
-    }
-    return this.fetchM3u8(streamUrl, headers);
+    return this.fetchM3u8(live.stream);
   }
 
-  async fetchM3u8(streamUrl: string, headers: Record<string, string>): Promise<string | null> {
+  async fetchM3u8(stream: StreamInfo): Promise<string | null> {
     for (let retryCnt = 0; retryCnt <= RETRY_LIMIT; retryCnt++) {
       try {
-        const res = await fetch(streamUrl, {
-          headers: headers,
+        const res = await fetch(stream.url, {
+          headers: stream.headers,
           signal: AbortSignal.timeout(this.env.httpTimeout),
         });
         if (res.status >= 400) {

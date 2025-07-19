@@ -9,8 +9,8 @@ import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { LiveRepository } from '../../live/storage/live.repository.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
-import { headers } from '../../common/data/common.schema.js';
+import { LiveDto, StreamInfo, streamInfo } from '../../live/spec/live.dto.schema.js';
+import { headers, queryParams } from '../../common/data/common.schema.js';
 
 @Injectable()
 export class NodeMapper {
@@ -41,11 +41,19 @@ export class NodeMapper {
         const platform = await platformP;
         const channel = await channelP;
         if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
+        let stream: StreamInfo | null = null;
+        if (liveEnt.streamUrl && liveEnt.streamHeaders) {
+          stream = {
+            url: liveEnt.streamUrl,
+            params: liveEnt.streamParams ? queryParams.parse(JSON.parse(liveEnt.streamParams)) : null,
+            headers: headers.parse(JSON.parse(liveEnt.streamHeaders)),
+          };
+        }
         lives.push({
           ...liveEnt,
           channel,
           platform,
-          headers: liveEnt.headers ? headers.parse(JSON.parse(liveEnt.headers)) : null,
+          stream: streamInfo.parse(stream),
         });
       }
       result = { ...result, lives };

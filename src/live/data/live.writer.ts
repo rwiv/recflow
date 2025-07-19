@@ -5,7 +5,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend } from '../spec/live.entity.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveMapper } from './live.mapper.js';
-import { LiveDto, LiveUpdate } from '../spec/live.dto.schema.js';
+import { LiveDto, LiveUpdate, StreamInfo } from '../spec/live.dto.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
@@ -42,8 +42,7 @@ export class LiveWriter {
 
   async createByLive(
     live: LiveInfo,
-    streamUrl: string | null,
-    headers: Record<string, string> | null,
+    stream: StreamInfo | null,
     opts: LiveCreateOptions,
     tx: Tx = db,
   ): Promise<LiveDto> {
@@ -69,13 +68,14 @@ export class LiveWriter {
       channelId: channel.id,
       sourceId: live.liveId,
       videoName,
-      streamUrl,
-      headers: headers ? JSON.stringify(headers) : null,
+      streamUrl: stream?.url ?? null,
+      streamParams: stream?.params ? JSON.stringify(stream.params) : null,
+      streamHeaders: stream?.headers ? JSON.stringify(stream.headers) : null,
       fsName: this.env.fsName,
     };
     const ent = await this.liveRepo.create(req, tx);
 
-    return { ...ent, channel, platform, headers };
+    return { ...ent, channel, platform, stream };
   }
 
   async bind(liveId: string, nodeId: string, tx: Tx = db) {

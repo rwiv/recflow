@@ -8,8 +8,8 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { NodeFieldsReq } from '../../node/spec/node.dto.schema.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
-import { headers, queryParams } from '../../common/data/common.schema.js';
-import { StreamInfo } from '../spec/live.dto.schema.js';
+import { LiveStreamDto } from '../spec/live.dto.schema.js';
+import { LiveStreamService } from './live-stream.service.js';
 
 export interface LiveFieldsReq {
   nodes?: boolean;
@@ -22,6 +22,7 @@ export class LiveMapper {
     private readonly pfFinder: PlatformFinder,
     private readonly channelFinder: ChannelFinder,
     private readonly nodeFinder: NodeFinder,
+    private readonly liveStreamService: LiveStreamService,
   ) {}
 
   async mapAll(lives: LiveEnt[], tx: Tx = db, opt: LiveFieldsReq): Promise<LiveDtoWithNodes[]> {
@@ -36,13 +37,9 @@ export class LiveMapper {
     const channel = await channelP;
     if (!channel) throw NotFoundError.from('Channel', 'id', liveEnt.channelId);
 
-    let stream: StreamInfo | null = null;
-    if (liveEnt.streamUrl && liveEnt.streamHeaders) {
-      stream = {
-        url: liveEnt.streamUrl,
-        params: liveEnt.streamParams ? queryParams.parse(JSON.parse(liveEnt.streamParams)) : null,
-        headers: headers.parse(JSON.parse(liveEnt.streamHeaders)),
-      };
+    let stream: LiveStreamDto | null = null;
+    if (liveEnt.liveStreamId) {
+      stream = await this.liveStreamService.findById(liveEnt.liveStreamId, tx);
     }
 
     let result: LiveDtoWithNodes = {
@@ -53,7 +50,7 @@ export class LiveMapper {
     };
 
     if (opt.nodes) {
-      const req: NodeFieldsReq = { group: opt.nodeGroup ?? false, lives: false };
+      const req: NodeFieldsReq = { group: opt.nodeGroup ?? false };
       const nodes = await this.nodeFinder.findByLiveId(liveEnt.id, req, tx);
       result = { ...result, nodes };
     }

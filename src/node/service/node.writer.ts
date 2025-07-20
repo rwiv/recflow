@@ -23,7 +23,7 @@ export class NodeWriter {
     return tx.transaction(async (tx) => {
       const entAppend: NodeEntAppend = append;
       const nodeEnt = await this.nodeRepo.create(entAppend, tx);
-      const record = await this.mapper.map(nodeEnt, { group: withGroup, lives: false }, tx);
+      const record = await this.mapper.map(nodeEnt, { group: withGroup }, tx);
       return { ...record };
     });
   }

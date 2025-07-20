@@ -20,7 +20,7 @@ export class NodeController {
 
   @Get('/')
   async nodes() {
-    return this.finder.findAll({ group: true, lives: true });
+    return this.finder.findAll({ group: true });
   }
 
   @Get('/status/:nodeName')
@@ -34,7 +34,7 @@ export class NodeController {
 
   @Get('/:nodeId')
   async node(@Param('nodeId') nodeId: string) {
-    return this.finder.findById(nodeId, { group: true, lives: true });
+    return this.finder.findById(nodeId, { group: true });
   }
 
   @Post('/')

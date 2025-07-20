@@ -126,37 +126,69 @@ export const nodeTable = pgTable(
   (t) => [
     uniqueIndex('node_name_idx').on(t.name),
     index('node_weight_idx').on(t.weight),
+    index('node_lives_cnt_idx').on(t.livesCnt),
     index('node_last_assigned_at_idx').on(t.lastAssignedAt.nullsFirst()),
+  ],
+);
+
+export const liveStreamTable = pgTable(
+  'live_stream',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    channelId: uuid('channel_id')
+      .notNull()
+      .references(() => channelTable.id),
+    sourceId: text('source_id').notNull(),
+    url: text('url').notNull(),
+    params: text('params'),
+    headers: text('headers').notNull(),
+    isOnLive: boolean('is_on_live').notNull(),
+    isInUse: boolean('is_in_use').notNull(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at').notNull(),
+    checkedAt: timestamp('checked_at').notNull(),
+  },
+  (t) => [
+    index('live_stream_channel_id_idx').on(t.channelId),
+    index('live_stream_source_id_idx').on(t.sourceId),
+    index('live_stream_checked_at_idx').on(t.checkedAt),
   ],
 );
 
 export const liveStatusEnum = ['initializing', 'recording', 'finalizing', 'deleted'] as const;
 
-export const liveTable = pgTable('live', {
-  id: uuid().primaryKey().defaultRandom(),
-  channelId: uuid('channel_id')
-    .notNull()
-    .references(() => channelTable.id),
-  platformId: uuid('platform_id')
-    .notNull()
-    .references(() => platformTable.id),
-  sourceId: text('source_id').notNull(),
-  liveTitle: text('live_title').notNull(),
-  streamUrl: text('stream_url'),
-  streamParams: text('stream_params'),
-  streamHeaders: text('stream_headers'),
-  fsName: text('fs_name').notNull(),
-  videoName: text('video_name').notNull(),
-  viewCnt: integer('view_cnt').notNull(),
-  isAdult: boolean('is_adult').notNull(),
-  status: text('status', { enum: liveStatusEnum }).notNull(),
-  isDisabled: boolean('is_disabled').notNull(),
-  domesticOnly: boolean('domestic_only').notNull(),
-  overseasFirst: boolean('overseas_first').notNull(),
-  createdAt: timestamp('created_at').notNull(),
-  updatedAt: timestamp('updated_at'),
-  deletedAt: timestamp('deleted_at'),
-});
+export const liveTable = pgTable(
+  'live',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    channelId: uuid('channel_id')
+      .notNull()
+      .references(() => channelTable.id),
+    platformId: uuid('platform_id')
+      .notNull()
+      .references(() => platformTable.id),
+    sourceId: text('source_id').notNull(),
+    liveTitle: text('live_title').notNull(),
+    liveDetails: text('live_details'),
+    liveStreamId: uuid('live_stream_id').references(() => liveStreamTable.id),
+    fsName: text('fs_name').notNull(),
+    videoName: text('video_name').notNull(),
+    viewCnt: integer('view_cnt').notNull(),
+    isAdult: boolean('is_adult').notNull(),
+    status: text('status', { enum: liveStatusEnum }).notNull(),
+    isDisabled: boolean('is_disabled').notNull(),
+    domesticOnly: boolean('domestic_only').notNull(),
+    overseasFirst: boolean('overseas_first').notNull(),
+    createdAt: timestamp('created_at').notNull(),
+    updatedAt: timestamp('updated_at'),
+    deletedAt: timestamp('deleted_at'),
+  },
+  (t) => [
+    index('live_channel_id_idx').on(t.channelId),
+    index('live_live_stream_id_idx').on(t.liveStreamId),
+    index('live_updated_at_idx').on(t.updatedAt),
+  ],
+);
 
 export const liveNodeTable = pgTable(
   'live_node',

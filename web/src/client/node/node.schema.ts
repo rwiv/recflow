@@ -29,6 +29,7 @@ export const nodeDto = z.object({
   capacity: z.coerce.number().nonnegative(),
   isCordoned: z.boolean(),
   isDomestic: z.boolean(),
+  livesCnt: z.number().int().nonnegative(),
   failureCnt: z.number().int().nonnegative(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().nullable(),

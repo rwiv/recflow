@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { headers, nonempty, queryParams } from '../../common/data/common.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { delay } from '../../utils/time.js';
-import { LiveDto, StreamInfo } from '../../live/spec/live.dto.schema.js';
+import { LiveDto, LiveStreamDto } from '../../live/spec/live.dto.schema.js';
 import { liveAttr } from '../../common/attr/attr.live.js';
 
 export const stlinkStreamInfo = z.object({
@@ -89,7 +89,7 @@ export class Stlink {
     return this.fetchM3u8(live.stream);
   }
 
-  async fetchM3u8(stream: StreamInfo): Promise<string | null> {
+  async fetchM3u8(stream: LiveStreamDto): Promise<string | null> {
     for (let retryCnt = 0; retryCnt <= RETRY_LIMIT; retryCnt++) {
       try {
         const res = await fetch(stream.url, {

@@ -25,7 +25,7 @@ export function LiveTable({ lives, withDisabled, setWithDisabled }: LiveTablePro
     <div className="w-full">
       <div className="flex justify-between items-center mb-4">
         <div className="flex">
-          <FilterInput table={table} columnId={'node'} placeholder="Filter nodes..." />
+          <FilterInput table={table} columnId={'title'} placeholder="Filter title..." />
           <div className="flex gap-1.5 mx-5">
             <LiveCreateButton />
             <LiveRemoveButton table={table} />

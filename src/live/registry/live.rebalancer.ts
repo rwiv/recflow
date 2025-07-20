@@ -48,23 +48,23 @@ export class LiveRebalancer {
   }
 
   async drainByNode(nodeId: string) {
-    const node = await this.nodeFinder.findById(nodeId, { lives: true });
+    const node = await this.nodeFinder.findById(nodeId, {});
     if (!node) {
       log.error(`Node not found`, { nodeId });
       return;
     }
 
     try {
-      assert(node.lives);
-      if (node.lives.length === 0) {
+      const lives = await this.liveFinder.findByNodeId(node.id);
+      if (lives.length === 0) {
         log.debug(`No lives to drain`, { node_id: nodeId });
         return;
       }
 
-      for (const live of node.lives) {
+      for (const live of lives) {
         await this.drainByLive(live, node);
       }
-      for (const live of node.lives) {
+      for (const live of lives) {
         await this.waitForCanceled(live, node);
       }
       log.info(`Node drain completed`, { group_id: node.groupId, node_id: nodeId, node_name: node.name });

@@ -13,6 +13,7 @@ import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { StreamInfo } from '@/client/live/live.schema';
+import { headers, queryParams } from '@/common/common.schema';
 
 const formSchema = z.object({
   type: platformNameEnum,
@@ -62,8 +63,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
     if (streamUrl && headersStr) {
       stream = {
         url: streamUrl,
-        params: paramsStr ? JSON.parse(paramsStr) : null,
-        headers: JSON.parse(headersStr),
+        params: paramsStr ? queryParams.parse(JSON.parse(paramsStr)) : null,
+        headers: headers.parse(JSON.parse(headersStr)),
       };
     }
 

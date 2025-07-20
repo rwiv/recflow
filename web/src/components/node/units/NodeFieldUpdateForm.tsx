@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { NODES_QUERY_KEY } from '@/common/constants.ts';
 import { updateNode } from '@/client/node/node.client.ts';
-import { NodeDtoWithLives } from '@/client/node/node.mapped.schema.ts';
+import { NodeDto } from '@/client/node/node.schema';
 
 type Type = 'name' | 'endpoint' | 'weight' | 'capacity' | 'failureCnt';
 
 interface NodeFieldUpdateForm {
   type: Type;
-  node: NodeDtoWithLives;
+  node: NodeDto;
 }
 
 const stringSchema = z.string().nonempty();
@@ -61,7 +61,7 @@ function getValidate(type: Type) {
   }
 }
 
-function getDefaultValue(type: Type, node: NodeDtoWithLives) {
+function getDefaultValue(type: Type, node: NodeDto) {
   switch (type) {
     case 'name':
       return node.name;
@@ -78,8 +78,7 @@ function getDefaultValue(type: Type, node: NodeDtoWithLives) {
   }
 }
 
-function getPrintValue(type: Type, node: NodeDtoWithLives) {
-  const lives = node.lives;
+function getPrintValue(type: Type, node: NodeDto) {
   switch (type) {
     case 'endpoint':
       if (node.endpoint.length > endpointSize) {
@@ -88,11 +87,7 @@ function getPrintValue(type: Type, node: NodeDtoWithLives) {
         return node.endpoint;
       }
     case 'capacity':
-      if (!lives) {
-        return `-1 / ${node.capacity}`;
-      } else {
-        return `${lives.length} / ${node.capacity}`;
-      }
+      return `${node.livesCnt} / ${node.capacity}`;
     default:
       return getDefaultValue(type, node);
   }

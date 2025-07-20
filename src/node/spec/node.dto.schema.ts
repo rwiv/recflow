@@ -17,5 +17,4 @@ export type NodeGroupDto = z.infer<typeof nodeGroupDto>;
 
 export interface NodeFieldsReq {
   group?: boolean;
-  lives?: boolean;
 }

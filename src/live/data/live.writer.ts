@@ -5,7 +5,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveEntAppend } from '../spec/live.entity.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveMapper } from './live.mapper.js';
-import { LiveDto, LiveUpdate, StreamInfo } from '../spec/live.dto.schema.js';
+import { LiveDto, LiveStreamDto, LiveUpdate } from '../spec/live.dto.schema.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
@@ -19,6 +19,7 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NodeRepository } from '../../node/storage/node.repository.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { nodeAttr } from '../../common/attr/attr.live.js';
+import { LiveStreamService } from './live-stream.service.js';
 
 export interface LiveCreateOptions {
   isDisabled: boolean;
@@ -34,6 +35,7 @@ export class LiveWriter {
     private readonly liveRepo: LiveRepository,
     private readonly pfFinder: PlatformFinder,
     private readonly liveFinder: LiveFinder,
+    private readonly liveStreamService: LiveStreamService,
     private readonly channelFinder: ChannelFinder,
     private readonly liveNodeRepo: LiveNodeRepository,
     private readonly nodeRepo: NodeRepository,
@@ -42,7 +44,7 @@ export class LiveWriter {
 
   async createByLive(
     live: LiveInfo,
-    stream: StreamInfo | null,
+    stream: LiveStreamDto | null,
     opts: LiveCreateOptions,
     tx: Tx = db,
   ): Promise<LiveDto> {
@@ -67,10 +69,9 @@ export class LiveWriter {
       platformId: platform.id,
       channelId: channel.id,
       sourceId: live.liveId,
+      liveDetails: null,
       videoName,
-      streamUrl: stream?.url ?? null,
-      streamParams: stream?.params ? JSON.stringify(stream.params) : null,
-      streamHeaders: stream?.headers ? JSON.stringify(stream.headers) : null,
+      liveStreamId: stream?.id ?? null,
       fsName: this.env.fsName,
     };
     const ent = await this.liveRepo.create(req, tx);
@@ -103,12 +104,15 @@ export class LiveWriter {
     const live = await this.liveFinder.findById(liveId, { nodes: true }, tx);
     if (!live) throw NotFoundError.from('Live', 'id', liveId);
 
-    return tx.transaction(async (tx) => {
+    return tx.transaction(async (txx) => {
       assert(live.nodes);
       for (const node of live.nodes) {
         await this.liveNodeRepo.delete({ liveId, nodeId: node.id });
       }
-      await this.liveRepo.delete(liveId, tx);
+      await this.liveRepo.delete(liveId, txx);
+      if (live.stream) {
+        await this.liveStreamService.delete(live.stream.id, txx); // TODO: remove
+      }
       return live;
     });
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseFilters } from '@nestjs/common';
 import { LiveRegistrar } from '../registry/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../spec/event.schema.js';
@@ -25,7 +25,10 @@ export class LiveController {
   ) {}
 
   @Get('/')
-  allActives(): Promise<LiveDto[]> {
+  allActives(@Query('nodeId') nodeId?: string): Promise<LiveDto[]> {
+    if (nodeId) {
+      return this.liveFinder.findByNodeId(nodeId, { nodes: true, nodeGroup: true });
+    }
     return this.liveFinder.findAllActives({ nodes: true, nodeGroup: true });
   }
 

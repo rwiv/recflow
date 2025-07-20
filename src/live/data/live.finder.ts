@@ -29,8 +29,13 @@ export class LiveFinder {
     }
   }
 
-  async findByPid(pid: string, tx: Tx = db, opts: FindOptions = {}) {
+  async findByPid(pid: string, opts: FindOptions = {}, tx: Tx = db) {
     const entities = await this.liveRepo.findByPid(pid, tx);
+    return this.mapper.mapAll(entities, tx, opts);
+  }
+
+  async findByNodeId(nodeId: string, opts: FindOptions = {}, tx: Tx = db) {
+    const entities = await this.liveRepo.findByNodeId(nodeId, tx);
     return this.mapper.mapAll(entities, tx, opts);
   }
 

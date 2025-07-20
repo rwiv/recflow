@@ -2,8 +2,6 @@ import { liveState, LiveState, SegmentKeyword, StdlRedis } from './stdl.redis.js
 import { RedisClientType } from 'redis';
 import { LiveDto } from '../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { log } from 'jslog';
-import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlLocationType } from './stdl.types.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 

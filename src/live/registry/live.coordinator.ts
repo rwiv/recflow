@@ -76,7 +76,7 @@ export class LiveCoordinator {
     isFollowed: boolean,
     tx: Tx = db,
   ): Promise<ChannelLiveInfo | null> {
-    if ((await this.liveFinder.findByPid(pid, tx)).length > 0) return null;
+    if ((await this.liveFinder.findByPid(pid, {}, tx)).length > 0) return null;
 
     if (isFollowed) {
       const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false);

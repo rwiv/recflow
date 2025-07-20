@@ -11,9 +11,8 @@ export const liveEnt = z.object({
   platformId: uuid,
   sourceId: nonempty,
   liveTitle: nonempty,
-  streamUrl: nonempty.nullable(),
-  streamParams: nonempty.nullable(),
-  streamHeaders: nonempty.nullable(),
+  liveDetails: nonempty.nullable(),
+  liveStreamId: uuid.nullable(),
   fsName: nonempty,
   videoName: nonempty,
   viewCnt: nnint,
@@ -40,3 +39,31 @@ export type LiveEntAppend = z.infer<typeof liveEntAppend>;
 
 export const liveEntUpdate = liveEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type LiveEntUpdate = z.infer<typeof liveEntUpdate>;
+
+export const liveStreamEnt = z.object({
+  id: uuid,
+  channelId: uuid,
+  sourceId: nonempty,
+  url: nonempty,
+  params: nonempty.nullable(),
+  headers: nonempty,
+  isInUse: z.boolean(),
+  isOnLive: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  checkedAt: z.coerce.date(),
+});
+export type LiveStreamEnt = z.infer<typeof liveStreamEnt>;
+
+export const liveStreamEntAppend = liveStreamEnt.partial({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  checkedAt: true,
+});
+export type LiveStreamEntAppend = z.infer<typeof liveStreamEntAppend>;
+
+export const liveStreamEntUpdate = liveStreamEnt
+  .omit({ id: true, createdAt: true, updatedAt: true, checkedAt: true })
+  .partial();
+export type LiveStreamEntUpdate = z.infer<typeof liveStreamEntUpdate>;

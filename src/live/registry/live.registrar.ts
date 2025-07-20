@@ -28,9 +28,10 @@ import { LiveFinder } from '../data/live.finder.js';
 import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
 import { ExitCmd } from '../spec/event.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
-import { LiveDto, StreamInfo } from '../spec/live.dto.schema.js';
+import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { LiveStreamService } from '../data/live-stream.service.js';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
@@ -68,6 +69,7 @@ export class LiveRegistrar {
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
+    private readonly liveStreamService: LiveStreamService,
     private readonly finalizer: LiveFinalizer,
     private readonly stlink: Stlink,
     @Inject(ENV) private readonly env: Env,
@@ -76,38 +78,72 @@ export class LiveRegistrar {
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
+  async getLiveStream(
+    req: LiveRegisterRequest,
+    liveInfo: LiveInfo,
+    channel: ChannelDto,
+  ): Promise<LiveStreamDto | null> {
+    const queried = await this.liveStreamService.findByQueryLatestOne({
+      sourceId: liveInfo.liveId,
+      channelId: channel.id,
+    });
+    if (queried) {
+      return queried;
+    }
+
+    if (req.stream) {
+      return await this.liveStreamService.createBy({
+        sourceId: liveInfo.liveId,
+        channelId: channel.id,
+        streamInfo: req.stream,
+      });
+    }
+
+    // Check if the live is accessible
+    let withAuth = liveInfo.isAdult;
+    if (req.isFollowed && this.env.stlink.enforceAuthForFollowed) {
+      withAuth = true;
+    }
+    if (req.criterion?.enforceCreds) {
+      withAuth = true;
+    }
+    const { platform, pid } = req.channelInfo;
+    const stRes = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
+    if (!stRes.openLive) {
+      log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
+      // live record is not created as it may normalize later
+      return null;
+    }
+    if (!stRes.best || !stRes.headers) {
+      log.error('Stream info is not available', liveInfoAttr(liveInfo));
+      return null;
+    }
+
+    const streamUrl = stRes?.best?.mediaPlaylistUrl;
+    const streamHeaders = stRes?.headers;
+    if (!streamUrl || !streamHeaders) {
+      throw new ValidationError('Stream info is not available');
+    }
+    return await this.liveStreamService.createBy({
+      sourceId: liveInfo.liveId,
+      channelId: channel.id,
+      streamInfo: { url: streamUrl, headers: streamHeaders, params: stRes?.best?.params ?? null },
+    });
+  }
+
   async register(req: LiveRegisterRequest): Promise<string | null> {
     const liveInfo = req.channelInfo.liveInfo;
-    const { platform, pid } = req.channelInfo;
 
-    let stream = req.stream ?? null;
-    if (!stream) {
-      // Check if the live is accessible
-      let withAuth = liveInfo.isAdult;
-      if (req.isFollowed && this.env.stlink.enforceAuthForFollowed) {
-        withAuth = true;
-      }
-      if (req.criterion?.enforceCreds) {
-        withAuth = true;
-      }
-      const stRes = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
-      if (!stRes.openLive) {
-        log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
-        // live record is not created as it may normalize later
-        return null;
-      }
-      if (!stRes.best || !stRes.headers) {
-        log.error('Stream info is not available', liveInfoAttr(liveInfo));
-        return null;
-      }
-
-      const streamUrl = stRes?.best?.mediaPlaylistUrl;
-      const streamHeaders = stRes?.headers;
-      if (!streamUrl || !streamHeaders) {
-        throw new ValidationError('Stream info is not available');
-      }
-      stream = { url: streamUrl, headers: streamHeaders, params: stRes?.best?.params ?? null };
+    // If channel is not registered, create a new channel
+    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
+    if (!channel) {
+      const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
+      const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
+      channel = await this.chWriter.createWithInfo(append, req.channelInfo);
     }
+
+    const liveStream = await this.getLiveStream(req, liveInfo, channel);
+    if (!liveStream) return null;
 
     // TODO: remove
     // // If m3u8 is not available (e.g. standby mode in Soop)
@@ -118,23 +154,15 @@ export class LiveRegistrar {
     //   return null;
     // }
 
-    // If channel is not registered, create a new channel
-    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
-    if (!channel) {
-      const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
-      const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
-      channel = await this.chWriter.createWithInfo(append, req.channelInfo);
-    }
-
     return db.transaction(async (tx) => {
-      return this.registerWithTx(req, channel, stream, tx);
+      return this.registerWithTx(req, channel, liveStream, tx);
     });
   }
 
   private async registerWithTx(
     req: LiveRegisterRequest,
     channel: ChannelDto,
-    stream: StreamInfo,
+    stream: LiveStreamDto,
     tx: Tx,
   ): Promise<string | null> {
     let live = req.reusableLive;

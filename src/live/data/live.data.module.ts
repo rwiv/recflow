@@ -11,6 +11,8 @@ import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveStateCleaner } from './live.state.cleaner.js';
 import { InfraModule } from '../../infra/infra.module.js';
+import { LiveStreamService } from './live-stream.service.js';
+import { LiveStreamMapper } from './live-stream.mapper.js';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { InfraModule } from '../../infra/infra.module.js';
     NodeServiceModule,
     PlatformModule,
   ],
-  providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner],
-  exports: [LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner],
+  providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner, LiveStreamMapper, LiveStreamService],
+  exports: [LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner, LiveStreamService],
 })
 export class LiveDataModule {}

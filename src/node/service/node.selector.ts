@@ -4,7 +4,6 @@ import { NodeDto } from '../spec/node.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
-import { notNull } from '../../utils/null.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface NodeSelectorOptions {
@@ -56,7 +55,7 @@ export class NodeSelector {
 
     let minNode = nodes[0];
     for (let i = 0; i < nodes.length; i++) {
-      if (notNull(nodes[i].lives).length < notNull(minNode.lives).length) {
+      if (nodes[i].livesCnt < minNode.livesCnt) {
         minNode = nodes[i];
       }
     }
@@ -64,13 +63,13 @@ export class NodeSelector {
   }
 
   private async findCandidateNodes(opts: NodeSelectorOptions, tx: Tx): Promise<NodeDtoWithLives[]> {
-    return (await this.nodeFinder.findAll({ lives: true }, tx))
+    return (await this.nodeFinder.findAll({}, tx))
       .filter((node) => !node.isCordoned)
       .filter((node) => !opts.ignoreNodeIds.includes(node.id))
       .filter((node) => !opts.ignoreGroupIds.includes(node.groupId))
       .filter((node) => (opts.domesticOnly ? node.isDomestic : true))
       .filter((node) => (opts.overseasFirst ? !node.isDomestic : true))
-      .filter((node) => notNull(node.lives).length < node.capacity);
+      .filter((node) => node.livesCnt < node.capacity);
   }
 }
 

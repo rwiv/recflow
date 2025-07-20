@@ -1,19 +1,18 @@
 import { configs } from '@/common/configs.ts';
 import { getIngredients, request } from '@/client/common/common.client.utils.ts';
-import { NodeAppend, NodeUpdate } from '@/client/node/node.schema.ts';
+import { NodeAppend, nodeDto, NodeUpdate } from '@/client/node/node.schema.ts';
 import { parseList } from '@/common/utils.schema.ts';
-import { nodeDtoWithLives } from '@/client/node/node.mapped.schema.ts';
 
 export async function fetchNodes() {
   const res = await request(`${configs.endpoint}/api/nodes`);
-  const nodes = parseList(nodeDtoWithLives, await res.json());
+  const nodes = parseList(nodeDto, await res.json());
   return nodes.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createNode(append: NodeAppend) {
   const { method, headers, body } = getIngredients('POST', append);
   const res = await request(`${configs.endpoint}/api/nodes`, { method, headers, body });
-  return nodeDtoWithLives.parse(await res.json());
+  return nodeDto.parse(await res.json());
 }
 
 export async function updateNode(id: string, form: NodeUpdate) {

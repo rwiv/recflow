@@ -248,7 +248,7 @@ export class LiveRegistrar {
   }
 
   async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
-    await this.liveWriter.unbind(live.id, node.id, tx);
+    await this.liveWriter.unbind({ liveId: live.id, nodeId: node.id }, tx);
     await this.finalizer.cancelRecorder(live, node);
     log.debug('Deregister node in live', liveAttr(live, { node }));
   }

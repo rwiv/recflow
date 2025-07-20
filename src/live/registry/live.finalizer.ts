@@ -113,6 +113,7 @@ export class LiveFinalizer {
           const live = await this.liveFinder.findById(req.liveId, { forUpdate: true }, tx);
           // LiveCleaner may have already removed live
           if (live) {
+            await this.liveWriter.update(live.id, { status: 'deleted' });
             const deleted = await this.liveWriter.delete(live.id, req.isPurge, true, tx);
             // logging(req.msg, { ...liveAttr(deleted), cmd: req.exitCmd }, req.logLevel);
           }
@@ -121,6 +122,7 @@ export class LiveFinalizer {
       } catch (err) {
         if (retryCnt === RETRY_LIMIT) {
           log.error(`Failed to finish live`, liveAttr(live, { err }));
+          await this.liveWriter.update(live.id, { status: 'deleted' });
           await this.liveWriter.delete(live.id, true, true);
           return;
         }

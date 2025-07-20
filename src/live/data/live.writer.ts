@@ -88,7 +88,8 @@ export class LiveWriter {
     });
   }
 
-  async unbind(liveId: string, nodeId: string, tx: Tx = db) {
+  async unbind(req: { liveId: string; nodeId: string }, tx: Tx = db) {
+    const { liveId, nodeId } = req;
     return tx.transaction(async (txx) => {
       const node = await this.nodeRepo.findByIdForUpdate(nodeId, txx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
@@ -107,7 +108,7 @@ export class LiveWriter {
     return tx.transaction(async (txx) => {
       assert(live.nodes);
       for (const node of live.nodes) {
-        await this.liveNodeRepo.delete({ liveId, nodeId: node.id });
+        await this.unbind({ liveId, nodeId: node.id }, txx);
       }
       await this.liveRepo.delete(liveId, txx);
       if (live.stream) {
@@ -138,7 +139,7 @@ export class LiveWriter {
     return tx.transaction(async (txx) => {
       if (live.nodes) {
         for (const node of live.nodes) {
-          await this.liveNodeRepo.delete({ liveId, nodeId: node.id }, txx);
+          await this.unbind({ liveId, nodeId: node.id }, txx);
         }
       }
       const update: LiveUpdate = { isDisabled: true };

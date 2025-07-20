@@ -81,7 +81,7 @@ export class LiveWriter {
 
   async bind(liveId: string, nodeId: string, tx: Tx = db) {
     return tx.transaction(async (txx) => {
-      const node = await this.nodeRepo.findById(nodeId, txx);
+      const node = await this.nodeRepo.findByIdForUpdate(nodeId, txx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
       await this.liveNodeRepo.create({ liveId, nodeId }, txx);
       await this.nodeRepo.update(nodeId, { livesCnt: node.livesCnt + 1 }, txx);
@@ -91,7 +91,7 @@ export class LiveWriter {
   async unbind(req: { liveId: string; nodeId: string }, tx: Tx = db) {
     const { liveId, nodeId } = req;
     return tx.transaction(async (txx) => {
-      const node = await this.nodeRepo.findById(nodeId, txx);
+      const node = await this.nodeRepo.findByIdForUpdate(nodeId, txx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
       if (node.livesCnt === 0) {
         throw new ValidationError('No active live streams are bound to this node to unbind.', { attr: nodeAttr(node) });

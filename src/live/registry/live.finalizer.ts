@@ -108,12 +108,14 @@ export class LiveFinalizer {
       }
 
       try {
-        await this._finishLive(live, req.exitCmd);
+        if (this.env.nodeEnv === 'prod') {
+          await this._finishLive(live, req.exitCmd);
+        }
         await db.transaction(async (tx) => {
           const live = await this.liveFinder.findById(req.liveId, { forUpdate: true }, tx);
           // LiveCleaner may have already removed live
           if (live) {
-            await this.liveWriter.update(live.id, { status: 'deleted' });
+            await this.liveWriter.update(live.id, { status: 'deleted' }, tx);
             const deleted = await this.liveWriter.delete(live.id, req.isPurge, true, tx);
             // logging(req.msg, { ...liveAttr(deleted), cmd: req.exitCmd }, req.logLevel);
           }
@@ -122,7 +124,6 @@ export class LiveFinalizer {
       } catch (err) {
         if (retryCnt === RETRY_LIMIT) {
           log.error(`Failed to finish live`, liveAttr(live, { err }));
-          await this.liveWriter.update(live.id, { status: 'deleted' });
           await this.liveWriter.delete(live.id, true, true);
           return;
         }

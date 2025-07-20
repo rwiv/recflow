@@ -32,6 +32,7 @@ import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { LiveStreamService } from '../data/live-stream.service.js';
+import { LiveStreamQuery } from '../storage/live.stream.repository.js';
 
 export interface LiveFinishOptions {
   isPurge?: boolean;
@@ -83,13 +84,9 @@ export class LiveRegistrar {
     liveInfo: LiveInfo,
     channel: ChannelDto,
   ): Promise<LiveStreamDto | null> {
-    const queried = await this.liveStreamService.findByQueryLatestOne({
-      sourceId: liveInfo.liveId,
-      channelId: channel.id,
-    });
-    if (queried) {
-      return queried;
-    }
+    const query: LiveStreamQuery = { sourceId: liveInfo.liveId, channelId: channel.id };
+    const exists = await this.liveStreamService.findByQueryLatestOne(query);
+    if (exists) return exists;
 
     if (req.stream) {
       return await this.liveStreamService.createBy({

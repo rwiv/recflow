@@ -86,9 +86,6 @@ export class LiveRecoveryManager {
     }
     const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, withAuth);
     if (!streamInfo.openLive) {
-      if (live.platform.name === 'soop') {
-        await this.registerSameLive(live);
-      }
       await this.finishLive(live.id, 'Delete uncleaned live', 'info');
       return;
     }

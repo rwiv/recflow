@@ -112,7 +112,10 @@ export class LiveWriter {
       }
       await this.liveRepo.delete(liveId, txx);
       if (live.stream) {
-        await this.liveStreamService.delete(live.stream.id, txx); // TODO: remove
+        const lives = await this.liveRepo.findByStreamId(live.stream.id, txx);
+        if (lives.length === 0) {
+          await this.liveStreamService.delete(live.stream.id, txx); // TODO: remove
+        }
       }
       return live;
     });

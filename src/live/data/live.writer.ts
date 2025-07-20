@@ -79,21 +79,19 @@ export class LiveWriter {
     return { ...ent, channel, platform, stream };
   }
 
-  async bind(liveId: string, nodeId: string) {
-    // To prevent deadlock
-    return db.transaction(async (txx) => {
-      const node = await this.nodeRepo.findByIdForUpdate(nodeId, txx);
+  async bind(liveId: string, nodeId: string, tx: Tx = db) {
+    return tx.transaction(async (txx) => {
+      const node = await this.nodeRepo.findById(nodeId, txx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
       await this.liveNodeRepo.create({ liveId, nodeId }, txx);
       await this.nodeRepo.update(nodeId, { livesCnt: node.livesCnt + 1 }, txx);
     });
   }
 
-  async unbind(req: { liveId: string; nodeId: string }) {
-    // To prevent deadlock
-    return db.transaction(async (txx) => {
-      const { liveId, nodeId } = req;
-      const node = await this.nodeRepo.findByIdForUpdate(nodeId, txx);
+  async unbind(req: { liveId: string; nodeId: string }, tx: Tx = db) {
+    const { liveId, nodeId } = req;
+    return tx.transaction(async (txx) => {
+      const node = await this.nodeRepo.findById(nodeId, txx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
       if (node.livesCnt === 0) {
         throw new ValidationError('No active live streams are bound to this node to unbind.', { attr: nodeAttr(node) });
@@ -110,7 +108,7 @@ export class LiveWriter {
     return tx.transaction(async (txx) => {
       assert(live.nodes);
       for (const node of live.nodes) {
-        await this.unbind({ liveId, nodeId: node.id });
+        await this.unbind({ liveId, nodeId: node.id }, txx);
       }
       await this.liveRepo.delete(liveId, txx);
       if (live.stream) {
@@ -141,7 +139,7 @@ export class LiveWriter {
     return tx.transaction(async (txx) => {
       if (live.nodes) {
         for (const node of live.nodes) {
-          await this.unbind({ liveId, nodeId: node.id });
+          await this.unbind({ liveId, nodeId: node.id }, txx);
         }
       }
       const update: LiveUpdate = { isDisabled: true };

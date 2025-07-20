@@ -203,7 +203,7 @@ export class LiveRegistrar {
     }
 
     // Set node
-    await this.liveWriter.bind(live.id, node.id);
+    await this.liveWriter.bind(live.id, node.id, tx);
     await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
     if (!(await this.stdlRedis.getLiveState(live.id, false))) {
       await this.stdlRedis.createLiveState(live);
@@ -247,8 +247,8 @@ export class LiveRegistrar {
     return newDisabledLive.id;
   }
 
-  async deregister(live: LiveDto, node: NodeDto) {
-    await this.liveWriter.unbind({ liveId: live.id, nodeId: node.id });
+  async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
+    await this.liveWriter.unbind({ liveId: live.id, nodeId: node.id }, tx);
     await this.finalizer.cancelRecorder(live, node);
     log.debug('Deregister node in live', liveAttr(live, { node }));
   }

@@ -11,17 +11,17 @@ import {
   DEFAULT_REGISTER_CYCLE,
   DEFAULT_LIVE_STATE_CLEANUP_CYCLE,
   DEFAULT_LIVE_ALLOCATION_CYCLE,
-} from './spec/live.task.contants.js';
+} from './live.task.contants.js';
 import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
 import { LiveAllocator } from '../../live/registry/live.allocator.js';
 import { Task } from '../spec/task.interface.js';
-import { liveTaskName } from './spec/live.task.names.js';
+import { liveTaskName } from './live.task.names.js';
 import { createWorker } from '../schedule/task.utils.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
 import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
-import { LiveRegisterTask } from './tasks/live.register-task.js';
+import { LiveRegisterTask } from './live.register-task.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -42,7 +42,6 @@ export class LiveTaskInitializer {
 
     const registerTask = new LiveRegisterTask(this.crFinder, this.liveCoordinator);
     createWorker(registerTask, { connection: this.redis, concurrency: 100 }, this.runner);
-    // this.scheduler.addPeriodTask(registerTask, DEFAULT_REGISTER_CYCLE, true);
 
     const cleanupTask: Task = {
       name: liveTaskName.LIVE_CLEANUP,
@@ -50,7 +49,6 @@ export class LiveTaskInitializer {
       run: () => this.liveCleaner.cleanup(),
     };
     createWorker(cleanupTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(cleanupTask, DEFAULT_CLEANUP_CYCLE, true);
 
     const refreshTask: Task = {
       name: liveTaskName.LIVE_REFRESH,
@@ -58,7 +56,6 @@ export class LiveTaskInitializer {
       run: () => this.liveRefresher.refreshEarliestOne(),
     };
     createWorker(refreshTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(refreshTask, DEFAULT_REFRESH_CYCLE, true);
 
     const recoveryTask: Task = {
       name: liveTaskName.LIVE_RECOVERY,
@@ -66,7 +63,6 @@ export class LiveTaskInitializer {
       run: () => this.liveRecoveryManager.check(),
     };
     createWorker(recoveryTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(recoveryTask, DEFAULT_RECOVERY_CYCLE, true);
 
     const followedRegisterTask: Task = {
       name: liveTaskName.LIVE_REGISTER_FOLLOWED,
@@ -74,7 +70,6 @@ export class LiveTaskInitializer {
       run: () => this.liveCoordinator.registerFollowedLives(),
     };
     createWorker(followedRegisterTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(followedRegisterTask, DEFAULT_REGISTER_CYCLE, true);
 
     const liveStateCleanupTask: Task = {
       name: liveTaskName.LIVE_STATE_CLEANUP,
@@ -82,7 +77,6 @@ export class LiveTaskInitializer {
       run: () => this.liveStateCleaner.cleanup(),
     };
     createWorker(liveStateCleanupTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(liveStateCleanupTask, DEFAULT_LIVE_STATE_CLEANUP_CYCLE, true);
 
     const liveAllocationTask: Task = {
       name: liveTaskName.LIVE_ALLOCATION,
@@ -90,6 +84,5 @@ export class LiveTaskInitializer {
       run: () => this.liveAllocator.check(),
     };
     createWorker(liveAllocationTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(liveAllocationTask, DEFAULT_LIVE_ALLOCATION_CYCLE, true);
   }
 }

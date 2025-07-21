@@ -8,6 +8,7 @@ import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
 import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
 import { log } from 'jslog';
+import { TaskRegistrar } from './task/schedule/task.registrar.js';
 
 async function bootstrap() {
   log.setLevel('debug');
@@ -26,6 +27,8 @@ async function bootstrap() {
   app.get(LiveTaskInitializer).init();
   app.get(ChannelTaskInitializer).init();
   app.get(NodeTaskInitializer).init();
+
+  app.get(TaskRegistrar).check();
 
   await app.listen(env.appPort);
 }

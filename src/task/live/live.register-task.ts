@@ -1,13 +1,13 @@
-import { Task } from '../../spec/task.interface.js';
-import { liveTaskName } from '../spec/live.task.names.js';
-import { LiveCoordinator } from '../../../live/registry/live.coordinator.js';
-import { CriterionFinder } from '../../../criterion/service/criterion.finder.js';
-import { DEFAULT_REGISTER_CYCLE } from '../spec/live.task.contants.js';
-import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { MissingValueError } from '../../../utils/errors/errors/MissingValueError.js';
+import { Task } from '../spec/task.interface.js';
+import { liveTaskName } from './live.task.names.js';
+import { LiveCoordinator } from '../../live/registry/live.coordinator.js';
+import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
+import { DEFAULT_REGISTER_CYCLE } from './live.task.contants.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 
 export class LiveRegisterTask implements Task {
-  public readonly name: string = liveTaskName.LIVE_REGISTER;
+  public readonly name: string = liveTaskName.LIVE_REGISTER_CRITERION;
   public readonly delay: number = DEFAULT_REGISTER_CYCLE;
 
   constructor(

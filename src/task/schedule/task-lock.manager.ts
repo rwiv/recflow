@@ -35,6 +35,6 @@ export class TaskLockManager {
   }
 
   private getKey(taskName: string) {
-    return `task:lock:${taskName}`;
+    return `task:${taskName}:lock`;
   }
 }

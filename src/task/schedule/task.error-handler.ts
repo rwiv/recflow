@@ -7,9 +7,9 @@ import { stacktrace } from '../../utils/errors/utils.js';
 export class TaskErrorHandler {
   readonly resolver = new BaseErrorResolver();
 
-  handle(raw: unknown) {
-    const err = this.resolver.resolve(raw);
-    log.error(err.message, { ...err.attr, stack_trace: stacktrace(err) });
-    // throw raw; // TODO: activate
+  handle(err: unknown) {
+    const resolved = this.resolver.resolve(err);
+    log.error(resolved.message, { ...resolved.attr, stack_trace: stacktrace(resolved) });
+    throw err;
   }
 }

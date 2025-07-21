@@ -3,7 +3,7 @@ import { TaskErrorHandler } from './task.error-handler.js';
 import { TaskLockManager } from './task-lock.manager.js';
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { TaskMeta } from '../spec/task.schema.js';
+import { LockSchema, TaskMeta } from '../spec/task.schema.js';
 import { delay } from '../../utils/time.js';
 
 @Injectable()
@@ -16,9 +16,10 @@ export class TaskRunner {
   async run(task: Task, meta: TaskMeta, args: any) {
     try {
       if (meta.lock !== null) {
-        const lock = await this.lm.get(task.name);
-        if (lock !== meta.lock) {
+        const lockToken = await this.lm.get(meta.lock.name);
+        if (lockToken !== meta.lock.token) {
           log.error('Failed to start Task: Lock token mismatch', { taskName: task.name });
+          throw Error('Lock token mismatch');
         }
       }
 
@@ -28,16 +29,26 @@ export class TaskRunner {
       }
 
       if (meta.lock !== null) {
-        const ok = await this.lm.release(task.name, meta.lock);
-        if (ok === null) {
-          log.error('Failed to release Task: Lock token not found', { taskName: task.name });
-        }
-        if (ok === false) {
-          log.error('Failed to release Task: Lock token mismatch', { taskName: task.name });
-        }
+        await this.releaseLock(meta.lock);
       }
     } catch (e) {
+      if (meta.delay) {
+        await delay(meta.delay);
+      }
+      if (meta.lock !== null) {
+        await this.releaseLock(meta.lock);
+      }
       this.eh.handle(e);
+    }
+  }
+
+  async releaseLock(lock: LockSchema) {
+    const ok = await this.lm.release(lock.name, lock.token);
+    if (ok === null) {
+      log.error('Failed to release Task: Lock token not found', lock);
+    }
+    if (ok === false) {
+      log.error('Failed to release Task: Lock token mismatch', { lock });
     }
   }
 }

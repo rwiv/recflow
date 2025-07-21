@@ -1,18 +1,17 @@
 import fs from 'fs';
 import { RedisConfig } from '../../common/config/config.types.js';
 import { createClient, RedisClientType } from 'redis';
+import { Redis } from 'ioredis';
 import { log } from 'jslog';
 import { RedisClientOptions } from '@redis/client';
 import { stacktrace } from '../../utils/errors/utils.js';
 
-export async function createRedisClient(conf: RedisConfig, logging: boolean = false) {
+export async function createRedisClient(conf: RedisConfig, database: number = 0, logging: boolean = false) {
+  const { password, caPath } = conf;
   const url = `redis://${conf.host}:${conf.port}`;
-  const opts: RedisClientOptions = {
-    url,
-    password: conf.password,
-  };
-  if (conf.caPath) {
-    const ca = await fs.promises.readFile(conf.caPath, 'utf-8');
+  const opts: RedisClientOptions = { url, password, database };
+  if (caPath) {
+    const ca = await fs.promises.readFile(caPath, 'utf-8');
     opts.socket = { tls: true, ca };
   }
   const client = await createClient(opts)
@@ -22,4 +21,14 @@ export async function createRedisClient(conf: RedisConfig, logging: boolean = fa
     log.info('Redis Client Connected');
   }
   return client as RedisClientType;
+}
+
+export function createIoRedisClient(conf: RedisConfig, db: number = 0): Redis {
+  return new Redis({
+    host: conf.host,
+    port: conf.port,
+    password: conf.password,
+    db,
+    maxRetriesPerRequest: null,
+  });
 }

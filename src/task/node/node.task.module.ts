@@ -3,9 +3,10 @@ import { NodeTaskInitializer } from './node.task.initializer.js';
 import { TaskSchedulerModule } from '../schedule/task.schedule.module.js';
 import { NodeServiceModule } from '../../node/service/node.service.module.js';
 import { ConfigModule } from '../../common/config/config.module.js';
+import { InfraModule } from '../../infra/infra.module.js';
 
 @Module({
-  imports: [TaskSchedulerModule, ConfigModule, NodeServiceModule],
+  imports: [InfraModule, ConfigModule, TaskSchedulerModule, NodeServiceModule],
   providers: [NodeTaskInitializer],
   exports: [NodeTaskInitializer],
 })

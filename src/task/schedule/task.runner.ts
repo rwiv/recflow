@@ -3,8 +3,8 @@ import { TaskErrorHandler } from './task.error-handler.js';
 import { TaskLockManager } from './task-lock.manager.js';
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { delay } from 'src/utils/time.js';
 import { TaskMeta } from '../spec/task.schema.js';
+import { delay } from '../../utils/time.js';
 
 @Injectable()
 export class TaskRunner {
@@ -13,7 +13,7 @@ export class TaskRunner {
     private readonly lm: TaskLockManager,
   ) {}
 
-  async run(meta: TaskMeta, task: Task) {
+  async run(task: Task, meta: TaskMeta, args: any) {
     try {
       if (meta.lock !== null) {
         const lock = await this.lm.get(task.name);
@@ -22,7 +22,7 @@ export class TaskRunner {
         }
       }
 
-      await task.run();
+      await task.run(args);
       if (meta.delay) {
         await delay(meta.delay);
       }

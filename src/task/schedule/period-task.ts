@@ -76,7 +76,7 @@ export class PeriodTask {
 
   private async run() {
     try {
-      await this.task.run();
+      await this.task.run(undefined);
     } catch (e) {
       this.eh.handle(e);
     }

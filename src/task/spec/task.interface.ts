@@ -1,4 +1,5 @@
 export interface Task {
   name: string;
-  run(): Promise<any>;
+  delay: number | null;
+  run(args: any): Promise<any>;
 }

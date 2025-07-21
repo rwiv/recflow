@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { TaskScheduler } from '../schedule/task.scheduler.js';
 import {
   channelTaskName,
   DEFAULT_CHANNEL_CACHE_CHECK_CYCLE,
@@ -8,26 +7,38 @@ import {
 } from './channel.tasks.constants.js';
 import { ChannelCacheChecker } from '../../channel/service/channel.cache.checker.js';
 import { Task } from '../spec/task.interface.js';
+import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
+import { TASK_REDIS } from '../../infra/infra.tokens.js';
+import { Redis } from 'ioredis';
+import { TaskRunner } from '../schedule/task.runner.js';
+import { createWorker } from '../schedule/task.utils.js';
 
 @Injectable()
 export class ChannelTaskInitializer {
   constructor(
+    @Inject(TASK_REDIS) private readonly redis: Redis,
+    private readonly runner: TaskRunner,
     private readonly chWriter: ChannelWriter,
-    private readonly scheduler: TaskScheduler,
     private readonly checker: ChannelCacheChecker,
   ) {}
 
   init() {
+    const cronOpts: WorkerOptions = { connection: this.redis, concurrency: 1 };
+
     const refreshTask: Task = {
       name: channelTaskName.CHANNEL_REFRESH,
+      delay: DEFAULT_CHANNEL_REFRESH_CYCLE,
       run: () => this.chWriter.refresh(),
     };
-    this.scheduler.addPeriodTask(refreshTask, DEFAULT_CHANNEL_REFRESH_CYCLE, true);
+    createWorker(refreshTask, cronOpts, this.runner);
+    // this.scheduler.addPeriodTask(refreshTask, DEFAULT_CHANNEL_REFRESH_CYCLE, true);
 
     const cacheCheckTask: Task = {
       name: channelTaskName.CHANNEL_CACHE_CHECK,
+      delay: DEFAULT_CHANNEL_CACHE_CHECK_CYCLE,
       run: () => this.checker.checkCache(),
     };
-    this.scheduler.addPeriodTask(cacheCheckTask, DEFAULT_CHANNEL_CACHE_CHECK_CYCLE, true);
+    createWorker(cacheCheckTask, cronOpts, this.runner);
+    // this.scheduler.addPeriodTask(cacheCheckTask, DEFAULT_CHANNEL_CACHE_CHECK_CYCLE, true);
   }
 }

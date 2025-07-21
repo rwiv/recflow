@@ -7,13 +7,13 @@ import { v4 } from 'uuid';
 export class TaskLockManager {
   constructor(@Inject(TASK_REDIS) private readonly redis: Redis) {}
 
-  async get(taskName: string) {
-    return this.redis.get(this.getKey(taskName));
+  async get(name: string) {
+    return this.redis.get(this.getKey(name));
   }
 
-  async acquire(taskName: string, ex: number) {
+  async acquire(name: string, ex: number) {
     const token = v4();
-    const ok = await this.redis.set(this.getKey(taskName), token, 'EX', ex, 'NX');
+    const ok = await this.redis.set(this.getKey(name), token, 'EX', ex, 'NX');
     if (ok === null) {
       return null;
     } else {
@@ -21,8 +21,8 @@ export class TaskLockManager {
     }
   }
 
-  async release(taskName: string, token: string): Promise<boolean | null> {
-    const key = this.getKey(taskName);
+  async release(name: string, token: string): Promise<boolean | null> {
+    const key = this.getKey(name);
     const lock = await this.redis.get(key);
     if (lock === null) {
       return null;

@@ -1,8 +1,8 @@
 import { Controller, Get, Post, UseFilters } from '@nestjs/common';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
-import { LiveAllocationTask } from '../live/tasks/live.allocation-task.js';
-import { DEFAULT_LIVE_ALLOCATION_CYCLE } from '../live/spec/live.task.contants.js';
+// import { LiveAllocationTask } from '../live/tasks/live.allocation-task.js';
+// import { DEFAULT_LIVE_ALLOCATION_CYCLE } from '../live/spec/live.task.contants.js';
 import { LiveAllocator } from '../../live/registry/live.allocator.js';
 import { liveTaskName } from '../live/spec/live.task.names.js';
 
@@ -19,11 +19,11 @@ export class TaskController {
     return this.scheduler.allPeriodTaskStats();
   }
 
-  @Post('/lives/allocation/start')
-  startAllocationTask() {
-    const liveAllocationTask = new LiveAllocationTask(this.liveAllocator);
-    this.scheduler.addPeriodTask(liveAllocationTask, DEFAULT_LIVE_ALLOCATION_CYCLE, true);
-  }
+  // @Post('/lives/allocation/start')
+  // startAllocationTask() {
+  //   const liveAllocationTask = new LiveAllocationTask(this.liveAllocator);
+  //   this.scheduler.addPeriodTask(liveAllocationTask, DEFAULT_LIVE_ALLOCATION_CYCLE, true);
+  // }
 
   @Post('/lives/allocation/stop')
   stopAllocationTask() {

@@ -10,5 +10,6 @@ export class TaskErrorHandler {
   handle(raw: unknown) {
     const err = this.resolver.resolve(raw);
     log.error(err.message, { ...err.attr, stack_trace: stacktrace(err) });
+    // throw raw; // TODO: activate
   }
 }

@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { ChannelRefreshTask } from './channel.refresh.task.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
-import { DEFAULT_CHANNEL_CACHE_CHECK_CYCLE, DEFAULT_CHANNEL_REFRESH_CYCLE } from './channel.tasks.constants.js';
-import { ChannelCacheCheckTask } from './channel.cache-check.task.js';
+import {
+  channelTaskName,
+  DEFAULT_CHANNEL_CACHE_CHECK_CYCLE,
+  DEFAULT_CHANNEL_REFRESH_CYCLE,
+} from './channel.tasks.constants.js';
 import { ChannelCacheChecker } from '../../channel/service/channel.cache.checker.js';
+import { Task } from '../spec/task.interface.js';
 
 @Injectable()
 export class ChannelTaskInitializer {
@@ -15,10 +18,16 @@ export class ChannelTaskInitializer {
   ) {}
 
   init() {
-    const refreshTask = new ChannelRefreshTask(this.chWriter);
+    const refreshTask: Task = {
+      name: channelTaskName.CHANNEL_REFRESH,
+      run: () => this.chWriter.refresh(),
+    };
     this.scheduler.addPeriodTask(refreshTask, DEFAULT_CHANNEL_REFRESH_CYCLE, true);
 
-    const cacheCheckTask = new ChannelCacheCheckTask(this.checker);
+    const cacheCheckTask: Task = {
+      name: channelTaskName.CHANNEL_CACHE_CHECK,
+      run: () => this.checker.checkCache(),
+    };
     this.scheduler.addPeriodTask(cacheCheckTask, DEFAULT_CHANNEL_CACHE_CHECK_CYCLE, true);
   }
 }

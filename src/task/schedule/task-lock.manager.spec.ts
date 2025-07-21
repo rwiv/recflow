@@ -18,6 +18,8 @@ it('test TaskLockManager', async () => {
   expect(token).not.toBeNull();
   assert(token);
 
+  expect(await lm.get(taskName)).toBe(token);
+
   expect(await lm.release(taskName, 'asd')).not.toBeTruthy();
   expect(await lm.release(taskName, token)).toBeTruthy();
 });

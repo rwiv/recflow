@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NodeResetTask } from './node.reset.task.js';
 import { TaskScheduler } from '../schedule/task.scheduler.js';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { Task } from '../spec/task.interface.js';
+import { nodeTaskName } from './node.tasks.constants.js';
 
 @Injectable()
 export class NodeTaskInitializer {
@@ -14,7 +15,10 @@ export class NodeTaskInitializer {
   ) {}
 
   init() {
-    const task = new NodeResetTask(this.nodeWriter);
-    this.scheduler.addPeriodTask(task, this.env.nodeResetCycleSec * 1000, true);
+    const resetTask: Task = {
+      name: nodeTaskName.NODE_RESET,
+      run: () => this.nodeWriter.resetFailureCntAll(),
+    };
+    this.scheduler.addPeriodTask(resetTask, this.env.nodeResetCycleSec * 1000, true);
   }
 }

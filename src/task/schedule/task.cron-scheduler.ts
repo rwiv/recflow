@@ -23,9 +23,9 @@ export class TaskCronScheduler {
     private readonly crFinder: CriterionFinder,
   ) {
     if (this.env.nodeEnv === 'prod') {
-      this.jobOpts = { removeOnComplete: 1000, removeOnFail: 1000 };
+      this.jobOpts = { removeOnComplete: 100, removeOnFail: 10 };
     } else {
-      this.jobOpts = { removeOnComplete: 10, removeOnFail: 10 };
+      this.jobOpts = { removeOnComplete: 10, removeOnFail: 3 };
     }
   }
 

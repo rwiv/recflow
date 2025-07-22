@@ -7,13 +7,10 @@ import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
 import { createWorker } from '../schedule/task.utils.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
 
 @Injectable()
 export class NodeTaskInitializer {
   constructor(
-    @Inject(ENV) private readonly env: Env,
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
     private readonly nodeWriter: NodeWriter,

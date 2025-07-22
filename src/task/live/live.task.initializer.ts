@@ -40,7 +40,7 @@ export class LiveTaskInitializer {
     const cronOpts: WorkerOptions = { connection: this.redis, concurrency: 1 };
 
     const registerTask = new LiveRegisterTask(this.crFinder, this.liveCoordinator);
-    createWorker(registerTask, { connection: this.redis, concurrency: 100 }, this.runner);
+    createWorker(registerTask, { connection: this.redis, concurrency: 30 }, this.runner);
 
     const cleanupTask: Task = {
       name: LIVE_CLEANUP_NAME,

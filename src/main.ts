@@ -9,6 +9,7 @@ import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.
 import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
 import { log } from 'jslog';
 import { TaskCronScheduler } from './task/schedule/task.cron-scheduler.js';
+import { TaskLockManager } from './task/schedule/task-lock.manager.js';
 
 async function bootstrap() {
   log.setLevel('debug');
@@ -22,6 +23,10 @@ async function bootstrap() {
   } else {
     app.enableCors();
     await app.get(DevInitializer).initDev();
+  }
+
+  if (env.nodeEnv !== 'prod') {
+    await app.get(TaskLockManager).releaseAll();
   }
 
   app.get(LiveTaskInitializer).init();

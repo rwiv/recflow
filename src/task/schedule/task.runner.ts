@@ -3,8 +3,9 @@ import { TaskErrorHandler } from './task.error-handler.js';
 import { TaskLockManager } from './task-lock.manager.js';
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { LockSchema, TaskMeta } from '../spec/task.schema.js';
+import { LockSchema, taskMeta } from '../spec/task.schema.js';
 import { delay } from '../../utils/time.js';
+import { Job } from 'bullmq';
 
 @Injectable()
 export class TaskRunner {
@@ -13,30 +14,40 @@ export class TaskRunner {
     private readonly lm: TaskLockManager,
   ) {}
 
-  async run(task: Task, meta: TaskMeta, args: any) {
-    try {
-      if (meta.lock !== null) {
-        const lockToken = await this.lm.get(meta.lock.name);
-        if (lockToken !== meta.lock.token) {
-          log.error('Failed to start Task: Lock token mismatch', meta.lock);
-          throw Error('Lock token mismatch');
-        }
+  async run(task: Task, job: Job) {
+    const meta = taskMeta.parse(job.data?.meta);
+    const { lock, delay: delayMs } = meta;
+    const args = job.data?.args;
+
+    if (lock) {
+      const lockToken = await this.lm.get(lock.name);
+      if (lockToken !== lock.token) {
+        log.warn('Failed to start Task: Lock token mismatch', lock);
+        return;
       }
 
+      if (job.stalledCounter > 0) {
+        log.warn('Release stalled task', lock);
+        await this.releaseLock(lock);
+        return;
+      }
+    }
+
+    try {
       await task.run(args);
 
-      if (meta.delay) {
-        await delay(meta.delay);
+      if (delayMs) {
+        await delay(delayMs);
       }
-      if (meta.lock !== null) {
-        await this.releaseLock(meta.lock);
+      if (lock) {
+        await this.releaseLock(lock);
       }
     } catch (e) {
-      if (meta.delay) {
-        await delay(meta.delay);
+      if (delayMs) {
+        await delay(delayMs);
       }
-      if (meta.lock !== null) {
-        await this.releaseLock(meta.lock);
+      if (lock) {
+        await this.releaseLock(lock);
       }
       this.eh.handle(e);
     }

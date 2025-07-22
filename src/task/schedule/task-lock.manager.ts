@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { v4 } from 'uuid';
+import { cronTaskDefs } from '../spec/task.queue-defs.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class TaskLockManager {
@@ -32,6 +34,15 @@ export class TaskLockManager {
     }
     await this.redis.del(key);
     return true;
+  }
+
+  async releaseAll() {
+    for (const taskName in cronTaskDefs) {
+      const deleted = await this.redis.del(this.getKey(taskName));
+      if (deleted > 0) {
+        log.debug(`Release Lock: ${taskName}`);
+      }
+    }
   }
 
   private getKey(taskName: string) {

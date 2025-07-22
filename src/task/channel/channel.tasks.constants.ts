@@ -9,5 +9,5 @@ export const CHANNEL_REFRESH_DEF: TaskDef = {
 export const CHANNEL_CACHE_CHECK_NAME = 'channel_cache_check';
 export const CHANNEL_CACHE_CHECK_DEF: TaskDef = {
   delay: 30 * 60 * 1000,
-  ex: 40 * 60,
+  ex: 30 * 60 + 60,
 };

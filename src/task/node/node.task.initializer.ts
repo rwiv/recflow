@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { Task } from '../spec/task.interface.js';
-import { nodeTaskName } from './node.tasks.constants.js';
+import { NODE_RESET_NAME } from './node.tasks.constants.js';
 import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
@@ -23,11 +23,9 @@ export class NodeTaskInitializer {
     const cronOpts: WorkerOptions = { connection: this.redis, concurrency: 1 };
 
     const resetTask: Task = {
-      name: nodeTaskName.NODE_RESET,
-      delay: this.env.nodeResetCycleSec * 1000,
+      name: NODE_RESET_NAME,
       run: () => this.nodeWriter.resetFailureCntAll(),
     };
     createWorker(resetTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(resetTask, this.env.nodeResetCycleSec * 1000, true);
   }
 }

@@ -14,8 +14,11 @@ import {
 } from './env.utils.js';
 import { z } from 'zod';
 
+export const nodeEnvEnum = z.enum(['dev', 'test', 'prod']);
+export type NodeEnv = z.infer<typeof nodeEnvEnum>;
+
 export interface Env {
-  nodeEnv: string;
+  nodeEnv: NodeEnv;
   appPort: number;
   appEndpoint: string;
   streamq: StreamqConfig;
@@ -50,19 +53,17 @@ const nnint = z.coerce.number().int().nonnegative();
 const nonempty = z.string().nonempty();
 
 export function readEnv(): Env {
-  // NODE_ENV
-  let nodeEnv = process.env.NODE_ENV;
-  if (nodeEnv !== 'prod') {
+  if (process.env.NODE_ENV !== 'prod') {
     dotenv.config({ path: path.resolve('dev', '.env') });
     log.info('dotenv loaded');
   }
-  nodeEnv = process.env.NODE_ENV;
+  let nodeEnv = process.env.NODE_ENV;
   if (!nodeEnv) {
     nodeEnv = 'dev';
   }
 
   return {
-    nodeEnv,
+    nodeEnv: nodeEnvEnum.parse(nodeEnv),
     appPort: nnint.parse(process.env.APP_PORT),
     appEndpoint: nonempty.parse(process.env.APP_ENDPOINT),
     streamq: readStreamqConfig(),

@@ -1,10 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import {
-  channelTaskName,
-  DEFAULT_CHANNEL_CACHE_CHECK_CYCLE,
-  DEFAULT_CHANNEL_REFRESH_CYCLE,
-} from './channel.tasks.constants.js';
+import { CHANNEL_CACHE_CHECK_NAME, CHANNEL_REFRESH_NAME } from './channel.tasks.constants.js';
 import { ChannelCacheChecker } from '../../channel/service/channel.cache.checker.js';
 import { Task } from '../spec/task.interface.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
@@ -26,19 +22,15 @@ export class ChannelTaskInitializer {
     const cronOpts: WorkerOptions = { connection: this.redis, concurrency: 1 };
 
     const refreshTask: Task = {
-      name: channelTaskName.CHANNEL_REFRESH,
-      delay: DEFAULT_CHANNEL_REFRESH_CYCLE,
+      name: CHANNEL_REFRESH_NAME,
       run: () => this.chWriter.refresh(),
     };
     createWorker(refreshTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(refreshTask, DEFAULT_CHANNEL_REFRESH_CYCLE, true);
 
     const cacheCheckTask: Task = {
-      name: channelTaskName.CHANNEL_CACHE_CHECK,
-      delay: DEFAULT_CHANNEL_CACHE_CHECK_CYCLE,
+      name: CHANNEL_CACHE_CHECK_NAME,
       run: () => this.checker.checkCache(),
     };
     createWorker(cacheCheckTask, cronOpts, this.runner);
-    // this.scheduler.addPeriodTask(cacheCheckTask, DEFAULT_CHANNEL_CACHE_CHECK_CYCLE, true);
   }
 }

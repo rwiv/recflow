@@ -18,16 +18,16 @@ export class TaskRunner {
       if (meta.lock !== null) {
         const lockToken = await this.lm.get(meta.lock.name);
         if (lockToken !== meta.lock.token) {
-          log.error('Failed to start Task: Lock token mismatch', { taskName: task.name });
+          log.error('Failed to start Task: Lock token mismatch', meta.lock);
           throw Error('Lock token mismatch');
         }
       }
 
       await task.run(args);
+
       if (meta.delay) {
         await delay(meta.delay);
       }
-
       if (meta.lock !== null) {
         await this.releaseLock(meta.lock);
       }
@@ -48,7 +48,7 @@ export class TaskRunner {
       log.error('Failed to release Task: Lock token not found', lock);
     }
     if (ok === false) {
-      log.error('Failed to release Task: Lock token mismatch', { lock });
+      log.error('Failed to release Task: Lock token mismatch', lock);
     }
   }
 }

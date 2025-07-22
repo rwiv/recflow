@@ -8,11 +8,7 @@ export function createWorker(task: Task, opts: WorkerOptions, runner: TaskRunner
   return new Worker(
     task.name,
     (job) => {
-      const meta = taskMeta.parse({
-        lock: job.data?.meta?.lock,
-        delay: task.delay,
-      });
-      return runner.run(task, meta, job.data?.args);
+      return runner.run(task, taskMeta.parse(job.data?.meta), job.data?.args);
     },
     opts,
   );

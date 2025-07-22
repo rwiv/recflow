@@ -9,3 +9,9 @@ export const taskMeta = z.object({
   delay: nnint.nullable(),
 });
 export type TaskMeta = z.infer<typeof taskMeta>;
+
+export const taskDef = z.object({
+  delay: nnint.nullable(),
+  ex: nnint,
+});
+export type TaskDef = z.infer<typeof taskDef>;

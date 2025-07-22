@@ -8,7 +8,6 @@ import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
 import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
 import { log } from 'jslog';
-import { TaskCronScheduler } from './task/schedule/task.cron-scheduler.js';
 import { TaskLockManager } from './task/schedule/task-lock.manager.js';
 
 async function bootstrap() {
@@ -32,8 +31,6 @@ async function bootstrap() {
   app.get(LiveTaskInitializer).init();
   app.get(ChannelTaskInitializer).init();
   app.get(NodeTaskInitializer).init();
-
-  app.get(TaskCronScheduler).check();
 
   await app.listen(env.appPort);
 }

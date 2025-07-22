@@ -37,6 +37,10 @@ export class LiveNodeRepository {
     return oneNotNull(ent);
   }
 
+  async findCountByNodeId(nodeId: string, tx: Tx = db): Promise<number> {
+    return tx.$count(tx.select().from(liveNodeTable).where(eq(liveNodeTable.nodeId, nodeId)));
+  }
+
   async findByLiveIdAndNodeId(liveId: string, nodeId: string, tx: Tx = db): Promise<LiveNodeEnt | null> {
     const entities = await tx
       .select()

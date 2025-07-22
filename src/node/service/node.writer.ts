@@ -7,12 +7,15 @@ import { NodeMapper } from './node.mapper.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { LiveRepository } from '../../live/storage/live.repository.js';
 import { Tx } from '../../infra/db/types.js';
+import { LiveNodeRepository } from '../storage/live-node.repository.js';
+import { log } from 'jslog';
 
 @Injectable()
 export class NodeWriter {
   constructor(
     private readonly nodeRepo: NodeRepository,
     private readonly liveRepo: LiveRepository,
+    private readonly liveNodeRepo: LiveNodeRepository,
     private readonly mapper: NodeMapper,
   ) {}
 
@@ -40,5 +43,20 @@ export class NodeWriter {
     const nodes = await this.nodeRepo.findAll();
     const ps = nodes.map((node) => this.nodeRepo.update(node.id, { failureCnt: 0 }));
     return Promise.all(ps);
+  }
+
+  async syncLivesCounts() {
+    const promises = [];
+    for (const node of await this.nodeRepo.findAll()) {
+      const p = db.transaction(async (tx) => {
+        const trueLivesCnt = await this.liveNodeRepo.findCountByNodeId(node.id, tx);
+        if (node.livesCnt !== trueLivesCnt) {
+          log.warn('Node lives count mismatch', { nodeId: node.id, expected: node.livesCnt, actual: trueLivesCnt });
+          await this.nodeRepo.update(node.id, { livesCnt: trueLivesCnt }, tx);
+        }
+      });
+      promises.push(p);
+    }
+    await Promise.all(promises);
   }
 }

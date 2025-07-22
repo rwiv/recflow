@@ -4,7 +4,13 @@ import {
   CHANNEL_REFRESH_DEF,
   CHANNEL_REFRESH_NAME,
 } from '../channel/channel.tasks.constants.js';
-import { NODE_DRAIN_NAME, NODE_RESET, NODE_RESET_NAME } from '../node/node.tasks.constants.js';
+import {
+  NODE_DRAIN_NAME,
+  NODE_LIVES_CHECK_DEF,
+  NODE_LIVES_CHECK_NAME,
+  NODE_RESET_DEF,
+  NODE_RESET_NAME,
+} from '../node/node.tasks.constants.js';
 import {
   LIVE_ALLOCATION_DEF,
   LIVE_ALLOCATION_NAME,
@@ -30,7 +36,8 @@ export type TaskDefs = Record<string, TaskDef | null>;
 export const cronTaskDefs: CronTaskDefs = {
   [CHANNEL_REFRESH_NAME]: CHANNEL_REFRESH_DEF,
   [CHANNEL_CACHE_CHECK_NAME]: CHANNEL_CACHE_CHECK_DEF,
-  [NODE_RESET_NAME]: NODE_RESET,
+  [NODE_RESET_NAME]: NODE_RESET_DEF,
+  [NODE_LIVES_CHECK_NAME]: NODE_LIVES_CHECK_DEF,
   [LIVE_CLEANUP_NAME]: LIVE_CLEANUP_DEF,
   [LIVE_REFRESH_NAME]: LIVE_REFRESH_DEF,
   [LIVE_RECOVERY_NAME]: LIVE_RECOVERY_DEF,

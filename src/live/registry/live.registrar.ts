@@ -200,7 +200,7 @@ export class LiveRegistrar {
     }
 
     // Set node
-    await this.liveWriter.bind(live.id, node.id, tx);
+    await this.liveWriter.bind({ liveId: live.id, nodeId: node.id }, tx);
     await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
     if (!(await this.stdlRedis.getLiveState(live.id, false))) {
       await this.stdlRedis.createLiveState(live);

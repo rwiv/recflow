@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 2.0.1
+  tag: 2.0.2
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -21,6 +21,7 @@ ingress:
   secretName: cloudflare-certificate
 
 app:
+  replicas: 2
   fsName: ~
   redis:
     host: stmgr-redis-master.media.svc.cluster.local

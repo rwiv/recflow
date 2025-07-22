@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { Task } from '../spec/task.interface.js';
-import { NODE_RESET_NAME, NODE_DRAIN_NAME } from './node.tasks.constants.js';
+import { NODE_RESET_NAME, NODE_DRAIN_NAME, NODE_LIVES_CHECK_NAME } from './node.tasks.constants.js';
 import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
@@ -26,6 +26,12 @@ export class NodeTaskInitializer {
       run: () => this.nodeWriter.resetFailureCntAll(),
     };
     createWorker(resetTask, cronOpts, this.runner);
+
+    const livesCheckTask: Task = {
+      name: NODE_LIVES_CHECK_NAME,
+      run: () => this.nodeWriter.syncLivesCounts(),
+    };
+    createWorker(livesCheckTask, cronOpts, this.runner);
 
     const drainTask: Task = {
       name: NODE_DRAIN_NAME,

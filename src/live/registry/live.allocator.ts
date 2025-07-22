@@ -76,7 +76,7 @@ export class LiveAllocator {
       logMessage = 'Reallocation Live';
     }
     const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-    await this.liveRegistrar.register({
+    await this.liveRegistrar.registerLiveNode({
       reusableLive: live,
       stream: live.stream ?? undefined,
       channelInfo: channelLiveInfo.parse(channelInfo),

@@ -48,7 +48,7 @@ export class LiveController {
     if (!channel.liveInfo) {
       throw new NotFoundError('Channel is not live');
     }
-    return this.liveService.register({
+    return this.liveService.createNewLive({
       channelInfo: channelLiveInfo.parse(channel),
       stream: req.stream ?? undefined,
     });

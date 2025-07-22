@@ -32,6 +32,8 @@ import { LiveFinalizer } from './live.finalizer.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { LiveStreamService } from '../data/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live.stream.repository.js';
+import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 export interface LiveFinishOptions {
   recordId: string;
@@ -48,17 +50,30 @@ export interface NodeSelectArgs {
   overseasFirst?: boolean;
 }
 
-export interface LiveRegisterRequest {
+export interface NewLiveCreationRequest {
   channelInfo: ChannelLiveInfo;
 
-  reusableLive?: LiveDtoWithNodes;
+  isFollowed?: boolean;
+  criterionId?: string;
+
+  logMessage?: string;
+  logLevel?: LogLevel;
+
+  stream?: StreamInfo;
+}
+
+export interface LiveNodeRegisterRequest {
+  channelInfo: ChannelLiveInfo;
+
+  isFollowed?: boolean;
   criterion?: CriterionDto;
 
   logMessage?: string;
   logLevel?: LogLevel;
 
   stream?: StreamInfo;
-  isFollowed?: boolean;
+
+  reusableLive?: LiveDtoWithNodes;
 
   mustExistNode?: boolean;
   node?: NodeSelectArgs;
@@ -76,6 +91,7 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
     private readonly liveStreamService: LiveStreamService,
     private readonly finalizer: LiveFinalizer,
+    private readonly crFinder: CriterionFinder,
     private readonly stlink: Stlink,
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
@@ -84,7 +100,7 @@ export class LiveRegistrar {
   ) {}
 
   async getLiveStream(
-    req: LiveRegisterRequest,
+    req: LiveNodeRegisterRequest,
     liveInfo: LiveInfo,
     channel: ChannelDto,
   ): Promise<LiveStreamDto | null> {
@@ -132,7 +148,22 @@ export class LiveRegistrar {
     });
   }
 
-  async register(req: LiveRegisterRequest): Promise<string | null> {
+  async createNewLive(req: NewLiveCreationRequest): Promise<string | null> {
+    let criterion = undefined;
+    if (req.criterionId) {
+      criterion = await this.crFinder.findById(req.criterionId);
+      if (!criterion) {
+        throw NotFoundError.from('Criterion', 'id', req.criterionId);
+      }
+    }
+    const newReq: LiveNodeRegisterRequest = {
+      ...req,
+      criterion,
+    };
+    return this.registerLiveNode(newReq);
+  }
+
+  async registerLiveNode(req: LiveNodeRegisterRequest): Promise<string | null> {
     const liveInfo = req.channelInfo.liveInfo;
 
     // If channel is not registered, create a new channel
@@ -161,7 +192,7 @@ export class LiveRegistrar {
   }
 
   private async registerWithTx(
-    req: LiveRegisterRequest,
+    req: LiveNodeRegisterRequest,
     channel: ChannelDto,
     stream: LiveStreamDto,
     tx: Tx,

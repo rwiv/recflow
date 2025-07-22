@@ -125,7 +125,7 @@ export class LiveRecoveryManager {
   private async registerSameLive(live: LiveDto) {
     try {
       const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-      return await this.liveRegistrar.register({
+      return await this.liveRegistrar.createNewLive({
         channelInfo: channelLiveInfo.parse(channelInfo),
         stream: live.stream ?? undefined,
         logMessage: 'Reregister Live',

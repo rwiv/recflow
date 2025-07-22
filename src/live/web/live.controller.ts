@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Post, Query, UseFilters } from '@nestjs/common';
 import { LiveRegistrar } from '../registry/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../spec/event.schema.js';
@@ -8,20 +8,24 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { liveAppendRequest, LiveAppendRequest, liveDeleteRequest, LiveDeleteRequest } from './live.web.schema.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { LiveFinishRequest, liveFinishRequest, LiveFinalizer } from '../registry/live.finalizer.js';
-import { log } from 'jslog';
-import { stacktrace } from '../../utils/errors/utils.js';
-import { LiveRebalancer } from '../registry/live.rebalancer.js';
+import { DrainArgs, drainArgs } from '../registry/live.rebalancer.js';
+import { Queue } from 'bullmq';
+import { getJobOpts } from '../../task/schedule/task.utils.js';
+import { TASK_REDIS } from '../../infra/infra.tokens.js';
+import { Redis } from 'ioredis';
+import { NODE_DRAIN_NAME } from '../../task/node/node.tasks.constants.js';
+import { ENV } from '../../common/config/config.module.js';
+import { Env } from '../../common/config/env.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')
 export class LiveController {
   constructor(
+    @Inject(ENV) private readonly env: Env,
+    @Inject(TASK_REDIS) private readonly taskRedis: Redis,
     private readonly liveService: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
     private readonly liveFinder: LiveFinder,
-    private readonly finalizer: LiveFinalizer,
-    private readonly rebalancer: LiveRebalancer,
   ) {}
 
   @Get('/')
@@ -56,27 +60,11 @@ export class LiveController {
     return this.liveService.finishLive(recordId, { exitCmd: exitCmd.parse(cmd), isPurge });
   }
 
-  @Post('/tasks/finish')
-  finish(@Body() req: LiveFinishRequest) {
-    this.finalizer.finishLive(liveFinishRequest.parse(req)).catch((err) => {
-      log.error('Error while finishing live', { stack_trace: stacktrace(err) });
-    });
-    return 'ok';
-  }
-
-  @Post('/tasks/adjust/node-group/:groupId')
-  adjustNodeGroup(@Param('groupId') groupId: string) {
-    this.rebalancer.drainByNodeGroup(groupId).catch((err) => {
-      log.error('Error while adjusting nodeGroup', { stack_trace: stacktrace(err) });
-    });
-    return 'ok';
-  }
-
-  @Post('/tasks/adjust/node/:nodeId')
-  adjustNode(@Param('nodeId') nodeId: string) {
-    this.rebalancer.drainByNode(nodeId).catch((err) => {
-      log.error('Error while adjusting node', { stack_trace: stacktrace(err) });
-    });
-    return 'ok';
+  @Post('/drain')
+  async drainNodeGroup(@Body() req: DrainArgs) {
+    const taskName = NODE_DRAIN_NAME;
+    const queue = new Queue(taskName, { connection: this.taskRedis });
+    const args = drainArgs.parse(req);
+    await queue.add(taskName, { meta: {}, args }, getJobOpts(this.env));
   }
 }

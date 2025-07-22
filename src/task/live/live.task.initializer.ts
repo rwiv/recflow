@@ -11,6 +11,7 @@ import {
   LIVE_CLEANUP_NAME,
   LIVE_STATE_CLEANUP_NAME,
   LIVE_ALLOCATION_NAME,
+  LIVE_FINISH_NAME,
 } from './live.task.contants.js';
 import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
 import { LiveAllocator } from '../../live/registry/live.allocator.js';
@@ -21,6 +22,7 @@ import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { LiveRegisterTask } from './live.register-task.js';
+import { LiveFinalizer, liveFinishRequest } from '../../live/registry/live.finalizer.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -34,13 +36,12 @@ export class LiveTaskInitializer {
     private readonly liveStateCleaner: LiveStateCleaner,
     private readonly liveRecoveryManager: LiveRecoveryManager,
     private readonly liveAllocator: LiveAllocator,
+    private readonly liveFinalizer: LiveFinalizer,
   ) {}
 
   init() {
     const cronOpts: WorkerOptions = { connection: this.redis, concurrency: 1 };
-
-    const registerTask = new LiveRegisterTask(this.crFinder, this.liveCoordinator);
-    createWorker(registerTask, { connection: this.redis, concurrency: 30 }, this.runner);
+    const batchOpts: WorkerOptions = { connection: this.redis, concurrency: 30 };
 
     const cleanupTask: Task = {
       name: LIVE_CLEANUP_NAME,
@@ -60,12 +61,6 @@ export class LiveTaskInitializer {
     };
     createWorker(recoveryTask, cronOpts, this.runner);
 
-    const followedRegisterTask: Task = {
-      name: LIVE_REGISTER_FOLLOWED_NAME,
-      run: () => this.liveCoordinator.registerFollowedLives(),
-    };
-    createWorker(followedRegisterTask, cronOpts, this.runner);
-
     const liveStateCleanupTask: Task = {
       name: LIVE_STATE_CLEANUP_NAME,
       run: () => this.liveStateCleaner.cleanup(),
@@ -77,5 +72,20 @@ export class LiveTaskInitializer {
       run: () => this.liveAllocator.check(),
     };
     createWorker(liveAllocationTask, cronOpts, this.runner);
+
+    const followedRegisterTask: Task = {
+      name: LIVE_REGISTER_FOLLOWED_NAME,
+      run: () => this.liveCoordinator.registerFollowedLives(),
+    };
+    createWorker(followedRegisterTask, cronOpts, this.runner);
+
+    const registerTask = new LiveRegisterTask(this.crFinder, this.liveCoordinator);
+    createWorker(registerTask, batchOpts, this.runner);
+
+    const liveFinishTask: Task = {
+      name: LIVE_FINISH_NAME,
+      run: (args: any) => this.liveFinalizer.finishLive(liveFinishRequest.parse(args)),
+    };
+    createWorker(liveFinishTask, batchOpts, this.runner);
   }
 }

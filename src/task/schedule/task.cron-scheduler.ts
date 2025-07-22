@@ -12,6 +12,7 @@ import { LIVE_REGISTER_CRITERION_DEF, LIVE_REGISTER_CRITERION_NAME } from '../li
 import { JobsOptions } from 'bullmq/dist/esm/types/index.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { getJobOpts } from './task.utils.js';
 
 @Injectable()
 export class TaskCronScheduler {
@@ -23,11 +24,7 @@ export class TaskCronScheduler {
     private readonly lm: TaskLockManager,
     private readonly crFinder: CriterionFinder,
   ) {
-    if (this.env.nodeEnv === 'prod') {
-      this.jobOpts = { removeOnComplete: 100, removeOnFail: 10 };
-    } else {
-      this.jobOpts = { removeOnComplete: 10, removeOnFail: 3 };
-    }
+    this.jobOpts = getJobOpts(this.env);
   }
 
   @Cron('* * * * * *')

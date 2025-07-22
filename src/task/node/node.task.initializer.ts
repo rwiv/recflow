@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { Task } from '../spec/task.interface.js';
-import { NODE_RESET_NAME } from './node.tasks.constants.js';
+import { NODE_RESET_NAME, NODE_DRAIN_NAME } from './node.tasks.constants.js';
 import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
 import { createWorker } from '../schedule/task.utils.js';
+import { drainArgs, LiveRebalancer } from '../../live/registry/live.rebalancer.js';
 
 @Injectable()
 export class NodeTaskInitializer {
@@ -14,6 +15,7 @@ export class NodeTaskInitializer {
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
     private readonly nodeWriter: NodeWriter,
+    private readonly liveRebalancer: LiveRebalancer,
   ) {}
 
   init() {
@@ -24,5 +26,11 @@ export class NodeTaskInitializer {
       run: () => this.nodeWriter.resetFailureCntAll(),
     };
     createWorker(resetTask, cronOpts, this.runner);
+
+    const drainTask: Task = {
+      name: NODE_DRAIN_NAME,
+      run: (args) => this.liveRebalancer.drain(drainArgs.parse(args)),
+    };
+    createWorker(drainTask, cronOpts, this.runner);
   }
 }

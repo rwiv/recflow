@@ -5,37 +5,23 @@ import { SelectedRowCount } from '@/components/common/table/SelectedRowCount.tsx
 import { PageNavigation } from '@/components/common/table/PageNavigation.tsx';
 import { useTable } from '@/components/common/table/useTable.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY, TASK_QUERY_KEY } from '@/common/constants.ts';
+import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@/common/constants.ts';
 import { Button } from '@/components/ui/button.tsx';
 import { NodeGroupCreateButton } from '@/components/nodegroup/NodeGroupCreateButton.tsx';
 import { NodeGroupDto } from '@/client/node/node.schema.ts';
 import { nodeGroupColumns } from '@/components/nodegroup/nodeGroupColumns.tsx';
 import { drainNodeGroup, deleteNodeGroup } from '@/client/node/node-group.client.ts';
 import { fetchNodes, updateNode } from '@/client/node/node.client.ts';
-import { TaskInfo } from '@/client/task/task.schema.ts';
-import { LIVE_ALLOCATION_TASK_NAME } from '@/client/task/task.constants.ts';
-import { startAllocationTask, stopAllocationTask } from '@/client/task/task.client.ts';
 
 interface NodeGroupTableProps {
   groups: NodeGroupDto[];
-  tasks: TaskInfo[];
 }
 
-export function NodeGroupTable({ groups, tasks }: NodeGroupTableProps) {
+export function NodeGroupTable({ groups }: NodeGroupTableProps) {
   const queryClient = useQueryClient();
   const table = useTable(groups, nodeGroupColumns);
 
   const disabledAdjustBtn = table.getFilteredSelectedRowModel().rows.length !== 1;
-  const enabledAllocationTask = !!tasks.find((task) => task.name === LIVE_ALLOCATION_TASK_NAME);
-
-  const onUpdateAllocationTask = async (isStart: boolean) => {
-    if (isStart) {
-      await startAllocationTask();
-    } else {
-      await stopAllocationTask();
-    }
-    await queryClient.invalidateQueries({ queryKey: [TASK_QUERY_KEY] });
-  };
 
   const onUpdateIsCordoned = async (isCordoned: boolean) => {
     const nodes = await fetchNodes();
@@ -95,15 +81,6 @@ export function NodeGroupTable({ groups, tasks }: NodeGroupTableProps) {
           <Button variant="secondary" className="mr-1" onClick={() => onUpdateIsCordoned(true)}>
             Deactivate
           </Button>
-          {enabledAllocationTask ? (
-            <Button variant="secondary" className="mr-1" onClick={() => onUpdateAllocationTask(false)}>
-              StopAllocation
-            </Button>
-          ) : (
-            <Button variant="secondary" className="mr-1" onClick={() => onUpdateAllocationTask(true)}>
-              StartAllocation
-            </Button>
-          )}
           <Button variant="secondary" className="ml-1" disabled={disabledAdjustBtn} onClick={onDrain}>
             Drain
           </Button>

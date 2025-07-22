@@ -8,7 +8,6 @@ import { LiveTaskInitializer } from './task/live/live.task.initializer.js';
 import { ChannelTaskInitializer } from './task/channel/channel.task.initializer.js';
 import { NodeTaskInitializer } from './task/node/node.task.initializer.js';
 import { log } from 'jslog';
-import { TaskLockManager } from './task/schedule/task-lock.manager.js';
 
 async function bootstrap() {
   log.setLevel('debug');
@@ -24,9 +23,9 @@ async function bootstrap() {
     await app.get(DevInitializer).initDev();
   }
 
-  if (env.nodeEnv !== 'prod') {
-    await app.get(TaskLockManager).releaseAll();
-  }
+  // if (env.nodeEnv !== 'prod') {
+  //   await app.get(TaskLockManager).releaseAll();
+  // }
 
   app.get(LiveTaskInitializer).init();
   app.get(ChannelTaskInitializer).init();

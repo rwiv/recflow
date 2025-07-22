@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SQS, STDL } from '../../infra/infra.tokens.js';
+import { SQS, STDL, TASK_REDIS } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { log } from 'jslog';
@@ -15,14 +15,17 @@ import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { LiveWriter } from '../data/live.writer.js';
 import { db } from '../../infra/db/db.js';
 import { HttpError } from '../../utils/errors/base/HttpError.js';
 import { getHttpRequestError } from '../../utils/http.js';
 import { SQSClient } from '../../infra/sqs/sqs.client.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { logging, logLevel } from '../../utils/log.js';
+import { logLevel } from '../../utils/log.js';
+import { Queue } from 'bullmq';
+import { LIVE_FINISH_NAME } from '../../task/live/live.task.contants.js';
+import { Redis } from 'ioredis';
+import { getJobOpts } from '../../task/schedule/task.utils.js';
 
 export const stdlDoneStatusEnum = z.enum(['complete', 'canceled']);
 export type StdlDoneStatus = z.infer<typeof stdlDoneStatusEnum>;
@@ -66,6 +69,7 @@ export class LiveFinalizer {
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(SQS) private readonly sqs: SQSClient,
+    @Inject(TASK_REDIS) private readonly taskRedis: Redis,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
   ) {}
@@ -88,15 +92,9 @@ export class LiveFinalizer {
   }
 
   async requestFinishLive(req: LiveFinishRequest) {
-    const res = await fetch(`${this.env.appEndpoint}/api/lives/tasks/finish`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(liveFinishRequest.parse(req)),
-      signal: AbortSignal.timeout(this.env.httpTimeout),
-    });
-    if (res.status >= 400) {
-      throw new HttpRequestError(`Failed to finish live`, res.status);
-    }
+    const taskName = LIVE_FINISH_NAME;
+    const queue = new Queue(taskName, { connection: this.taskRedis });
+    await queue.add(taskName, { meta: {}, args: req }, getJobOpts(this.env));
   }
 
   async finishLive(req: LiveFinishRequest) {

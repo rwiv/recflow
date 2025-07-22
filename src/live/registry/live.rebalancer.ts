@@ -3,7 +3,6 @@ import { LiveRegistrar } from './live.registrar.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
-import assert from 'assert';
 import { NodeGroupService } from '../../node/service/node-group.service.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
@@ -15,9 +14,18 @@ import { stacktrace } from '../../utils/errors/utils.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { delay } from '../../utils/time.js';
 import { LiveFinder } from '../data/live.finder.js';
+import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { nonempty } from '../../common/data/common.schema.js';
+import { z } from 'zod';
 
 const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
 const RECORDING_CLOSE_INTERVAL_DELAY_MS = 1000; // 1 sec
+
+export const drainArgs = z.object({
+  groupId: nonempty.optional(),
+  nodeId: nonempty.optional(),
+});
+export type DrainArgs = z.infer<typeof drainArgs>;
 
 @Injectable()
 export class LiveRebalancer {
@@ -31,7 +39,17 @@ export class LiveRebalancer {
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
-  async drainByNodeGroup(groupId: string) {
+  async drain(args: DrainArgs) {
+    if (args.groupId) {
+      return this.drainNodeGroup(args.groupId);
+    }
+    if (args.nodeId) {
+      return this.drainNode(args.nodeId);
+    }
+    throw new ValidationError('Invalid arguments');
+  }
+
+  async drainNodeGroup(groupId: string) {
     const groups = await this.nodeGroupService.findAll();
     const group = groups.find((g) => g.id === groupId);
     if (!group) throw NotFoundError.from('NodeGroup', 'name', groupId);
@@ -43,11 +61,11 @@ export class LiveRebalancer {
     }
 
     await Promise.all(targetNodes.map((node) => this.nodeUpdater.update(node.id, { isCordoned: true })));
-    await Promise.all(targetNodes.map((node) => this.drainByNode(node.id)));
+    await Promise.all(targetNodes.map((node) => this.drainNode(node.id)));
     log.info(`Node group drain completed`, { group_id: groupId, group_name: group.name });
   }
 
-  async drainByNode(nodeId: string) {
+  async drainNode(nodeId: string) {
     const node = await this.nodeFinder.findById(nodeId, {});
     if (!node) {
       log.error(`Node not found`, { nodeId });

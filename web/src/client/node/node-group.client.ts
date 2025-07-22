@@ -15,8 +15,8 @@ export async function createNodeGroup(append: NodeGroupAppend) {
 }
 
 export async function drainNodeGroup(groupId: string) {
-  const { method, headers, body } = getIngredients('POST');
-  await request(`${configs.endpoint}/api/lives/tasks/adjust/node-group/${groupId}`, {
+  const { method, headers, body } = getIngredients('POST', { groupId });
+  await request(`${configs.endpoint}/api/lives/drain`, {
     method,
     headers,
     body,

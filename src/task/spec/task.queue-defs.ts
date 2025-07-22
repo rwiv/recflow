@@ -4,16 +4,19 @@ import {
   CHANNEL_REFRESH_DEF,
   CHANNEL_REFRESH_NAME,
 } from '../channel/channel.tasks.constants.js';
-import { NODE_RESET, NODE_RESET_NAME } from '../node/node.tasks.constants.js';
+import { NODE_DRAIN_NAME, NODE_RESET, NODE_RESET_NAME } from '../node/node.tasks.constants.js';
 import {
   LIVE_ALLOCATION_DEF,
   LIVE_ALLOCATION_NAME,
   LIVE_CLEANUP_DEF,
   LIVE_CLEANUP_NAME,
+  LIVE_FINISH_NAME,
   LIVE_RECOVERY_DEF,
   LIVE_RECOVERY_NAME,
   LIVE_REFRESH_DEF,
   LIVE_REFRESH_NAME,
+  LIVE_REGISTER_CRITERION_DEF,
+  LIVE_REGISTER_CRITERION_NAME,
   LIVE_REGISTER_FOLLOWED_DEF,
   LIVE_REGISTER_FOLLOWED_NAME,
   LIVE_STATE_CLEANUP_DEF,
@@ -21,16 +24,31 @@ import {
 } from '../live/live.task.contants.js';
 import { TaskDef } from './task.schema.js';
 
-export const cronTaskDefs: Record<string, TaskDef> = {
+export type CronTaskDefs = Record<string, TaskDef>;
+export type TaskDefs = Record<string, TaskDef | null>;
+
+export const cronTaskDefs: CronTaskDefs = {
   [CHANNEL_REFRESH_NAME]: CHANNEL_REFRESH_DEF,
   [CHANNEL_CACHE_CHECK_NAME]: CHANNEL_CACHE_CHECK_DEF,
   [NODE_RESET_NAME]: NODE_RESET,
-  [LIVE_REGISTER_FOLLOWED_NAME]: LIVE_REGISTER_FOLLOWED_DEF,
   [LIVE_CLEANUP_NAME]: LIVE_CLEANUP_DEF,
   [LIVE_REFRESH_NAME]: LIVE_REFRESH_DEF,
   [LIVE_RECOVERY_NAME]: LIVE_RECOVERY_DEF,
   [LIVE_STATE_CLEANUP_NAME]: LIVE_STATE_CLEANUP_DEF,
   [LIVE_ALLOCATION_NAME]: LIVE_ALLOCATION_DEF,
+  [LIVE_REGISTER_FOLLOWED_NAME]: LIVE_REGISTER_FOLLOWED_DEF,
 };
 
-export const taskDefs: Record<string, TaskDef> = { ...cronTaskDefs };
+export const taskDefsRaw: TaskDefs = {
+  ...cronTaskDefs,
+  [LIVE_REGISTER_CRITERION_NAME]: LIVE_REGISTER_CRITERION_DEF,
+  [LIVE_FINISH_NAME]: null,
+  [NODE_DRAIN_NAME]: null,
+};
+
+export const taskDefs: TaskDefs = Object.keys(taskDefsRaw)
+  .sort()
+  .reduce((obj: TaskDefs, key) => {
+    obj[key] = taskDefsRaw[key];
+    return obj;
+  }, {});

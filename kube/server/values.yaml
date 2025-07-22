@@ -21,8 +21,6 @@ ingress:
   secretName: cloudflare-certificate
 
 app:
-  server:
-    endpoint: http://stmgr:80
   fsName: ~
   redis:
     host: stmgr-redis-master.media.svc.cluster.local

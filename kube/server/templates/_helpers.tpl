@@ -1,8 +1,6 @@
 {{- define "stmgr.app.env" -}}
 - name: NODE_ENV
   value: prod
-- name: APP_ENDPOINT
-  value: {{ .Values.app.server.endpoint }}
 - name: APP_PORT
   value: "{{ .Values.service.targetPort }}"
 - name: STREAMQ_URL

@@ -20,7 +20,6 @@ export type NodeEnv = z.infer<typeof nodeEnvEnum>;
 export interface Env {
   nodeEnv: NodeEnv;
   appPort: number;
-  appEndpoint: string;
   streamq: StreamqConfig;
   stlink: StlinkConfig;
   untf: UntfConfig;
@@ -65,7 +64,6 @@ export function readEnv(): Env {
   return {
     nodeEnv: nodeEnvEnum.parse(nodeEnv),
     appPort: nnint.parse(process.env.APP_PORT),
-    appEndpoint: nonempty.parse(process.env.APP_ENDPOINT),
     streamq: readStreamqConfig(),
     stlink: readStlinkConfig(),
     untf: readUntfConfig(),

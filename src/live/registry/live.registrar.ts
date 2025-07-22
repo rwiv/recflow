@@ -22,10 +22,9 @@ import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { logging, LogLevel } from '../../utils/log.js';
 import { LiveFinder } from '../data/live.finder.js';
-import { LiveCreateOptions, LiveWriter } from '../data/live.writer.js';
+import { LiveCreateArgs, LiveWriter } from '../data/live.writer.js';
 import { ExitCmd } from '../spec/event.schema.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
@@ -35,15 +34,25 @@ import { LiveStreamService } from '../data/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live.stream.repository.js';
 
 export interface LiveFinishOptions {
+  recordId: string;
   isPurge?: boolean;
   exitCmd?: ExitCmd;
   msg?: string;
   logLevel?: LogLevel;
 }
 
+export interface NodeSelectArgs {
+  ignoreNodeIds?: string[];
+  ignoreGroupIds?: string[];
+  domesticOnly?: boolean;
+  overseasFirst?: boolean;
+}
+
 export interface LiveRegisterRequest {
   channelInfo: ChannelLiveInfo;
+
   reusableLive?: LiveDtoWithNodes;
+  criterion?: CriterionDto;
 
   logMessage?: string;
   logLevel?: LogLevel;
@@ -51,13 +60,8 @@ export interface LiveRegisterRequest {
   stream?: StreamInfo;
   isFollowed?: boolean;
 
-  // node selection options
-  ignoreNodeIds?: string[];
-  ignoreGroupIds?: string[];
-  criterion?: CriterionDto;
-  domesticOnly?: boolean;
-  overseasFirst?: boolean;
   mustExistNode?: boolean;
+  node?: NodeSelectArgs;
 }
 
 @Injectable()
@@ -170,11 +174,10 @@ export class LiveRegistrar {
 
     if (cr?.loggingOnly) {
       const headMessage = 'New Logging Only Live';
-      const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly: false, overseasFirst: false };
-      return this.createDisabledLive(live, liveInfo, createOpts, headMessage, false, cr, tx);
+      return this.createDisabledLive(liveInfo, channel, live, headMessage, false, cr, tx);
     }
 
-    const selectOpts = this.getNodeSelectOpts(req, live, channel);
+    const selectOpts = this.getNodeSelectOpts(req.node ?? {}, channel, live, cr);
     const { domesticOnly, overseasFirst } = selectOpts;
     let node = await this.nodeSelector.match(selectOpts, tx);
     if (!channel.priority.shouldSave) {
@@ -184,8 +187,7 @@ export class LiveRegistrar {
     if (!node) {
       const headMessage = 'No available nodes for assignment';
       if (mustExistNode) {
-        const createOpts: LiveCreateOptions = { isDisabled: true, domesticOnly, overseasFirst };
-        return this.createDisabledLive(live, liveInfo, createOpts, headMessage, true, cr, tx);
+        return this.createDisabledLive(liveInfo, channel, live, headMessage, true, cr, tx);
       } else {
         log.error(headMessage, liveInfoAttr(liveInfo));
         return null;
@@ -195,8 +197,17 @@ export class LiveRegistrar {
     // Create live if not exists
     if (!live) {
       logMessage = 'New Live';
-      const createOpts: LiveCreateOptions = { isDisabled: false, domesticOnly, overseasFirst };
-      live = await this.liveWriter.createByLive(liveInfo, stream, createOpts, tx);
+      const args: LiveCreateArgs = {
+        liveInfo: req.channelInfo.liveInfo,
+        fields: {
+          channelId: channel.id,
+          isDisabled: false,
+          domesticOnly,
+          overseasFirst,
+          liveStreamId: stream.id,
+        },
+      };
+      live = await this.liveWriter.createByLive(args, tx);
     }
 
     // Set node
@@ -220,23 +231,38 @@ export class LiveRegistrar {
   }
 
   private async createDisabledLive(
-    live: LiveDto | undefined,
     liveInfo: LiveInfo,
-    createOpts: LiveCreateOptions,
+    channel: ChannelDto,
+    existsLive: LiveDto | undefined,
     headMessage: string,
     withNotify: boolean,
     cr: CriterionDto | undefined,
     tx: Tx,
   ) {
-    if (live) {
-      const msg = 'Live already exists, but will be disabled';
-      await this.finishLive(live.id, { exitCmd: 'finish', isPurge: true, msg, logLevel: 'warn' });
+    if (existsLive) {
+      await this.finishLive({
+        recordId: existsLive.id,
+        exitCmd: 'finish',
+        isPurge: true,
+        msg: 'Live already exists, but will be disabled',
+        logLevel: 'warn',
+      });
     }
-    createOpts.isDisabled = true;
-    const newDisabledLive = await this.liveWriter.createByLive(liveInfo, null, createOpts, tx);
+    const args: LiveCreateArgs = {
+      liveInfo,
+      fields: {
+        channelId: channel.id,
+        isDisabled: true,
+        domesticOnly: false,
+        overseasFirst: false,
+        liveStreamId: null,
+      },
+    };
+    const newDisabledLive = await this.liveWriter.createByLive(args, tx);
 
+    const { channelName, viewCnt, liveTitle } = args.liveInfo;
     if (withNotify) {
-      const messageFields = `channel=${liveInfo.channelName}, views=${liveInfo.viewCnt}, title=${liveInfo.liveTitle}`;
+      const messageFields = `channel=${channelName}, views=${viewCnt}, title=${liveTitle}`;
       this.notifier.notify(`${headMessage}: ${messageFields}`);
     }
 
@@ -250,7 +276,8 @@ export class LiveRegistrar {
     log.debug('Deregister node in live', liveAttr(live, { node }));
   }
 
-  async finishLive(recordId: string, opts: LiveFinishOptions = {}): Promise<LiveDto | null> {
+  async finishLive(opts: LiveFinishOptions): Promise<LiveDto | null> {
+    const recordId = opts.recordId;
     const isPurge = opts.isPurge ?? false;
     const logLevel = opts.logLevel ?? 'info';
     let exitCmd = opts.exitCmd ?? 'delete';
@@ -261,7 +288,8 @@ export class LiveRegistrar {
 
     const live = await this.liveFinder.findById(recordId, { nodes: true });
     if (!live) {
-      throw NotFoundError.from('LiveRecord', 'id', recordId);
+      log.warn(`Failed to finish live: Not found LiveRecord: id=${recordId}`);
+      return null;
     }
     assert(live.nodes);
     if (live.nodes.length === 0) {
@@ -286,13 +314,14 @@ export class LiveRegistrar {
   }
 
   private getNodeSelectOpts(
-    req: LiveRegisterRequest,
-    live: LiveDtoWithNodes | undefined,
+    req: NodeSelectArgs,
     channel: ChannelDto,
+    live: LiveDtoWithNodes | undefined,
+    criterion: CriterionDto | undefined,
   ): NodeSelectorOptions {
     let domesticOnly = false;
-    if (req.criterion) {
-      domesticOnly = req.criterion.domesticOnly;
+    if (criterion) {
+      domesticOnly = criterion.domesticOnly;
     }
     if (live) {
       domesticOnly = live.domesticOnly;
@@ -302,8 +331,8 @@ export class LiveRegistrar {
     }
 
     let overseasFirst = channel.overseasFirst;
-    if (req.criterion) {
-      overseasFirst = req.criterion.overseasFirst;
+    if (criterion) {
+      overseasFirst = criterion.overseasFirst;
     }
     if (live) {
       overseasFirst = live.overseasFirst;

@@ -7,7 +7,7 @@ import { mockLiveInfoChzzk } from '../../platform/spec/wapper/live.mocks.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { LiveCreateOptions, LiveWriter } from './live.writer.js';
+import { LiveCreateArgs, LiveWriter } from './live.writer.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 
 const app = await createTestApp();
@@ -33,9 +33,18 @@ describe('ChannelService', () => {
     const cha = mockChannelAppend({ platformId: pf.id, priorityId: pri.id });
     const ch = await chWriter.createWithTagNames(cha, ['tag1', 'tag2']);
 
-    const cOpts1: LiveCreateOptions = { isDisabled: false, domesticOnly: false, overseasFirst: false };
     const li1 = mockLiveInfoChzzk({ channelId: ch.pid });
-    const live1 = await liveWriter.createByLive(li1, null, cOpts1);
+    const args1: LiveCreateArgs = {
+      liveInfo: li1,
+      fields: {
+        channelId: ch.id,
+        isDisabled: false,
+        domesticOnly: false,
+        overseasFirst: false,
+        liveStreamId: null,
+      },
+    };
+    const live1 = await liveWriter.createByLive(args1);
     expect(live1.liveTitle).toBe(li1.liveTitle);
 
     const li2 = mockLiveInfoChzzk({ channelId: ch.pid });
@@ -44,9 +53,10 @@ describe('ChannelService', () => {
     expect(live2.liveTitle).toBe(li2.liveTitle);
 
     await expect(() => {
-      const cOpts2 = { ...cOpts1, videoName: live1.videoName };
-      const li3 = mockLiveInfoChzzk({ channelId: ch.pid });
-      return liveWriter.createByLive(li3, null, cOpts2);
+      const args2 = { ...args1 };
+      args2.liveInfo = mockLiveInfoChzzk({ channelId: ch.pid });
+      args2.fields.videoName = live1.videoName;
+      return liveWriter.createByLive(args2);
     }).rejects.toThrowError(ConflictError);
   });
 });

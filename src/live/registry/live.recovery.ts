@@ -113,7 +113,8 @@ export class LiveRecoveryManager {
   }
 
   private finishLive(liveId: string, message: string, logLevel: LogLevel) {
-    return this.liveRegistrar.finishLive(liveId, {
+    return this.liveRegistrar.finishLive({
+      recordId: liveId,
       isPurge: true,
       exitCmd: 'finish',
       msg: message,

@@ -80,8 +80,10 @@ export class LiveAllocator {
       reusableLive: live,
       stream: live.stream ?? undefined,
       channelInfo: channelLiveInfo.parse(channelInfo),
-      ignoreGroupIds: live.nodes.map((it) => it.groupId),
       mustExistNode: false,
+      node: {
+        ignoreGroupIds: live.nodes.map((it) => it.groupId),
+      },
       logMessage,
       logLevel,
     });

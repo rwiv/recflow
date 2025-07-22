@@ -57,7 +57,7 @@ export class LiveController {
   @Delete('/')
   async delete(@Body() req: LiveDeleteRequest) {
     const { recordId, cmd, isPurge } = liveDeleteRequest.parse(req);
-    return this.liveService.finishLive(recordId, { exitCmd: exitCmd.parse(cmd), isPurge });
+    return this.liveService.finishLive({ recordId, exitCmd: exitCmd.parse(cmd), isPurge });
   }
 
   @Post('/drain')

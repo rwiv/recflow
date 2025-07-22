@@ -19,11 +19,18 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NodeRepository } from '../../node/storage/node.repository.js';
 import { LiveStreamService } from './live-stream.service.js';
 
-export interface LiveCreateOptions {
+export interface LiveCreationFields {
+  channelId: string;
   isDisabled: boolean;
   domesticOnly: boolean;
   overseasFirst: boolean;
+  liveStreamId: string | null;
   videoName?: string;
+}
+
+export interface LiveCreateArgs {
+  liveInfo: LiveInfo;
+  fields: LiveCreationFields;
 }
 
 @Injectable()
@@ -40,18 +47,18 @@ export class LiveWriter {
     private readonly mapper: LiveMapper,
   ) {}
 
-  async createByLive(
-    live: LiveInfo,
-    stream: LiveStreamDto | null,
-    opts: LiveCreateOptions,
-    tx: Tx = db,
-  ): Promise<LiveDto> {
-    const platform = await this.pfFinder.findByNameNotNull(live.type, tx);
-    const channel = await this.channelFinder.findByPidAndPlatform(live.pid, platform.name, tx);
-    if (!channel) throw NotFoundError.from('Channel', 'pid', live.pid);
+  async createByLive(args: LiveCreateArgs, tx: Tx = db): Promise<LiveDto> {
+    const liveInfo = args.liveInfo;
+    const platform = await this.pfFinder.findByNameNotNull(liveInfo.type, tx);
+    const channel = await this.channelFinder.findByPidAndPlatform(liveInfo.pid, platform.name, tx);
+    if (!channel) throw NotFoundError.from('Channel', 'pid', liveInfo.pid);
+    let stream: LiveStreamDto | null = null;
+    if (args.fields.liveStreamId) {
+      stream = await this.liveStreamService.findById(args.fields.liveStreamId, tx);
+    }
 
     // Validate videoName
-    let videoName = opts.videoName;
+    let videoName = args.fields.videoName;
     if (!videoName) {
       videoName = getFormattedTimestamp();
     }
@@ -62,15 +69,15 @@ export class LiveWriter {
     }
 
     const req: LiveEntAppend = {
-      ...live,
-      ...opts,
+      ...liveInfo,
+      ...args.fields,
       platformId: platform.id,
       channelId: channel.id,
-      sourceId: live.liveId,
+      sourceId: args.liveInfo.liveId,
       liveDetails: null,
       videoName,
-      liveStreamId: stream?.id ?? null,
       fsName: this.env.fsName,
+      status: 'initializing',
     };
     const ent = await this.liveRepo.create(req, tx);
 

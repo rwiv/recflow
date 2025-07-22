@@ -14,9 +14,11 @@ export class LiveCleaner {
   ) {}
 
   async cleanup() {
+    const promises = [];
     for (const live of await this.liveFinder.findAll()) {
-      await this.finishLive(live);
+      promises.push(this.finishLive(live));
     }
+    await Promise.allSettled(promises);
   }
 
   private async finishLive(live: LiveDto) {
@@ -28,6 +30,6 @@ export class LiveCleaner {
     if (live.isDisabled) {
       exitCmd = 'delete';
     }
-    await this.liveRegistrar.finishLive(live.id, { isPurge: true, exitCmd });
+    await this.liveRegistrar.finishLive({ recordId: live.id, isPurge: true, exitCmd });
   }
 }

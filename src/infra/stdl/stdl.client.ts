@@ -37,7 +37,7 @@ export abstract class Stdl {
   abstract cancelRecording(endpoint: string, recordId: string): Promise<void>;
 }
 
-export const stdlStreamStatusEnum = z.enum(['wait', 'recording', 'done', 'failed']);
+export const stdlStreamStatusEnum = z.enum(['waiting', 'recording', 'completed', 'failed']);
 
 export const recordingStatus = z.object({
   id: uuid,

@@ -124,14 +124,9 @@ export class LiveRecoveryManager {
 
   private async registerSameLive(live: LiveDto) {
     try {
-      const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
-      return await this.liveRegistrar.createNewLive({
-        channelInfo: channelLiveInfo.parse(channelInfo),
-        stream: live.stream ?? undefined,
-        logMessage: 'Reregister Live',
-      });
+      return await this.liveRegistrar.createNewLiveByLive(live);
     } catch (e) {
-      log.error('Failed to reregister live', { ...liveAttr(live), stack_trace: stacktrace(e) });
+      log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
     }
   }
 
@@ -180,7 +175,7 @@ export class LiveRecoveryManager {
 
         // Filter valid recordings in node
         const recStatus = nodeRecs.find((status) => status.id === live.id);
-        if (recStatus && ['recording', 'done'].includes(recStatus.status)) {
+        if (recStatus && ['recording', 'completed'].includes(recStatus.status)) {
           continue;
         }
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);

@@ -17,6 +17,7 @@ import { LiveFinalizer } from './live.finalizer.js';
 import { LiveRebalancer } from './live.rebalancer.js';
 import { LiveAllocator } from './live.allocator.js';
 import { LiveStorageModule } from '../storage/live.storage.module.js';
+import { CriterionServiceModule } from '../../criterion/service/criterion.service.module.js';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LiveStorageModule } from '../storage/live.storage.module.js';
     NodeStorageModule,
     NodeServiceModule,
     PlatformModule,
+    CriterionServiceModule,
   ],
   providers: [
     LiveRegistrar,

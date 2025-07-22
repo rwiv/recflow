@@ -44,7 +44,7 @@ describe('ChannelService', () => {
         liveStreamId: null,
       },
     };
-    const live1 = await liveWriter.createByLive(args1);
+    const live1 = await liveWriter.createByLiveInfo(args1);
     expect(live1.liveTitle).toBe(li1.liveTitle);
 
     const li2 = mockLiveInfoChzzk({ channelId: ch.pid });
@@ -56,7 +56,11 @@ describe('ChannelService', () => {
       const args2 = { ...args1 };
       args2.liveInfo = mockLiveInfoChzzk({ channelId: ch.pid });
       args2.fields.videoName = live1.videoName;
-      return liveWriter.createByLive(args2);
+      return liveWriter.createByLiveInfo(args2);
     }).rejects.toThrowError(ConflictError);
+
+    const copied = await liveWriter.createByLive(live2.id);
+    expect(copied.id).not.toBe(live2.id);
+    expect(copied.createdAt).not.toBe(live2.createdAt);
   });
 });

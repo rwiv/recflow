@@ -47,7 +47,26 @@ export class LiveWriter {
     private readonly mapper: LiveMapper,
   ) {}
 
-  async createByLive(args: LiveCreateArgs, tx: Tx = db): Promise<LiveDto> {
+  async createByLive(baseId: string, tx: Tx = db): Promise<LiveDto> {
+    const baseEnt = await this.liveRepo.findById(baseId, tx);
+    if (!baseEnt) throw NotFoundError.from('Live', 'id', baseId);
+
+    const req: LiveEntAppend = {
+      ...baseEnt,
+      status: 'initializing',
+      isDisabled: false,
+      videoName: getFormattedTimestamp(),
+    };
+    delete req.id;
+    delete req.createdAt;
+    delete req.updatedAt;
+    delete req.deletedAt;
+
+    const ent = await this.liveRepo.create(req, tx);
+    return await this.mapper.map(ent);
+  }
+
+  async createByLiveInfo(args: LiveCreateArgs, tx: Tx = db): Promise<LiveDto> {
     const liveInfo = args.liveInfo;
     const platform = await this.pfFinder.findByNameNotNull(liveInfo.type, tx);
     const channel = await this.channelFinder.findByPidAndPlatform(liveInfo.pid, platform.name, tx);

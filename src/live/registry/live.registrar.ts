@@ -14,7 +14,7 @@ import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import type { Stdl } from '../../infra/stdl/stdl.client.js';
+import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selector.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
@@ -63,25 +63,25 @@ export interface NewLiveCreationRequest {
 }
 
 export interface LiveNodeRegisterRequest {
-  channelInfo: ChannelLiveInfo;
+  live: LiveDtoWithNodes;
 
-  isFollowed?: boolean;
+  node?: NodeDto;
+
   criterion?: CriterionDto;
 
   logMessage?: string;
   logLevel?: LogLevel;
 
-  stream?: StreamInfo;
-
-  reusableLive?: LiveDtoWithNodes;
-
-  mustExistNode?: boolean;
-  node?: NodeSelectArgs;
+  nodeSelect?: NodeSelectArgs;
 }
 
 @Injectable()
 export class LiveRegistrar {
   constructor(
+    @Inject(ENV) private readonly env: Env,
+    @Inject(NOTIFIER) private readonly notifier: Notifier,
+    @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly nodeSelector: NodeSelector,
     private readonly nodeUpdater: NodeUpdater,
     private readonly chWriter: ChannelWriter,
@@ -93,14 +93,88 @@ export class LiveRegistrar {
     private readonly finalizer: LiveFinalizer,
     private readonly crFinder: CriterionFinder,
     private readonly stlink: Stlink,
-    @Inject(ENV) private readonly env: Env,
-    @Inject(NOTIFIER) private readonly notifier: Notifier,
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
+  async createNewLiveByLive(base: LiveDto): Promise<string | null> {
+    if (!base.liveStreamId) {
+      throw new ValidationError('LiveStreamId is not set', { attr: liveAttr(base) });
+    }
+
+    const live = await this.liveWriter.createByLive(base.id);
+    const newReq: LiveNodeRegisterRequest = {
+      live,
+      logMessage: 'New Same Live',
+    };
+    return this.registerLiveNode(newReq);
+  }
+
+  async createNewLive(req: NewLiveCreationRequest): Promise<string | null> {
+    const liveInfo = req.channelInfo.liveInfo;
+    let cr = undefined;
+    if (req.criterionId) {
+      cr = await this.crFinder.findById(req.criterionId);
+      if (!cr) {
+        throw NotFoundError.from('Criterion', 'id', req.criterionId);
+      }
+    }
+
+    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
+    if (!channel) {
+      const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
+      const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
+      channel = await this.chWriter.createWithInfo(append, req.channelInfo);
+    }
+
+    if (cr?.loggingOnly) {
+      const headMessage = 'New Logging Only Live';
+      return this.createDisabledLive(liveInfo, channel, undefined, headMessage, false, cr);
+    }
+
+    const stream = await this.getLiveStream(req, liveInfo, channel);
+    if (!stream) return null;
+
+    // If m3u8 is not available (e.g. standby mode in Soop)
+    // const m3u8 = await this.stlink.fetchM3u8(stream);
+    // if (!m3u8) {
+    //   // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
+    //   log.warn('M3U8 not available', liveInfoAttr(liveInfo));
+    //   return null;
+    // }
+
+    const selectOpts = this.getNodeSelectOpts({}, channel, undefined, cr);
+    let node = await this.nodeSelector.match(selectOpts);
+    if (!channel.priority.shouldSave) {
+      node = null;
+    }
+    // If there is no available node
+    if (!node) {
+      const headMessage = 'No available nodes for assignment';
+      return this.createDisabledLive(liveInfo, channel, undefined, headMessage, true, cr);
+    }
+
+    const args: LiveCreateArgs = {
+      liveInfo: req.channelInfo.liveInfo,
+      fields: {
+        channelId: channel.id,
+        isDisabled: false,
+        domesticOnly: selectOpts.domesticOnly,
+        overseasFirst: selectOpts.overseasFirst,
+        liveStreamId: stream.id,
+      },
+    };
+    const live = await this.liveWriter.createByLiveInfo(args);
+    const newReq: LiveNodeRegisterRequest = {
+      ...req,
+      live,
+      node,
+      criterion: cr,
+      logMessage: 'New Live',
+    };
+    return this.registerLiveNode(newReq);
+  }
+
   async getLiveStream(
-    req: LiveNodeRegisterRequest,
+    req: NewLiveCreationRequest,
     liveInfo: LiveInfo,
     channel: ChannelDto,
   ): Promise<LiveStreamDto | null> {
@@ -121,8 +195,11 @@ export class LiveRegistrar {
     if (req.isFollowed && this.env.stlink.enforceAuthForFollowed) {
       withAuth = true;
     }
-    if (req.criterion?.enforceCreds) {
-      withAuth = true;
+    if (req.criterionId) {
+      const cr = await this.crFinder.findById(req.criterionId);
+      if (cr?.enforceCreds) {
+        withAuth = true;
+      }
     }
     const { platform, pid } = req.channelInfo;
     const stRes = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
@@ -148,119 +225,6 @@ export class LiveRegistrar {
     });
   }
 
-  async createNewLive(req: NewLiveCreationRequest): Promise<string | null> {
-    let criterion = undefined;
-    if (req.criterionId) {
-      criterion = await this.crFinder.findById(req.criterionId);
-      if (!criterion) {
-        throw NotFoundError.from('Criterion', 'id', req.criterionId);
-      }
-    }
-    const newReq: LiveNodeRegisterRequest = {
-      ...req,
-      criterion,
-    };
-    return this.registerLiveNode(newReq);
-  }
-
-  async registerLiveNode(req: LiveNodeRegisterRequest): Promise<string | null> {
-    const liveInfo = req.channelInfo.liveInfo;
-
-    // If channel is not registered, create a new channel
-    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
-    if (!channel) {
-      const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
-      const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
-      channel = await this.chWriter.createWithInfo(append, req.channelInfo);
-    }
-
-    const liveStream = await this.getLiveStream(req, liveInfo, channel);
-    if (!liveStream) return null;
-
-    // TODO: remove
-    // // If m3u8 is not available (e.g. standby mode in Soop)
-    // const m3u8 = await this.stlink.fetchM3u8(streamUrl, headers);
-    // if (!m3u8) {
-    //   // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-    //   log.warn('M3U8 not available', liveInfoAttr(liveInfo));
-    //   return null;
-    // }
-
-    return db.transaction(async (tx) => {
-      return this.registerWithTx(req, channel, liveStream, tx);
-    });
-  }
-
-  private async registerWithTx(
-    req: LiveNodeRegisterRequest,
-    channel: ChannelDto,
-    stream: LiveStreamDto,
-    tx: Tx,
-  ): Promise<string | null> {
-    let live = req.reusableLive;
-    const cr = req.criterion;
-    const liveInfo = req.channelInfo.liveInfo;
-    const mustExistNode = req.mustExistNode ?? true;
-    let logMessage = req.logMessage ?? 'New LiveNode';
-
-    if (cr?.loggingOnly) {
-      const headMessage = 'New Logging Only Live';
-      return this.createDisabledLive(liveInfo, channel, live, headMessage, false, cr, tx);
-    }
-
-    const selectOpts = this.getNodeSelectOpts(req.node ?? {}, channel, live, cr);
-    const { domesticOnly, overseasFirst } = selectOpts;
-    let node = await this.nodeSelector.match(selectOpts, tx);
-    if (!channel.priority.shouldSave) {
-      node = null;
-    }
-    // If there is no available node
-    if (!node) {
-      const headMessage = 'No available nodes for assignment';
-      if (mustExistNode) {
-        return this.createDisabledLive(liveInfo, channel, live, headMessage, true, cr, tx);
-      } else {
-        log.error(headMessage, liveInfoAttr(liveInfo));
-        return null;
-      }
-    }
-
-    // Create live if not exists
-    if (!live) {
-      logMessage = 'New Live';
-      const args: LiveCreateArgs = {
-        liveInfo: req.channelInfo.liveInfo,
-        fields: {
-          channelId: channel.id,
-          isDisabled: false,
-          domesticOnly,
-          overseasFirst,
-          liveStreamId: stream.id,
-        },
-      };
-      live = await this.liveWriter.createByLive(args, tx);
-    }
-
-    // Set node
-    await this.liveWriter.bind({ liveId: live.id, nodeId: node.id }, tx);
-    await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
-    if (!(await this.stdlRedis.getLiveState(live.id, false))) {
-      await this.stdlRedis.createLiveState(live);
-    }
-    await this.stdl.startRecording(node.endpoint, live.id);
-
-    // Send notification
-    if (live.channel.priority.shouldNotify) {
-      this.notifier.sendLiveInfo(live);
-    }
-
-    await this.liveWriter.update(live.id, { status: 'recording' }, tx);
-
-    const attr = { ...liveAttr(live, { cr, node }), stream_url: stream.url };
-    logging(logMessage, attr, req.logLevel ?? 'info');
-    return live.id;
-  }
-
   private async createDisabledLive(
     liveInfo: LiveInfo,
     channel: ChannelDto,
@@ -268,7 +232,7 @@ export class LiveRegistrar {
     headMessage: string,
     withNotify: boolean,
     cr: CriterionDto | undefined,
-    tx: Tx,
+    tx: Tx = db,
   ) {
     if (existsLive) {
       await this.finishLive({
@@ -289,7 +253,7 @@ export class LiveRegistrar {
         liveStreamId: null,
       },
     };
-    const newDisabledLive = await this.liveWriter.createByLive(args, tx);
+    const newDisabledLive = await this.liveWriter.createByLiveInfo(args, tx);
 
     const { channelName, viewCnt, liveTitle } = args.liveInfo;
     if (withNotify) {
@@ -299,6 +263,49 @@ export class LiveRegistrar {
 
     log.info(headMessage, liveAttr(newDisabledLive, { cr }));
     return newDisabledLive.id;
+  }
+
+  async registerLiveNode(req: LiveNodeRegisterRequest): Promise<string | null> {
+    return db.transaction(async (tx) => {
+      return this._registerLiveNode(req, tx);
+    });
+  }
+
+  private async _registerLiveNode(req: LiveNodeRegisterRequest, tx: Tx): Promise<string | null> {
+    const live = req.live;
+    const channel = live.channel;
+    let node = req.node ?? null;
+    const cr = req.criterion;
+    const logMessage = req.logMessage ?? 'New LiveNode';
+
+    if (!node) {
+      const selectOpts = this.getNodeSelectOpts(req.nodeSelect ?? {}, channel, live, cr);
+      node = await this.nodeSelector.match(selectOpts, tx);
+    }
+    // If there is no available node
+    if (!node) {
+      log.error('No available nodes for assignment', liveAttr(live));
+      return null;
+    }
+
+    // Process node
+    await this.liveWriter.bind({ liveId: live.id, nodeId: node.id }, tx);
+    await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
+    if (!(await this.stdlRedis.getLiveState(live.id, false))) {
+      await this.stdlRedis.createLiveState(live);
+    }
+    await this.stdl.startRecording(node.endpoint, live.id);
+
+    // Send notification
+    if (live.channel.priority.shouldNotify) {
+      this.notifier.sendLiveInfo(live);
+    }
+
+    await this.liveWriter.update(live.id, { status: 'recording' }, tx);
+
+    const attr = { ...liveAttr(live, { cr, node }), stream_url: live.stream?.url };
+    logging(logMessage, attr, req.logLevel ?? 'info');
+    return live.id;
   }
 
   async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {

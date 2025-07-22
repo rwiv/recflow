@@ -8,7 +8,6 @@ import assert from 'assert';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { LiveRegistrar } from './live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { LogLevel } from '../../utils/log.js';
@@ -75,13 +74,9 @@ export class LiveAllocator {
       logLevel = 'warn';
       logMessage = 'Reallocation Live';
     }
-    const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
     await this.liveRegistrar.registerLiveNode({
-      reusableLive: live,
-      stream: live.stream ?? undefined,
-      channelInfo: channelLiveInfo.parse(channelInfo),
-      mustExistNode: false,
-      node: {
+      live,
+      nodeSelect: {
         ignoreGroupIds: live.nodes.map((it) => it.groupId),
       },
       logMessage,

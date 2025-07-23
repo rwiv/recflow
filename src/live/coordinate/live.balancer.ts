@@ -72,7 +72,7 @@ export class LiveBalancer {
       logLevel = 'warn';
       logMessage = 'Reallocation Live';
     }
-    await this.liveRegistrar.registerLiveNode({
+    await this.liveRegistrar.register({
       live,
       nodeSelect: {
         ignoreGroupIds: live.nodes.map((it) => it.groupId),

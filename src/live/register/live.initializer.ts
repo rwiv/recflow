@@ -25,10 +25,10 @@ import { LiveStreamService } from '../data/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live.stream.repository.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveNodeRegisterRequest, LiveRegistrar } from './live.registrar.js';
+import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
 
-export interface NewLiveCreationRequest {
+export interface NewLiveRequest {
   channelInfo: ChannelLiveInfo;
 
   isFollowed?: boolean;
@@ -63,14 +63,14 @@ export class LiveInitializer {
     }
 
     const live = await this.liveWriter.createByLive(base.id);
-    const newReq: LiveNodeRegisterRequest = {
+    const newReq: LiveRegisterRequest = {
       live,
       logMessage: 'New Same Live',
     };
-    return this.registrar.registerLiveNode(newReq);
+    return this.registrar.register(newReq);
   }
 
-  async createNewLive(req: NewLiveCreationRequest): Promise<string | null> {
+  async createNewLive(req: NewLiveRequest): Promise<string | null> {
     const liveInfo = req.channelInfo.liveInfo;
     let cr = undefined;
     if (req.criterionId) {
@@ -125,21 +125,17 @@ export class LiveInitializer {
       },
     };
     const live = await this.liveWriter.createByLiveInfo(args);
-    const newReq: LiveNodeRegisterRequest = {
+    const newReq: LiveRegisterRequest = {
       ...req,
       live,
       node,
       criterion: cr,
       logMessage: 'New Live',
     };
-    return this.registrar.registerLiveNode(newReq);
+    return this.registrar.register(newReq);
   }
 
-  async getLiveStream(
-    req: NewLiveCreationRequest,
-    liveInfo: LiveInfo,
-    channel: ChannelDto,
-  ): Promise<LiveStreamDto | null> {
+  async getLiveStream(req: NewLiveRequest, liveInfo: LiveInfo, channel: ChannelDto): Promise<LiveStreamDto | null> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveId, channelId: channel.id };
     const exists = await this.liveStreamService.findByQueryLatestOne(query);
     if (exists) return exists;

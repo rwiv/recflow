@@ -21,7 +21,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { LiveRegisterHelper, NodeSelectArgs } from './live.register-helper.js';
 
-export interface LiveFinishOptions {
+export interface LiveFinishRequest {
   recordId: string;
   isPurge?: boolean;
   exitCmd?: ExitCmd;
@@ -29,7 +29,7 @@ export interface LiveFinishOptions {
   logLevel?: LogLevel;
 }
 
-export interface LiveNodeRegisterRequest {
+export interface LiveRegisterRequest {
   live: LiveDtoWithNodes;
 
   node?: NodeDto;
@@ -56,13 +56,13 @@ export class LiveRegistrar {
     private readonly helper: LiveRegisterHelper,
   ) {}
 
-  async registerLiveNode(req: LiveNodeRegisterRequest): Promise<string | null> {
+  async register(req: LiveRegisterRequest): Promise<string | null> {
     return db.transaction(async (tx) => {
-      return this._registerLiveNode(req, tx);
+      return this._register(req, tx);
     });
   }
 
-  private async _registerLiveNode(req: LiveNodeRegisterRequest, tx: Tx): Promise<string | null> {
+  private async _register(req: LiveRegisterRequest, tx: Tx): Promise<string | null> {
     const live = req.live;
     const channel = live.channel;
     let node = req.node ?? null;
@@ -105,13 +105,13 @@ export class LiveRegistrar {
     log.debug('Deregister node in live', liveAttr(live, { node }));
   }
 
-  async finishLive(opts: LiveFinishOptions): Promise<LiveDto | null> {
-    const recordId = opts.recordId;
-    const isPurge = opts.isPurge ?? false;
-    const logLevel = opts.logLevel ?? 'info';
-    let exitCmd = opts.exitCmd ?? 'delete';
-    let msg = opts.msg ?? 'Delete live';
-    if (!opts.msg && !isPurge) {
+  async finishLive(req: LiveFinishRequest): Promise<LiveDto | null> {
+    const recordId = req.recordId;
+    const isPurge = req.isPurge ?? false;
+    const logLevel = req.logLevel ?? 'info';
+    let exitCmd = req.exitCmd ?? 'delete';
+    let msg = req.msg ?? 'Delete live';
+    if (!req.msg && !isPurge) {
       msg = 'Disable live';
     }
 

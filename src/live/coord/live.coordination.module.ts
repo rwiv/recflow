@@ -24,4 +24,4 @@ import { LiveRecoveryManager } from './live.recovery.js';
   providers: [LiveCleaner, LiveRecoveryManager, LiveDrainer, LiveBalancer],
   exports: [LiveCleaner, LiveRecoveryManager, LiveDrainer, LiveBalancer],
 })
-export class LiveCoordinateModule {}
+export class LiveCoordinationModule {}

@@ -9,7 +9,7 @@ import { db } from '../../infra/db/db.js';
 import { NodeFieldsReq } from '../../node/spec/node.dto.schema.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { LiveStreamDto } from '../spec/live.dto.schema.js';
-import { LiveStreamService } from './live-stream.service.js';
+import { LiveStreamService } from '../stream/live-stream.service.js';
 
 export interface LiveFieldsReq {
   nodes?: boolean;

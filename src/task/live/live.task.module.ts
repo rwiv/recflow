@@ -6,7 +6,7 @@ import { TaskSchedulerModule } from '../schedule/task.schedule.module.js';
 import { LiveTaskInitializer } from './live.task.initializer.js';
 import { InfraModule } from '../../infra/infra.module.js';
 import { LiveDetectionModule } from '../../live/detection/live.detection.module.js';
-import { LiveCoordinateModule } from '../../live/coordinate/live.coordinate.module.js';
+import { LiveCoordinationModule } from '../../live/coord/live.coordination.module.js';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { LiveCoordinateModule } from '../../live/coordinate/live.coordinate.modu
     LiveDataModule,
     LiveRegisterModule,
     LiveDetectionModule,
-    LiveCoordinateModule,
+    LiveCoordinationModule,
     TaskSchedulerModule,
   ],
   providers: [LiveTaskInitializer],

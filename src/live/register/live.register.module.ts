@@ -10,6 +10,7 @@ import { LiveFinalizer } from './live.finalizer.js';
 import { CriterionServiceModule } from '../../criterion/service/criterion.service.module.js';
 import { LiveInitializer } from './live.initializer.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
+import { LiveStreamModule } from '../stream/live.stream.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LiveRegisterHelper } from './live.register-helper.js';
     NodeServiceModule,
     CriterionServiceModule,
     LiveDataModule,
+    LiveStreamModule,
   ],
   providers: [LiveRegistrar, LiveInitializer, LiveFinalizer, LiveRegisterHelper],
   exports: [LiveRegistrar, LiveInitializer, LiveFinalizer, LiveRegisterHelper],

@@ -20,7 +20,6 @@ import { Notifier } from '../../infra/notify/notifier.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { LogLevel } from '../../utils/log.js';
-import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { LiveInitializer } from '../register/live.initializer.js';
 

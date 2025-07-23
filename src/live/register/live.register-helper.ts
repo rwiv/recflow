@@ -13,7 +13,6 @@ export interface NodeSelectArgs {
 
 @Injectable()
 export class LiveRegisterHelper {
-
   getNodeSelectOpts(
     req: NodeSelectArgs,
     channel: ChannelDto,

@@ -17,7 +17,7 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { NodeRepository } from '../../node/storage/node.repository.js';
-import { LiveStreamService } from './live-stream.service.js';
+import { LiveStreamService } from '../stream/live-stream.service.js';
 
 export interface LiveCreationFields {
   channelId: string;

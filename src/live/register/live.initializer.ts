@@ -21,7 +21,7 @@ import { LogLevel } from '../../utils/log.js';
 import { LiveCreateArgs, LiveWriter } from '../data/live.writer.js';
 import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { LiveStreamService } from '../data/live-stream.service.js';
+import { LiveStreamService } from '../stream/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live.stream.repository.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';

@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { LiveDetector } from '../../live/detection/live.detector.js';
 import { LiveRefresher } from '../../live/data/live.refresher.js';
-import { LiveCleaner } from '../../live/coordinate/live.cleaner.js';
-import { LiveRecoveryManager } from '../../live/coordinate/live.recovery.js';
+import { LiveCleaner } from '../../live/coord/live.cleaner.js';
+import { LiveRecoveryManager } from '../../live/coord/live.recovery.js';
 import {
   LIVE_REGISTER_FOLLOWED_NAME,
   LIVE_REFRESH_NAME,
@@ -14,7 +14,7 @@ import {
   LIVE_FINISH_NAME,
 } from './live.task.contants.js';
 import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
-import { LiveBalancer } from '../../live/coordinate/live.balancer.js';
+import { LiveBalancer } from '../../live/coord/live.balancer.js';
 import { Task } from '../spec/task.interface.js';
 import { createWorker } from '../schedule/task.utils.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';

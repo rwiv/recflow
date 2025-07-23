@@ -7,8 +7,10 @@ import { z } from 'zod';
 import { headers, nonempty, queryParams } from '../../common/data/common.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { delay } from '../../utils/time.js';
-import { LiveDto, LiveStreamDto } from '../../live/spec/live.dto.schema.js';
-import { liveAttr } from '../../common/attr/attr.live.js';
+import { LiveDto, LiveStreamDto, streamInfo, StreamInfo } from '../../live/spec/live.dto.schema.js';
+import { liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
+import { log } from 'jslog';
+import { LiveInfo } from '../spec/wapper/live.js';
 
 export const stlinkStreamInfo = z.object({
   openLive: z.boolean(),
@@ -47,6 +49,27 @@ export class Stlink {
     } else {
       throw new ValidationError(`Unsupported platform: ${platform}`);
     }
+  }
+
+  toStreamInfo(res: StlinkStreamInfo, liveInfo: LiveInfo): StreamInfo | null {
+    if (!res.openLive) {
+      log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
+      // live record is not created as it may normalize later
+      return null;
+    }
+    if (!res.best || !res.headers) {
+      log.error('Stream info is not available', liveInfoAttr(liveInfo));
+      return null;
+    }
+
+    const streamUrl = res?.best?.mediaPlaylistUrl;
+    const streamHeaders = res?.headers;
+    if (!streamUrl || !streamHeaders) {
+      throw new ValidationError('Stream info is not available');
+    }
+
+    const result: StreamInfo = { url: streamUrl, headers: streamHeaders, params: res?.best?.params ?? null };
+    return streamInfo.parse(result);
   }
 
   private async _fetchStreamInfo(

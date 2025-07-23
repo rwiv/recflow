@@ -13,6 +13,7 @@ import { DevCriterionInserter } from './insert.criterion.js';
 import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { PriorityService } from '../../../channel/service/priority.service.js';
+import { DEFAULT_PRIORITY_NAME } from '../../../channel/spec/priority.constants.js';
 
 @Injectable()
 export class DevChannelInserter {
@@ -54,8 +55,8 @@ export class DevChannelInserter {
       const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
       const platformId = platforms.find((pf) => pf.name === info.platform)?.id;
       if (!platformId) throw NotFoundError.from('Platform', 'name', info.platform);
-      const priorityId = priorities.find((pri) => pri.name === 'ignore')?.id;
-      if (!priorityId) throw NotFoundError.from('Priority', 'name', 'ignore');
+      const priorityId = priorities.find((pri) => pri.name === DEFAULT_PRIORITY_NAME)?.id;
+      if (!priorityId) throw NotFoundError.from('Priority', 'name', DEFAULT_PRIORITY_NAME);
       const append: ChannelAppend = {
         ...info,
         platformId,

@@ -5,7 +5,7 @@ import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
-import { liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
+import { channelAttr, liveAttr } from '../../common/attr/attr.live.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
@@ -22,7 +22,7 @@ import { LiveCreateArgs, LiveWriter } from '../data/live.writer.js';
 import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { LiveStreamService } from '../stream/live-stream.service.js';
-import { LiveStreamQuery } from '../storage/live.stream.repository.js';
+import { LiveStreamQuery } from '../storage/live-stream.repository.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
@@ -138,7 +138,11 @@ export class LiveInitializer {
   async getLiveStream(req: NewLiveRequest, liveInfo: LiveInfo, channel: ChannelDto): Promise<LiveStreamDto | null> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveId, channelId: channel.id };
     const exists = await this.liveStreamService.findByQueryLatestOne(query);
-    if (exists) return exists;
+    if (exists) {
+      const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
+      log.debug('Use existing stream record', attr);
+      return exists;
+    }
 
     if (req.stream) {
       return await this.liveStreamService.createBy({
@@ -161,26 +165,11 @@ export class LiveInitializer {
     }
     const { platform, pid } = req.channelInfo;
     const stRes = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
-    if (!stRes.openLive) {
-      log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
-      // live record is not created as it may normalize later
+    const streamInfo = this.stlink.toStreamInfo(stRes, liveInfo);
+    if (!streamInfo) {
       return null;
     }
-    if (!stRes.best || !stRes.headers) {
-      log.error('Stream info is not available', liveInfoAttr(liveInfo));
-      return null;
-    }
-
-    const streamUrl = stRes?.best?.mediaPlaylistUrl;
-    const streamHeaders = stRes?.headers;
-    if (!streamUrl || !streamHeaders) {
-      throw new ValidationError('Stream info is not available');
-    }
-    return await this.liveStreamService.createBy({
-      sourceId: liveInfo.liveId,
-      channelId: channel.id,
-      streamInfo: { url: streamUrl, headers: streamHeaders, params: stRes?.best?.params ?? null },
-    });
+    return await this.liveStreamService.createBy({ sourceId: liveInfo.liveId, channelId: channel.id, streamInfo });
   }
 
   private async createDisabledLive(

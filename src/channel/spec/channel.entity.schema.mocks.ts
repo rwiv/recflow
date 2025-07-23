@@ -17,6 +17,7 @@ export function mockChannelEnt(overrides: Partial<ChannelEnt> = {}): ChannelEnt 
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     lastRefreshedAt: faker.date.recent(),
+    streamCheckedAt: faker.date.recent(),
     ...overrides,
   };
 }

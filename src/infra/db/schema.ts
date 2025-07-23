@@ -48,14 +48,18 @@ export const channelTable = pgTable(
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),
     lastRefreshedAt: timestamp('last_refreshed_at'),
+    streamCheckedAt: timestamp('stream_checked_at'),
   },
   (t) => [
+    index('channel_platform_id_idx').on(t.platformId),
+    index('channel_priority_id_idx').on(t.priorityId),
     index('channel_pid_idx').on(t.pid),
     index('channel_username_idx').on(t.username),
     index('channel_follow_cnt_idx').on(t.followerCnt),
     index('channel_created_at_idx').on(t.createdAt),
     index('channel_updated_at_idx').on(t.updatedAt),
     index('channel_last_refreshed_at_idx').on(t.lastRefreshedAt.nullsFirst()),
+    index('channel_stream_chacked_at_idx').on(t.streamCheckedAt.nullsFirst()),
   ],
 );
 

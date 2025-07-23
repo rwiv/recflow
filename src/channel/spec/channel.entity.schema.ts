@@ -16,6 +16,7 @@ export const channelEnt = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   lastRefreshedAt: z.coerce.date().nullable(),
+  streamCheckedAt: z.coerce.date().nullable(),
 });
 export type ChannelEnt = z.infer<typeof channelEnt>;
 
@@ -28,6 +29,7 @@ export const channelEntAppend = channelEnt.partial({
   createdAt: true,
   updatedAt: true,
   lastRefreshedAt: true,
+  streamCheckedAt: true,
 });
 export type ChannelEntAppend = z.infer<typeof channelEntAppend>;
 

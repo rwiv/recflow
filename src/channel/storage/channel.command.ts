@@ -9,11 +9,17 @@ import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from '../s
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { z } from 'zod';
 
+export interface UpdateOptions {
+  refresh?: boolean;
+  streamCheck?: boolean;
+}
+
 const channelEntAppendReq = channelEnt.partial({
   id: true,
   profileImgUrl: true,
   description: true,
   lastRefreshedAt: true,
+  streamCheckedAt: true,
 });
 type ChannelEntAppendRequest = z.infer<typeof channelEntAppendReq>;
 
@@ -44,20 +50,24 @@ export class ChannelCommandRepository {
   }
 
   async setUpdatedAtNow(id: string, tx: Tx = db) {
-    return this.update(id, {}, false, tx);
+    return this.update(id, {}, { refresh: false, streamCheck: false }, tx);
   }
 
-  async update(id: string, update: ChannelEntUpdate, isRefresh: boolean, tx: Tx = db): Promise<ChannelEnt> {
+  async update(id: string, update: ChannelEntUpdate, opts: UpdateOptions, tx: Tx = db): Promise<ChannelEnt> {
     const channel = await this.chQuery.findById(id, tx);
     if (!channel) throw NotFoundError.from('Channel', 'id', id);
     const req: ChannelEnt = {
       ...channel,
       ...update,
     };
-    if (isRefresh) {
-      req.lastRefreshedAt = new Date();
+    const now = new Date();
+    if (opts.streamCheck) {
+      req.streamCheckedAt = now;
+    }
+    if (opts.refresh) {
+      req.lastRefreshedAt = now;
     } else {
-      req.updatedAt = new Date();
+      req.updatedAt = now;
     }
     const ent = await tx.update(channelTable).set(channelEnt.parse(req)).where(eq(channelTable.id, id)).returning();
     return oneNotNull(ent);

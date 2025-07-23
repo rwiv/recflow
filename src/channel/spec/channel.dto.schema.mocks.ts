@@ -35,6 +35,7 @@ export function mockChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto 
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     lastRefreshedAt: faker.date.recent(),
+    streamCheckedAt: faker.date.recent(),
     platform: mockPlatformDto(),
     priority: mockPriorityDto(),
     ...overrides,

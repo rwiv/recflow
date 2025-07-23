@@ -1,4 +1,4 @@
-import { ChannelCommandRepository } from '../storage/channel.command.js';
+import { ChannelCommandRepository, UpdateOptions } from '../storage/channel.command.js';
 import { db } from '../../infra/db/db.js';
 import {
   ChannelAppendWithFetch,
@@ -112,14 +112,14 @@ export class ChannelWriter {
     });
   }
 
-  async update(id: string, req: ChannelUpdate, isRefresh: boolean, tx: Tx = db) {
-    const ent = await this.chCmd.update(id, req, isRefresh, tx);
+  async update(id: string, req: ChannelUpdate, opts: UpdateOptions, tx: Tx = db) {
+    const ent = await this.chCmd.update(id, req, opts, tx);
     const dto = await this.chMapper.map(ent);
 
-    if (!isRefresh) {
+    if (!opts.refresh) {
       await this.cache.set(dto);
     }
-    if (isRefresh && (await this.cache.findById(dto.id))) {
+    if (opts.refresh && (await this.cache.findById(dto.id))) {
       await this.cache.set(dto, { keepEx: true });
     }
 
@@ -154,7 +154,7 @@ export class ChannelWriter {
     });
   }
 
-  async refreshOne(): Promise<ChannelDto> {
+  async refreshEarliestOne(): Promise<ChannelDto> {
     const channel = await this.chFinder.findEarliestRefreshedOne();
     if (!channel) {
       throw new NotFoundError('earliest refreshed channel not found');
@@ -164,22 +164,30 @@ export class ChannelWriter {
       const info = await this.fetcher.fetchChannel(channel.platform.name, channel.pid, false);
       if (!info) {
         log.debug(`During the refresh process, fetched channelInfo is null`, channelAttr(channel));
-        return this.update(channel.id, {}, true);
+        return this.update(channel.id, {}, { refresh: true });
       }
-
-      const updateReq: ChannelUpdate = {
-        username: info.username,
-        profileImgUrl: info.profileImgUrl,
-        followerCnt: info.followerCnt,
-      };
-      return this.update(channel.id, updateReq, true);
+      return await this.refreshOne(channel.id, info, {});
     } catch (e) {
       if (e instanceof HttpRequestError) {
         log.debug(`Failed to refresh channel`, channelAttr(channel));
-        return this.update(channel.id, {}, true);
+        return await this.update(channel.id, {}, { refresh: true });
       } else {
         throw e;
       }
     }
+  }
+
+  async refreshOne(
+    channelId: string,
+    info: ChannelInfo,
+    opts: { streamCheck?: boolean },
+    tx: Tx = db,
+  ): Promise<ChannelDto> {
+    const updateReq: ChannelUpdate = {
+      username: info.username,
+      profileImgUrl: info.profileImgUrl,
+      followerCnt: info.followerCnt,
+    };
+    return await this.update(channelId, updateReq, { ...opts, refresh: true }, tx);
   }
 }

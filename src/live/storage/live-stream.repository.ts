@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
+import { and, asc, desc, eq, notExists, sql } from 'drizzle-orm';
 import { LiveStreamEnt, liveStreamEnt, LiveStreamEntAppend, LiveStreamEntUpdate } from '../spec/live.entity.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { liveStreamTable } from '../../infra/db/schema.js';
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { channelPriorityTable, channelTable, liveStreamTable, platformTable } from '../../infra/db/schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
 const liveStreamEntAppendReq = liveStreamEnt.partial({ id: true });
 type LiveStreamEntAppendRequest = z.infer<typeof liveStreamEntAppendReq>;
@@ -43,12 +44,25 @@ export class LiveStreamRepository {
     return oneNullable(await tx.select().from(liveStreamTable).where(eq(liveStreamTable.id, id)));
   }
 
-  async findByQuery(query: LiveStreamQuery, tx: Tx = db) {
+  async findByLiveAndChannel(query: LiveStreamQuery, tx: Tx = db) {
     return tx
       .select()
       .from(liveStreamTable)
       .where(and(eq(liveStreamTable.sourceId, query.sourceId), eq(liveStreamTable.channelId, query.channelId)))
       .orderBy(desc(liveStreamTable.createdAt));
+  }
+
+  async findChannelsForCheckStream(platformName: PlatformName, limit: number, tx: Tx = db) {
+    const subQuery = db.select().from(liveStreamTable).where(eq(liveStreamTable.channelId, channelTable.id));
+    const res = await tx
+      .select({ channels: channelTable })
+      .from(channelTable)
+      .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
+      .innerJoin(channelPriorityTable, eq(channelTable.priorityId, channelPriorityTable.id))
+      .where(and(eq(platformTable.name, platformName), eq(channelPriorityTable.shouldSave, true), notExists(subQuery)))
+      .orderBy(sql`${channelTable.streamCheckedAt} ASC NULLS FIRST`)
+      .limit(limit);
+    return res.map((row) => row.channels);
   }
 
   async update(id: string, update: LiveStreamEntUpdate, tx: Tx = db) {

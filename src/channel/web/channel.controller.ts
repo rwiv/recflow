@@ -92,7 +92,7 @@ export class ChannelController {
   @Put('/:channelId')
   update(@Param('channelId') channelId: string, @Body() req: ChannelUpdate) {
     const update = channelUpdate.parse(req);
-    return this.chWriter.update(channelId, update, false);
+    return this.chWriter.update(channelId, update, {});
   }
 
   @Delete('/:channelId')

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LiveStreamAppend, LiveStreamDto, LiveStreamUpdate, StreamInfo } from '../spec/live.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { LiveStreamQuery, LiveStreamRepository } from '../storage/live.stream.repository.js';
+import { LiveStreamQuery, LiveStreamRepository } from '../storage/live-stream.repository.js';
 import { LiveStreamMapper } from './live-stream.mapper.js';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class LiveStreamService {
   }
 
   async findByQueryLatestOne(query: LiveStreamQuery, tx: Tx = db) {
-    const ent = await this.liveStreamRepo.findByQuery(query, tx);
+    const ent = await this.liveStreamRepo.findByLiveAndChannel(query, tx);
     if (ent.length === 0) return null;
     return this.mapper.map(ent[0]);
   }

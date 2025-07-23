@@ -70,8 +70,8 @@ export class LiveRegistrar {
     const logMessage = req.logMessage ?? 'New LiveNode';
 
     if (!node) {
-      const selectOpts = this.helper.getNodeSelectOpts(req.nodeSelect ?? {}, channel, live, cr);
-      node = await this.nodeSelector.match(selectOpts, tx);
+      const selectArgs = this.helper.getNodeSelectArgs(req.nodeSelect ?? {}, channel, live, cr);
+      node = await this.nodeSelector.match(selectArgs, db);
     }
     // If there is no available node
     if (!node) {

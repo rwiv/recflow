@@ -53,8 +53,11 @@ export class LiveRecoveryManager {
   ) {}
 
   async check() {
-    const tgtLives = await this.retrieveInvalidNodes();
-    await Promise.all(tgtLives.map((tgtLive) => this.checkInvalidLive(tgtLive)));
+    const promises = [];
+    for (const live of await this.retrieveInvalidNodes()) {
+      promises.push(this.checkInvalidLive(live));
+    }
+    await Promise.allSettled(promises);
   }
 
   private async checkInvalidLive(invalidLive: TargetLive) {

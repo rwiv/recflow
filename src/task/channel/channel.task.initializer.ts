@@ -23,7 +23,7 @@ export class ChannelTaskInitializer {
 
     const refreshTask: Task = {
       name: CHANNEL_REFRESH_NAME,
-      run: () => this.chWriter.refresh(),
+      run: () => this.chWriter.refreshOne(),
     };
     createWorker(refreshTask, cronOpts, this.runner);
 

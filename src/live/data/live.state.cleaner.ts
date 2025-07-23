@@ -21,10 +21,11 @@ export class LiveStateCleaner {
   ) {}
 
   async cleanup() {
-    const targetIds = await this.getTargetIds();
-    for (const targetId of targetIds) {
-      await this.clearLive(targetId);
+    const promises = [];
+    for (const targetId of await this.getTargetIds()) {
+      promises.push(this.clearLive(targetId));
     }
+    await Promise.allSettled(promises);
   }
 
   async getTargetIds() {

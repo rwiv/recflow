@@ -14,8 +14,14 @@ export class SoopLiveFilter {
   ) {}
 
   async getFiltered(liveInfos: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {
-    const promises = liveInfos.map((liveInfo) => this.filter(liveInfo, cr));
-    return (await Promise.all(promises)).filter((liveInfo) => liveInfo !== null);
+    const promises = [];
+    for (const liveInfo of liveInfos) {
+      promises.push(this.filter(liveInfo, cr));
+    }
+    return (await Promise.allSettled(promises))
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => r.value)
+      .filter((liveInfo) => liveInfo !== null);
   }
 
   async filter(liveInfo: LiveInfo, cr: SoopCriterionDto): Promise<LiveInfo | null> {

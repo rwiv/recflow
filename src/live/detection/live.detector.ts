@@ -28,46 +28,56 @@ export class LiveDetector {
 
   async checkFollowedLives() {
     const followedChannels = await this.channelFinder.findFollowedChannels();
+    const promises = [];
     for (const ch of followedChannels) {
       const channelInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
       if (!channelInfo) continue;
-      await this.liveInitializer.createNewLive({ channelInfo, isFollowed: true });
+      promises.push(this.liveInitializer.createNewLive({ channelInfo, isFollowed: true }));
     }
+    await Promise.allSettled(promises);
   }
 
   async checkQueriedLives(criterion: PlatformCriterionDto) {
     const queriedLives = await this.fetcher.fetchLives(criterion);
     const filtered = await this.filter.getFiltered(criterion, queriedLives);
     if (criterion.loggingOnly) {
-      await this.filterQueriedLoggingOnly(criterion, filtered);
+      await this.setLoggingOnlyLives(criterion, filtered);
     } else {
-      await this.filterQueriedDefault(criterion, filtered);
+      await this.registerQueriedLives(criterion, filtered);
     }
   }
 
-  private async filterQueriedDefault(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
+  private async registerQueriedLives(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
+    const promises = [];
     for (const live of lives) {
       const channelInfo = await this.fetchInfo(live.type, live.pid, false);
       if (!channelInfo) continue;
-      await this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id });
+      promises.push(this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id }));
     }
+    await Promise.allSettled(promises);
   }
 
-  private async filterQueriedLoggingOnly(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
+  private async setLoggingOnlyLives(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
+    const promises = [];
     for (const live of lives) {
-      if (await this.historyRepo.exists(criterion.platform.name, live.liveId)) {
-        continue;
-      }
-
-      let priority: PriorityDto | undefined = undefined;
-      const channel = await this.channelFinder.findByPidAndPlatform(live.pid, criterion.platform.name);
-      if (channel) {
-        priority = channel.priority;
-      }
-
-      await this.historyRepo.set(criterion.platform.name, live, priority ?? null);
-      log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion, pri: priority }));
+      promises.push(this.setLoggingOnlyLivesOne(criterion, live));
     }
+    await Promise.allSettled(promises);
+  }
+
+  private async setLoggingOnlyLivesOne(criterion: PlatformCriterionDto, live: LiveInfo) {
+    if (await this.historyRepo.exists(criterion.platform.name, live.liveId)) {
+      return;
+    }
+
+    let priority: PriorityDto | undefined = undefined;
+    const channel = await this.channelFinder.findByPidAndPlatform(live.pid, criterion.platform.name);
+    if (channel) {
+      priority = channel.priority;
+    }
+
+    await this.historyRepo.set(criterion.platform.name, live, priority ?? null);
+    log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion, pri: priority }));
   }
 
   private async fetchInfo(

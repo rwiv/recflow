@@ -103,8 +103,8 @@ export class LiveInitializer {
     //   return null;
     // }
 
-    const selectOpts = this.helper.getNodeSelectOpts({}, channel, undefined, cr);
-    let node = await this.nodeSelector.match(selectOpts);
+    const selectArgs = this.helper.getNodeSelectArgs({}, channel, undefined, cr);
+    let node = await this.nodeSelector.match(selectArgs);
     if (!channel.priority.shouldSave) {
       node = null;
     }
@@ -119,8 +119,8 @@ export class LiveInitializer {
       fields: {
         channelId: channel.id,
         isDisabled: false,
-        domesticOnly: selectOpts.domesticOnly,
-        overseasFirst: selectOpts.overseasFirst,
+        domesticOnly: selectArgs.domesticOnly,
+        overseasFirst: selectArgs.overseasFirst,
         liveStreamId: stream.id,
       },
     };

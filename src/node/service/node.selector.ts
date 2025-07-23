@@ -6,7 +6,7 @@ import { db } from '../../infra/db/db.js';
 import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
-export interface NodeSelectorOptions {
+export interface NodeSelectorArgs {
   ignoreNodeIds: string[];
   ignoreGroupIds: string[];
   domesticOnly: boolean;
@@ -17,24 +17,24 @@ export interface NodeSelectorOptions {
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(opts: NodeSelectorOptions, tx: Tx = db): Promise<NodeDtoWithLives | null> {
-    if (opts.domesticOnly && opts.overseasFirst) {
+  async match(args: NodeSelectorArgs, tx: Tx = db): Promise<NodeDtoWithLives | null> {
+    if (args.domesticOnly && args.overseasFirst) {
       throw new ValidationError('Invalid options: domesticOnly and overseasFirst cannot be both true');
     }
 
-    if (opts.overseasFirst) {
-      const node = await this._match(opts, tx);
+    if (args.overseasFirst) {
+      const node = await this._match(args, tx);
       if (node) {
         return node;
       } else {
-        return this._match({ ...opts, overseasFirst: false }, tx);
+        return this._match({ ...args, overseasFirst: false }, tx);
       }
     }
 
-    return this._match(opts, tx);
+    return this._match(args, tx);
   }
 
-  async _match(opts: NodeSelectorOptions, tx: Tx = db): Promise<NodeDtoWithLives | null> {
+  async _match(opts: NodeSelectorArgs, tx: Tx = db): Promise<NodeDtoWithLives | null> {
     // search for available nodes
     let nodes = await this.findCandidateNodes(opts, tx);
     if (nodes.length === 0) {
@@ -62,7 +62,7 @@ export class NodeSelector {
     return minNode;
   }
 
-  private async findCandidateNodes(opts: NodeSelectorOptions, tx: Tx): Promise<NodeDtoWithLives[]> {
+  private async findCandidateNodes(opts: NodeSelectorArgs, tx: Tx): Promise<NodeDtoWithLives[]> {
     return (await this.nodeFinder.findAll({}, tx))
       .filter((node) => !node.isCordoned)
       .filter((node) => !opts.ignoreNodeIds.includes(node.id))

@@ -30,12 +30,12 @@ export class LiveTaskInitializer {
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
     private readonly crFinder: CriterionFinder,
-    private readonly liveCoordinator: LiveDetector,
+    private readonly liveDetector: LiveDetector,
     private readonly liveCleaner: LiveCleaner,
     private readonly liveRefresher: LiveRefresher,
     private readonly liveStateCleaner: LiveStateCleaner,
     private readonly liveRecoveryManager: LiveRecoveryManager,
-    private readonly liveAllocator: LiveBalancer,
+    private readonly liveBalancer: LiveBalancer,
     private readonly liveFinalizer: LiveFinalizer,
   ) {}
 
@@ -69,17 +69,17 @@ export class LiveTaskInitializer {
 
     const liveAllocationTask: Task = {
       name: LIVE_ALLOCATION_NAME,
-      run: () => this.liveAllocator.check(),
+      run: () => this.liveBalancer.check(),
     };
     createWorker(liveAllocationTask, cronOpts, this.runner);
 
     const followedRegisterTask: Task = {
       name: LIVE_REGISTER_FOLLOWED_NAME,
-      run: () => this.liveCoordinator.checkFollowedLives(),
+      run: () => this.liveDetector.checkFollowedLives(),
     };
     createWorker(followedRegisterTask, cronOpts, this.runner);
 
-    const registerTask = new LiveRegisterTask(this.crFinder, this.liveCoordinator);
+    const registerTask = new LiveRegisterTask(this.crFinder, this.liveDetector);
     createWorker(registerTask, batchOpts, this.runner);
 
     const liveFinishTask: Task = {

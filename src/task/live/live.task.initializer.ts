@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
-import { LiveCoordinator } from '../../live/registry/live.coordinator.js';
+import { LiveDetector } from '../../live/detection/live.detector.js';
 import { LiveRefresher } from '../../live/data/live.refresher.js';
-import { LiveCleaner } from '../../live/registry/live.cleaner.js';
-import { LiveRecoveryManager } from '../../live/registry/live.recovery.js';
+import { LiveCleaner } from '../../live/coordinate/live.cleaner.js';
+import { LiveRecoveryManager } from '../../live/coordinate/live.recovery.js';
 import {
   LIVE_REGISTER_FOLLOWED_NAME,
   LIVE_REFRESH_NAME,
@@ -14,7 +14,7 @@ import {
   LIVE_FINISH_NAME,
 } from './live.task.contants.js';
 import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
-import { LiveAllocator } from '../../live/registry/live.allocator.js';
+import { LiveBalancer } from '../../live/coordinate/live.balancer.js';
 import { Task } from '../spec/task.interface.js';
 import { createWorker } from '../schedule/task.utils.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
@@ -22,7 +22,7 @@ import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { LiveRegisterTask } from './live.register-task.js';
-import { LiveFinalizer, liveFinishRequest } from '../../live/registry/live.finalizer.js';
+import { LiveFinalizer, liveFinishRequest } from '../../live/register/live.finalizer.js';
 
 @Injectable()
 export class LiveTaskInitializer {
@@ -30,12 +30,12 @@ export class LiveTaskInitializer {
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
     private readonly crFinder: CriterionFinder,
-    private readonly liveCoordinator: LiveCoordinator,
+    private readonly liveCoordinator: LiveDetector,
     private readonly liveCleaner: LiveCleaner,
     private readonly liveRefresher: LiveRefresher,
     private readonly liveStateCleaner: LiveStateCleaner,
     private readonly liveRecoveryManager: LiveRecoveryManager,
-    private readonly liveAllocator: LiveAllocator,
+    private readonly liveAllocator: LiveBalancer,
     private readonly liveFinalizer: LiveFinalizer,
   ) {}
 
@@ -75,7 +75,7 @@ export class LiveTaskInitializer {
 
     const followedRegisterTask: Task = {
       name: LIVE_REGISTER_FOLLOWED_NAME,
-      run: () => this.liveCoordinator.registerFollowedLives(),
+      run: () => this.liveCoordinator.checkFollowedLives(),
     };
     createWorker(followedRegisterTask, cronOpts, this.runner);
 

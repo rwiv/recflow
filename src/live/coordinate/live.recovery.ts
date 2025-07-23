@@ -5,7 +5,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from '../register/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
@@ -22,6 +22,7 @@ import { db } from '../../infra/db/db.js';
 import { LogLevel } from '../../utils/log.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { stacktrace } from '../../utils/errors/utils.js';
+import { LiveInitializer } from '../register/live.initializer.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -44,6 +45,7 @@ export class LiveRecoveryManager {
     @Inject(NOTIFIER) private readonly notifier: Notifier,
     private readonly stlink: Stlink,
     private readonly liveFinder: LiveFinder,
+    private readonly liveInitializer: LiveInitializer,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly liveNodeRepo: LiveNodeRepository,
     private readonly nodeUpdater: NodeUpdater,
@@ -124,7 +126,7 @@ export class LiveRecoveryManager {
 
   private async registerSameLive(live: LiveDto) {
     try {
-      return await this.liveRegistrar.createNewLiveByLive(live);
+      return await this.liveInitializer.createNewLiveByLive(live);
     } catch (e) {
       log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
     }

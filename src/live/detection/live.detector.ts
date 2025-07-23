@@ -12,30 +12,30 @@ import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/cha
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveHistoryRepository } from '../storage/live.history.repository.js';
 import { PlatformLiveFilter } from './live.filter.js';
-import { LiveRegistrar } from './live.registrar.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { LiveInitializer } from '../register/live.initializer.js';
 
 @Injectable()
-export class LiveCoordinator {
+export class LiveDetector {
   constructor(
     private readonly channelFinder: ChannelFinder,
     private readonly liveFinder: LiveFinder,
-    private readonly liveRegistrar: LiveRegistrar,
+    private readonly liveInitializer: LiveInitializer,
     private readonly fetcher: PlatformFetcher,
     private readonly filter: PlatformLiveFilter,
     private readonly historyRepo: LiveHistoryRepository,
   ) {}
 
-  async registerFollowedLives() {
+  async checkFollowedLives() {
     const followedChannels = await this.channelFinder.findFollowedChannels();
     for (const ch of followedChannels) {
       const channelInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
       if (!channelInfo) continue;
-      await this.liveRegistrar.createNewLive({ channelInfo, isFollowed: true });
+      await this.liveInitializer.createNewLive({ channelInfo, isFollowed: true });
     }
   }
 
-  async registerQueriedLives(criterion: PlatformCriterionDto) {
+  async checkQueriedLives(criterion: PlatformCriterionDto) {
     const queriedLives = await this.fetcher.fetchLives(criterion);
     const filtered = await this.filter.getFiltered(criterion, queriedLives);
     if (criterion.loggingOnly) {
@@ -49,7 +49,7 @@ export class LiveCoordinator {
     for (const live of lives) {
       const channelInfo = await this.fetchInfo(live.type, live.pid, false);
       if (!channelInfo) continue;
-      await this.liveRegistrar.createNewLive({ channelInfo, criterionId: criterion.id });
+      await this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id });
     }
   }
 

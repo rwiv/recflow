@@ -6,8 +6,7 @@ import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
-import { LiveRegistrar } from './live.registrar.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
+import { LiveRegistrar } from '../register/live.registrar.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { LogLevel } from '../../utils/log.js';
@@ -16,14 +15,13 @@ import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
 
 @Injectable()
-export class LiveAllocator {
+export class LiveBalancer {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
-    private readonly fetcher: PlatformFetcher,
   ) {}
 
   async check() {

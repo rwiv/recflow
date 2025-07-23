@@ -1,5 +1,5 @@
 import { Task } from '../spec/task.interface.js';
-import { LiveCoordinator } from '../../live/registry/live.coordinator.js';
+import { LiveDetector } from '../../live/detection/live.detector.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { LIVE_REGISTER_CRITERION_NAME } from './live.task.contants.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -10,7 +10,7 @@ export class LiveRegisterTask implements Task {
 
   constructor(
     private readonly crFinder: CriterionFinder,
-    private readonly liveCoordinator: LiveCoordinator,
+    private readonly liveCoordinator: LiveDetector,
   ) {}
 
   async run(args: any): Promise<void> {
@@ -22,6 +22,6 @@ export class LiveRegisterTask implements Task {
     if (!cr) {
       throw NotFoundError.from('Criterion', 'id', crId);
     }
-    await this.liveCoordinator.registerQueriedLives(cr);
+    await this.liveCoordinator.checkQueriedLives(cr);
   }
 }

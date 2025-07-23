@@ -7,7 +7,7 @@ import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
 import { createWorker } from '../schedule/task.utils.js';
-import { drainArgs, LiveRebalancer } from '../../live/registry/live.rebalancer.js';
+import { drainArgs, LiveDrainer } from '../../live/coordinate/live.drainer.js';
 
 @Injectable()
 export class NodeTaskInitializer {
@@ -15,7 +15,7 @@ export class NodeTaskInitializer {
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
     private readonly nodeWriter: NodeWriter,
-    private readonly liveRebalancer: LiveRebalancer,
+    private readonly liveRebalancer: LiveDrainer,
   ) {}
 
   init() {

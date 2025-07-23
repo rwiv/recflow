@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from '../register/live.registrar.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeUpdater } from '../../node/service/node.updater.js';
@@ -28,15 +28,15 @@ export const drainArgs = z.object({
 export type DrainArgs = z.infer<typeof drainArgs>;
 
 @Injectable()
-export class LiveRebalancer {
+export class LiveDrainer {
   constructor(
+    @Inject(STDL) private readonly stdl: Stdl,
+    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly liveFinder: LiveFinder,
     private readonly nodeFinder: NodeFinder,
     private readonly nodeGroupService: NodeGroupService,
     private readonly nodeUpdater: NodeUpdater,
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
   ) {}
 
   async drain(args: DrainArgs) {

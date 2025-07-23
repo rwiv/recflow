@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from '../register/live.registrar.js';
 import { ExitCmd } from '../spec/event.schema.js';
 
 @Injectable()

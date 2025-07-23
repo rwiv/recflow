@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import assert from 'assert';
 import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
@@ -10,45 +9,24 @@ import { liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
-import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
+import { NOTIFIER } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { Stdl } from '../../infra/stdl/stdl.client.js';
-import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
-import { NodeSelector, NodeSelectorOptions } from '../../node/service/node.selector.js';
-import { NodeUpdater } from '../../node/service/node.updater.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { NodeSelector } from '../../node/service/node.selector.js';
 import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
-import { logging, LogLevel } from '../../utils/log.js';
-import { LiveFinder } from '../data/live.finder.js';
+import { LogLevel } from '../../utils/log.js';
 import { LiveCreateArgs, LiveWriter } from '../data/live.writer.js';
-import { ExitCmd } from '../spec/event.schema.js';
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
-import { LiveFinalizer } from './live.finalizer.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { LiveStreamService } from '../data/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live.stream.repository.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-
-export interface LiveFinishOptions {
-  recordId: string;
-  isPurge?: boolean;
-  exitCmd?: ExitCmd;
-  msg?: string;
-  logLevel?: LogLevel;
-}
-
-export interface NodeSelectArgs {
-  ignoreNodeIds?: string[];
-  ignoreGroupIds?: string[];
-  domesticOnly?: boolean;
-  overseasFirst?: boolean;
-}
+import { LiveNodeRegisterRequest, LiveRegistrar } from './live.registrar.js';
+import { LiveRegisterHelper } from './live.register-helper.js';
 
 export interface NewLiveCreationRequest {
   channelInfo: ChannelLiveInfo;
@@ -62,37 +40,21 @@ export interface NewLiveCreationRequest {
   stream?: StreamInfo;
 }
 
-export interface LiveNodeRegisterRequest {
-  live: LiveDtoWithNodes;
-
-  node?: NodeDto;
-
-  criterion?: CriterionDto;
-
-  logMessage?: string;
-  logLevel?: LogLevel;
-
-  nodeSelect?: NodeSelectArgs;
-}
-
 @Injectable()
-export class LiveRegistrar {
+export class LiveInitializer {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
+    private readonly stlink: Stlink,
     private readonly nodeSelector: NodeSelector,
-    private readonly nodeUpdater: NodeUpdater,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
-    private readonly liveFinder: LiveFinder,
     private readonly liveStreamService: LiveStreamService,
-    private readonly finalizer: LiveFinalizer,
+    private readonly registrar: LiveRegistrar,
     private readonly crFinder: CriterionFinder,
-    private readonly stlink: Stlink,
+    private readonly helper: LiveRegisterHelper,
   ) {}
 
   async createNewLiveByLive(base: LiveDto): Promise<string | null> {
@@ -105,7 +67,7 @@ export class LiveRegistrar {
       live,
       logMessage: 'New Same Live',
     };
-    return this.registerLiveNode(newReq);
+    return this.registrar.registerLiveNode(newReq);
   }
 
   async createNewLive(req: NewLiveCreationRequest): Promise<string | null> {
@@ -141,7 +103,7 @@ export class LiveRegistrar {
     //   return null;
     // }
 
-    const selectOpts = this.getNodeSelectOpts({}, channel, undefined, cr);
+    const selectOpts = this.helper.getNodeSelectOpts({}, channel, undefined, cr);
     let node = await this.nodeSelector.match(selectOpts);
     if (!channel.priority.shouldSave) {
       node = null;
@@ -170,7 +132,7 @@ export class LiveRegistrar {
       criterion: cr,
       logMessage: 'New Live',
     };
-    return this.registerLiveNode(newReq);
+    return this.registrar.registerLiveNode(newReq);
   }
 
   async getLiveStream(
@@ -235,7 +197,7 @@ export class LiveRegistrar {
     tx: Tx = db,
   ) {
     if (existsLive) {
-      await this.finishLive({
+      await this.registrar.finishLive({
         recordId: existsLive.id,
         exitCmd: 'finish',
         isPurge: true,
@@ -263,133 +225,5 @@ export class LiveRegistrar {
 
     log.info(headMessage, liveAttr(newDisabledLive, { cr }));
     return newDisabledLive.id;
-  }
-
-  async registerLiveNode(req: LiveNodeRegisterRequest): Promise<string | null> {
-    return db.transaction(async (tx) => {
-      return this._registerLiveNode(req, tx);
-    });
-  }
-
-  private async _registerLiveNode(req: LiveNodeRegisterRequest, tx: Tx): Promise<string | null> {
-    const live = req.live;
-    const channel = live.channel;
-    let node = req.node ?? null;
-    const cr = req.criterion;
-    const logMessage = req.logMessage ?? 'New LiveNode';
-
-    if (!node) {
-      const selectOpts = this.getNodeSelectOpts(req.nodeSelect ?? {}, channel, live, cr);
-      node = await this.nodeSelector.match(selectOpts, tx);
-    }
-    // If there is no available node
-    if (!node) {
-      log.error('No available nodes for assignment', liveAttr(live));
-      return null;
-    }
-
-    // Process node
-    await this.liveWriter.bind({ liveId: live.id, nodeId: node.id }, tx);
-    await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
-    if (!(await this.stdlRedis.getLiveState(live.id, false))) {
-      await this.stdlRedis.createLiveState(live);
-    }
-    await this.stdl.startRecording(node.endpoint, live.id);
-
-    // Send notification
-    if (live.channel.priority.shouldNotify) {
-      this.notifier.sendLiveInfo(live);
-    }
-
-    await this.liveWriter.update(live.id, { status: 'recording' }, tx);
-
-    const attr = { ...liveAttr(live, { cr, node }), stream_url: live.stream?.url };
-    logging(logMessage, attr, req.logLevel ?? 'info');
-    return live.id;
-  }
-
-  async deregister(live: LiveDto, node: NodeDto, tx: Tx = db) {
-    await this.liveWriter.unbind({ liveId: live.id, nodeId: node.id }, tx);
-    await this.finalizer.cancelRecorder(live, node);
-    log.debug('Deregister node in live', liveAttr(live, { node }));
-  }
-
-  async finishLive(opts: LiveFinishOptions): Promise<LiveDto | null> {
-    const recordId = opts.recordId;
-    const isPurge = opts.isPurge ?? false;
-    const logLevel = opts.logLevel ?? 'info';
-    let exitCmd = opts.exitCmd ?? 'delete';
-    let msg = opts.msg ?? 'Delete live';
-    if (!opts.msg && !isPurge) {
-      msg = 'Disable live';
-    }
-
-    const live = await this.liveFinder.findById(recordId, { nodes: true });
-    if (!live) {
-      log.warn(`Failed to finish live: Not found LiveRecord: id=${recordId}`);
-      return null;
-    }
-    assert(live.nodes);
-    if (live.nodes.length === 0) {
-      exitCmd = 'delete';
-    }
-
-    if (exitCmd === 'delete') {
-      const deleted = await this.liveWriter.delete(recordId, isPurge, false);
-      logging(msg, { ...liveAttr(deleted), cmd: exitCmd }, logLevel);
-      return deleted;
-    }
-
-    if (live.deletedAt) {
-      log.warn('Live is already finished', liveAttr(live));
-      return null;
-    }
-    await this.liveWriter.update(live.id, { status: 'finalizing' });
-    await this.liveWriter.disable(live.id, false, true); // if Live is not disabled, it will become a recovery target and cause an error
-    await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
-    logging(msg, { ...liveAttr(live), cmd: exitCmd }, logLevel);
-    return live; // not delete live record
-  }
-
-  private getNodeSelectOpts(
-    req: NodeSelectArgs,
-    channel: ChannelDto,
-    live: LiveDtoWithNodes | undefined,
-    criterion: CriterionDto | undefined,
-  ): NodeSelectorOptions {
-    let domesticOnly = false;
-    if (criterion) {
-      domesticOnly = criterion.domesticOnly;
-    }
-    if (live) {
-      domesticOnly = live.domesticOnly;
-    }
-    if (req.domesticOnly !== undefined) {
-      domesticOnly = req.domesticOnly;
-    }
-
-    let overseasFirst = channel.overseasFirst;
-    if (criterion) {
-      overseasFirst = criterion.overseasFirst;
-    }
-    if (live) {
-      overseasFirst = live.overseasFirst;
-    }
-    if (req.overseasFirst !== undefined) {
-      overseasFirst = req.overseasFirst;
-    }
-
-    const opts: NodeSelectorOptions = { ignoreNodeIds: [], ignoreGroupIds: [], domesticOnly, overseasFirst };
-    if (req.ignoreGroupIds) {
-      opts.ignoreGroupIds = [...req.ignoreGroupIds];
-    }
-    if (req.ignoreNodeIds) {
-      opts.ignoreNodeIds = [...req.ignoreNodeIds];
-    }
-    if (live && live.nodes) {
-      opts.ignoreNodeIds = [...opts.ignoreNodeIds, ...live.nodes.map((node) => node.id)];
-    }
-
-    return opts;
   }
 }

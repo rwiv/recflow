@@ -3,10 +3,10 @@ import { NodeTaskInitializer } from './node.task.initializer.js';
 import { TaskSchedulerModule } from '../schedule/task.schedule.module.js';
 import { NodeServiceModule } from '../../node/service/node.service.module.js';
 import { InfraModule } from '../../infra/infra.module.js';
-import { LiveRegistryModule } from '../../live/registry/live.registry.module.js';
+import { LiveCoordinateModule } from '../../live/coordinate/live.coordinate.module.js';
 
 @Module({
-  imports: [InfraModule, TaskSchedulerModule, NodeServiceModule, LiveRegistryModule],
+  imports: [InfraModule, TaskSchedulerModule, NodeServiceModule, LiveCoordinateModule],
   providers: [NodeTaskInitializer],
   exports: [NodeTaskInitializer],
 })

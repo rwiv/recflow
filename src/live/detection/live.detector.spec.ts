@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { mockPlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.mocks.js';
 import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
 import { mockChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.mocks.js';
-import { LiveCoordinator } from './live.coordinator.js';
+import { LiveDetector } from './live.detector.js';
 
 describe('LiveCoordinator', () => {
-  let coordinator: LiveCoordinator;
+  let coordinator: LiveDetector;
   let mockFetcher: { fetchLives: MockInstance; fetchChannel: MockInstance };
   let mockLiveRegistrar: { register: MockInstance };
   let mockChannelFinder: { findFollowedChannels: MockInstance };
@@ -20,7 +20,7 @@ describe('LiveCoordinator', () => {
     mockLiveFinder = { findByPid: vi.fn() };
     mockFilter = { getFiltered: vi.fn() };
     mockHistoryRepo = { exists: vi.fn(), set: vi.fn() };
-    coordinator = new LiveCoordinator(
+    coordinator = new LiveDetector(
       mockChannelFinder as any,
       mockLiveFinder as any,
       mockLiveRegistrar as any,
@@ -46,7 +46,7 @@ describe('LiveCoordinator', () => {
         .mockResolvedValueOnce(mockChannel2);
 
       // When
-      await coordinator.registerFollowedLives();
+      await coordinator.checkFollowedLives();
 
       // Then
       expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(1, { channelInfo: mockChannel0 });
@@ -74,7 +74,7 @@ describe('LiveCoordinator', () => {
       mockFetcher.fetchChannel.mockResolvedValueOnce(mockChannel0).mockResolvedValueOnce(mockChannel2);
 
       // When
-      await coordinator.registerQueriedLives(mockCriterion);
+      await coordinator.checkQueriedLives(mockCriterion);
 
       // Then
       expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(1, {
@@ -121,7 +121,7 @@ describe('LiveCoordinator', () => {
         .mockResolvedValueOnce(false);
 
       // When
-      await coordinator.registerQueriedLives(mockCriterion);
+      await coordinator.checkQueriedLives(mockCriterion);
 
       // Then
       expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(1, 'chzzk', mockChannel0.liveInfo);

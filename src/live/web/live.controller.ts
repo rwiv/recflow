@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Post, Query, UseFilters } from '@nestjs/common';
-import { LiveRegistrar } from '../registry/live.registrar.js';
+import { LiveRegistrar } from '../register/live.registrar.js';
+import { LiveInitializer } from '../register/live.initializer.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../spec/event.schema.js';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
@@ -8,7 +9,7 @@ import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { liveAppendRequest, LiveAppendRequest, liveDeleteRequest, LiveDeleteRequest } from './live.web.schema.js';
 import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { DrainArgs, drainArgs } from '../registry/live.rebalancer.js';
+import { DrainArgs, drainArgs } from '../coordinate/live.drainer.js';
 import { Queue } from 'bullmq';
 import { getJobOpts } from '../../task/schedule/task.utils.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
@@ -23,7 +24,8 @@ export class LiveController {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(TASK_REDIS) private readonly taskRedis: Redis,
-    private readonly liveService: LiveRegistrar,
+    private readonly liveRegistrar: LiveRegistrar,
+    private readonly liveInitializer: LiveInitializer,
     private readonly fetcher: PlatformFetcher,
     private readonly liveFinder: LiveFinder,
   ) {}
@@ -48,7 +50,7 @@ export class LiveController {
     if (!channel.liveInfo) {
       throw new NotFoundError('Channel is not live');
     }
-    return this.liveService.createNewLive({
+    return this.liveInitializer.createNewLive({
       channelInfo: channelLiveInfo.parse(channel),
       stream: req.stream ?? undefined,
     });
@@ -57,7 +59,7 @@ export class LiveController {
   @Delete('/')
   async delete(@Body() req: LiveDeleteRequest) {
     const { recordId, cmd, isPurge } = liveDeleteRequest.parse(req);
-    return this.liveService.finishLive({ recordId, exitCmd: exitCmd.parse(cmd), isPurge });
+    return this.liveRegistrar.finishLive({ recordId, exitCmd: exitCmd.parse(cmd), isPurge });
   }
 
   @Post('/drain')

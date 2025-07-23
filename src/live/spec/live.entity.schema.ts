@@ -63,7 +63,5 @@ export const liveStreamEntAppend = liveStreamEnt.partial({
 });
 export type LiveStreamEntAppend = z.infer<typeof liveStreamEntAppend>;
 
-export const liveStreamEntUpdate = liveStreamEnt
-  .omit({ id: true, createdAt: true, updatedAt: true, checkedAt: true })
-  .partial();
+export const liveStreamEntUpdate = liveStreamEnt.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type LiveStreamEntUpdate = z.infer<typeof liveStreamEntUpdate>;

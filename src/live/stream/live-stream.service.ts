@@ -5,6 +5,12 @@ import { db } from '../../infra/db/db.js';
 import { LiveStreamQuery, LiveStreamRepository } from '../storage/live-stream.repository.js';
 import { LiveStreamMapper } from './live-stream.mapper.js';
 
+export interface LiveStreamCreationArgs {
+  streamInfo: StreamInfo;
+  channelId: string;
+  sourceId: string;
+}
+
 @Injectable()
 export class LiveStreamService {
   constructor(
@@ -24,10 +30,12 @@ export class LiveStreamService {
     return this.mapper.map(ent[0]);
   }
 
-  async createBy(
-    args: { streamInfo: StreamInfo; channelId: string; sourceId: string },
-    tx: Tx = db,
-  ): Promise<LiveStreamDto> {
+  async findEarliestChecked(limit: number, tx: Tx = db): Promise<LiveStreamDto[]> {
+    const entities = await this.liveStreamRepo.findEarliestChecked(limit, tx);
+    return this.mapper.mapAll(entities, tx);
+  }
+
+  async create(args: LiveStreamCreationArgs, tx: Tx = db): Promise<LiveStreamDto> {
     const append: LiveStreamAppend = {
       sourceId: args.sourceId,
       channelId: args.channelId,
@@ -37,11 +45,6 @@ export class LiveStreamService {
       isInUse: false,
       isOnLive: true,
     };
-    const ent = await this.liveStreamRepo.create(append, tx);
-    return this.mapper.map(ent);
-  }
-
-  async create(append: LiveStreamAppend, tx: Tx = db): Promise<LiveStreamDto> {
     const ent = await this.liveStreamRepo.create(append, tx);
     return this.mapper.map(ent);
   }

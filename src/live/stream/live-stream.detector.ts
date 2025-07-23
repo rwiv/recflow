@@ -8,7 +8,7 @@ import { Stlink } from '../../platform/stlink/stlink.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveStreamService } from './live-stream.service.js';
 
-export const QUERY_LIMIT = 10;
+export const QUERY_LIMIT = 10; // TODO: use config
 
 @Injectable()
 export class LiveStreamDetector {
@@ -45,7 +45,7 @@ export class LiveStreamDetector {
       return this.updateChannel(channelId, info);
     }
 
-    await this.liveStreamService.createBy({ sourceId: info.liveInfo.liveId, channelId, streamInfo });
+    await this.liveStreamService.create({ sourceId: info.liveInfo.liveId, channelId, streamInfo });
     await this.updateChannel(channelId, info);
 
     const attr = {

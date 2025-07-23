@@ -1,7 +1,7 @@
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { PriorityDto } from '../../channel/spec/priority.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
+import { LiveDto, LiveStreamDto } from '../../live/spec/live.dto.schema.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { stacktrace } from '../../utils/errors/utils.js';
@@ -115,5 +115,15 @@ export function channelAttr(channel: ChannelDto) {
     channel_uid: channel.pid,
     channel_name: channel.username,
     grade_name: channel.priority.name,
+  };
+}
+
+export function streamAttr(stream: LiveStreamDto) {
+  return {
+    channel_id: stream.channel.id,
+    channel_uid: stream.channel.pid,
+    channel_name: stream.channel.username,
+    source_id: stream.sourceId,
+    stream_url: stream.url,
   };
 }

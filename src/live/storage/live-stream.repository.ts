@@ -5,7 +5,13 @@ import { LiveStreamEnt, liveStreamEnt, LiveStreamEntAppend, LiveStreamEntUpdate 
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channelPriorityTable, channelTable, liveStreamTable, platformTable } from '../../infra/db/schema.js';
+import {
+  channelPriorityTable,
+  channelTable,
+  liveStreamTable,
+  liveTable,
+  platformTable,
+} from '../../infra/db/schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
@@ -42,6 +48,10 @@ export class LiveStreamRepository {
 
   async findById(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(liveStreamTable).where(eq(liveStreamTable.id, id)));
+  }
+
+  async findLiveCountByStreamId(streamId: string, tx: Tx = db): Promise<number> {
+    return tx.$count(tx.select().from(liveTable).where(eq(liveTable.liveStreamId, streamId)));
   }
 
   async findByLiveAndChannel(query: LiveStreamQuery, tx: Tx = db) {

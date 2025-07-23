@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { headers, nonempty, queryParams } from '../../common/data/common.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { delay } from '../../utils/time.js';
-import { LiveDto, LiveStreamDto, streamInfo, StreamInfo } from '../../live/spec/live.dto.schema.js';
+import { LiveDto, streamInfo, StreamInfo } from '../../live/spec/live.dto.schema.js';
 import { liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
 import { log } from 'jslog';
 import { LiveInfo } from '../spec/wapper/live.js';
@@ -112,7 +112,7 @@ export class Stlink {
     return this.fetchM3u8(live.stream);
   }
 
-  async fetchM3u8(stream: LiveStreamDto): Promise<string | null> {
+  async fetchM3u8(stream: StreamInfo): Promise<string | null> {
     for (let retryCnt = 0; retryCnt <= RETRY_LIMIT; retryCnt++) {
       try {
         const res = await fetch(stream.url, {

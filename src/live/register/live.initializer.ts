@@ -95,14 +95,6 @@ export class LiveInitializer {
     const stream = await this.getLiveStream(req, liveInfo, channel);
     if (!stream) return null;
 
-    // If m3u8 is not available (e.g. standby mode in Soop)
-    // const m3u8 = await this.stlink.fetchM3u8(stream);
-    // if (!m3u8) {
-    //   // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-    //   log.warn('M3U8 not available', liveInfoAttr(liveInfo));
-    //   return null;
-    // }
-
     const selectArgs = this.helper.getNodeSelectArgs({}, channel, undefined, cr);
     let node = await this.nodeSelector.match(selectArgs);
     if (!channel.priority.shouldSave) {
@@ -141,11 +133,11 @@ export class LiveInitializer {
     if (exists) {
       const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
       log.debug('Use existing stream record', attr);
-      return exists;
+      return await this.liveStreamService.update(exists.id, { isInUse: true });
     }
 
     if (req.stream) {
-      return await this.liveStreamService.createBy({
+      return await this.liveStreamService.create({
         sourceId: liveInfo.liveId,
         channelId: channel.id,
         streamInfo: req.stream,
@@ -169,7 +161,16 @@ export class LiveInitializer {
     if (!streamInfo) {
       return null;
     }
-    return await this.liveStreamService.createBy({ sourceId: liveInfo.liveId, channelId: channel.id, streamInfo });
+
+    // If m3u8 is not available (e.g. soop standby mode)
+    const m3u8 = await this.stlink.fetchM3u8(streamInfo);
+    if (!m3u8) {
+      // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
+      log.warn('M3U8 not available', channelAttr(channel));
+      return null;
+    }
+
+    return await this.liveStreamService.create({ sourceId: liveInfo.liveId, channelId: channel.id, streamInfo });
   }
 
   private async createDisabledLive(

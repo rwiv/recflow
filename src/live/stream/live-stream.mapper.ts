@@ -11,6 +11,10 @@ import { headers, queryParams } from '../../common/data/common.schema.js';
 export class LiveStreamMapper {
   constructor(private readonly channelFinder: ChannelFinder) {}
 
+  async mapAll(entities: LiveStreamEnt[], tx: Tx = db) {
+    return Promise.all(entities.map((ent) => this.map(ent, tx)));
+  }
+
   async map(streamEnt: LiveStreamEnt, tx: Tx = db): Promise<LiveStreamDto> {
     const channel = await this.channelFinder.findById(streamEnt.channelId, tx);
     if (!channel) throw NotFoundError.from('Channel', 'id', streamEnt.channelId);

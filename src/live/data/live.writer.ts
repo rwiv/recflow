@@ -110,7 +110,7 @@ export class LiveWriter {
     return db.transaction(async (txx) => {
       const node = await this.nodeRepo.findById(nodeId, txx);
       if (!node) throw NotFoundError.from('Node', 'id', nodeId);
-      await this.nodeRepo.update(nodeId, { livesCnt: node.livesCnt + 1 }, txx);
+      await this.nodeRepo.update(nodeId, { livesCnt: node.livesCnt + 1, lastAssignedAt: new Date() }, txx);
     });
   }
 
@@ -146,7 +146,11 @@ export class LiveWriter {
   }
 
   async updateByLive(id: string, live: LiveInfo, tx: Tx = db) {
-    return this.update(id, { ...live }, tx);
+    await this.update(id, { ...live }, tx);
+  }
+
+  async update(id: string, update: LiveUpdate, tx: Tx = db) {
+    await this.liveRepo.update(id, update, tx);
   }
 
   async delete(liveId: string, isPurge: boolean, finished: boolean, tx: Tx = db) {
@@ -176,10 +180,5 @@ export class LiveWriter {
       await this.update(liveId, update, txx);
       return live;
     });
-  }
-
-  async update(id: string, update: LiveUpdate, tx: Tx = db) {
-    const updated = await this.liveRepo.update(id, update, tx);
-    return this.mapper.map(updated, tx);
   }
 }

@@ -14,7 +14,7 @@ const nodeWriter = app.get(NodeWriter);
 const nodeFinder = app.get(NodeFinder);
 const ngRepo = app.get(NodeGroupRepository);
 
-describe('ChannelService', () => {
+describe('test NodeWriter', async () => {
   beforeEach(async () => {
     await init.initDev();
   });

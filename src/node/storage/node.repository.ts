@@ -56,10 +56,6 @@ export class NodeRepository {
     return tx.select().from(nodeTable);
   }
 
-  async setLastAssignedAtNow(id: string, tx: Tx = db) {
-    return this.update(id, { lastAssignedAt: new Date() }, tx);
-  }
-
   async update(id: string, update: NodeEntUpdate, tx: Tx = db) {
     const node = await this.findById(id, tx);
     if (!node) throw NotFoundError.from('NodeEnt', 'id', id);

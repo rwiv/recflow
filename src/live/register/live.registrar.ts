@@ -10,7 +10,6 @@ import { Notifier } from '../../infra/notify/notifier.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
-import { NodeUpdater } from '../../node/service/node.updater.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { logging, LogLevel } from '../../utils/log.js';
 import { LiveFinder } from '../data/live.finder.js';
@@ -49,7 +48,6 @@ export class LiveRegistrar {
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly nodeSelector: NodeSelector,
-    private readonly nodeUpdater: NodeUpdater,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
     private readonly finalizer: LiveFinalizer,
@@ -78,10 +76,8 @@ export class LiveRegistrar {
       log.error('No available nodes for assignment', liveAttr(live));
       return null;
     }
-
-    // Process node
     await this.liveWriter.bind({ liveId: live.id, nodeId: node.id }, tx);
-    await this.nodeUpdater.setLastAssignedAtNow(node.id, tx);
+
     if (!(await this.stdlRedis.getLiveState(live.id, false))) {
       await this.stdlRedis.createLiveState(live);
     }

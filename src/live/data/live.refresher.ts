@@ -6,6 +6,7 @@ import { Tx } from '../../infra/db/types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveFinder } from './live.finder.js';
 import { LiveWriter } from './live.writer.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 @Injectable()
 export class LiveRefresher {
@@ -27,8 +28,10 @@ export class LiveRefresher {
       const before = await this.liveFinder.findById(live.id, { forUpdate: true }, txx);
       if (!before) return;
 
-      const updated = await this.liveWriter.updateByLive(live.id, liveInfo, txx);
+      await this.liveWriter.updateByLive(live.id, liveInfo, txx);
 
+      const updated = await this.liveFinder.findById(live.id, {}, txx);
+      if (!updated) throw NotFoundError.from('Live', 'id', live.id);
       if (before.liveTitle !== updated.liveTitle) {
         log.info('Live Title Changed', liveAttr(updated));
       }

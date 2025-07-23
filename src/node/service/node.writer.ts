@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { NodeRepository } from '../storage/node.repository.js';
-import { NodeAppend, NodeDto } from '../spec/node.dto.schema.js';
+import { NodeAppend, NodeDto, NodeUpdate } from '../spec/node.dto.schema.js';
 import { NodeEntAppend } from '../spec/node.entity.schema.js';
 import { db } from '../../infra/db/db.js';
 import { NodeMapper } from './node.mapper.js';
@@ -29,6 +29,10 @@ export class NodeWriter {
       const record = await this.mapper.map(nodeEnt, { group: withGroup }, tx);
       return { ...record };
     });
+  }
+
+  async update(id: string, req: NodeUpdate, tx: Tx = db) {
+    await this.nodeRepo.update(id, req, tx);
   }
 
   async delete(id: string, tx: Tx = db) {

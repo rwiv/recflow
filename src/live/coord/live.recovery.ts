@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
-import { NodeUpdater } from '../../node/service/node.updater.js';
+import { NodeWriter } from '../../node/service/node.writer.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
@@ -47,7 +47,7 @@ export class LiveRecoveryManager {
     private readonly liveInitializer: LiveInitializer,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly liveNodeRepo: LiveNodeRepository,
-    private readonly nodeUpdater: NodeUpdater,
+    private readonly nodeWriter: NodeWriter,
     private readonly nodeFinder: NodeFinder,
     private readonly fetcher: PlatformFetcher,
   ) {}
@@ -155,10 +155,10 @@ export class LiveRecoveryManager {
         return;
       }
       if (node.failureCnt >= this.env.nodeFailureThreshold) {
-        await this.nodeUpdater.update(node.id, { failureCnt: 0, isCordoned: true }, tx);
+        await this.nodeWriter.update(node.id, { failureCnt: 0, isCordoned: true }, tx);
         this.notifier.notify(`Node ${node.name} is cordoned due to failure count exceeded threshold`);
       } else {
-        await this.nodeUpdater.update(node.id, { failureCnt: node.failureCnt + 1 }, tx);
+        await this.nodeWriter.update(node.id, { failureCnt: node.failureCnt + 1 }, tx);
       }
     });
   }

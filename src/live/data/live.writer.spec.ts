@@ -9,12 +9,15 @@ import { dropTables } from '../../infra/db/utils.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { LiveCreateArgs, LiveWriter } from './live.writer.js';
 import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
+import { LiveFinder } from './live.finder.js';
+import assert from 'assert';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
 const priService = app.get(PriorityService);
 const liveWriter = app.get(LiveWriter);
+const liveFinder = app.get(LiveFinder);
 const chWriter = app.get(ChannelWriter);
 
 describe('ChannelService', () => {
@@ -48,7 +51,9 @@ describe('ChannelService', () => {
     expect(live1.liveTitle).toBe(li1.liveTitle);
 
     const li2 = mockLiveInfoChzzk({ channelId: ch.pid });
-    const live2 = await liveWriter.updateByLive(live1.id, li2);
+    await liveWriter.updateByLive(live1.id, li2);
+    const live2 = await liveFinder.findById(live1.id);
+    assert(live2);
     expect(live2.liveTitle).not.toBe(live1.liveTitle);
     expect(live2.liveTitle).toBe(li2.liveTitle);
 

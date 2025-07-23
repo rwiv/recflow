@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
-import { NodeUpdater } from '../../node/service/node.updater.js';
+import { NodeWriter } from '../../node/service/node.writer.js';
 import { NodeGroupService } from '../../node/service/node-group.service.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
@@ -36,7 +36,7 @@ export class LiveDrainer {
     private readonly liveFinder: LiveFinder,
     private readonly nodeFinder: NodeFinder,
     private readonly nodeGroupService: NodeGroupService,
-    private readonly nodeUpdater: NodeUpdater,
+    private readonly nodeWriter: NodeWriter,
   ) {}
 
   async drain(args: DrainArgs) {
@@ -60,7 +60,7 @@ export class LiveDrainer {
       return;
     }
 
-    await Promise.all(targetNodes.map((node) => this.nodeUpdater.update(node.id, { isCordoned: true })));
+    await Promise.all(targetNodes.map((node) => this.nodeWriter.update(node.id, { isCordoned: true })));
     await Promise.all(targetNodes.map((node) => this.drainNode(node.id)));
     log.info(`Node group drain completed`, { group_id: groupId, group_name: group.name });
   }

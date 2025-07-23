@@ -4,7 +4,6 @@ import { STDL } from '../../infra/infra.tokens.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../service/node.finder.js';
-import { NodeUpdater } from '../service/node.updater.js';
 import { NodeWriter } from '../service/node.writer.js';
 import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
 
@@ -14,7 +13,6 @@ export class NodeController {
   constructor(
     private readonly finder: NodeFinder,
     private readonly writer: NodeWriter,
-    private readonly updater: NodeUpdater,
     @Inject(STDL) private readonly stdl: Stdl,
   ) {}
 
@@ -45,7 +43,7 @@ export class NodeController {
   @Put('/:nodeId')
   update(@Param('nodeId') nodeId: string, @Body() req: NodeUpdate) {
     const update = nodeUpdate.parse(req);
-    return this.updater.update(nodeId, update);
+    return this.writer.update(nodeId, update);
   }
 
   @Delete('/:nodeId')

@@ -41,7 +41,6 @@ export class ChzzkLiveFilter {
     }
 
     // by channel
-    // TODO: Change based on tier
     if (!cr.loggingOnly) {
       const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'chzzk');
       if (channel) {

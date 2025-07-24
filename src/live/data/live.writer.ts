@@ -138,7 +138,7 @@ export class LiveWriter {
       if (live.stream) {
         const liveCnt = await this.streamService.findLiveCountByStreamId(live.stream.id, txx);
         if (liveCnt === 0) {
-          await this.streamService.delete(live.stream.id, txx); // TODO: remove
+          await this.streamService.delete(live.stream.id, txx);
         }
       }
       return live;

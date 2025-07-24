@@ -1,10 +1,10 @@
 import { TaskDef } from '../spec/task.schema.js';
 
 export const LIVE_REGISTER_CRITERION_NAME = 'live_register_criterion';
-export const LIVE_REGISTER_CRITERION_DEF: TaskDef = { delay: 5 * 1000, ex: 5 * 60 }; // TODO: reduce ex
+export const LIVE_REGISTER_CRITERION_DEF: TaskDef = { delay: 5 * 1000, ex: 2 * 60 };
 
 export const LIVE_REGISTER_FOLLOWED_NAME = 'live_register_followed';
-export const LIVE_REGISTER_FOLLOWED_DEF: TaskDef = { delay: 5 * 1000, ex: 5 * 60 }; // TODO: reduce ex
+export const LIVE_REGISTER_FOLLOWED_DEF: TaskDef = { delay: 5 * 1000, ex: 2 * 60 };
 
 export const LIVE_CLEANUP_NAME = 'live_cleanup';
 export const LIVE_CLEANUP_DEF: TaskDef = { delay: 5 * 1000, ex: 60 };

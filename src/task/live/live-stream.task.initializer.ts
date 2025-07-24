@@ -23,7 +23,7 @@ export class LiveStreamTaskInitializer {
 
     const detectionTask: Task = {
       name: LIVE_STREAM_DETECTION_NAME,
-      run: () => this.streamDetector.check('chzzk'), // TODO: update soop
+      run: () => this.streamDetector.check('soop'),
     };
     createWorker(detectionTask, cronOpts, this.runner);
 

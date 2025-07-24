@@ -46,10 +46,6 @@ export class LiveRepository {
     return oneNullable(await tx.select().from(liveTable).where(cond));
   }
 
-  async findByStreamId(streamId: string, tx: Tx = db): Promise<LiveEnt[]> {
-    return tx.select().from(liveTable).where(eq(liveTable.liveStreamId, streamId));
-  }
-
   async findByIdForUpdate(id: string, tx: Tx = db) {
     return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)).for('update'));
   }

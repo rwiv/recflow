@@ -25,3 +25,6 @@ export const LIVE_FINISH_NAME = 'live_finish';
 
 export const LIVE_STREAM_DETECTION_NAME = 'live_stream_detection';
 export const LIVE_STREAM_DETECTION_DEF: TaskDef = { delay: 1000, ex: 60 };
+
+export const LIVE_STREAM_AUDIT_NAME = 'live_stream_audit';
+export const LIVE_STREAM_AUDIT_DEF: TaskDef = { delay: 10 * 1000, ex: 60 };

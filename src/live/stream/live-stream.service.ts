@@ -24,6 +24,10 @@ export class LiveStreamService {
     return this.mapper.map(ent);
   }
 
+  async findLiveCountByStreamId(streamId: string, tx: Tx = db) {
+    return this.liveStreamRepo.findLiveCountByStreamId(streamId, tx);
+  }
+
   async findByQueryLatestOne(query: LiveStreamQuery, tx: Tx = db) {
     const ent = await this.liveStreamRepo.findByLiveAndChannel(query, tx);
     if (ent.length === 0) return null;
@@ -42,8 +46,6 @@ export class LiveStreamService {
       url: args.streamInfo.url,
       headers: JSON.stringify(args.streamInfo.headers),
       params: args.streamInfo.params ? JSON.stringify(args.streamInfo.params) : null,
-      isInUse: false,
-      isOnLive: true,
     };
     const ent = await this.liveStreamRepo.create(append, tx);
     return this.mapper.map(ent);
@@ -54,7 +56,6 @@ export class LiveStreamService {
   }
 
   async update(id: string, update: LiveStreamUpdate, tx: Tx = db) {
-    const updated = await this.liveStreamRepo.update(id, update, tx);
-    return this.mapper.map(updated, tx);
+    await this.liveStreamRepo.update(id, update, tx);
   }
 }

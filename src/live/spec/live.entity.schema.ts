@@ -47,8 +47,6 @@ export const liveStreamEnt = z.object({
   url: nonempty,
   params: nonempty.nullable(),
   headers: nonempty,
-  isInUse: z.boolean(),
-  isOnLive: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   checkedAt: z.coerce.date(),

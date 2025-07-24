@@ -136,8 +136,8 @@ export class LiveWriter {
       }
       await this.liveRepo.delete(liveId, txx);
       if (live.stream) {
-        const lives = await this.liveRepo.findByStreamId(live.stream.id, txx);
-        if (lives.length === 0) {
+        const liveCnt = await this.liveStreamService.findLiveCountByStreamId(live.stream.id, txx);
+        if (liveCnt === 0) {
           await this.liveStreamService.delete(live.stream.id, txx); // TODO: remove
         }
       }

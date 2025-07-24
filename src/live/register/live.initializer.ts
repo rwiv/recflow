@@ -133,7 +133,7 @@ export class LiveInitializer {
     if (exists) {
       const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
       log.debug('Use existing stream record', attr);
-      return await this.liveStreamService.update(exists.id, { isInUse: true });
+      return exists;
     }
 
     if (req.stream) {

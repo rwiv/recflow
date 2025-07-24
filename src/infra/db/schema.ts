@@ -146,8 +146,6 @@ export const liveStreamTable = pgTable(
     url: text('url').notNull(),
     params: text('params'),
     headers: text('headers').notNull(),
-    isOnLive: boolean('is_on_live').notNull(),
-    isInUse: boolean('is_in_use').notNull(),
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at').notNull(),
     checkedAt: timestamp('checked_at').notNull(),

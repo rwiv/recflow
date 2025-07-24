@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LIVE_STREAM_DETECTION_NAME } from './live.task.contants.js';
+import { LIVE_STREAM_AUDIT_NAME, LIVE_STREAM_DETECTION_NAME } from './live.task.contants.js';
 import { Task } from '../spec/task.interface.js';
 import { createWorker } from '../schedule/task.utils.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
@@ -7,6 +7,7 @@ import { TaskRunner } from '../schedule/task.runner.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
 import { LiveStreamDetector } from '../../live/stream/live-stream.detector.js';
+import { LiveStreamAuditor } from '../../live/stream/live-stream.auditor.js';
 
 @Injectable()
 export class LiveStreamTaskInitializer {
@@ -14,6 +15,7 @@ export class LiveStreamTaskInitializer {
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
     private readonly liveStreamDetector: LiveStreamDetector,
+    private readonly liveStreamAuditor: LiveStreamAuditor,
   ) {}
 
   init() {
@@ -24,5 +26,11 @@ export class LiveStreamTaskInitializer {
       run: () => this.liveStreamDetector.check('chzzk'), // TODO: update soop
     };
     createWorker(detectionTask, cronOpts, this.runner);
+
+    const auditTask: Task = {
+      name: LIVE_STREAM_AUDIT_NAME,
+      run: () => this.liveStreamAuditor.check(),
+    };
+    createWorker(auditTask, cronOpts, this.runner);
   }
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { LiveStreamRepository } from '../storage/live-stream.repository.js';
 import { LiveStreamService } from './live-stream.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
@@ -12,7 +11,6 @@ export const BATCH_NUM = 10; // TODO: use config
 @Injectable()
 export class LiveStreamAuditor {
   constructor(
-    private readonly liveStreamRepo: LiveStreamRepository,
     private readonly liveStreamService: LiveStreamService,
     private readonly fetcher: PlatformFetcher,
     private readonly stlink: Stlink,
@@ -38,26 +36,26 @@ export class LiveStreamAuditor {
       log.debug('Delete Restarted Live Stream', streamAttr(stream));
       return this.remove(stream);
     }
-    const liveCnt = await this.liveStreamRepo.findLiveCountByStreamId(stream.id);
+    const liveCnt = await this.liveStreamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
       // If m3u8 is not available (e.g. soop standby mode)
       const m3u8 = await this.stlink.fetchM3u8(stream);
       if (!m3u8) {
         // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
         log.warn('M3U8 not available', streamAttr(stream));
-        await this.liveStreamRepo.delete(stream.id);
+        await this.liveStreamService.delete(stream.id);
         return;
       }
     }
-    await this.liveStreamRepo.update(stream.id, { checkedAt: new Date() });
+    await this.liveStreamService.update(stream.id, { checkedAt: new Date() });
   }
 
   private async remove(stream: LiveStreamDto) {
-    const liveCnt = await this.liveStreamRepo.findLiveCountByStreamId(stream.id);
+    const liveCnt = await this.liveStreamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
-      await this.liveStreamRepo.delete(stream.id);
+      await this.liveStreamService.delete(stream.id);
     } else {
-      await this.liveStreamRepo.update(stream.id, { checkedAt: new Date() });
+      await this.liveStreamService.update(stream.id, { checkedAt: new Date() });
     }
   }
 }

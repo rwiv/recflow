@@ -11,14 +11,14 @@ export const BATCH_NUM = 10; // TODO: use config
 @Injectable()
 export class LiveStreamAuditor {
   constructor(
-    private readonly liveStreamService: LiveStreamService,
+    private readonly streamService: LiveStreamService,
     private readonly fetcher: PlatformFetcher,
     private readonly stlink: Stlink,
   ) {}
 
   async check() {
     const promises = [];
-    for (const stream of await this.liveStreamService.findEarliestChecked(BATCH_NUM)) {
+    for (const stream of await this.streamService.findEarliestChecked(BATCH_NUM)) {
       promises.push(this.checkOne(stream));
     }
     await Promise.allSettled(promises);
@@ -36,26 +36,26 @@ export class LiveStreamAuditor {
       log.debug('Delete Restarted Live Stream', streamAttr(stream));
       return this.remove(stream);
     }
-    const liveCnt = await this.liveStreamService.findLiveCountByStreamId(stream.id);
+    const liveCnt = await this.streamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
       // If m3u8 is not available (e.g. soop standby mode)
       const m3u8 = await this.stlink.fetchM3u8(stream);
       if (!m3u8) {
         // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
         log.warn('M3U8 not available', streamAttr(stream));
-        await this.liveStreamService.delete(stream.id);
+        await this.streamService.delete(stream.id);
         return;
       }
     }
-    await this.liveStreamService.update(stream.id, { checkedAt: new Date() });
+    await this.streamService.update(stream.id, { checkedAt: new Date() });
   }
 
   private async remove(stream: LiveStreamDto) {
-    const liveCnt = await this.liveStreamService.findLiveCountByStreamId(stream.id);
+    const liveCnt = await this.streamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
-      await this.liveStreamService.delete(stream.id);
+      await this.streamService.delete(stream.id);
     } else {
-      await this.liveStreamService.update(stream.id, { checkedAt: new Date() });
+      await this.streamService.update(stream.id, { checkedAt: new Date() });
     }
   }
 }

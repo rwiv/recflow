@@ -54,6 +54,10 @@ export class LiveStreamRepository {
     return tx.$count(tx.select().from(liveTable).where(eq(liveTable.liveStreamId, streamId)));
   }
 
+  async findByChannel(channelId: string, tx: Tx = db) {
+    return tx.select().from(liveStreamTable).where(eq(liveStreamTable.channelId, channelId));
+  }
+
   async findByLiveAndChannel(query: LiveStreamQuery, tx: Tx = db) {
     return tx
       .select()

@@ -51,7 +51,7 @@ export class LiveInitializer {
     private readonly chFinder: ChannelFinder,
     private readonly priService: PriorityService,
     private readonly liveWriter: LiveWriter,
-    private readonly liveStreamService: LiveStreamService,
+    private readonly streamService: LiveStreamService,
     private readonly registrar: LiveRegistrar,
     private readonly crFinder: CriterionFinder,
     private readonly helper: LiveRegisterHelper,
@@ -129,7 +129,7 @@ export class LiveInitializer {
 
   async getLiveStream(req: NewLiveRequest, liveInfo: LiveInfo, channel: ChannelDto): Promise<LiveStreamDto | null> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveId, channelId: channel.id };
-    const exists = await this.liveStreamService.findByQueryLatestOne(query);
+    const exists = await this.streamService.findByQueryLatestOne(query);
     if (exists) {
       const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
       log.debug('Use existing stream record', attr);
@@ -137,7 +137,7 @@ export class LiveInitializer {
     }
 
     if (req.stream) {
-      return await this.liveStreamService.create({
+      return await this.streamService.create({
         sourceId: liveInfo.liveId,
         channelId: channel.id,
         streamInfo: req.stream,
@@ -170,7 +170,7 @@ export class LiveInitializer {
       return null;
     }
 
-    return await this.liveStreamService.create({ sourceId: liveInfo.liveId, channelId: channel.id, streamInfo });
+    return await this.streamService.create({ sourceId: liveInfo.liveId, channelId: channel.id, streamInfo });
   }
 
   private async createDisabledLive(

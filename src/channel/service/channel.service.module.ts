@@ -9,9 +9,10 @@ import { TagWriter } from './tag.writer.js';
 import { TagFinder } from './tag.finder.js';
 import { PriorityService } from './priority.service.js';
 import { ChannelCacheChecker } from './channel.cache.checker.js';
+import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
 
 @Module({
-  imports: [ChannelStorageModule, PlatformModule],
+  imports: [PlatformModule, ChannelStorageModule, LiveStorageModule],
   providers: [
     PriorityService,
     TagWriter,

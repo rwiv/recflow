@@ -22,7 +22,7 @@ export class LiveMapper {
     private readonly pfFinder: PlatformFinder,
     private readonly channelFinder: ChannelFinder,
     private readonly nodeFinder: NodeFinder,
-    private readonly liveStreamService: LiveStreamService,
+    private readonly streamService: LiveStreamService,
   ) {}
 
   async mapAll(lives: LiveEnt[], tx: Tx = db, opt: LiveFieldsReq): Promise<LiveDtoWithNodes[]> {
@@ -39,7 +39,7 @@ export class LiveMapper {
 
     let stream: LiveStreamDto | null = null;
     if (liveEnt.liveStreamId) {
-      stream = await this.liveStreamService.findById(liveEnt.liveStreamId, tx);
+      stream = await this.streamService.findById(liveEnt.liveStreamId, tx);
     }
 
     let result: LiveDtoWithNodes = {

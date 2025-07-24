@@ -40,7 +40,7 @@ export class LiveWriter {
     private readonly liveRepo: LiveRepository,
     private readonly pfFinder: PlatformFinder,
     private readonly liveFinder: LiveFinder,
-    private readonly liveStreamService: LiveStreamService,
+    private readonly streamService: LiveStreamService,
     private readonly channelFinder: ChannelFinder,
     private readonly liveNodeRepo: LiveNodeRepository,
     private readonly nodeRepo: NodeRepository,
@@ -73,7 +73,7 @@ export class LiveWriter {
     if (!channel) throw NotFoundError.from('Channel', 'pid', liveInfo.pid);
     let stream: LiveStreamDto | null = null;
     if (args.fields.liveStreamId) {
-      stream = await this.liveStreamService.findById(args.fields.liveStreamId, tx);
+      stream = await this.streamService.findById(args.fields.liveStreamId, tx);
     }
 
     // Validate videoName
@@ -136,9 +136,9 @@ export class LiveWriter {
       }
       await this.liveRepo.delete(liveId, txx);
       if (live.stream) {
-        const liveCnt = await this.liveStreamService.findLiveCountByStreamId(live.stream.id, txx);
+        const liveCnt = await this.streamService.findLiveCountByStreamId(live.stream.id, txx);
         if (liveCnt === 0) {
-          await this.liveStreamService.delete(live.stream.id, txx); // TODO: remove
+          await this.streamService.delete(live.stream.id, txx); // TODO: remove
         }
       }
       return live;

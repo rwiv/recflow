@@ -29,6 +29,7 @@ import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js'
 import { log } from 'jslog';
 import { ChannelCacheStore } from '../storage/channel.cache.store.js';
 import { channelAttr } from '../../common/attr/attr.live.js';
+import { LiveStreamRepository } from '../../live/storage/live-stream.repository.js';
 
 @Injectable()
 export class ChannelWriter {
@@ -43,6 +44,7 @@ export class ChannelWriter {
     private readonly fetcher: PlatformFetcher,
     private readonly tagCmd: TagCommandRepository,
     private readonly cache: ChannelCacheStore,
+    private readonly streamRepo: LiveStreamRepository,
   ) {}
 
   async createWithFetch(appendFetch: ChannelAppendWithFetch) {
@@ -143,6 +145,11 @@ export class ChannelWriter {
       for (const tag of tags) {
         const detach: TagDetachment = { channelId: channel.id, tagId: tag.id };
         await this.tagWriter.detach(detach, txx);
+      }
+      for (const stream of await this.streamRepo.findByChannel(channel.id, txx)) {
+        if ((await this.streamRepo.findLiveCountByStreamId(stream.id, txx)) === 0) {
+          await this.streamRepo.delete(stream.id, txx);
+        }
       }
       await this.chCmd.delete(channel.id, txx);
 

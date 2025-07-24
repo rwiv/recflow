@@ -14,8 +14,8 @@ export class LiveStreamTaskInitializer {
   constructor(
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly runner: TaskRunner,
-    private readonly liveStreamDetector: LiveStreamDetector,
-    private readonly liveStreamAuditor: LiveStreamAuditor,
+    private readonly streamDetector: LiveStreamDetector,
+    private readonly streamAuditor: LiveStreamAuditor,
   ) {}
 
   init() {
@@ -23,13 +23,13 @@ export class LiveStreamTaskInitializer {
 
     const detectionTask: Task = {
       name: LIVE_STREAM_DETECTION_NAME,
-      run: () => this.liveStreamDetector.check('chzzk'), // TODO: update soop
+      run: () => this.streamDetector.check('chzzk'), // TODO: update soop
     };
     createWorker(detectionTask, cronOpts, this.runner);
 
     const auditTask: Task = {
       name: LIVE_STREAM_AUDIT_NAME,
-      run: () => this.liveStreamAuditor.check(),
+      run: () => this.streamAuditor.check(),
     };
     createWorker(auditTask, cronOpts, this.runner);
   }

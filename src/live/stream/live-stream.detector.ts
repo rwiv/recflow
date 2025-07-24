@@ -13,15 +13,15 @@ export const QUERY_LIMIT = 10; // TODO: use config
 @Injectable()
 export class LiveStreamDetector {
   constructor(
-    private readonly liveStreamRepo: LiveStreamRepository,
-    private readonly liveStreamService: LiveStreamService,
+    private readonly streamRepo: LiveStreamRepository,
+    private readonly lsService: LiveStreamService,
     private readonly channelWriter: ChannelWriter,
     private readonly fetcher: PlatformFetcher,
     private readonly stlink: Stlink,
   ) {}
 
   async check(platform: PlatformName) {
-    const channels = await this.liveStreamRepo.findChannelsForCheckStream(platform, QUERY_LIMIT);
+    const channels = await this.streamRepo.findChannelsForCheckStream(platform, QUERY_LIMIT);
     const promises = [];
     for (const channel of channels) {
       promises.push(this.checkOne(platform, channel.id, channel.pid));
@@ -45,7 +45,7 @@ export class LiveStreamDetector {
       return this.updateChannel(channelId, info);
     }
 
-    await this.liveStreamService.create({ sourceId: info.liveInfo.liveId, channelId, streamInfo });
+    await this.lsService.create({ sourceId: info.liveInfo.liveId, channelId, streamInfo });
     await this.updateChannel(channelId, info);
 
     const attr = {

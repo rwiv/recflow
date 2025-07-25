@@ -39,8 +39,7 @@ export class LiveStreamAuditor {
     const liveCnt = await this.streamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
       // If m3u8 is not available (e.g. soop standby mode)
-      const m3u8 = await this.stlink.fetchM3u8(stream);
-      if (!m3u8) {
+      if (!(await this.stlink.fetchM3u8(stream))) {
         // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
         log.warn('M3U8 not available', streamAttr(stream));
         await this.streamService.delete(stream.id);

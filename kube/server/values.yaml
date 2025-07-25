@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 2.0.7
+  tag: 2.0.8
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -38,7 +38,7 @@ app:
     usernameKey: username
     passwordKey: password
   configs:
-    httpTimeoutMs: 7000
+    httpTimeoutMs: 20000
     liveAllocationInitWaitSec: 15
     liveRecoveryInitWaitSec: 40
     liveFinishTimeoutSec: 180 # 3 minutes

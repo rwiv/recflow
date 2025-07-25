@@ -163,8 +163,7 @@ export class LiveInitializer {
     }
 
     // If m3u8 is not available (e.g. soop standby mode)
-    const m3u8 = await this.stlink.fetchM3u8(streamInfo);
-    if (!m3u8) {
+    if (!(await this.stlink.fetchM3u8(streamInfo))) {
       // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
       log.warn('M3U8 not available', channelAttr(channel));
       return null;

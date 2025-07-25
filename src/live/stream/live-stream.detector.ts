@@ -44,15 +44,21 @@ export class LiveStreamDetector {
     if (!streamInfo) {
       return this.updateChannel(channelId, info);
     }
+    const attr = {
+      channel_uid: info.pid,
+      channel_name: info.username,
+      live_source_id: info.liveInfo.liveId,
+      live_title: info.liveInfo.liveTitle,
+      stream_url: streamInfo.url,
+    };
+
+    if (!(await this.stlink.fetchM3u8(streamInfo))) {
+      return this.updateChannel(channelId, info);
+    }
 
     await this.lsService.create({ sourceId: info.liveInfo.liveId, channelId, streamInfo });
     await this.updateChannel(channelId, info);
 
-    const attr = {
-      channel_uid: info.pid,
-      channel_name: info.username,
-      stream_url: streamInfo.url,
-    };
     log.debug('Live Stream Detected', attr);
   }
 

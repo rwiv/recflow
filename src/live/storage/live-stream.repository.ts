@@ -87,8 +87,10 @@ export class LiveStreamRepository {
     const entReq: LiveStreamEnt = {
       ...liveStream,
       ...update,
-      updatedAt: new Date(),
     };
+    if (!entReq.checkedAt) {
+      entReq.updatedAt = new Date();
+    }
     const ent = await tx
       .update(liveStreamTable)
       .set(liveStreamEnt.parse(entReq))

@@ -5,6 +5,7 @@ import { Queue } from 'bullmq';
 import { Redis } from 'ioredis';
 import { cronTaskDefs } from '../spec/task.queue-defs.js';
 import { LockSchema, TaskDef, TaskMeta } from '../spec/task.schema.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
@@ -17,6 +18,7 @@ import { getJobOpts } from './task.utils.js';
 @Injectable()
 export class TaskCronScheduler {
   private readonly jobOpts: JobsOptions;
+  private readonly queues: Map<string, Queue> = new Map();
 
   constructor(
     @Inject(ENV) private readonly env: Env,
@@ -29,10 +31,10 @@ export class TaskCronScheduler {
 
   @Cron('* * * * * *')
   async handleCron() {
-    await this.checkOne();
+    await this.check();
   }
 
-  async checkOne() {
+  async check() {
     const promises: Promise<void>[] = [];
 
     for (const [taskName, taskDef] of Object.entries(cronTaskDefs)) {
@@ -52,10 +54,9 @@ export class TaskCronScheduler {
     if (!lockToken) {
       return;
     }
-    const queue = new Queue(taskName, { connection: this.redis });
     const lock: LockSchema = { name: taskName, token: lockToken };
     const meta: TaskMeta = { lock, delay: taskDef.delay };
-    await queue.add(taskName, { meta }, this.jobOpts);
+    await this.getQueue(taskName).add(taskName, { meta }, this.jobOpts);
   }
 
   private async checkCriterion(cr: PlatformCriterionDto) {
@@ -66,10 +67,20 @@ export class TaskCronScheduler {
     if (!lockToken) {
       return;
     }
-    const queue = new Queue(taskName, { connection: this.redis });
     const lock: LockSchema = { name: lockKey, token: lockToken };
     const meta: TaskMeta = { lock, delay: LIVE_REGISTER_CRITERION_DEF.delay };
     const data = { meta, args: { crId: cr.id } };
-    await queue.add(lockKey, data, this.jobOpts);
+    await this.getQueue(taskName).add(lockKey, data, this.jobOpts);
+  }
+
+  private getQueue(key: string) {
+    if (!this.queues.has(key)) {
+      this.queues.set(key, new Queue(key, { connection: this.redis }));
+    }
+    const queue = this.queues.get(key);
+    if (!queue) {
+      throw NotFoundError.from('Queue', 'name', key);
+    }
+    return queue;
   }
 }

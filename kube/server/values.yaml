@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 2.0.8
+  tag: 2.1.0
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -19,6 +19,14 @@ service:
 ingress:
   host: ~
   secretName: cloudflare-certificate
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 300Mi
+  limits:
+    cpu: 200m
+    memory: 500Mi
 
 app:
   replicas: 2

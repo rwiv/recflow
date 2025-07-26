@@ -16,6 +16,7 @@ import { PlatformModule } from './platform/platform.module.js';
 import { readEnv } from './common/config/env.js';
 import { createIoRedisClient } from './infra/redis/redis.client.js';
 import { taskDefs } from './task/spec/task.queue-defs.js';
+import { GlobalModule } from './common/global/global.module.js';
 
 const env = readEnv();
 const bull = createIoRedisClient(env.serverRedis, 1);
@@ -39,6 +40,7 @@ for (const taskName in taskDefs) {
     NodeModule,
     CriterionModule,
     TaskModule,
+    GlobalModule,
   ],
 })
 export class AppModule {}

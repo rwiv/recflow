@@ -13,7 +13,7 @@ spec:
       labels:
         app: {{ .Values.global.name }}
         {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
+        {{ toYaml . | nindent 8 }}
         {{- end }}
     spec:
       containers:
@@ -21,20 +21,17 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           env:
 {{ include "stmgr.app.env" . | indent 12 }}
+          {{- with .Values.resources }}
           resources:
-            requests:
-              cpu: 100m
-              memory: 300Mi
-            limits:
-              cpu: 200m
-              memory: 300Mi
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret }}
       {{- with .Values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{ toYaml . | nindent 8 }}
       {{- end }}

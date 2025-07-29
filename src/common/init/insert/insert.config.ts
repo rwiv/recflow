@@ -48,14 +48,11 @@ export type NodeBatchInsert = z.infer<typeof nodeBatchInsert>;
 const channelBatchInsert = z.object({
   pids: z.array(nonempty),
   platform: platformNameEnum,
-  priority: z.string().nonempty(),
-  tagNames: z.array(nonempty),
 });
 export type ChannelBatchInsert = z.infer<typeof channelBatchInsert>;
 
 export const batchConfig = z.object({
-  endpoint: z.string().url(),
-  channels: channelBatchInsert,
+  channels: z.array(channelBatchInsert),
   nodes: z.array(nodeBatchInsert),
   criteria: criteriaBatchInsert,
 });

@@ -1,3 +1,4 @@
+import path from 'path';
 import { Inject, Injectable } from '@nestjs/common';
 import { dropTables } from '../../infra/db/utils.js';
 import { DevChannelInserter } from './insert/insert.channel.js';
@@ -5,6 +6,7 @@ import { platformNameEnum } from '../../platform/spec/storage/platform.enum.sche
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
 import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../../criterion/spec/criterion.rule.schema.js';
+import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
 import { PriorityService } from '../../channel/service/priority.service.js';
 import { PlatformWriter } from '../../platform/storage/platform.writer.js';
 import { dropAllKeys } from '../../infra/redis/redis.utils.js';
@@ -32,8 +34,8 @@ export class DevInitializer {
     await this.addCriterionRules();
 
     if (withInject) {
-      await this.devInjector.insertTestChannels();
-      await this.devInjector.insertTestNodes();
+      await this.devInjector.insertTestChannels(path.join('dev', 'test_channel_infos.json'));
+      await this.devInjector.insertTestNodes(path.join('dev', 'batch_conf.yaml'));
     }
   }
 
@@ -45,17 +47,16 @@ export class DevInitializer {
 
   private async addPriorities() {
     await this.priService.create({ name: 'great', shouldSave: true, tier: 1, seq: 1 });
-    await this.priService.create({ name: 'nice', shouldSave: true, tier: 1, seq: 2 });
-    await this.priService.create({ name: 'good', shouldSave: true, tier: 2, seq: 3 });
-    await this.priService.create({ name: 'none', shouldSave: true, tier: 2, seq: 4 });
-    await this.priService.create({ name: 'review', shouldSave: false, tier: 3, seq: 5 });
-    await this.priService.create({ name: 'ignore', shouldSave: false, tier: 3, seq: 6 });
+    await this.priService.create({ name: 'good', shouldSave: true, tier: 2, seq: 2 });
+    await this.priService.create({ name: DEFAULT_PRIORITY_NAME, shouldSave: true, tier: 2, seq: 3 });
+    await this.priService.create({ name: 'review', shouldSave: false, tier: 3, seq: 4 });
+    await this.priService.create({ name: 'ignore', shouldSave: false, tier: 3, seq: 5 });
   }
 
   private async addNodeGroups() {
-    await this.ngRepo.create({ name: 'main' });
-    await this.ngRepo.create({ name: 'sub' });
-    await this.ngRepo.create({ name: 'extra' });
+    await this.ngRepo.create({ name: 'group1' });
+    await this.ngRepo.create({ name: 'group2' });
+    await this.ngRepo.create({ name: 'group3' });
   }
 
   private async addCriterionRules() {

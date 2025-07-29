@@ -109,7 +109,7 @@ export function TagQuerySelect({ type }: { type: 'include' | 'exclude' }) {
           role="combobox"
           aria-expanded={open}
           onClick={onTrigger}
-          className="w-[200px] justify-between font-normal"
+          className="w-[170px] justify-between font-normal"
         >
           {getSelectedNameImpl()}
           <ChevronsUpDown className="opacity-50" />

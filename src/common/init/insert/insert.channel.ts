@@ -1,8 +1,8 @@
 import fs from 'fs';
-import path from 'path';
+import { faker } from '@faker-js/faker';
 import { ChannelInfo } from '../../../platform/spec/wapper/channel.js';
 import { ChannelWriter } from '../../../channel/service/channel.writer.js';
-import { randomElem } from '../../../utils/list.js';
+import { randomElem, shuffleArray } from '../../../utils/list.js';
 import { randomInt } from '../../../utils/random.js';
 import { ChannelAppend, channelAppend } from '../../../channel/spec/channel.dto.schema.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
@@ -13,11 +13,10 @@ import { DevCriterionInserter } from './insert.criterion.js';
 import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 import { PriorityService } from '../../../channel/service/priority.service.js';
-import { DEFAULT_PRIORITY_NAME } from '../../../channel/spec/priority.constants.js';
+import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()
 export class DevChannelInserter {
-  private readonly testChannelFilePath: string;
   constructor(
     private readonly channelWriter: ChannelWriter,
     private readonly fetcher: PlatformFetcher,
@@ -25,43 +24,45 @@ export class DevChannelInserter {
     private readonly criterionInserter: DevCriterionInserter,
     private readonly pfFinder: PlatformFinder,
     private readonly priService: PriorityService,
-  ) {
-    this.testChannelFilePath = path.join('dev', 'test_channel_infos.json');
-  }
+  ) {}
 
-  async insertTestNodes() {
-    const conf = readBatchConfig(path.join('dev', 'batch_conf.yaml'));
+  async insertTestNodes(confPath: string) {
+    const conf = readBatchConfig(confPath);
     await this.nodeInserter.insert(conf.nodes);
     await this.criterionInserter.insert(conf.criteria);
   }
 
-  async writeTestChannelInfosFile(confPath: string) {
+  async writeTestChannelInfosFile(confPath: string, testChanPath: string) {
     const conf = readBatchConfig(confPath);
-    const infos = [];
-    for (const id of conf.channels.pids) {
-      infos.push(await this.fetcher.fetchChannelNotNull('chzzk', id, false));
+    const pairs: [PlatformName, string][] = [];
+    for (const batchInfo of conf.channels) {
+      for (const pid of batchInfo.pids) {
+        pairs.push([batchInfo.platform, pid]);
+      }
     }
-    await fs.promises.writeFile(this.testChannelFilePath, JSON.stringify(infos, null, 2));
+    const promises = [];
+    for (const pair of shuffleArray(pairs)) {
+      promises.push(await this.fetcher.fetchChannelNotNull(pair[0], pair[1], false));
+    }
+    const infos = await Promise.all(promises);
+    await fs.promises.writeFile(testChanPath, JSON.stringify(infos, null, 2));
   }
 
-  async insertTestChannels() {
-    const text = await fs.promises.readFile(this.testChannelFilePath, 'utf8');
+  async insertTestChannels(testChanPath: string) {
+    const text = await fs.promises.readFile(testChanPath, 'utf8');
     const infos = JSON.parse(text) as ChannelInfo[];
     const platforms = await this.pfFinder.findAll();
     const priorities = await this.priService.findAll();
     for (const info of infos) {
       const tags: string[] = [];
       for (let i = 1; i < 10; i++) tags.push(`tag${i}`);
-      const tagNames = Array.from({ length: randomInt(0, 7) }, () => randomElem(tags));
+      const tagNames = Array.from({ length: randomInt(0, 4) }, () => randomElem(tags));
       const platformId = platforms.find((pf) => pf.name === info.platform)?.id;
       if (!platformId) throw NotFoundError.from('Platform', 'name', info.platform);
-      const priorityId = priorities.find((pri) => pri.name === DEFAULT_PRIORITY_NAME)?.id;
-      if (!priorityId) throw NotFoundError.from('Priority', 'name', DEFAULT_PRIORITY_NAME);
       const append: ChannelAppend = {
         ...info,
         platformId,
-        priorityId,
-        // isFollowed: randomElem([true, false] as const),
+        priorityId: faker.helpers.arrayElement(priorities.map((p) => p.id)),
         isFollowed: false,
         description: null,
       };

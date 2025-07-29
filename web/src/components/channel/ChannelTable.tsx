@@ -8,7 +8,7 @@ import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.t
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelCreateButton } from '@/components/channel/edit/ChannelCreateButton.tsx';
-import { DEFAULT_PAGINATION_SIZE } from '@/common/constants.ts';
+import { DEFAULT_CHANNEL_PAGINATION_SIZE } from '@/common/constants.ts';
 import { fetchChannels } from '@/client/channel/channel.client.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
@@ -41,7 +41,7 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
     return (
       <PageNavigation
         pageState={pageState}
-        paginationSize={DEFAULT_PAGINATION_SIZE}
+        paginationSize={DEFAULT_CHANNEL_PAGINATION_SIZE}
         endPage={Math.ceil(total / pageState.pageSize)}
       />
     );

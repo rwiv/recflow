@@ -12,6 +12,6 @@ export const NODE_GROUPS_QUERY_KEY = 'nodeGroups';
 export const CHZZK_CRITERIA_QUERY_KEY = 'chzzk_criteria';
 export const SOOP_CRITERIA_QUERY_KEY = 'soop_criteria';
 
-export const DEFAULT_PAGINATION_SIZE = 7;
-export const DEFAULT_PAGE_NUMBER = 1;
-export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_CHANNEL_PAGINATION_SIZE = 7;
+export const DEFAULT_CHANNEL_PAGE_NUMBER = 1;
+export const DEFAULT_CHANNEL_PAGE_SIZE = 10;

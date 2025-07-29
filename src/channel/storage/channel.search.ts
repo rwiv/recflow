@@ -52,50 +52,9 @@ export class ChannelSearchRepository {
     return result;
   }
 
-  // using OR condition
-  async findByAnyTag(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
-    const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
-    const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
-    if (tagIds.length === 0) return { total: 0, channels: [] };
-    let excludeIds: string[] = [];
-    if (excludeTagNames.length > 0) {
-      this.checkDuplicatedTags(includeTagNames, excludeTagNames);
-      excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
-    }
-
-    let qb = tx
-      .selectDistinct({ channels: channelTable })
-      .from(channelTable)
-      .innerJoin(channelTagMapTable, eq(channelTagMapTable.channelId, channelTable.id))
-      .$dynamic();
-
-    const conds: SQLWrapper[] = [];
-    for (const tagId of excludeIds) {
-      const cond = and(eq(channelTagMapTable.channelId, channelTable.id), eq(channelTagMapTable.tagId, tagId));
-      const subQuery = db.select().from(channelTagMapTable).where(cond);
-      conds.push(notExists(subQuery));
-    }
-
-    if (priorityName) await this.withPriority(conds, priorityName, tx);
-    qb = qb.where(and(...conds, inArray(channelTagMapTable.tagId, tagIds)));
-
-    let total = undefined;
-    if (withTotal) {
-      total = total = await tx.$count(qb);
-    }
-    if (sortBy) qb = this.withSorted(qb, sortBy);
-    if (page) qb = this.withPage(qb, page);
-    const result: ChannelPageEntResult = { channels: (await qb).map((r) => r.channels) };
-    if (total !== undefined) {
-      result.total = total;
-    }
-    return result;
-  }
-
-  // async findByAllTagsLegacy(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
+  // async findByTagsLegacy(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
   //   const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
   //   const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
-  //   if (includeIds.length === 0) return { total: 0, channels: [] };
   //   let excludeIds: string[] = [];
   //   if (excludeTagNames.length > 0) {
   //     this.checkDuplicatedTags(includeTagNames, excludeTagNames);
@@ -136,27 +95,26 @@ export class ChannelSearchRepository {
   //   return result;
   // }
 
-  async findByAllTags(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
+  async findByTags(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
     const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
-    const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
-    if (includeIds.length === 0) return { total: 0, channels: [] };
-    let excludeIds: string[] = [];
+    const includeTagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
+    let excludeTagIds: string[] = [];
     if (excludeTagNames.length > 0) {
       this.checkDuplicatedTags(includeTagNames, excludeTagNames);
-      excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
+      excludeTagIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
     }
 
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
-    for (const tagId of includeIds) {
+    for (const tagId of includeTagIds) {
       const cond = and(eq(channelTagMapTable.channelId, channelTable.id), eq(channelTagMapTable.tagId, tagId));
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(exists(subQuery));
     }
-    if (excludeIds.length > 0) {
+    if (excludeTagIds.length > 0) {
       const cond = and(
         eq(channelTagMapTable.channelId, channelTable.id),
-        inArray(channelTagMapTable.tagId, excludeIds),
+        inArray(channelTagMapTable.tagId, excludeTagIds),
       );
       const subQuery = db.select().from(channelTagMapTable).where(cond);
       conds.push(notExists(subQuery));
@@ -181,7 +139,9 @@ export class ChannelSearchRepository {
   private checkDuplicatedTags(includeTagNames: string[], excludeTagNames: string[]) {
     const set = new Set(includeTagNames);
     for (const name of excludeTagNames) {
-      if (set.has(name)) throw new ValidationError('Duplicated tag names');
+      if (set.has(name)) {
+        throw new ValidationError('Duplicated tag names');
+      }
     }
   }
 

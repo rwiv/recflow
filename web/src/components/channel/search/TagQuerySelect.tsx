@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/command.tsx';
 import { TagDto } from '@/client/channel/tag.schema.ts';
 
-export function TagQuerySelect() {
+export function TagQuerySelect({ type }: { type: 'include' | 'exclude' }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
@@ -31,9 +31,23 @@ export function TagQuerySelect() {
     enabled: isTriggered,
   });
 
+  const getFilteredTags = () => {
+    const result: TagDto[] = [];
+    if (!tags || !pageState) return undefined;
+    const filterTagNames = type === 'include' ? pageState.excludeTags : pageState.includeTags;
+    for (const tag of tags) {
+      if (!filterTagNames.includes(tag.name)) {
+        result.push(tag);
+      }
+    }
+    return result;
+  };
+
+  const filteredTags = getFilteredTags();
+
   const tagMap = useMemo(() => {
-    return new Map(tags?.map((tag) => [tag.name, tag]));
-  }, [tags]);
+    return new Map(filteredTags?.map((tag) => [tag.name, tag]));
+  }, [filteredTags]);
 
   const onTrigger = async () => {
     if (!isTriggered) {
@@ -44,34 +58,43 @@ export function TagQuerySelect() {
   const onSelect = (selectedValue: string) => {
     setValue(selectedValue === value ? '' : selectedValue);
     setOpen(false);
+
     const tag = tagMap.get(selectedValue);
     if (!tag || !pageState) return;
-    if (pageState.includeTags.includes(tag.name)) {
-      const newPageState = pageState.new().setIncludeTags([]).build();
-      setPageState(newPageState);
-      navigate(`/channels?${newPageState.toQueryString()}`);
+    const psBuilder = pageState.new();
+
+    const oldTagNames = type === 'include' ? pageState.includeTags : pageState.excludeTags;
+    let newTagNames = [];
+    if (oldTagNames.includes(tag.name)) {
+      newTagNames = [...oldTagNames].filter((name) => name !== tag.name);
     } else {
-      const newPageState = pageState.new().setIncludeTags([tag.name]).build();
-      setPageState(newPageState);
-      navigate(`/channels?${newPageState.toQueryString()}`);
+      newTagNames = [...oldTagNames, tag.name];
     }
+    if (type === 'include') {
+      psBuilder.setIncludeTags(newTagNames);
+    } else {
+      psBuilder.setExcludeTags(newTagNames);
+    }
+
+    const newPageState = psBuilder.build();
+    setPageState(newPageState);
+    navigate(`/channels?${newPageState.toQueryString()}`);
   };
 
   const getSelectedNameImpl = () => {
-    const iTags = pageState?.includeTags;
-    if (iTags && iTags.length > 0) {
-      return iTags.join(', ');
-    }
-    if (tags && value) {
-      return tagMap.get(value)?.name;
+    const tagNames = type === 'include' ? pageState?.includeTags : pageState?.excludeTags;
+    if (tagNames && tagNames.length > 0) {
+      return tagNames.join(', ');
     } else {
-      return 'Select Tag...';
+      return type === 'include' ? 'Include Tag...' : 'Exclude Tag...';
     }
   };
 
   const getCheckedStyle = (tag: TagDto) => {
     const base = 'ml-auto';
-    if (pageState?.includeTags?.includes(tag.name)) {
+    const tagNames = type === 'include' ? pageState?.includeTags : pageState?.excludeTags;
+    const includes = tagNames?.includes(tag.name);
+    if (includes) {
       return cn(base, 'opacity-100');
     } else {
       return cn(base, 'opacity-0');
@@ -98,8 +121,8 @@ export function TagQuerySelect() {
           <CommandList>
             <CommandEmpty>No tag found.</CommandEmpty>
             <CommandGroup>
-              {tags &&
-                tags.map((tag) => (
+              {filteredTags &&
+                filteredTags.map((tag) => (
                   <CommandItem key={tag.id} value={tag.name} onSelect={onSelect}>
                     {tag.name}
                     <Check className={getCheckedStyle(tag)} />

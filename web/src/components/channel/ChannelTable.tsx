@@ -62,7 +62,8 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
         </div>
         <div className="flex gap-2">
           <PrioritySelect />
-          <TagQuerySelect />
+          <TagQuerySelect type="include" />
+          <TagQuerySelect type="exclude" />
           <SortSelect />
           <Button variant="outline" css={css({ width: '5.5rem' })}>
             Refresh

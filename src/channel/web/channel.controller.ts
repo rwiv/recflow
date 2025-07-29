@@ -89,7 +89,7 @@ export class ChannelController {
         includeTagNames: includeTagsStr ? includeTagsStr.split(',') : [],
         excludeTagNames: excludeTagsStr ? excludeTagsStr.split(',') : [],
       };
-      return this.chSearcher.findByAllTags(tagReq, opts);
+      return this.chSearcher.findByTags(tagReq, opts);
     }
 
     return this.chSearcher.findByQuery(req, opts);

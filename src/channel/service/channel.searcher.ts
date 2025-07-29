@@ -17,13 +17,8 @@ export class ChannelSearcher {
     return this.toPageResult(entRet, opts);
   }
 
-  async findByAnyTag(req: ChannelTagSearchRequest, opts: ChannelMapOptions = {}) {
-    const entRet = await this.chSearch.findByAnyTag(req);
-    return this.toPageResult(entRet, opts);
-  }
-
-  async findByAllTags(req: ChannelTagSearchRequest, opts: ChannelMapOptions = {}) {
-    const entRet = await this.chSearch.findByAllTags(req);
+  async findByTags(req: ChannelTagSearchRequest, opts: ChannelMapOptions = {}) {
+    const entRet = await this.chSearch.findByTags(req);
     return this.toPageResult(entRet, opts);
   }
 

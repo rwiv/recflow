@@ -44,7 +44,7 @@ export function PrioritySelect() {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="all">ALL</SelectItem>
+          <SelectItem value="all">ALL Grades</SelectItem>
           {priorities?.map((priority) => (
             <SelectItem key={priority.id} value={priority.name}>
               {priority.name}

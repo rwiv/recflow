@@ -8,7 +8,7 @@ import { ChannelMapper } from './channel.mapper.js';
 import { ChannelWriter } from './channel.writer.js';
 import { PriorityService } from './priority.service.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { ChannelSearchRepository } from '../storage/channel.search.js';
+import { ChannelSearchRepository, ChannelTagSearchRequest } from '../storage/channel.search.js';
 import assert from 'assert';
 
 const app = await createTestApp();
@@ -53,24 +53,27 @@ describe('ChannelService', () => {
       }
     }
 
-    // const sortedBy = 'createdAt';
-    const sortedBy = 'followerCnt';
+    // const sortBy = 'createdAt';
+    const sortBy = 'followerCnt';
 
-    // const prioirty = 'should';
-    const prioirty = undefined;
+    // const priorityName = 'should';
+    const priorityName = undefined;
 
-    const includes = ['tag4', 'tag5'];
-    // const excludes: string[] = [];
-    const excludes = ['tag10', 'tag12'];
-    // const excludes = ['tag10', 'tag12'];
-    // const excludes = ['tag3', 'tag6'];
+    const includeTagNames = ['tag4', 'tag5'];
+    // const excludeTagNames: string[] = [];
+    const excludeTagNames = ['tag10', 'tag12'];
 
-    const page = { page: 1, size: 20 };
-
-    // const result = await chSearcher.findByQuery(page, sorted, prioirty, undefined, true);
-    const result = await chSearchRepo.findByAllTags(includes, excludes, page, sortedBy, prioirty);
-    // const result = await chSearchRepo.findByAllTags2(includes, excludes, page, sortedBy, prioirty, false);
-    // const result = await chSearcher.findByAnyTag(includes, excludes, page, sorted, prioirty, true);
+    const req: ChannelTagSearchRequest = {
+      page: { page: 1, size: 20 },
+      sortBy,
+      priorityName,
+      includeTagNames,
+      excludeTagNames,
+      withTotal: false,
+    };
+    // const result = await chSearcher.findByQuery(req);
+    const result = await chSearchRepo.findByTags(req);
+    // const result = await chSearchRepo.findByTagsLegacy(req);
     console.log(result.total);
     console.log(result.channels.map((r) => r.username));
     console.log(result.channels.map((r) => r.followerCnt));

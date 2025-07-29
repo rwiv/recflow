@@ -10,7 +10,7 @@ import { subLists } from '../../utils/list.js';
 import { TagCommandRepository } from './tag.command.js';
 import { PriorityService } from '../service/priority.service.js';
 import { ChannelCommandRepository } from './channel.command.js';
-import { ChannelSearchRepository } from './channel.search.js';
+import { ChannelSearchRepository, ChannelTagSearchRequest } from './channel.search.js';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
@@ -85,22 +85,28 @@ describe('ChannelService', () => {
   });
 
   it('test', async () => {
-    // const sortedBy = 'createdAt';
-    const sortedBy = 'followerCnt';
+    // const sortBy = 'createdAt';
+    const sortBy = 'followerCnt';
 
-    // const prioirty = 'should';
-    const prioirty = undefined;
+    // const priorityName = 'should';
+    const priorityName = undefined;
 
-    const includes = ['tag4', 'tag5', 'tag10'];
-    // const excludes = ['tag10', 'tag11', 'tag12', 'tag13', 'tag14', 'tag15', 'tag16', 'tag17', 'tag18'];
-    const excludes = Array.from({ length: 10 }, (_, idx) => `tag${idx + 30}`);
-
-    const page = { page: 1, size: 20 };
+    const includeTagNames = ['tag4', 'tag5', 'tag10'];
+    // const excludeTagNames = ['tag10', 'tag11', 'tag12', 'tag13', 'tag14', 'tag15', 'tag16', 'tag17', 'tag18'];
+    const excludeTagNames = Array.from({ length: 10 }, (_, idx) => `tag${idx + 30}`);
 
     const startTime = Date.now();
 
-    const result = await chSearchRepo.findByAllTags(includes, excludes, page, sortedBy, prioirty, false);
-    // const result = await chSearchRepo.findByAllTags2(includes, excludes, page, sortedBy, prioirty, false);
+    const req: ChannelTagSearchRequest = {
+      page: { page: 1, size: 20 },
+      sortBy,
+      priorityName,
+      includeTagNames,
+      excludeTagNames,
+      withTotal: false,
+    };
+    const result = await chSearchRepo.findByTags(req);
+    // const result = await chSearchRepo.findByTagsLegacy(req);
 
     console.log(`Duration: ${Date.now() - startTime}ms`);
     console.log(result.channels.map((r) => r.username));

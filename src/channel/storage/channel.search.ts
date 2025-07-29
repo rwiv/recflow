@@ -13,6 +13,18 @@ import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PageQuery } from '../../common/data/common.schema.js';
 
+export interface ChannelSearchRequest {
+  page?: PageQuery;
+  sortBy?: ChannelSortType;
+  priorityName?: string;
+  withTotal?: boolean;
+}
+
+export interface ChannelTagSearchRequest extends ChannelSearchRequest {
+  includeTagNames: string[];
+  excludeTagNames: string[];
+}
+
 @Injectable()
 export class ChannelSearchRepository {
   constructor(
@@ -20,13 +32,8 @@ export class ChannelSearchRepository {
     private readonly priRepo: PriorityRepository,
   ) {}
 
-  async findByQuery(
-    page?: PageQuery,
-    sortBy?: ChannelSortType,
-    priorityName?: string,
-    withTotal?: boolean,
-    tx: Tx = db,
-  ): Promise<ChannelPageEntResult> {
+  async findByQuery(req: ChannelSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
+    const { page, sortBy, priorityName, withTotal } = req;
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
     if (priorityName) await this.withPriority(conds, priorityName, tx);
@@ -46,19 +53,12 @@ export class ChannelSearchRepository {
   }
 
   // using OR condition
-  async findByAnyTag(
-    includeTagNames: string[],
-    excludeTagNames?: string[],
-    page?: PageQuery,
-    sortBy?: ChannelSortType,
-    priorityName?: string,
-    withTotal?: boolean,
-    tx: Tx = db,
-  ): Promise<ChannelPageEntResult> {
+  async findByAnyTag(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
+    const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
     const tagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
     if (tagIds.length === 0) return { total: 0, channels: [] };
     let excludeIds: string[] = [];
-    if (excludeTagNames && excludeTagNames.length > 0) {
+    if (excludeTagNames.length > 0) {
       this.checkDuplicatedTags(includeTagNames, excludeTagNames);
       excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
     }
@@ -92,70 +92,56 @@ export class ChannelSearchRepository {
     return result;
   }
 
-  async findByAllTags2(
-    includeTagNames: string[],
-    excludeTagNames?: string[],
-    page?: PageQuery,
-    sortBy?: ChannelSortType,
-    priorityName?: string,
-    withTotal?: boolean,
-    tx: Tx = db,
-  ): Promise<ChannelPageEntResult> {
+  // async findByAllTagsLegacy(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
+  //   const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
+  //   const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
+  //   if (includeIds.length === 0) return { total: 0, channels: [] };
+  //   let excludeIds: string[] = [];
+  //   if (excludeTagNames.length > 0) {
+  //     this.checkDuplicatedTags(includeTagNames, excludeTagNames);
+  //     excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
+  //   }
+  //   const merged = [...includeIds, ...excludeIds];
+  //   const conds: SQLWrapper[] = [inArray(channelTagMapTable.tagId, merged)];
+  //
+  //   let qb = db
+  //     .select({ channels: channelTable })
+  //     .from(channelTable)
+  //     .leftJoin(channelTagMapTable, eq(channelTable.id, channelTagMapTable.channelId))
+  //     .$dynamic();
+  //
+  //   if (priorityName) await this.withPriority(conds, priorityName, tx);
+  //   let having: any = eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length);
+  //   if (excludeIds.length > 0) {
+  //     having = and(
+  //       eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length),
+  //       eq(getSubCountSQL(excludeIds, channelTagMapTable.tagId), 0),
+  //     );
+  //   }
+  //   qb = qb
+  //     .where(and(...conds))
+  //     .groupBy(channelTable.id)
+  //     .having(having);
+  //
+  //   let total = undefined;
+  //   if (withTotal) {
+  //     total = total = await tx.$count(qb);
+  //   }
+  //   if (sortBy) qb = this.withSorted(qb, sortBy);
+  //   if (page) qb = this.withPage(qb, page);
+  //   const result: ChannelPageEntResult = { channels: (await qb).map((row) => row.channels) };
+  //   if (total !== undefined) {
+  //     result.total = total;
+  //   }
+  //   return result;
+  // }
+
+  async findByAllTags(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
+    const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
     const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
     if (includeIds.length === 0) return { total: 0, channels: [] };
     let excludeIds: string[] = [];
-    if (excludeTagNames && excludeTagNames.length > 0) {
-      this.checkDuplicatedTags(includeTagNames, excludeTagNames);
-      excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
-    }
-    const merged = [...includeIds, ...excludeIds];
-    const conds: SQLWrapper[] = [inArray(channelTagMapTable.tagId, merged)];
-
-    let qb = db
-      .select({ channels: channelTable })
-      .from(channelTable)
-      .leftJoin(channelTagMapTable, eq(channelTable.id, channelTagMapTable.channelId))
-      .$dynamic();
-
-    if (priorityName) await this.withPriority(conds, priorityName, tx);
-    let having: any = eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length);
-    if (excludeIds.length > 0) {
-      having = and(
-        eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length),
-        eq(getSubCountSQL(excludeIds, channelTagMapTable.tagId), 0),
-      );
-    }
-    qb = qb
-      .where(and(...conds))
-      .groupBy(channelTable.id)
-      .having(having);
-
-    let total = undefined;
-    if (withTotal) {
-      total = total = await tx.$count(qb);
-    }
-    if (sortBy) qb = this.withSorted(qb, sortBy);
-    if (page) qb = this.withPage(qb, page);
-    const result: ChannelPageEntResult = { channels: (await qb).map((row) => row.channels) };
-    if (total !== undefined) {
-      result.total = total;
-    }
-    return result;
-  }
-
-  async findByAllTags(
-    includeTagNames: string[],
-    excludeTagNames?: string[],
-    page?: PageQuery,
-    sortBy?: ChannelSortType,
-    priorityName?: string,
-    withTotal?: boolean,
-    tx: Tx = db,
-  ): Promise<ChannelPageEntResult> {
-    const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
-    if (includeIds.length === 0) return { total: 0, channels: [] };
-    let excludeIds: string[] = [];
-    if (excludeTagNames && excludeTagNames.length > 0) {
+    if (excludeTagNames.length > 0) {
       this.checkDuplicatedTags(includeTagNames, excludeTagNames);
       excludeIds = await this.tagQuery.findIdsByNames(excludeTagNames, tx);
     }

@@ -14,9 +14,7 @@ export function NodeGroupPage() {
   return (
     <div>
       <PageHeaderTab nodeGroup />
-      <div className="mx-10 my-3">
-        {nodeGroups  && <NodeGroupTable groups={nodeGroups} />}
-      </div>
+      <div className="mx-10 my-3">{nodeGroups && <NodeGroupTable groups={nodeGroups} />}</div>
     </div>
   );
 }

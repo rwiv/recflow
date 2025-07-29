@@ -6,11 +6,22 @@ export class ChannelPageStateBuilder {
   curPageNum: number = -1;
   pageSize: number = DEFAULT_PAGE_SIZE;
   priority: string | undefined;
-  tagName: string | undefined;
+  includeTags: string[] = [];
+  excludeTags: string[] = [];
   sortBy: ChannelSortType = 'updatedAt';
   pid: string | undefined;
   username: string | undefined;
   isSingle: boolean = false;
+
+  setIncludeTags(tags: string[]): this {
+    this.includeTags = tags;
+    return this;
+  }
+
+  setExcludeTags(tags: string[]): this {
+    this.excludeTags = tags;
+    return this;
+  }
 
   setCurPageNum(curPageNum: number): this {
     this.curPageNum = curPageNum;
@@ -26,14 +37,6 @@ export class ChannelPageStateBuilder {
     if (priority !== null) {
       this.priority = priority;
     }
-    return this;
-  }
-
-  setTagName(tagName: string | null | undefined): this {
-    if (tagName === null) {
-      return this;
-    }
-    this.tagName = tagName;
     return this;
   }
 

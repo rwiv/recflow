@@ -29,6 +29,7 @@ import { PageQuery, pageQuery } from '../../common/data/common.schema.js';
 import { PriorityService } from '../service/priority.service.js';
 import { ChannelMapOptions } from '../spec/channel.types.js';
 import { ChannelMapper } from '../service/channel.mapper.js';
+import { ChannelSearchRequest, ChannelTagSearchRequest } from '../storage/channel.search.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -45,10 +46,11 @@ export class ChannelController {
   async channels(
     @Query('st') st?: string,
     @Query('pri') priority?: string,
-    @Query('tn') tagName?: string,
+    @Query('it') includeTagsStr?: string,
+    @Query('et') excludeTagsStr?: string,
     @Query('pid') pid?: string,
     @Query('uname') username?: string,
-    @Query('p', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('p', new ParseIntPipe({ optional: true })) pageNum?: number,
     @Query('s', new ParseIntPipe({ optional: true })) size?: number,
     @Query('wt', new ParseBoolPipe({ optional: true })) withTags?: boolean,
     @Query('wtp', new ParseBoolPipe({ optional: true })) withTopics?: boolean,
@@ -69,19 +71,28 @@ export class ChannelController {
       return channelPageResult.parse({ channels, total: 1 });
     }
 
-    if (!page || !size) {
+    if (!pageNum || !size) {
       throw new ValidationError('page and size must be provided');
     }
     let sortBy: ChannelSortType = 'updatedAt';
     if (st) {
       sortBy = channelSortTypeEnum.parse(st);
     }
-    const pq: PageQuery = { page, size };
-    if (tagName) {
-      return this.chSearcher.findByAnyTag([tagName], undefined, pq, sortBy, priority, opts);
-    } else {
-      return this.chSearcher.findByQuery(pageQuery.parse(pq), sortBy, priority, opts);
+    const pageQ: PageQuery = { page: pageNum, size };
+    const page = pageQuery.parse(pageQ);
+
+    const req: ChannelSearchRequest = { page, sortBy, priorityName: priority, withTotal: true };
+
+    if (includeTagsStr || excludeTagsStr) {
+      const tagReq: ChannelTagSearchRequest = {
+        ...req,
+        includeTagNames: includeTagsStr ? includeTagsStr.split(',') : [],
+        excludeTagNames: excludeTagsStr ? excludeTagsStr.split(',') : [],
+      };
+      return this.chSearcher.findByAllTags(tagReq, opts);
     }
+
+    return this.chSearcher.findByQuery(req, opts);
   }
 
   @Post('/')

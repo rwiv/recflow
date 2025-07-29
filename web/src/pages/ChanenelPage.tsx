@@ -39,7 +39,8 @@ function getPageState(params: URLSearchParams) {
   builder.setCurPageNum(page);
   builder.setSorted(params.get('st'));
   builder.setPriority(params.get('pri'));
-  builder.setTagName(params.get('tn'));
+  builder.setIncludeTags(params.get('it')?.split(',') ?? []);
+  builder.setExcludeTags(params.get('et')?.split(',') ?? []);
   builder.setPid(params.get('pid'));
   builder.setUsername(params.get('uname'));
   return builder.build();

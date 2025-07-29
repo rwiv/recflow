@@ -6,7 +6,8 @@ export class ChannelPageState {
   curPageNum: number;
   pageSize: number;
   priority: string | undefined;
-  tagName: string | undefined;
+  includeTags: string[];
+  excludeTags: string[];
   sortBy: ChannelSortType = 'updatedAt';
   pid: string | undefined;
   username: string | undefined;
@@ -16,7 +17,8 @@ export class ChannelPageState {
     this.curPageNum = builder.curPageNum;
     this.pageSize = builder.pageSize;
     this.priority = builder.priority;
-    this.tagName = builder.tagName;
+    this.includeTags = builder.includeTags;
+    this.excludeTags = builder.excludeTags;
     this.sortBy = builder.sortBy;
     this.pid = builder.pid;
     this.username = builder.username;
@@ -32,7 +34,8 @@ export class ChannelPageState {
       .setCurPageNum(this.curPageNum)
       .setPageSize(this.pageSize)
       .setPriority(this.priority)
-      .setTagName(this.tagName)
+      .setIncludeTags(this.includeTags)
+      .setExcludeTags(this.excludeTags)
       .setSorted(this.sortBy);
   }
 
@@ -63,8 +66,11 @@ export class ChannelPageState {
     if (this.priority) {
       params.set('pri', this.priority);
     }
-    if (this.tagName) {
-      params.set('tn', this.tagName);
+    if (this.includeTags.length > 0) {
+      params.set('it', this.includeTags.join(','));
+    }
+    if (this.excludeTags.length > 0) {
+      params.set('et', this.excludeTags.join(','));
     }
     if (this.sortBy) {
       params.set('st', this.sortBy);
@@ -72,12 +78,13 @@ export class ChannelPageState {
     return params.toString();
   }
 
-  queryKeys() {
+  queryKeys(): (string | number | boolean | undefined)[] {
     return [
       CHANNELS_QUERY_KEY,
       this.curPageNum,
       this.priority,
-      this.tagName,
+      this.includeTags.join(','),
+      this.excludeTags.join(','),
       this.sortBy,
       this.pid,
       this.username,

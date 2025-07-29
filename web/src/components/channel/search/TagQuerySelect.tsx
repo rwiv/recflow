@@ -23,7 +23,7 @@ export function TagQuerySelect() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [isTriggered, setIsTriggered] = useState(false);
-  const { pageState } = useChannelPageStore();
+  const { pageState, setPageState } = useChannelPageStore();
 
   const { data: tags } = useQuery({
     queryKey: [TAGS_QUERY_KEY],
@@ -46,13 +46,21 @@ export function TagQuerySelect() {
     setOpen(false);
     const tag = tagMap.get(selectedValue);
     if (!tag || !pageState) return;
-    const newPageState = pageState.new().setTagName(tag.name).build();
-    navigate(`/channels?${newPageState.toQueryString()}`);
+    if (pageState.includeTags.includes(tag.name)) {
+      const newPageState = pageState.new().setIncludeTags([]).build();
+      setPageState(newPageState);
+      navigate(`/channels?${newPageState.toQueryString()}`);
+    } else {
+      const newPageState = pageState.new().setIncludeTags([tag.name]).build();
+      setPageState(newPageState);
+      navigate(`/channels?${newPageState.toQueryString()}`);
+    }
   };
 
   const getSelectedNameImpl = () => {
-    if (pageState?.tagName) {
-      return pageState.tagName;
+    const iTags = pageState?.includeTags;
+    if (iTags && iTags.length > 0) {
+      return iTags.join(', ');
     }
     if (tags && value) {
       return tagMap.get(value)?.name;
@@ -63,7 +71,7 @@ export function TagQuerySelect() {
 
   const getCheckedStyle = (tag: TagDto) => {
     const base = 'ml-auto';
-    if (pageState?.tagName === tag.name) {
+    if (pageState?.includeTags?.includes(tag.name)) {
       return cn(base, 'opacity-100');
     } else {
       return cn(base, 'opacity-0');

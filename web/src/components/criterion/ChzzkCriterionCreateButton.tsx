@@ -119,8 +119,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
         <TextFormField form={form} name="name" label="Name" />
         <CheckFormField form={form} name="enforceCreds" label="Enforce Credentials" />
         <CheckFormField form={form} name="adultOnly" label="Adult Only" />
-        <CheckFormField form={form} name="domesticOnly" label="Domestic Only" />
-        <CheckFormField form={form} name="overseasFirst" label="Overseas First " />
+        {/*<CheckFormField form={form} name="domesticOnly" label="Domestic Only" />*/}
+        {/*<CheckFormField form={form} name="overseasFirst" label="Overseas First " />*/}
         <CheckFormField form={form} name="loggingOnly" label="Logging Only" />
         <TextFormField form={form} name="description" label="Description" />
         <TextFormField form={form} name="sufficientUserCnt" label="Sufficient User Count" placeholder="0" />

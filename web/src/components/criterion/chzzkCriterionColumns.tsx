@@ -5,13 +5,11 @@ import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
 import {
   CriterionActivationBadge,
-  CriterionDomesticOnlyBadge,
   CriterionEnforceCredentialsBadge,
   CriterionLoggingOnlyBadge,
-  CriterionOverseasFirstBadge,
 } from '@/components/criterion/units/criterion_badges.tsx';
 
-const NORMAL_WIDTH = '6rem';
+const NORMAL_WIDTH = '7rem';
 const EDITABLE_WIDTH = '6rem';
 
 const nameColumn: ColumnDef<ChzzkCriterionDto> = {
@@ -42,19 +40,19 @@ const enforceCredsColumn: ColumnDef<ChzzkCriterionDto> = {
 //   meta: { header: { width: NORMAL_WIDTH } },
 // };
 
-const domesticOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
-  accessorKey: 'domesticOnly',
-  header: () => <div className="justify-self-center">DomesticOnly</div>,
-  cell: ({ row }) => <CriterionDomesticOnlyBadge criterion={row.original} />,
-  meta: { header: { width: NORMAL_WIDTH } },
-};
-
-const overseasFirstColumn: ColumnDef<ChzzkCriterionDto> = {
-  accessorKey: 'overseasFirst',
-  header: () => <div className="justify-self-center">OverseasFirst</div>,
-  cell: ({ row }) => <CriterionOverseasFirstBadge criterion={row.original} />,
-  meta: { header: { width: NORMAL_WIDTH } },
-};
+// const domesticOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
+//   accessorKey: 'domesticOnly',
+//   header: () => <div className="justify-self-center">DomesticOnly</div>,
+//   cell: ({ row }) => <CriterionDomesticOnlyBadge criterion={row.original} />,
+//   meta: { header: { width: NORMAL_WIDTH } },
+// };
+//
+// const overseasFirstColumn: ColumnDef<ChzzkCriterionDto> = {
+//   accessorKey: 'overseasFirst',
+//   header: () => <div className="justify-self-center">OverseasFirst</div>,
+//   cell: ({ row }) => <CriterionOverseasFirstBadge criterion={row.original} />,
+//   meta: { header: { width: NORMAL_WIDTH } },
+// };
 
 const loggingOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'loggingOnly',
@@ -114,8 +112,8 @@ export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
   isDeactivatedColumn,
   enforceCredsColumn,
   // adultOnlyColumn,
-  domesticOnlyColumn,
-  overseasFirstColumn,
+  // domesticOnlyColumn,
+  // overseasFirstColumn,
   loggingOnlyColumn,
   sufficientUserCntColumn,
   minUserCntColumn,

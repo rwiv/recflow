@@ -43,10 +43,10 @@ const groupColumn: ColumnDef<NodeDto> = {
   meta: { header: { width: SWITCH_SIDTH } },
 };
 
-const weightColumn: ColumnDef<NodeDto> = {
-  accessorKey: 'weight',
+const priorityColumn: ColumnDef<NodeDto> = {
+  accessorKey: 'priority',
   header: () => <div className="justify-self-center">Priority</div>,
-  cell: ({ row }) => <NodeFieldUpdateForm type="weight" node={row.original} />,
+  cell: ({ row }) => <NodeFieldUpdateForm type="priority" node={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
@@ -69,7 +69,7 @@ export const nodeColumns: ColumnDef<NodeDto>[] = [
   cordonedColumn,
   isDomesticColumn,
   groupColumn,
-  weightColumn,
+  priorityColumn,
   capacityColumn,
   failureCntColumn,
   endpointColumn,

@@ -40,12 +40,12 @@ export function NodeCreateButton() {
 }
 
 const formSchema = nodeAppend.extend({
-  weight: nonempty,
+  priority: nonempty,
   capacity: nonempty,
 });
 
 const middleSchema = formSchema.extend({
-  weight: z.coerce.number().positive(),
+  priority: z.coerce.number().positive(),
   capacity: z.coerce.number().nonnegative(),
 });
 
@@ -57,7 +57,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
     defaultValues: {
       name: '',
       endpoint: '',
-      weight: '',
+      priority: '',
       capacity: '',
       isCordoned: false,
       isDomestic: false,
@@ -90,7 +90,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
             </SelectItem>
           ))}
         </SelectFormField>
-        <TextFormField form={form} name="weight" label="Priority" placeholder="1" />
+        <TextFormField form={form} name="priority" label="Priority" placeholder="1" />
         <TextFormField form={form} name="capacity" placeholder="0" />
         <FormSubmitButton />
       </form>

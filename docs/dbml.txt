@@ -115,7 +115,7 @@ Table node {
   name text [not null]
   description text
   endpoint text [not null]
-  weight integer [not null]
+  priority integer [not null]
   capacity integer [not null]
   is_cordoned boolean [not null]
   group_id uuid [not null]

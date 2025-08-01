@@ -114,7 +114,7 @@ export const nodeTable = pgTable(
     name: text().notNull().unique(),
     description: text(),
     endpoint: text().notNull(),
-    weight: integer().notNull(),
+    priority: integer().notNull(),
     capacity: integer('capacity').notNull(),
     isCordoned: boolean('is_cordoned').notNull(),
     groupId: uuid('group_id')
@@ -129,7 +129,7 @@ export const nodeTable = pgTable(
   },
   (t) => [
     uniqueIndex('node_name_idx').on(t.name),
-    index('node_weight_idx').on(t.weight),
+    index('node_priority_idx').on(t.priority),
     index('node_lives_cnt_idx').on(t.livesCnt),
     index('node_last_assigned_at_idx').on(t.lastAssignedAt.nullsFirst()),
   ],

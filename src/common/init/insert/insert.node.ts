@@ -11,7 +11,7 @@ const nodeBatchInsert = z.object({
   name: nonempty,
   endpoint: z.string().url(),
   groupName: z.string().nonempty(),
-  weight: z.number().int().nonnegative(),
+  priority: z.number().int().nonnegative(),
   capacity: nnint,
   isCordoned: z.boolean(),
 });

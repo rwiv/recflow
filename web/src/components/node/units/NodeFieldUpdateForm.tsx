@@ -5,7 +5,7 @@ import { NODES_QUERY_KEY } from '@/common/constants.ts';
 import { updateNode } from '@/client/node/node.client.ts';
 import { NodeDto } from '@/client/node/node.schema';
 
-type Type = 'name' | 'endpoint' | 'weight' | 'capacity' | 'failureCnt';
+type Type = 'name' | 'endpoint' | 'priority' | 'capacity' | 'failureCnt';
 
 interface NodeFieldUpdateForm {
   type: Type;
@@ -27,8 +27,8 @@ export function NodeFieldUpdateForm({ type, node }: NodeFieldUpdateForm) {
         await updateNode(node.id, { name: stringSchema.parse(value) });
       } else if (type === 'endpoint') {
         await updateNode(node.id, { endpoint: stringSchema.parse(value) });
-      } else if (type === 'weight') {
-        await updateNode(node.id, { weight: numSchema.parse(value) });
+      } else if (type === 'priority') {
+        await updateNode(node.id, { priority: numSchema.parse(value) });
       } else if (type === 'capacity') {
         await updateNode(node.id, { capacity: numSchema.parse(value) });
       } else if (type === 'failureCnt') {
@@ -52,7 +52,7 @@ function getValidate(type: Type) {
     case 'name':
     case 'endpoint':
       return stringSchema.parse;
-    case 'weight':
+    case 'priority':
     case 'capacity':
     case 'failureCnt':
       return numSchema.parse;
@@ -67,8 +67,8 @@ function getDefaultValue(type: Type, node: NodeDto) {
       return node.name;
     case 'endpoint':
       return node.endpoint;
-    case 'weight':
-      return node.weight.toString();
+    case 'priority':
+      return node.priority.toString();
     case 'capacity':
       return node.capacity.toString();
     case 'failureCnt':

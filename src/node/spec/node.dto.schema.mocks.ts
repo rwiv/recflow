@@ -5,7 +5,7 @@ export function mockNodeAppend(overrides: Partial<NodeAppend> = {}): NodeAppend 
   return {
     name: faker.lorem.words(2),
     endpoint: faker.internet.url(),
-    weight: faker.number.int({ min: 1, max: 100 }),
+    priority: faker.number.int({ min: 1, max: 100 }),
     groupId: faker.string.uuid(),
     capacity: faker.number.int({ min: 1, max: 100 }),
     ...overrides,
@@ -18,7 +18,7 @@ export function mockNodeDto(overrides: Partial<NodeDto> = {}): NodeDto {
     name: faker.lorem.words(2),
     description: faker.lorem.sentence(),
     endpoint: faker.internet.url(),
-    weight: faker.number.int({ min: 1, max: 100 }),
+    priority: faker.number.int({ min: 1, max: 100 }),
     groupId: faker.string.uuid(),
     capacity: faker.number.int({ min: 1, max: 100 }),
     isCordoned: faker.datatype.boolean(),

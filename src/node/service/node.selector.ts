@@ -41,16 +41,16 @@ export class NodeSelector {
       return null;
     }
 
-    // find minimum weight
-    let minWeight = nodes[0].weight;
+    // find minimum priority
+    let minPriority = nodes[0].priority;
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].weight < minWeight) {
-        minWeight = nodes[i].weight;
+      if (nodes[i].priority < minPriority) {
+        minPriority = nodes[i].priority;
       }
     }
 
     // select the node with the minimum assigned count
-    nodes = sortedByEarliestAssigned(nodes.filter((node) => node.weight === minWeight));
+    nodes = sortedByEarliestAssigned(nodes.filter((node) => node.priority === minPriority));
     if (nodes.length === 0) return null;
 
     let minNode = nodes[0];

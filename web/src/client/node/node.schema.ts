@@ -25,7 +25,7 @@ export const nodeDto = z.object({
   id: uuid,
   name: nonempty,
   endpoint: nonempty,
-  weight: z.coerce.number().nonnegative(),
+  priority: z.coerce.number().nonnegative(),
   capacity: z.coerce.number().nonnegative(),
   isCordoned: z.boolean(),
   isDomestic: z.boolean(),

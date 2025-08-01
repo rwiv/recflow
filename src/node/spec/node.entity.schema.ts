@@ -6,7 +6,7 @@ export const nodeEnt = z.object({
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
   endpoint: z.string().nonempty(),
-  weight: z.number().int().positive(),
+  priority: z.number().int().positive(),
   capacity: z.number().int().nonnegative(),
   isCordoned: z.boolean(),
   isDomestic: z.boolean(),

@@ -1,9 +1,8 @@
 import fs from 'fs';
-import { faker } from '@faker-js/faker';
 import { ChannelInfo } from '../../../platform/spec/wapper/channel.js';
 import { ChannelWriter } from '../../../channel/service/channel.writer.js';
 import { randomElem, shuffleArray } from '../../../utils/list.js';
-import { randomInt } from '../../../utils/random.js';
+import { arrayElement, randomInt } from '../../../utils/random.js';
 import { ChannelAppend, channelAppend } from '../../../channel/spec/channel.dto.schema.js';
 import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
@@ -62,7 +61,7 @@ export class DevChannelInserter {
       const append: ChannelAppend = {
         ...info,
         platformId,
-        gradeId: faker.helpers.arrayElement(grades.map((p) => p.id)),
+        gradeId: arrayElement(grades.map((p) => p.id)),
         isFollowed: false,
         description: null,
       };

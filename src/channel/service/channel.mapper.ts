@@ -5,14 +5,14 @@ import { TagQueryRepository } from '../storage/tag.query.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { PriorityService } from './priority.service.js';
+import { GradeService } from './grade.service.js';
 import { ChannelMapOptions } from '../spec/channel.types.js';
 
 @Injectable()
 export class ChannelMapper {
   constructor(
     private readonly pfFinder: PlatformFinder,
-    private readonly priService: PriorityService,
+    private readonly grService: GradeService,
     private readonly tagQuery: TagQueryRepository,
   ) {}
 
@@ -27,8 +27,8 @@ export class ChannelMapper {
 
   async map(ent: ChannelEnt, tx: Tx = db): Promise<ChannelDto> {
     const platformP = this.pfFinder.findByIdNotNull(ent.platformId, tx);
-    const priorityP = this.priService.findByIdNotNull(ent.priorityId, tx);
-    return { ...ent, platform: await platformP, priority: await priorityP };
+    const gradeP = this.grService.findByIdNotNull(ent.gradeId, tx);
+    return { ...ent, platform: await platformP, grade: await gradeP };
   }
 
   async loadRelations(channels: ChannelDto[], opts: ChannelMapOptions, tx: Tx = db): Promise<MappedChannelDto[]> {

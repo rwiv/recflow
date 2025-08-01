@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { uuid } from '@/common/common.schema.ts';
 
-export const priorityDto = z.object({
+export const gradeDto = z.object({
   id: uuid,
   name: z.string().nonempty(),
   description: z.string().nonempty().nullable(),
@@ -12,16 +12,16 @@ export const priorityDto = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });
-export type PriorityDto = z.infer<typeof priorityDto>;
+export type GradeDto = z.infer<typeof gradeDto>;
 
-export const priorityAppend = priorityDto.partial({
+export const gradeAppend = gradeDto.partial({
   id: true,
   description: true,
   shouldNotify: true,
   createdAt: true,
   updatedAt: true,
 });
-export type PriorityAppend = z.infer<typeof priorityAppend>;
+export type GradeAppend = z.infer<typeof gradeAppend>;
 
-export const priorityUpdate = priorityDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
-export type PriorityUpdate = z.infer<typeof priorityUpdate>;
+export const gradeUpdate = gradeDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
+export type GradeUpdate = z.infer<typeof gradeUpdate>;

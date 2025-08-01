@@ -32,16 +32,16 @@ const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   meta: { header: { width: CHANNEL_WIDTH } },
 };
 
-const priorityColumn: ColumnDef<LiveDtoWithNodes> = {
-  accessorKey: 'priority',
+const gradeColumn: ColumnDef<LiveDtoWithNodes> = {
+  accessorKey: 'grade',
   header: () => <div className="ml-1">Grade</div>,
   cell: ({ row }) => (
     <button className="uppercase">
-      <Badge variant="default">{row.original.channel.priority.name}</Badge>
+      <Badge variant="default">{row.original.channel.grade.name}</Badge>
     </button>
   ),
   filterFn: (rows, _, filterValue) => {
-    return rows.original.channel.priority.name.includes(filterValue);
+    return rows.original.channel.grade.name.includes(filterValue);
   },
   meta: { header: { width: PRIORITY_WIDTH } },
 };
@@ -87,7 +87,7 @@ const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
 export const liveColumns: ColumnDef<LiveDtoWithNodes>[] = [
   createSelectColumn(selectCid),
   channelColumn,
-  priorityColumn,
+  gradeColumn,
   titleColumn,
   sortableColumnDef(
     viewCntCid,

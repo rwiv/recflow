@@ -1,39 +1,39 @@
 import { TextUpdateForm } from '@/components/common/layout/TextUpdateForm.tsx';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
-import { updatePriority } from '@/client/channel/priority.client.ts';
-import { PriorityDto } from '@/client/channel/priority.schema.ts';
+import { GRADES_QUERY_KEY } from '@/common/constants.ts';
+import { updateGrade } from '@/client/channel/grade.client.ts';
+import { GradeDto } from '@/client/channel/grade.schema.ts';
 
 type Type = 'name' | 'description' | 'tier' | 'seq';
 
 interface NodeFieldUpdateForm {
   type: Type;
-  priority: PriorityDto;
+  grade: GradeDto;
 }
 
 const stringSchema = z.coerce.string().nonempty();
 const descriptionSchema = z.coerce.string();
 const numSchema = z.coerce.number().nonnegative();
 
-export function PriorityFieldUpdateForm({ type, priority }: NodeFieldUpdateForm) {
+export function GradeFieldUpdateForm({ type, grade }: NodeFieldUpdateForm) {
   const queryClient = useQueryClient();
-  const printValue = getPrintValue(type, priority);
-  const defaultValue = getDefaultValue(type, priority);
+  const printValue = getPrintValue(type, grade);
+  const defaultValue = getDefaultValue(type, grade);
 
   const submit = async (value: string) => {
     try {
       if (type === 'name') {
-        await updatePriority(priority.id, { name: stringSchema.parse(value) });
+        await updateGrade(grade.id, { name: stringSchema.parse(value) });
       } else if (type === 'description') {
         const validated = value === '' ? null : stringSchema.parse(value);
-        await updatePriority(priority.id, { description: validated });
+        await updateGrade(grade.id, { description: validated });
       } else if (type == 'tier') {
-        await updatePriority(priority.id, { tier: numSchema.parse(value) });
+        await updateGrade(grade.id, { tier: numSchema.parse(value) });
       } else if (type === 'seq') {
-        await updatePriority(priority.id, { seq: numSchema.parse(value) });
+        await updateGrade(grade.id, { seq: numSchema.parse(value) });
       }
-      await queryClient.invalidateQueries({ queryKey: [PRIORITIES_QUERY_KEY] });
+      await queryClient.invalidateQueries({ queryKey: [GRADES_QUERY_KEY] });
     } catch (e) {
       console.error(e);
     }
@@ -60,21 +60,21 @@ function getValidate(type: Type) {
   }
 }
 
-function getDefaultValue(type: Type, priority: PriorityDto): string {
+function getDefaultValue(type: Type, grade: GradeDto): string {
   switch (type) {
     case 'name':
-      return priority.name;
+      return grade.name;
     case 'description':
-      return priority.description ?? '';
+      return grade.description ?? '';
     case 'tier':
-      return priority.tier.toString();
+      return grade.tier.toString();
     case 'seq':
-      return priority.seq.toString();
+      return grade.seq.toString();
     default:
       throw new Error(`Invalid type: ${type}`);
   }
 }
 
-function getPrintValue(type: Type, priority: PriorityDto) {
-  return getDefaultValue(type, priority);
+function getPrintValue(type: Type, grade: GradeDto) {
+  return getDefaultValue(type, grade);
 }

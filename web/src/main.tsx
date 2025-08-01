@@ -10,7 +10,7 @@ import { ChannelPage } from '@/pages/ChanenelPage.tsx';
 import { NodePage } from '@/pages/NodePage.tsx';
 import { CriterionPage } from '@/pages/CriterionPage.tsx';
 import { Toaster } from '@/components/ui/toaster.tsx';
-import { PriorityPage } from '@/pages/PriorityPage.tsx';
+import { GradePage } from '@/pages/GradePage.tsx';
 import { TagPage } from '@/pages/TagPage.tsx';
 import { NodeGroupPage } from '@/pages/NodeGroupPage.tsx';
 
@@ -18,7 +18,7 @@ const routes: RouteObject[] = [
   { path: '/', element: <LivePage /> },
   { path: '/channels', element: <ChannelPage /> },
   { path: '/tags', element: <TagPage /> },
-  { path: '/priorities', element: <PriorityPage /> },
+  { path: '/grades', element: <GradePage /> },
   { path: '/nodes', element: <NodePage /> },
   { path: '/node-groups', element: <NodeGroupPage /> },
   { path: '/criteria', element: <CriterionPage /> },

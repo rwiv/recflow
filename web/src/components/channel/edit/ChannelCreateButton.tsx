@@ -19,11 +19,11 @@ import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx'
 import { SelectFormField } from '@/components/common/form/SelectFormField.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { TextAreaFormField } from '@/components/common/form/TextAreaFormField.tsx';
-import { PLATFORMS_QUERY_KEY, PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
+import { PLATFORMS_QUERY_KEY, GRADES_QUERY_KEY } from '@/common/constants.ts';
 import { fetchPlatforms } from '@/client/common/platform.client.ts';
 import { uppercase } from '@/common/utils.strings.ts';
-import { fetchPriorities } from '@/client/channel/priority.client.ts';
-import { PriorityDto } from '@/client/channel/priority.schema.ts';
+import { fetchGrades } from '@/client/channel/grade.client.ts';
+import { GradeDto } from '@/client/channel/grade.schema.ts';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -32,15 +32,15 @@ export function ChannelCreateButton() {
     queryKey: [PLATFORMS_QUERY_KEY],
     queryFn: fetchPlatforms,
   });
-  const { data: priorities } = useQuery({
-    queryKey: [PRIORITIES_QUERY_KEY],
-    queryFn: fetchPriorities,
+  const { data: grades } = useQuery({
+    queryKey: [GRADES_QUERY_KEY],
+    queryFn: fetchGrades,
   });
 
   return (
     <DialogButton label="Add" title="Add New Node" closeRef={closeBtnRef}>
-      {platforms && priorities && (
-        <CreateForm platforms={platforms} priorities={priorities} cb={() => closeBtnRef.current?.click()} />
+      {platforms && grades && (
+        <CreateForm platforms={platforms} grades={grades} cb={() => closeBtnRef.current?.click()} />
       )}
     </DialogButton>
   );
@@ -48,7 +48,7 @@ export function ChannelCreateButton() {
 
 const FormSchema = z.object({
   platformId: uuid,
-  priorityId: uuid,
+  gradeId: uuid,
   sourceId: nonempty,
   isFollowed: z.boolean(),
   description: z.string(),
@@ -57,11 +57,11 @@ const FormSchema = z.object({
 
 interface ChannelCreateProps {
   platforms: PlatformDto[];
-  priorities: PriorityDto[];
+  grades: GradeDto[];
   cb: () => void;
 }
 
-export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
+export function CreateForm({ platforms, grades, cb }: ChannelCreateProps) {
   const queryClient = useQueryClient();
   const { pageState } = useChannelPageStore();
 
@@ -70,7 +70,7 @@ export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
     defaultValues: {
       platformId: '',
       sourceId: '',
-      priorityId: '',
+      gradeId: '',
       isFollowed: false,
       description: '',
       tagNames: [],
@@ -99,8 +99,8 @@ export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <SelectFormField form={form} name="priorityId" label="Priority">
-          {priorities.map((p) => (
+        <SelectFormField form={form} name="gradeId" label="Grade">
+          {grades.map((p) => (
             <SelectItem key={p.id} value={p.id}>
               {uppercase(p.name)}
             </SelectItem>

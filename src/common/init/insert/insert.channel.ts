@@ -12,7 +12,7 @@ import { DevNodeInserter } from './insert.node.js';
 import { DevCriterionInserter } from './insert.criterion.js';
 import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { PriorityService } from '../../../channel/service/priority.service.js';
+import { GradeService } from '../../../channel/service/grade.service.js';
 import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class DevChannelInserter {
     private readonly nodeInserter: DevNodeInserter,
     private readonly criterionInserter: DevCriterionInserter,
     private readonly pfFinder: PlatformFinder,
-    private readonly priService: PriorityService,
+    private readonly grService: GradeService,
   ) {}
 
   async insertTestNodes(confPath: string) {
@@ -52,7 +52,7 @@ export class DevChannelInserter {
     const text = await fs.promises.readFile(testChanPath, 'utf8');
     const infos = JSON.parse(text) as ChannelInfo[];
     const platforms = await this.pfFinder.findAll();
-    const priorities = await this.priService.findAll();
+    const grades = await this.grService.findAll();
     for (const info of infos) {
       const tags: string[] = [];
       for (let i = 1; i < 10; i++) tags.push(`tag${i}`);
@@ -62,7 +62,7 @@ export class DevChannelInserter {
       const append: ChannelAppend = {
         ...info,
         platformId,
-        priorityId: faker.helpers.arrayElement(priorities.map((p) => p.id)),
+        gradeId: faker.helpers.arrayElement(grades.map((p) => p.id)),
         isFollowed: false,
         description: null,
       };

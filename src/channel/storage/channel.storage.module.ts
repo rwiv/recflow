@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ChannelCommandRepository } from './channel.command.js';
 import { ChannelQueryRepository } from './channel.query.js';
 import { ChannelSearchRepository } from './channel.search.js';
-import { PriorityRepository } from './priority.repository.js';
+import { GradeRepository } from './grade.repository.js';
 import { TagCommandRepository } from './tag.command.js';
 import { TagQueryRepository } from './tag.query.js';
 import { ChannelCacheStore } from './channel.cache.store.js';
@@ -11,7 +11,7 @@ import { InfraModule } from '../../infra/infra.module.js';
 @Module({
   imports: [InfraModule],
   providers: [
-    PriorityRepository,
+    GradeRepository,
     ChannelCommandRepository,
     ChannelQueryRepository,
     ChannelSearchRepository,
@@ -20,7 +20,7 @@ import { InfraModule } from '../../infra/infra.module.js';
     ChannelCacheStore,
   ],
   exports: [
-    PriorityRepository,
+    GradeRepository,
     ChannelCommandRepository,
     ChannelQueryRepository,
     ChannelSearchRepository,

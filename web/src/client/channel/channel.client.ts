@@ -24,8 +24,8 @@ export async function createChannel(req: ChannelAppend) {
   return (await res.json()) as ChannelDto;
 }
 
-export async function updateChannelPriority(id: string, priorityId: string) {
-  return updateChannel(id, undefined, undefined, priorityId);
+export async function updateChannelGrade(id: string, gradeId: string) {
+  return updateChannel(id, undefined, undefined, gradeId);
 }
 
 export async function updateChannelIsFollowed(id: string, isFollowed: boolean) {
@@ -40,10 +40,10 @@ async function updateChannel(
   id: string,
   description?: string | null,
   isFollowed?: boolean,
-  priorityId?: string,
+  gradeId?: string,
 ) {
   const url = `${configs.endpoint}/api/channels/${id}`;
-  const req: ChannelUpdate = { description, isFollowed, priorityId };
+  const req: ChannelUpdate = { description, isFollowed, gradeId };
   const { method, headers, body } = getIngredients('PUT', req);
   const res = await request(url, { method, headers, body });
   return (await res.json()) as ChannelDto;

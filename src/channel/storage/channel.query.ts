@@ -34,15 +34,15 @@ export class ChannelQueryRepository {
       .where(like(channelTable.username, `%${username}%`));
   }
 
-  async findByPriorityId(priorityId: string, tx: Tx = db) {
-    return tx.select().from(channelTable).where(eq(channelTable.priorityId, priorityId));
+  async findByGradeId(gradeId: string, tx: Tx = db) {
+    return tx.select().from(channelTable).where(eq(channelTable.gradeId, gradeId));
   }
 
-  async findIdsByPriorityId(priorityId: string, tx: Tx = db) {
+  async findIdsByGradeId(gradeId: string, tx: Tx = db) {
     const records = await tx
       .select({ id: channelTable.id })
       .from(channelTable)
-      .where(eq(channelTable.priorityId, priorityId));
+      .where(eq(channelTable.gradeId, gradeId));
     return records.map((record) => record.id);
   }
 

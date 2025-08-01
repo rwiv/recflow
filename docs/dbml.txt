@@ -8,7 +8,7 @@ Table platform {
 
 
 // channel
-Table channel_priority {
+Table channel_grade {
   id uuid [pk, not null]
   name text [not null]
   should_save boolean [not null]
@@ -27,7 +27,7 @@ Table channel {
   username text [not null]
   profile_img_url text
   follower_cnt integer [not null]
-  priority_id uuid [not null]
+  grade_id uuid [not null]
   is_followed boolean [not null]
   adult_only boolean [not null]
   overseas_first boolean [not null]
@@ -39,7 +39,7 @@ Table channel {
 }
 
 Ref: channel.platform_id > platform.id
-Ref: channel.priority_id > channel_priority.id
+Ref: channel.grade_id > channel_grade.id
 
 Table channel_tag {
   id uuid [pk, not null]

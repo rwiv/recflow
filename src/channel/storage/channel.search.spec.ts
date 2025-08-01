@@ -8,14 +8,14 @@ import { faker } from '@faker-js/faker';
 import assert from 'assert';
 import { subLists } from '../../utils/list.js';
 import { TagCommandRepository } from './tag.command.js';
-import { PriorityService } from '../service/priority.service.js';
+import { GradeService } from '../service/grade.service.js';
 import { ChannelCommandRepository } from './channel.command.js';
 import { ChannelSearchRepository, ChannelTagSearchRequest } from './channel.search.js';
 
 const app = await createTestApp();
 const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
-const priService = app.get(PriorityService);
+const grService = app.get(GradeService);
 const tagCmd = app.get(TagCommandRepository);
 const chanCmd = app.get(ChannelCommandRepository);
 const chSearchRepo = app.get(ChannelSearchRepository);
@@ -36,9 +36,9 @@ describe('ChannelService', () => {
 
     await init.initDev(false);
 
-    const great = (await priService.findByNameNotNull('great'))?.id;
-    const nice = (await priService.findByNameNotNull('nice'))?.id;
-    const good = (await priService.findByNameNotNull('good'))?.id;
+    const great = (await grService.findByNameNotNull('great'))?.id;
+    const nice = (await grService.findByNameNotNull('nice'))?.id;
+    const good = (await grService.findByNameNotNull('good'))?.id;
 
     const chzzk = (await pfFinder.findByName('chzzk'))?.id;
     const soop = (await pfFinder.findByName('soop'))?.id;
@@ -88,8 +88,8 @@ describe('ChannelService', () => {
     // const sortBy = 'createdAt';
     const sortBy = 'followerCnt';
 
-    // const priorityName = 'should';
-    const priorityName = undefined;
+    // const gradeName = 'should';
+    const gradeName = undefined;
 
     const includeTagNames = ['tag4', 'tag5', 'tag10'];
     // const excludeTagNames = ['tag10', 'tag11', 'tag12', 'tag13', 'tag14', 'tag15', 'tag16', 'tag17', 'tag18'];
@@ -100,7 +100,7 @@ describe('ChannelService', () => {
     const req: ChannelTagSearchRequest = {
       page: { page: 1, size: 20 },
       sortBy,
-      priorityName,
+      gradeName: gradeName,
       includeTagNames,
       excludeTagNames,
       withTotal: false,
@@ -119,7 +119,7 @@ function chanReq(n: number, maxTagNum: number, tagIds: string[], priIds: string[
     username: `user${n}`,
     isFollowed: false,
     platformId: faker.helpers.arrayElement(pfIds),
-    priorityId: faker.helpers.arrayElement(priIds),
+    gradeId: faker.helpers.arrayElement(priIds),
     followerCnt: faker.number.int({ min: 0, max: 100000 }),
   });
 }

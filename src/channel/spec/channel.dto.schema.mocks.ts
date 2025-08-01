@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { ChannelAppend, ChannelDto } from './channel.dto.schema.js';
-import { mockPriorityDto } from './priority.schema.mocks.js';
+import { mockGradeDto } from './grade.schema.mocks.js';
 import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
 import { ChannelEntAppend } from './channel.entity.schema.js';
 
@@ -11,7 +11,7 @@ export function mockChannelEntAppend(overrides: Partial<ChannelAppend> = {}): Ch
     username: faker.string.uuid(),
     profileImgUrl: faker.string.uuid(),
     followerCnt: faker.number.int({ min: 1, max: 100 }),
-    priorityId: faker.string.uuid(),
+    gradeId: faker.string.uuid(),
     isFollowed: faker.datatype.boolean(),
     ...overrides,
   };
@@ -37,7 +37,7 @@ export function mockChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto 
     lastRefreshedAt: faker.date.recent(),
     streamCheckedAt: faker.date.recent(),
     platform: mockPlatformDto(),
-    priority: mockPriorityDto(),
+    grade: mockGradeDto(),
     ...overrides,
   };
 }

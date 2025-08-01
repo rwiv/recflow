@@ -4,18 +4,18 @@ import { z } from 'zod';
 import { Form } from '@/components/ui/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
+import { GRADES_QUERY_KEY } from '@/common/constants.ts';
 import { DialogButton } from '@/components/common/layout/DialogButton.tsx';
 import { TextFormField } from '@/components/common/form/TextFormField.tsx';
 import { css } from '@emotion/react';
 import { FormSubmitButton } from '@/components/common/form/FormSubmitButton.tsx';
 import { parse } from '@/common/utils.form.ts';
 import { nonempty } from '@/common/common.schema.ts';
-import { priorityAppend } from '@/client/channel/priority.schema.ts';
-import { createPriority } from '@/client/channel/priority.client.ts';
+import { gradeAppend } from '@/client/channel/grade.schema.ts';
+import { createGrade } from '@/client/channel/grade.client.ts';
 import { CheckFormField } from '@/components/common/form/CheckFormField.tsx';
 
-export function PriorityCreateButton() {
+export function GradeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -31,7 +31,7 @@ export function PriorityCreateButton() {
   );
 }
 
-const formSchema = priorityAppend.extend({
+const formSchema = gradeAppend.extend({
   description: z.string(),
   tier: nonempty,
   seq: nonempty,
@@ -64,8 +64,8 @@ export function CreateForm({ cb }: { cb: () => void }) {
     if (middleData.description === '') {
       middleData.description = null;
     }
-    await createPriority(priorityAppend.parse(middleData));
-    await queryClient.invalidateQueries({ queryKey: [PRIORITIES_QUERY_KEY] });
+    await createGrade(gradeAppend.parse(middleData));
+    await queryClient.invalidateQueries({ queryKey: [GRADES_QUERY_KEY] });
     cb();
   }
 

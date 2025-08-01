@@ -26,7 +26,7 @@ import { HttpErrorFilter } from '../../common/error/error.filter.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { ChannelSearcher } from '../service/channel.searcher.js';
 import { PageQuery, pageQuery } from '../../common/data/common.schema.js';
-import { PriorityService } from '../service/priority.service.js';
+import { GradeService } from '../service/grade.service.js';
 import { ChannelMapOptions } from '../spec/channel.types.js';
 import { ChannelMapper } from '../service/channel.mapper.js';
 import { ChannelSearchRequest, ChannelTagSearchRequest } from '../storage/channel.search.js';
@@ -38,7 +38,7 @@ export class ChannelController {
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly chSearcher: ChannelSearcher,
-    private readonly priService: PriorityService,
+    private readonly grService: GradeService,
     private readonly chMapper: ChannelMapper,
   ) {}
 
@@ -81,7 +81,7 @@ export class ChannelController {
     const pageQ: PageQuery = { page: pageNum, size };
     const page = pageQuery.parse(pageQ);
 
-    const req: ChannelSearchRequest = { page, sortBy, priorityName: grade, withTotal: true };
+    const req: ChannelSearchRequest = { page, sortBy, gradeName: grade, withTotal: true };
 
     if (includeTagsStr || excludeTagsStr) {
       const tagReq: ChannelTagSearchRequest = {
@@ -111,8 +111,8 @@ export class ChannelController {
     return this.chWriter.delete(channelId);
   }
 
-  @Get('/priorities')
-  priorities() {
-    return this.priService.findAll();
+  @Get('/grades')
+  grades() {
+    return this.grService.findAll();
   }
 }

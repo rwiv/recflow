@@ -6,8 +6,8 @@ import { platformNameEnum } from '../../platform/spec/storage/platform.enum.sche
 import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
 import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
 import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../../criterion/spec/criterion.rule.schema.js';
-import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
-import { PriorityService } from '../../channel/service/priority.service.js';
+import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/grade.constants.js';
+import { GradeService } from '../../channel/service/grade.service.js';
 import { PlatformWriter } from '../../platform/storage/platform.writer.js';
 import { dropAllKeys } from '../../infra/redis/redis.utils.js';
 import { SERVER_REDIS } from '../../infra/infra.tokens.js';
@@ -17,7 +17,7 @@ import { RedisStore } from '../../infra/redis/redis.store.js';
 export class DevInitializer {
   constructor(
     private readonly pfWriter: PlatformWriter,
-    private readonly priService: PriorityService,
+    private readonly grService: GradeService,
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
     private readonly devInjector: DevChannelInserter,
@@ -46,11 +46,11 @@ export class DevInitializer {
   }
 
   private async addPriorities() {
-    await this.priService.create({ name: 'great', shouldSave: true, tier: 1, seq: 1 });
-    await this.priService.create({ name: 'good', shouldSave: true, tier: 2, seq: 2 });
-    await this.priService.create({ name: DEFAULT_PRIORITY_NAME, shouldSave: true, tier: 2, seq: 3 });
-    await this.priService.create({ name: 'review', shouldSave: false, tier: 3, seq: 4 });
-    await this.priService.create({ name: 'ignore', shouldSave: false, tier: 3, seq: 5 });
+    await this.grService.create({ name: 'great', shouldSave: true, tier: 1, seq: 1 });
+    await this.grService.create({ name: 'good', shouldSave: true, tier: 2, seq: 2 });
+    await this.grService.create({ name: DEFAULT_PRIORITY_NAME, shouldSave: true, tier: 2, seq: 3 });
+    await this.grService.create({ name: 'review', shouldSave: false, tier: 3, seq: 4 });
+    await this.grService.create({ name: 'ignore', shouldSave: false, tier: 3, seq: 5 });
   }
 
   private async addNodeGroups() {

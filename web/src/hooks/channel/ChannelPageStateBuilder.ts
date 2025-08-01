@@ -33,9 +33,9 @@ export class ChannelPageStateBuilder {
     return this;
   }
 
-  setGrade(priority: string | null | undefined): this {
-    if (priority !== null) {
-      this.grade = priority;
+  setGrade(grade: string | null | undefined): this {
+    if (grade !== null) {
+      this.grade = grade;
     }
     return this;
   }

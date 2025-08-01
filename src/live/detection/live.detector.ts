@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { PriorityDto } from '../../channel/spec/priority.schema.js';
+import { GradeDto } from '../../channel/spec/grade.schema.js';
 import { liveInfoAttr } from '../../common/attr/attr.live.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
@@ -70,14 +70,14 @@ export class LiveDetector {
       return;
     }
 
-    let priority: PriorityDto | undefined = undefined;
+    let grade: GradeDto | undefined = undefined;
     const channel = await this.channelFinder.findByPlatformAndSourceId(criterion.platform.name, live.sourceId);
     if (channel) {
-      priority = channel.priority;
+      grade = channel.grade;
     }
 
-    await this.historyRepo.set(criterion.platform.name, live, priority ?? null);
-    log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion, pri: priority }));
+    await this.historyRepo.set(criterion.platform.name, live, grade ?? null);
+    log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion, gr: grade }));
   }
 
   private async fetchInfo(

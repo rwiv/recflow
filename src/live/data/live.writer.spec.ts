@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, it, expect } from 'vitest';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { PriorityService } from '../../channel/service/priority.service.js';
+import { GradeService } from '../../channel/service/grade.service.js';
 import { mockChannelAppend } from '../../channel/spec/channel.dto.schema.mocks.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { mockLiveInfoChzzk } from '../../platform/spec/wapper/live.mocks.js';
@@ -15,7 +15,7 @@ import assert from 'assert';
 const app = await createTestApp();
 const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
-const priService = app.get(PriorityService);
+const grService = app.get(GradeService);
 const liveWriter = app.get(LiveWriter);
 const liveFinder = app.get(LiveFinder);
 const chWriter = app.get(ChannelWriter);
@@ -31,9 +31,9 @@ describe('ChannelService', () => {
 
   it('create', async () => {
     const pf = await pfFinder.findByNameNotNull('chzzk');
-    const pri = await priService.findByNameNotNull('none');
+    const gr = await grService.findByNameNotNull('none');
 
-    const cha = mockChannelAppend({ platformId: pf.id, priorityId: pri.id });
+    const cha = mockChannelAppend({ platformId: pf.id, gradeId: gr.id });
     const ch = await chWriter.createWithTagNames(cha, ['tag1', 'tag2']);
 
     const li1 = mockLiveInfoChzzk({ channelId: ch.sourceId });

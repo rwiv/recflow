@@ -44,10 +44,10 @@ export class ChzzkLiveFilter {
     if (!cr.loggingOnly) {
       const channel = await this.chFinder.findByPlatformAndSourceId('chzzk', liveInfo.sourceId);
       if (channel) {
-        if (channel.priority.shouldNotify) {
+        if (channel.grade.shouldNotify) {
           return liveInfo;
         }
-        if (channel.priority.shouldSave) {
+        if (channel.grade.shouldSave) {
           return liveInfo;
         } else {
           return null;

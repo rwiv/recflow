@@ -35,7 +35,7 @@ function GroupUpdateDialog({ node, children }: { node: NodeDto; children: ReactN
     queryFn: fetchNodeGroups,
   });
   return (
-    <DialogBase title="Update Channel Priority" closeRef={closeBtnRef} triggerNode={children}>
+    <DialogBase title="Update Channel Grade" closeRef={closeBtnRef} triggerNode={children}>
       {nodeGroups && (
         <CreateForm node={node} nodeGroups={nodeGroups} cb={() => closeBtnRef?.current?.click()} />
       )}

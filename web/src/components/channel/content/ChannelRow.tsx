@@ -4,7 +4,7 @@ import { prettyDate } from '@/lib/date.ts';
 import { ChannelActions } from '@/components/channel/edit/ChannelActions.tsx';
 import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
 import { ChannelDto } from '@/client/channel/channel.types.ts';
-import { PriorityUpdateDialog } from '@/components/channel/edit/PriorityUpdateDialog.tsx';
+import { GradeUpdateDialog } from '@/components/channel/edit/GradeUpdateDialog.tsx';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
 import { css } from '@emotion/react';
 
@@ -15,11 +15,11 @@ export function ChannelRow({ channel }: { channel: ChannelDto }) {
         <ChannelInfoCell channel={channel} css={css({ width: '15rem' })} />
       </TableCell>
       <TableCell>
-        <PriorityUpdateDialog channel={channel}>
+        <GradeUpdateDialog channel={channel}>
           <button className="uppercase">
-            <Badge variant="default">{channel.priority.name}</Badge>
+            <Badge variant="default">{channel.grade.name}</Badge>
           </button>
-        </PriorityUpdateDialog>
+        </GradeUpdateDialog>
       </TableCell>
       <TableCell>
         <div className="flex flex-row flex-wrap items-center gap-1.5">

@@ -84,7 +84,7 @@ export class LiveRegistrar {
     await this.stdl.startRecording(node.endpoint, live.id);
 
     // Send notification
-    if (live.channel.priority.shouldNotify) {
+    if (live.channel.grade.shouldNotify) {
       this.notifier.sendLiveInfo(live);
     }
 

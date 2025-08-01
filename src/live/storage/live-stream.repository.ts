@@ -5,13 +5,7 @@ import { LiveStreamEnt, liveStreamEnt, LiveStreamEntAppend, LiveStreamEntUpdate 
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { oneNotNull, oneNullable } from '../../utils/list.js';
-import {
-  channelPriorityTable,
-  channelTable,
-  liveStreamTable,
-  liveTable,
-  platformTable,
-} from '../../infra/db/schema.js';
+import { channelGradeTable, channelTable, liveStreamTable, liveTable, platformTable } from '../../infra/db/schema.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 
@@ -72,8 +66,8 @@ export class LiveStreamRepository {
       .select({ channels: channelTable })
       .from(channelTable)
       .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
-      .innerJoin(channelPriorityTable, eq(channelTable.priorityId, channelPriorityTable.id))
-      .where(and(eq(platformTable.name, platformName), eq(channelPriorityTable.shouldSave, true), notExists(subQuery)))
+      .innerJoin(channelGradeTable, eq(channelTable.gradeId, channelGradeTable.id))
+      .where(and(eq(platformTable.name, platformName), eq(channelGradeTable.shouldSave, true), notExists(subQuery)))
       .orderBy(sql`${channelTable.streamCheckedAt} ASC NULLS FIRST`)
       .limit(limit);
     return res.map((row) => row.channels);

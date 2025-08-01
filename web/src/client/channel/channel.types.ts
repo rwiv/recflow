@@ -1,6 +1,6 @@
 import { tagDto } from '@/client/channel/tag.schema.ts';
 import { platformDto } from '@/client/common/platform.schema.ts';
-import { priorityDto } from '@/client/channel/priority.schema.ts';
+import { gradeDto } from '@/client/channel/grade.schema.ts';
 import { z } from 'zod';
 import { nnint, nonempty, uuid } from '@/common/common.schema.ts';
 
@@ -11,7 +11,7 @@ export const channelDto = z.object({
   profileImgUrl: nonempty.nullable(),
   followerCnt: nnint,
   platform: platformDto,
-  priority: priorityDto,
+  grade: gradeDto,
   isFollowed: z.boolean(),
   description: nonempty.nullable(),
   createdAt: z.coerce.date(),
@@ -24,14 +24,14 @@ export type ChannelDto = z.infer<typeof channelDto>;
 export interface ChannelAppend {
   sourceId: string;
   platformId: string;
-  priorityId: string;
+  gradeId: string;
   isFollowed: boolean;
   description: string | null;
   tagNames: string[];
 }
 
 export interface ChannelUpdate {
-  priorityId?: string;
+  gradeId?: string;
   isFollowed?: boolean;
   description?: string | null;
 }

@@ -9,7 +9,7 @@ export function mockChannelEnt(overrides: Partial<ChannelEnt> = {}): ChannelEnt 
     username: faker.string.uuid(),
     profileImgUrl: faker.string.uuid(),
     followerCnt: faker.number.int({ min: 1, max: 100 }),
-    priorityId: faker.string.uuid(),
+    gradeId: faker.string.uuid(),
     isFollowed: faker.datatype.boolean(),
     overseasFirst: faker.datatype.boolean(),
     adultOnly: faker.datatype.boolean(),

@@ -1,5 +1,5 @@
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
-import { PriorityDto } from '../../channel/spec/priority.schema.js';
+import { GradeDto } from '../../channel/spec/grade.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { LiveDto, LiveStreamDto } from '../../live/spec/live.dto.schema.js';
 import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
@@ -43,7 +43,7 @@ interface NodeAttr {
 interface Options {
   cr?: CriterionDto;
   node?: NodeDtoWithLives | null;
-  pri?: PriorityDto;
+  gr?: GradeDto;
   err?: unknown;
 }
 
@@ -65,7 +65,7 @@ export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
     video_name: live.videoName,
     channel_uid: live.channel.sourceId,
     channel_name: live.channel.username,
-    grade_name: live.channel.priority.name,
+    grade_name: live.channel.grade.name,
   };
   if (opts) {
     const { node, cr, err } = opts;
@@ -94,9 +94,9 @@ export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options): LiveInfoAttr {
     channel_name: liveInfo.channelName,
   };
   if (opts) {
-    const { cr, pri, err } = opts;
-    if (pri) {
-      attr.grade_name = pri.name;
+    const { cr, gr, err } = opts;
+    if (gr) {
+      attr.grade_name = gr.name;
     }
     if (cr) {
       attr.criterion_name = cr.name;
@@ -114,7 +114,7 @@ export function channelAttr(channel: ChannelDto) {
     channel_id: channel.id,
     channel_uid: channel.sourceId,
     channel_name: channel.username,
-    grade_name: channel.priority.name,
+    grade_name: channel.grade.name,
   };
 }
 

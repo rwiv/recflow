@@ -6,7 +6,7 @@ import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
 import { TagQueryRepository } from './tag.query.js';
 import { Injectable } from '@nestjs/common';
-import { PriorityRepository } from './priority.repository.js';
+import { GradeRepository } from './grade.repository.js';
 import { ChannelPageEntResult } from '../spec/channel.entity.schema.js';
 import { channelSortTypeEnum, ChannelSortType } from '../spec/channel.dto.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
@@ -16,7 +16,7 @@ import { PageQuery } from '../../common/data/common.schema.js';
 export interface ChannelSearchRequest {
   page?: PageQuery;
   sortBy?: ChannelSortType;
-  priorityName?: string;
+  gradeName?: string;
   withTotal?: boolean;
 }
 
@@ -29,14 +29,14 @@ export interface ChannelTagSearchRequest extends ChannelSearchRequest {
 export class ChannelSearchRepository {
   constructor(
     private readonly tagQuery: TagQueryRepository,
-    private readonly priRepo: PriorityRepository,
+    private readonly grRepo: GradeRepository,
   ) {}
 
   async findByQuery(req: ChannelSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
-    const { page, sortBy, priorityName, withTotal } = req;
+    const { page, sortBy, gradeName, withTotal } = req;
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
-    if (priorityName) await this.withPriority(conds, priorityName, tx);
+    if (gradeName) await this.withGrade(conds, gradeName, tx);
     qb = qb.where(and(...conds));
 
     let total = undefined;
@@ -53,7 +53,7 @@ export class ChannelSearchRepository {
   }
 
   // async findByTagsLegacy(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
-  //   const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
+  //   const { includeTagNames, excludeTagNames, page, sortBy, gradeName, withTotal } = req;
   //   const includeIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
   //   let excludeIds: string[] = [];
   //   if (excludeTagNames.length > 0) {
@@ -69,7 +69,7 @@ export class ChannelSearchRepository {
   //     .leftJoin(channelTagMapTable, eq(channelTable.id, channelTagMapTable.channelId))
   //     .$dynamic();
   //
-  //   if (priorityName) await this.withPriority(conds, priorityName, tx);
+  //   if (gradeName) await this.withGrade(conds, gradeName, tx);
   //   let having: any = eq(getSubCountSQL(includeIds, channelTagMapTable.tagId), includeIds.length);
   //   if (excludeIds.length > 0) {
   //     having = and(
@@ -96,7 +96,7 @@ export class ChannelSearchRepository {
   // }
 
   async findByTags(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
-    const { includeTagNames, excludeTagNames, page, sortBy, priorityName, withTotal } = req;
+    const { includeTagNames, excludeTagNames, page, sortBy, gradeName, withTotal } = req;
     const includeTagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
     let excludeTagIds: string[] = [];
     if (excludeTagNames.length > 0) {
@@ -120,7 +120,7 @@ export class ChannelSearchRepository {
       conds.push(notExists(subQuery));
     }
 
-    if (priorityName) await this.withPriority(conds, priorityName, tx);
+    if (gradeName) await this.withGrade(conds, gradeName, tx);
     qb = qb.where(and(...conds));
 
     let total = undefined;
@@ -145,10 +145,10 @@ export class ChannelSearchRepository {
     }
   }
 
-  private async withPriority(conditions: SQLWrapper[], priorityName: string, tx: Tx = db) {
-    const priority = await this.priRepo.findByName(priorityName, tx);
-    if (!priority) throw NotFoundError.from('Priority', 'name', priorityName);
-    conditions.push(eq(channelTable.priorityId, priority.id));
+  private async withGrade(conditions: SQLWrapper[], gradeName: string, tx: Tx = db) {
+    const grade = await this.grRepo.findByName(gradeName, tx);
+    if (!grade) throw NotFoundError.from('Grade', 'name', gradeName);
+    conditions.push(eq(channelTable.gradeId, grade.id));
   }
 
   private withPage<T extends PgSelect>(qb: T, page: PageQuery) {

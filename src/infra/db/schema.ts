@@ -11,8 +11,8 @@ export const platformTable = pgTable(
   (t) => [uniqueIndex('platform_name_idx').on(t.name)],
 );
 
-export const channelPriorityTable = pgTable(
-  'channel_priority',
+export const channelGradeTable = pgTable(
+  'channel_grade',
   {
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull().unique(),
@@ -24,7 +24,7 @@ export const channelPriorityTable = pgTable(
     createdAt: timestamp('created_at').notNull(),
     updatedAt: timestamp('updated_at'),
   },
-  (t) => [uniqueIndex('channel_priority_name_idx').on(t.name)],
+  (t) => [uniqueIndex('channel_grade_name_idx').on(t.name)],
 );
 
 export const channelTable = pgTable(
@@ -38,9 +38,9 @@ export const channelTable = pgTable(
     username: text().notNull(),
     profileImgUrl: text('profile_img_url'),
     followerCnt: integer('follower_cnt').notNull(),
-    priorityId: uuid('priority_id')
+    gradeId: uuid('grade_id')
       .notNull()
-      .references(() => channelPriorityTable.id),
+      .references(() => channelGradeTable.id),
     isFollowed: boolean('is_followed').notNull(),
     adultOnly: boolean('adult_only').notNull(),
     overseasFirst: boolean('overseas_first').notNull(),
@@ -52,7 +52,7 @@ export const channelTable = pgTable(
   },
   (t) => [
     index('channel_platform_id_idx').on(t.platformId),
-    index('channel_priority_id_idx').on(t.priorityId),
+    index('channel_grade_id_idx').on(t.gradeId),
     index('channel_source_id_idx').on(t.sourceId),
     index('channel_username_idx').on(t.username),
     index('channel_follow_cnt_idx').on(t.followerCnt),

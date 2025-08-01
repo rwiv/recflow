@@ -7,7 +7,7 @@ interface HeaderTabProps {
   live?: boolean;
   channel?: boolean;
   tag?: boolean;
-  priority?: boolean;
+  grade?: boolean;
   node?: boolean;
   nodeGroup?: boolean;
   criterion?: boolean;
@@ -25,7 +25,7 @@ export function PageHeaderTab(props: HeaderTabProps) {
       </TabList>
       <TabList className="my-3">
         <PageTabButton isActive={props.channel ?? false} to={channelUrl} content={'Channels'} />
-        <PageTabButton isActive={props.priority ?? false} to={'/priorities'} content={'Grades'} />
+        <PageTabButton isActive={props.grade ?? false} to={'/grades'} content={'Grades'} />
         <PageTabButton isActive={props.tag ?? false} to={'/tags'} content={'Tags'} />
       </TabList>
     </div>

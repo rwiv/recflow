@@ -1,7 +1,7 @@
 import { ChannelTableContent } from '@/components/channel/content/ChannelTableContent.tsx';
 import { useEffect } from 'react';
 import { PageNavigation } from '@/components/channel/search/ChannelNavigation.tsx';
-import { PrioritySelect } from '@/components/channel/search/PrioritySelect.tsx';
+import { GradeSelect } from '@/components/channel/search/GradeSelect.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { css } from '@emotion/react';
 import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.tsx';
@@ -61,7 +61,7 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
           </div>
         </div>
         <div className="flex gap-2">
-          <PrioritySelect />
+          <GradeSelect />
           <TagQuerySelect type="include" />
           <TagQuerySelect type="exclude" />
           <SortSelect />

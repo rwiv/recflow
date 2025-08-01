@@ -6,7 +6,7 @@ import { dropTables } from '../../infra/db/utils.js';
 import { ChannelFinder } from './channel.finder.js';
 import { ChannelMapper } from './channel.mapper.js';
 import { ChannelWriter } from './channel.writer.js';
-import { PriorityService } from './priority.service.js';
+import { GradeService } from './grade.service.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ChannelSearchRepository, ChannelTagSearchRequest } from '../storage/channel.search.js';
 import assert from 'assert';
@@ -14,7 +14,7 @@ import assert from 'assert';
 const app = await createTestApp();
 const init = app.get(DevInitializer);
 const pfFinder = app.get(PlatformFinder);
-const priService = app.get(PriorityService);
+const grService = app.get(GradeService);
 const chFinder = app.get(ChannelFinder);
 const chSearchRepo = app.get(ChannelSearchRepository);
 const chWriter = app.get(ChannelWriter);
@@ -28,9 +28,9 @@ describe('ChannelService', () => {
   it('findPage', async () => {
     await dropTables();
     await init.initDev(false);
-    const great = (await priService.findByNameNotNull('great'))?.id;
-    const nice = (await priService.findByNameNotNull('nice'))?.id;
-    const good = (await priService.findByNameNotNull('good'))?.id;
+    const great = (await grService.findByNameNotNull('great'))?.id;
+    const nice = (await grService.findByNameNotNull('nice'))?.id;
+    const good = (await grService.findByNameNotNull('good'))?.id;
     const chzzk = (await pfFinder.findByName('chzzk'))?.id;
     assert(chzzk);
 
@@ -56,8 +56,8 @@ describe('ChannelService', () => {
     // const sortBy = 'createdAt';
     const sortBy = 'followerCnt';
 
-    // const priorityName = 'should';
-    const priorityName = undefined;
+    // const gradeName = 'should';
+    const gradeName = undefined;
 
     const includeTagNames = ['tag4', 'tag5'];
     // const excludeTagNames: string[] = [];
@@ -66,7 +66,7 @@ describe('ChannelService', () => {
     const req: ChannelTagSearchRequest = {
       page: { page: 1, size: 20 },
       sortBy,
-      priorityName,
+      gradeName: gradeName,
       includeTagNames,
       excludeTagNames,
       withTotal: false,
@@ -85,11 +85,11 @@ describe('ChannelService', () => {
   });
 });
 
-function add(n: number, priorityId: string, platformId: string, followerCnt: number, tagNames: string[]) {
+function add(n: number, gradeId: string, platformId: string, followerCnt: number, tagNames: string[]) {
   const ch = mockChannelAppend({
     sourceId: `uid${n}`,
     username: `user${n}`,
-    priorityId,
+    gradeId,
     followerCnt,
     platformId,
   });

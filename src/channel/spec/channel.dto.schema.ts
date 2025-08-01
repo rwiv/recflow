@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { tagDto } from './tag.dto.schema.js';
 import { channelEnt, channelEntAppend, channelEntUpdate } from './channel.entity.schema.js';
-import { priorityDto } from './priority.schema.js';
+import { gradeDto } from './grade.schema.js';
 import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
 
-export const channelDto = channelEnt.omit({ platformId: true, priorityId: true }).extend({
+export const channelDto = channelEnt.omit({ platformId: true, gradeId: true }).extend({
   platform: platformDto,
-  priority: priorityDto,
+  grade: gradeDto,
 });
 export type ChannelDto = z.infer<typeof channelDto>;
 
@@ -22,7 +22,7 @@ export const channelAppendWithFetch = channelAppend
   .pick({
     sourceId: true,
     platformId: true,
-    priorityId: true,
+    gradeId: true,
     isFollowed: true,
     description: true,
   })
@@ -35,7 +35,7 @@ export const channelAppendWithInfo = channelAppendWithFetch.omit({ sourceId: tru
 export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
 
 export const channelUpdate = channelEntUpdate.extend({
-  priorityName: z.string().nonempty().optional(),
+  gradeName: z.string().nonempty().optional(),
 });
 export type ChannelUpdate = z.infer<typeof channelUpdate>;
 

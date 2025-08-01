@@ -7,14 +7,14 @@ import { ChannelMapper } from './channel.mapper.js';
 import { ChannelSearcher } from './channel.searcher.js';
 import { TagWriter } from './tag.writer.js';
 import { TagFinder } from './tag.finder.js';
-import { PriorityService } from './priority.service.js';
+import { GradeService } from './grade.service.js';
 import { ChannelCacheChecker } from './channel.cache.checker.js';
 import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
 
 @Module({
   imports: [PlatformModule, ChannelStorageModule, LiveStorageModule],
   providers: [
-    PriorityService,
+    GradeService,
     TagWriter,
     TagFinder,
     ChannelWriter,
@@ -24,7 +24,7 @@ import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
     ChannelCacheChecker,
   ],
   exports: [
-    PriorityService,
+    GradeService,
     TagWriter,
     TagFinder,
     ChannelWriter,

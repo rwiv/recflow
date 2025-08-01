@@ -10,16 +10,16 @@ import { css } from '@emotion/react';
 import { useChannelPageStore } from '@/hooks/channel/useChannelPageStore.ts';
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { PRIORITIES_QUERY_KEY } from '@/common/constants.ts';
-import { fetchPriorities } from '@/client/channel/priority.client.ts';
+import { GRADES_QUERY_KEY } from '@/common/constants.ts';
+import { fetchGrades } from '@/client/channel/grade.client.ts';
 
-export function PrioritySelect() {
+export function GradeSelect() {
   const navigate = useNavigate();
   const { pageState } = useChannelPageStore();
 
-  const { data: priorities } = useQuery({
-    queryKey: [PRIORITIES_QUERY_KEY],
-    queryFn: fetchPriorities,
+  const { data: grades } = useQuery({
+    queryKey: [GRADES_QUERY_KEY],
+    queryFn: fetchGrades,
   });
 
   const onChange = async (value: string) => {
@@ -45,9 +45,9 @@ export function PrioritySelect() {
       <SelectContent>
         <SelectGroup>
           <SelectItem value="all">ALL Grades</SelectItem>
-          {priorities?.map((priority) => (
-            <SelectItem key={priority.id} value={priority.name}>
-              {priority.name}
+          {grades?.map((grade) => (
+            <SelectItem key={grade.id} value={grade.name}>
+              {grade.name}
             </SelectItem>
           ))}
         </SelectGroup>

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { PriorityDto } from '../../channel/spec/priority.schema.js';
+import { GradeDto } from '../../channel/spec/grade.schema.js';
 import { nnint, nonempty } from '../../common/data/common.schema.js';
 import { SERVER_REDIS } from '../../infra/infra.tokens.js';
 import { RedisStore, SetOptions } from '../../infra/redis/redis.store.js';
@@ -14,8 +14,8 @@ const liveHistory = z.object({
   title: nonempty,
   channelId: nonempty,
   channelName: nonempty,
-  priorityName: nonempty.nullable(),
-  priorityTier: nnint.nullable(),
+  gradeName: nonempty.nullable(),
+  gradeTier: nnint.nullable(),
   isAdult: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -32,15 +32,15 @@ export class LiveHistoryRepository {
     return liveHistory.parse(JSON.parse(data));
   }
 
-  async set(platform: PlatformName, liveInfo: LiveInfo, priority: PriorityDto | null) {
+  async set(platform: PlatformName, liveInfo: LiveInfo, grade: GradeDto | null) {
     const history: LiveHistory = {
       platform,
       liveId: liveInfo.liveId,
       channelId: liveInfo.sourceId,
       channelName: liveInfo.channelName,
       title: liveInfo.liveTitle,
-      priorityName: priority?.name ?? null,
-      priorityTier: priority?.tier ?? null,
+      gradeName: grade?.name ?? null,
+      gradeTier: grade?.tier ?? null,
       isAdult: liveInfo.isAdult,
       createdAt: new Date(),
       updatedAt: new Date(),

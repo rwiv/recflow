@@ -3,7 +3,7 @@ import {
   channelTagMapTable,
   channelTable,
   channelTagTable,
-  channelPriorityTable,
+  channelGradeTable,
   platformTable,
   nodeGroupTable,
   nodeTable,
@@ -27,7 +27,7 @@ export async function dropTables() {
   await db.delete(channelTagMapTable);
   await db.delete(channelTagTable);
   await db.delete(channelTable);
-  await db.delete(channelPriorityTable);
+  await db.delete(channelGradeTable);
 
   await db.delete(nodeTable);
   await db.delete(nodeGroupTable);

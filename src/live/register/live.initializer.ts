@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { PriorityService } from '../../channel/service/priority.service.js';
+import { GradeService } from '../../channel/service/grade.service.js';
 import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
-import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/priority.constants.js';
+import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/grade.constants.js';
 import { channelAttr, liveAttr } from '../../common/attr/attr.live.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
@@ -49,7 +49,7 @@ export class LiveInitializer {
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
-    private readonly priService: PriorityService,
+    private readonly grService: GradeService,
     private readonly liveWriter: LiveWriter,
     private readonly streamService: LiveStreamService,
     private readonly registrar: LiveRegistrar,
@@ -82,8 +82,8 @@ export class LiveInitializer {
 
     let channel = await this.chFinder.findByPlatformAndSourceId(liveInfo.type, liveInfo.sourceId);
     if (!channel) {
-      const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
-      const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
+      const none = await this.grService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
+      const append: ChannelAppendWithInfo = { gradeId: none.id, isFollowed: false };
       channel = await this.chWriter.createWithInfo(append, req.channelInfo);
     }
 
@@ -97,7 +97,7 @@ export class LiveInitializer {
 
     const selectArgs = this.helper.getNodeSelectArgs({}, channel, undefined, cr);
     let node = await this.nodeSelector.match(selectArgs);
-    if (!channel.priority.shouldSave) {
+    if (!channel.grade.shouldSave) {
       node = null;
     }
     // If there is no available node

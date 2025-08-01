@@ -91,7 +91,7 @@ export class ChannelWriter {
       const entAppend: ChannelEntAppend = {
         ...append,
         platformId: platform.id,
-        priorityId: append.priorityId,
+        gradeId: append.gradeId,
       };
       const channel = await this.chMapper.map(await this.chCmd.create(entAppend, txx));
 

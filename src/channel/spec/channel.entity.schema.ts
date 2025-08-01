@@ -8,7 +8,7 @@ export const channelEnt = z.object({
   username: z.string().nonempty(),
   profileImgUrl: z.string().nullable(),
   followerCnt: z.number().nonnegative(),
-  priorityId: uuid,
+  gradeId: uuid,
   isFollowed: z.boolean(),
   overseasFirst: z.boolean(),
   adultOnly: z.boolean(),

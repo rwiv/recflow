@@ -80,7 +80,7 @@ export class LiveInitializer {
       }
     }
 
-    let channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, liveInfo.type);
+    let channel = await this.chFinder.findByPlatformAndSourceId(liveInfo.type, liveInfo.sourceId);
     if (!channel) {
       const none = await this.priService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
       const append: ChannelAppendWithInfo = { priorityId: none.id, isFollowed: false };
@@ -155,8 +155,8 @@ export class LiveInitializer {
         withAuth = true;
       }
     }
-    const { platform, pid } = req.channelInfo;
-    const stRes = await this.stlink.fetchStreamInfo(platform, pid, withAuth);
+    const { platform, sourceId } = req.channelInfo;
+    const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, withAuth);
     const streamInfo = this.stlink.toStreamInfo(stRes, liveInfo);
     if (!streamInfo) {
       return null;

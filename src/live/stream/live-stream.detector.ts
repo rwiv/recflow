@@ -24,28 +24,28 @@ export class LiveStreamDetector {
     const channels = await this.streamRepo.findChannelsForCheckStream(platform, QUERY_LIMIT);
     const promises = [];
     for (const channel of channels) {
-      promises.push(this.checkOne(platform, channel.id, channel.pid));
+      promises.push(this.checkOne(platform, channel.id, channel.sourceId));
     }
     await Promise.allSettled(promises);
   }
 
-  async checkOne(platform: PlatformName, channelId: string, pid: string) {
-    let info = await this.fetcher.fetchChannelNotNull(platform, pid, false);
+  async checkOne(platform: PlatformName, channelId: string, sourceId: string) {
+    let info = await this.fetcher.fetchChannelNotNull(platform, sourceId, false);
     if (!info.openLive) {
       return this.updateChannel(channelId, info);
     }
-    info = await this.fetcher.fetchChannelNotNull(platform, pid, true);
+    info = await this.fetcher.fetchChannelNotNull(platform, sourceId, true);
     if (!info.liveInfo) {
       return this.updateChannel(channelId, info);
     }
 
-    const stRes = await this.stlink.fetchStreamInfo(platform, pid, info.liveInfo.isAdult);
+    const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, info.liveInfo.isAdult);
     const streamInfo = this.stlink.toStreamInfo(stRes, info.liveInfo);
     if (!streamInfo) {
       return this.updateChannel(channelId, info);
     }
     const attr = {
-      channel_uid: info.pid,
+      channel_uid: info.sourceId,
       channel_name: info.username,
       live_source_id: info.liveInfo.liveId,
       live_title: info.liveInfo.liveTitle,

@@ -7,7 +7,7 @@ const fetcher = app.get(PlatformFetcher);
 
 it('test', async () => {
   const platform = 'chzzk';
-  const pid = '';
-  const channelInfo = await fetcher.fetchChannel(platform, pid, true);
+  const sourceId = '';
+  const channelInfo = await fetcher.fetchChannel(platform, sourceId, true);
   console.log(channelInfo);
 });

@@ -26,9 +26,9 @@ export function PrioritySelect() {
     if (!pageState) return;
     const builder = pageState.new();
     if (value === 'all') {
-      builder.setPriority(undefined);
+      builder.setGrade(undefined);
     } else {
-      builder.setPriority(value);
+      builder.setGrade(value);
     }
     navigate(`/channels?${builder.build().toQueryString()}`);
   };
@@ -38,7 +38,7 @@ export function PrioritySelect() {
   }
 
   return (
-    <Select defaultValue={pageState.priority ?? 'all'} onValueChange={onChange}>
+    <Select defaultValue={pageState.grade ?? 'all'} onValueChange={onChange}>
       <SelectTrigger css={css({ width: '9rem' })}>
         <SelectValue />
       </SelectTrigger>

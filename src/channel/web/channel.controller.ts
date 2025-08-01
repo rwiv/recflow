@@ -45,10 +45,10 @@ export class ChannelController {
   @Get('/')
   async channels(
     @Query('st') st?: string,
-    @Query('pri') priority?: string,
+    @Query('gr') grade?: string,
     @Query('it') includeTagsStr?: string,
     @Query('et') excludeTagsStr?: string,
-    @Query('pid') pid?: string,
+    @Query('uid') sourceId?: string,
     @Query('uname') username?: string,
     @Query('p', new ParseIntPipe({ optional: true })) pageNum?: number,
     @Query('s', new ParseIntPipe({ optional: true })) size?: number,
@@ -60,8 +60,8 @@ export class ChannelController {
       topics: withTopics ?? false,
     };
 
-    if (pid) {
-      const dtos = await this.chFinder.findByPid(pid);
+    if (sourceId) {
+      const dtos = await this.chFinder.findBySourceId(sourceId);
       const channels = await this.chMapper.loadRelations(dtos, opts);
       return channelPageResult.parse({ channels, total: 1 });
     }
@@ -81,7 +81,7 @@ export class ChannelController {
     const pageQ: PageQuery = { page: pageNum, size };
     const page = pageQuery.parse(pageQ);
 
-    const req: ChannelSearchRequest = { page, sortBy, priorityName: priority, withTotal: true };
+    const req: ChannelSearchRequest = { page, sortBy, priorityName: grade, withTotal: true };
 
     if (includeTagsStr || excludeTagsStr) {
       const tagReq: ChannelTagSearchRequest = {

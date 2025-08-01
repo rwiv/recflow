@@ -5,7 +5,7 @@ import { uuid } from '../../common/data/common.schema.js';
 import { streamInfo } from '../spec/live.dto.schema.js';
 
 export const liveAppendRequest = z.object({
-  pid: z.string().nonempty(),
+  sourceId: z.string().nonempty(),
   platformName: platformNameEnum,
   stream: streamInfo.nullable(),
 });

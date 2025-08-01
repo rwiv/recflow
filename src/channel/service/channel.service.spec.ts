@@ -87,7 +87,7 @@ describe('ChannelService', () => {
 
 function add(n: number, priorityId: string, platformId: string, followerCnt: number, tagNames: string[]) {
   const ch = mockChannelAppend({
-    pid: `pid${n}`,
+    sourceId: `uid${n}`,
     username: `user${n}`,
     priorityId,
     followerCnt,

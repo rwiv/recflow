@@ -14,7 +14,7 @@ interface ChannelInfoCellProps {
 export function ChannelInfoCell({ channel, className, css }: ChannelInfoCellProps) {
   return (
     <div className={cn('flex flex-row flex-wrap items-center ml-1', className)} css={css}>
-      <a href={getChannelUrl(channel.platform.name, channel.pid)}>
+      <a href={getChannelUrl(channel.platform.name, channel.sourceId)}>
         <Avatar className="w-9 h-9">
           <AvatarImage src={channel.profileImgUrl ?? ''} />
           <AvatarFallback>
@@ -23,7 +23,7 @@ export function ChannelInfoCell({ channel, className, css }: ChannelInfoCellProp
         </Avatar>
       </a>
       <div className={cn('center ml-5 mr-1 font-medium', channel.isFollowed ? 'underline' : undefined)}>
-        <a href={getChannelUrl(channel.platform.name, channel.pid)}>{channel.username}</a>
+        <a href={getChannelUrl(channel.platform.name, channel.sourceId)}>{channel.username}</a>
       </div>
       <div>
         <img src={getSvgSrc(channel.platform.name)} alt="platform type" />

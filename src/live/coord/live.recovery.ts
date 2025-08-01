@@ -88,14 +88,14 @@ export class LiveRecoveryManager {
     if (live.channel.isFollowed && this.env.stlink.enforceAuthForFollowed) {
       withAuth = true;
     }
-    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.pid, withAuth);
+    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.sourceId, withAuth);
     if (!streamInfo.openLive) {
       await this.finishLive(live.id, 'Delete uncleaned live', 'info');
       return;
     }
 
     // Finish if live is restarted
-    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.pid, true);
+    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
     if (live.sourceId !== chanInfo.liveInfo?.liveId) {
       if (live.platform.name === 'soop') {
         await this.registerSameLive(live);

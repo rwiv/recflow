@@ -35,15 +35,15 @@ export class ChannelFinder {
     return channel;
   }
 
-  async findByPidAndPlatform(pid: string, platformName: PlatformName, tx: Tx = db): Promise<ChannelDto | null> {
-    const cache = await this.cache.findByPlatformAndPid(pid, platformName);
+  async findByPlatformAndSourceId(pfName: PlatformName, sourceId: string, tx: Tx = db): Promise<ChannelDto | null> {
+    const cache = await this.cache.findByPlatformAndSourceId(pfName, sourceId);
     if (cache) return cache;
 
-    const platform = await this.pfFinder.findByNameNotNull(platformName, tx);
-    const entities = await this.chQuery.findByPidAndPlatform(pid, platform.id, tx);
+    const platform = await this.pfFinder.findByNameNotNull(pfName, tx);
+    const entities = await this.chQuery.findByPlatformAndSourceId(platform.id, sourceId, tx);
     const channels = await this.chMapper.mapAll(entities, tx);
     if (channels.length === 0) return null;
-    if (channels.length > 1) throw new ConflictError(`Multiple channels with pid: ${pid}`);
+    if (channels.length > 1) throw new ConflictError(`Multiple channels with sourceId: ${sourceId}`);
     const dto = channels[0];
 
     await this.cache.set(dto);
@@ -75,8 +75,8 @@ export class ChannelFinder {
     return await this.chMapper.map(entities[0]);
   }
 
-  async findByPid(pid: string, tx: Tx = db): Promise<ChannelDto[]> {
-    return this.chMapper.mapAll(await this.chQuery.findByPid(pid, tx), tx);
+  async findBySourceId(sourceId: string, tx: Tx = db): Promise<ChannelDto[]> {
+    return this.chMapper.mapAll(await this.chQuery.findBySourceId(sourceId, tx), tx);
   }
 
   async findByUsernameLike(username: string, tx: Tx = db): Promise<ChannelDto[]> {

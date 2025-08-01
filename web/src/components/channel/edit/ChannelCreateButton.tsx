@@ -49,7 +49,7 @@ export function ChannelCreateButton() {
 const FormSchema = z.object({
   platformId: uuid,
   priorityId: uuid,
-  pid: nonempty,
+  sourceId: nonempty,
   isFollowed: z.boolean(),
   description: z.string(),
   tagNames: z.array(nonempty),
@@ -69,7 +69,7 @@ export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       platformId: '',
-      pid: '',
+      sourceId: '',
       priorityId: '',
       isFollowed: false,
       description: '',
@@ -86,7 +86,7 @@ export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
       await createChannel(req);
     } catch (e) {
       if (e instanceof Error && e.message.includes('already exists')) {
-        form.setError('pid', { message: 'Channel ID already exists' });
+        form.setError('sourceId', { message: 'Channel ID already exists' });
         return;
       }
       throw e;
@@ -113,7 +113,7 @@ export function CreateForm({ platforms, priorities, cb }: ChannelCreateProps) {
             </SelectItem>
           ))}
         </SelectFormField>
-        <TextFormField form={form} name="pid" label="Channel UID" />
+        <TextFormField form={form} name="sourceId" label="Channel UID" />
         <TextAreaFormField
           form={form}
           name="description"

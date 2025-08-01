@@ -36,7 +36,7 @@ describe('ChannelService', () => {
     const cha = mockChannelAppend({ platformId: pf.id, priorityId: pri.id });
     const ch = await chWriter.createWithTagNames(cha, ['tag1', 'tag2']);
 
-    const li1 = mockLiveInfoChzzk({ channelId: ch.pid });
+    const li1 = mockLiveInfoChzzk({ channelId: ch.sourceId });
     const args1: LiveCreateArgs = {
       liveInfo: li1,
       fields: {
@@ -50,7 +50,7 @@ describe('ChannelService', () => {
     const live1 = await liveWriter.createByLiveInfo(args1);
     expect(live1.liveTitle).toBe(li1.liveTitle);
 
-    const li2 = mockLiveInfoChzzk({ channelId: ch.pid });
+    const li2 = mockLiveInfoChzzk({ channelId: ch.sourceId });
     await liveWriter.updateByLive(live1.id, li2);
     const live2 = await liveFinder.findById(live1.id);
     assert(live2);
@@ -59,7 +59,7 @@ describe('ChannelService', () => {
 
     await expect(() => {
       const args2 = { ...args1 };
-      args2.liveInfo = mockLiveInfoChzzk({ channelId: ch.pid });
+      args2.liveInfo = mockLiveInfoChzzk({ channelId: ch.sourceId });
       args2.fields.videoName = live1.videoName;
       return liveWriter.createByLiveInfo(args2);
     }).rejects.toThrowError(ConflictError);

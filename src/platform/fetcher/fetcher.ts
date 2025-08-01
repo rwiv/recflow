@@ -34,9 +34,9 @@ export class PlatformFetcher {
     }
   }
 
-  async fetchChannel(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
+  async fetchChannel(platform: PlatformName, sourceId: string, hasLiveInfo: boolean) {
     try {
-      return await this.fetchChannelNotNull(platform, pid, hasLiveInfo);
+      return await this.fetchChannelNotNull(platform, sourceId, hasLiveInfo);
     } catch (err) {
       if (err instanceof HttpRequestError && err.status === 404) {
         return null;
@@ -46,17 +46,17 @@ export class PlatformFetcher {
     }
   }
 
-  async fetchChannelNotNull(platform: PlatformName, pid: string, hasLiveInfo: boolean) {
+  async fetchChannelNotNull(platform: PlatformName, sourceId: string, hasLiveInfo: boolean) {
     try {
       if (platform === 'chzzk') {
-        return await this.chzzkFetcher.fetchChannel(pid, hasLiveInfo);
+        return await this.chzzkFetcher.fetchChannel(sourceId, hasLiveInfo);
       } else if (platform === 'soop') {
-        return await this.soopFetcher.fetchChannel(pid, hasLiveInfo);
+        return await this.soopFetcher.fetchChannel(sourceId, hasLiveInfo);
       } else {
         throw new BaseError(`Invalid PlatformType: ${platform}`);
       }
     } catch (err) {
-      throw getHttpRequestError('Failed to fetch channel', err, { platform, channel_uid: pid });
+      throw getHttpRequestError('Failed to fetch channel', err, { platform, channel_uid: sourceId });
     }
   }
 }

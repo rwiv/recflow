@@ -20,7 +20,7 @@ export type ChannelAppend = z.infer<typeof channelAppend>;
 
 export const channelAppendWithFetch = channelAppend
   .pick({
-    pid: true,
+    sourceId: true,
     platformId: true,
     priorityId: true,
     isFollowed: true,
@@ -31,7 +31,7 @@ export const channelAppendWithFetch = channelAppend
   });
 export type ChannelAppendWithFetch = z.infer<typeof channelAppendWithFetch>;
 
-export const channelAppendWithInfo = channelAppendWithFetch.omit({ pid: true, platformId: true });
+export const channelAppendWithInfo = channelAppendWithFetch.omit({ sourceId: true, platformId: true });
 export type ChannelAppendWithInfo = z.infer<typeof channelAppendWithInfo>;
 
 export const channelUpdate = channelEntUpdate.extend({

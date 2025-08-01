@@ -46,7 +46,7 @@ const nodeBatchInsert = z.object({
 export type NodeBatchInsert = z.infer<typeof nodeBatchInsert>;
 
 const channelBatchInsert = z.object({
-  pids: z.array(nonempty),
+  uids: z.array(nonempty),
   platform: platformNameEnum,
 });
 export type ChannelBatchInsert = z.infer<typeof channelBatchInsert>;

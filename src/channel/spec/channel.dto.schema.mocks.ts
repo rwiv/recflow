@@ -7,7 +7,7 @@ import { ChannelEntAppend } from './channel.entity.schema.js';
 export function mockChannelEntAppend(overrides: Partial<ChannelAppend> = {}): ChannelEntAppend {
   return {
     platformId: faker.string.uuid(),
-    pid: faker.string.uuid(),
+    sourceId: faker.string.uuid(),
     username: faker.string.uuid(),
     profileImgUrl: faker.string.uuid(),
     followerCnt: faker.number.int({ min: 1, max: 100 }),
@@ -24,7 +24,7 @@ export function mockChannelAppend(overrides: Partial<ChannelAppend> = {}): Chann
 export function mockChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto {
   return {
     id: faker.string.uuid(),
-    pid: faker.string.uuid(),
+    sourceId: faker.string.uuid(),
     username: faker.string.uuid(),
     profileImgUrl: faker.string.uuid(),
     followerCnt: faker.number.int({ min: 1, max: 100 }),

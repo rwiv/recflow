@@ -36,7 +36,7 @@ export class LiveHistoryRepository {
     const history: LiveHistory = {
       platform,
       liveId: liveInfo.liveId,
-      channelId: liveInfo.pid,
+      channelId: liveInfo.sourceId,
       channelName: liveInfo.channelName,
       title: liveInfo.liveTitle,
       priorityName: priority?.name ?? null,

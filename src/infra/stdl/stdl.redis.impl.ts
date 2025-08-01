@@ -39,7 +39,7 @@ export class StdlRedisImpl extends StdlRedis {
     const state: LiveState = {
       id: live.id,
       platform: live.platform.name,
-      channelId: live.channel.pid,
+      channelId: live.channel.sourceId,
       channelName: live.channel.username,
       liveId: live.sourceId,
       liveTitle: live.liveTitle,

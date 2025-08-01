@@ -30,7 +30,7 @@ export class LiveDetector {
     const followedChannels = await this.channelFinder.findFollowedChannels();
     const promises = [];
     for (const ch of followedChannels) {
-      const channelInfo = await this.fetchInfo(ch.platform.name, ch.pid, true);
+      const channelInfo = await this.fetchInfo(ch.platform.name, ch.sourceId, true);
       if (!channelInfo) continue;
       promises.push(this.liveInitializer.createNewLive({ channelInfo, isFollowed: true }));
     }
@@ -50,7 +50,7 @@ export class LiveDetector {
   private async registerQueriedLives(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
     const promises = [];
     for (const live of lives) {
-      const channelInfo = await this.fetchInfo(live.type, live.pid, false);
+      const channelInfo = await this.fetchInfo(live.type, live.sourceId, false);
       if (!channelInfo) continue;
       promises.push(this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id }));
     }
@@ -71,7 +71,7 @@ export class LiveDetector {
     }
 
     let priority: PriorityDto | undefined = undefined;
-    const channel = await this.channelFinder.findByPidAndPlatform(live.pid, criterion.platform.name);
+    const channel = await this.channelFinder.findByPlatformAndSourceId(criterion.platform.name, live.sourceId);
     if (channel) {
       priority = channel.priority;
     }
@@ -82,18 +82,18 @@ export class LiveDetector {
 
   private async fetchInfo(
     pfName: PlatformName,
-    pid: string,
+    sourceId: string,
     isFollowed: boolean,
     tx: Tx = db,
   ): Promise<ChannelLiveInfo | null> {
-    if ((await this.liveFinder.findByPid(pid, {}, tx)).length > 0) return null;
+    if ((await this.liveFinder.findBySourceId(sourceId, {}, tx)).length > 0) return null;
 
     if (isFollowed) {
-      const chanInfo = await this.fetcher.fetchChannel(pfName, pid, false);
+      const chanInfo = await this.fetcher.fetchChannel(pfName, sourceId, false);
       if (!chanInfo?.openLive) return null;
     }
 
-    const chanWithLive = await this.fetcher.fetchChannel(pfName, pid, true);
+    const chanWithLive = await this.fetcher.fetchChannel(pfName, sourceId, true);
     // If the live status is not applied to the list (it can actually happen in chzzk)
     if (!chanWithLive?.liveInfo) return null;
 

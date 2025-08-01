@@ -46,7 +46,7 @@ export class StdlMock extends Stdl {
       return {
         id: dto.id,
         platform: dto.platform.name,
-        channelId: dto.channel.pid,
+        channelId: dto.channel.sourceId,
         channelName: dto.channel.username,
         liveId: dto.sourceId,
         videoName: dto.videoName,

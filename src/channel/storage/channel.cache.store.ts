@@ -22,8 +22,8 @@ export class ChannelCacheStore {
     return channelDto.parse(JSON.parse(data));
   }
 
-  async findByPlatformAndPid(pid: string, pfName: PlatformName): Promise<ChannelDto | null> {
-    const data = await this.redis.get(`${CHANNEL_KEY_PREFIX}:${pfName}:${pid}`);
+  async findByPlatformAndSourceId(pfName: PlatformName, sourceId: string): Promise<ChannelDto | null> {
+    const data = await this.redis.get(`${CHANNEL_KEY_PREFIX}:${pfName}:${sourceId}`);
     if (!data) return null;
     return channelDto.parse(JSON.parse(data));
   }
@@ -32,7 +32,7 @@ export class ChannelCacheStore {
     const reqOpts = opts ?? {};
     const text = JSON.stringify(channelDto.parse(data));
     const p1 = this.redis.set(`${CHANNEL_KEY_PREFIX}:${data.id}`, text, reqOpts);
-    const p2 = this.redis.set(this.pfPidKey(data), text, reqOpts);
+    const p2 = this.redis.set(this.pfUidKey(data), text, reqOpts);
     await Promise.all([p1, p2]);
   }
 
@@ -51,16 +51,16 @@ export class ChannelCacheStore {
   async delete(id: string) {
     const cache = await this.findById(id);
     if (cache) {
-      await this.redis.delete(this.pfPidKey(cache));
+      await this.redis.delete(this.pfUidKey(cache));
     }
     await this.redis.delete(`${CHANNEL_KEY_PREFIX}:${id}`);
   }
 
   async deleteByDto(dto: ChannelDto) {
-    await this.redis.deleteBatch([`${CHANNEL_KEY_PREFIX}:${dto.id}`, this.pfPidKey(dto)]);
+    await this.redis.deleteBatch([`${CHANNEL_KEY_PREFIX}:${dto.id}`, this.pfUidKey(dto)]);
   }
 
-  private pfPidKey(data: ChannelDto) {
-    return `${CHANNEL_KEY_PREFIX}:${data.platform.name}:${data.pid}`;
+  private pfUidKey(data: ChannelDto) {
+    return `${CHANNEL_KEY_PREFIX}:${data.platform.name}:${data.sourceId}`;
   }
 }

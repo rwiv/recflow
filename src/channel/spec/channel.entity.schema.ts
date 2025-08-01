@@ -4,7 +4,7 @@ import { uuid } from '../../common/data/common.schema.js';
 export const channelEnt = z.object({
   id: uuid,
   platformId: uuid,
-  pid: z.string().nonempty(),
+  sourceId: z.string().nonempty(),
   username: z.string().nonempty(),
   profileImgUrl: z.string().nullable(),
   followerCnt: z.number().nonnegative(),

@@ -6,7 +6,7 @@ import { platformNameEnum } from '../storage/platform.enum.schema.js';
 import { nnint, nonempty } from '../../../common/data/common.schema.js';
 
 export const channelInfo = z.object({
-  pid: nonempty,
+  sourceId: nonempty,
   username: nonempty,
   profileImgUrl: nonempty.nullable(),
   followerCnt: nnint,
@@ -29,7 +29,7 @@ export function channelFromChzzk(info: ChzzkChannelInfo): ChannelInfo {
   }
   return {
     platform: 'chzzk',
-    pid: info.channelId,
+    sourceId: info.channelId,
     username: info.channelName,
     profileImgUrl: info.channelImageUrl ?? null,
     followerCnt: info.followerCount,
@@ -46,7 +46,7 @@ export function channelFromSoop(info: SoopChannelInfo): ChannelInfo {
   }
   return {
     platform: 'soop',
-    pid: info.userId,
+    sourceId: info.userId,
     username: info.userNick,
     profileImgUrl: info.profileImageUrl ?? null,
     followerCnt: info.fanCnt,

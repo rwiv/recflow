@@ -69,8 +69,8 @@ export class LiveWriter {
   async createByLiveInfo(args: LiveCreateArgs, tx: Tx = db): Promise<LiveDto> {
     const liveInfo = args.liveInfo;
     const platform = await this.pfFinder.findByNameNotNull(liveInfo.type, tx);
-    const channel = await this.channelFinder.findByPidAndPlatform(liveInfo.pid, platform.name, tx);
-    if (!channel) throw NotFoundError.from('Channel', 'pid', liveInfo.pid);
+    const channel = await this.channelFinder.findByPlatformAndSourceId(platform.name, liveInfo.sourceId, tx);
+    if (!channel) throw NotFoundError.from('Channel', 'sourceId', liveInfo.sourceId);
     let stream: LiveStreamDto | null = null;
     if (args.fields.liveStreamId) {
       stream = await this.streamService.findById(args.fields.liveStreamId, tx);
@@ -81,7 +81,7 @@ export class LiveWriter {
     if (!videoName) {
       videoName = getFormattedTimestamp();
     }
-    for (const live of await this.liveFinder.findByPid(channel.pid)) {
+    for (const live of await this.liveFinder.findBySourceId(channel.sourceId)) {
       if (live.videoName === videoName) {
         throw new ConflictError('A live stream with the same video name is already running on this channel');
       }

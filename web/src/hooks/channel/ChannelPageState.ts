@@ -5,22 +5,22 @@ import { ChannelSortType } from '@/client/common/common.schema.ts';
 export class ChannelPageState {
   curPageNum: number;
   pageSize: number;
-  priority: string | undefined;
+  grade: string | undefined;
   includeTags: string[];
   excludeTags: string[];
   sortBy: ChannelSortType = 'updatedAt';
-  pid: string | undefined;
+  sourceId: string | undefined;
   username: string | undefined;
   isSingle: boolean = false;
 
   constructor(builder: ChannelPageStateBuilder) {
     this.curPageNum = builder.curPageNum;
     this.pageSize = builder.pageSize;
-    this.priority = builder.priority;
+    this.grade = builder.grade;
     this.includeTags = builder.includeTags;
     this.excludeTags = builder.excludeTags;
     this.sortBy = builder.sortBy;
-    this.pid = builder.pid;
+    this.sourceId = builder.sourceId;
     this.username = builder.username;
     this.isSingle = builder.isSingle;
   }
@@ -33,7 +33,7 @@ export class ChannelPageState {
     return new ChannelPageStateBuilder()
       .setCurPageNum(this.curPageNum)
       .setPageSize(this.pageSize)
-      .setPriority(this.priority)
+      .setGrade(this.grade)
       .setIncludeTags(this.includeTags)
       .setExcludeTags(this.excludeTags)
       .setSorted(this.sortBy);
@@ -52,8 +52,8 @@ export class ChannelPageState {
   toQueryString(): string {
     const params = new URLSearchParams();
     if (this.isSingle) {
-      if (this.pid) {
-        params.set('pid', this.pid);
+      if (this.sourceId) {
+        params.set('uid', this.sourceId);
       }
       if (this.username) {
         params.set('uname', this.username);
@@ -63,8 +63,8 @@ export class ChannelPageState {
 
     params.set('p', this.curPageNum.toString());
     params.set('s', this.pageSize.toString());
-    if (this.priority) {
-      params.set('pri', this.priority);
+    if (this.grade) {
+      params.set('gr', this.grade);
     }
     if (this.includeTags.length > 0) {
       params.set('it', this.includeTags.join(','));
@@ -82,11 +82,11 @@ export class ChannelPageState {
     return [
       CHANNELS_QUERY_KEY,
       this.curPageNum,
-      this.priority,
+      this.grade,
       this.includeTags.join(','),
       this.excludeTags.join(','),
       this.sortBy,
-      this.pid,
+      this.sourceId,
       this.username,
       this.isSingle,
     ];

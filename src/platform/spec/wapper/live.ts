@@ -6,7 +6,7 @@ import { nnint, nonempty } from '../../../common/data/common.schema.js';
 
 export const liveInfo = z.object({
   type: platformNameEnum,
-  pid: nonempty,
+  sourceId: nonempty,
   channelName: nonempty,
   liveId: nonempty,
   liveTitle: nonempty,
@@ -20,7 +20,7 @@ export type LiveInfo = z.infer<typeof liveInfo>;
 export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
   return {
     type: 'chzzk',
-    pid: info.channelId,
+    sourceId: info.channelId,
     channelName: info.channelName,
     liveId: info.liveId.toString(),
     liveTitle: info.liveTitle,
@@ -34,7 +34,7 @@ export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
 export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
   return {
     type: 'soop',
-    pid: info.userId,
+    sourceId: info.userId,
     channelName: info.userNick,
     liveId: info.broadNo,
     liveTitle: info.broadTitle,

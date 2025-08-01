@@ -11,9 +11,9 @@ export async function fetchAllLives() {
   return parseList(liveDtoWithNodes, await res.json());
 }
 
-export async function createLive(pid: string, platform: PlatformName, stream: StreamInfo | null) {
+export async function createLive(sourceId: string, platform: PlatformName, stream: StreamInfo | null) {
   const url = `${configs.endpoint}/api/lives`;
-  const req = { pid, platformName: platform, stream };
+  const req = { sourceId, platformName: platform, stream };
   const { method, headers, body } = getIngredients('POST', req);
   const res = await request(url, { method, headers, body });
   if (res.status >= 400) {

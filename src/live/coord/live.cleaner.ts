@@ -22,7 +22,7 @@ export class LiveCleaner {
   }
 
   private async finishLive(live: LiveDto) {
-    const channelInfo = await this.fetcher.fetchChannel(live.platform.name, live.channel.pid, false);
+    const channelInfo = await this.fetcher.fetchChannel(live.platform.name, live.channel.sourceId, false);
     if (channelInfo?.openLive) {
       return;
     }

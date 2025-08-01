@@ -16,15 +16,15 @@ export class ChannelQueryRepository {
     return oneNullable(await tx.select().from(channelTable).where(eq(channelTable.id, channelId)));
   }
 
-  async findByPid(pid: string, tx: Tx = db) {
-    return tx.select().from(channelTable).where(eq(channelTable.pid, pid));
+  async findBySourceId(sourceId: string, tx: Tx = db) {
+    return tx.select().from(channelTable).where(eq(channelTable.sourceId, sourceId));
   }
 
-  async findByPidAndPlatform(pid: string, platformId: string, tx: Tx = db) {
+  async findByPlatformAndSourceId(platformId: string, sourceId: string, tx: Tx = db) {
     return tx
       .select()
       .from(channelTable)
-      .where(and(eq(channelTable.pid, pid), eq(channelTable.platformId, platformId)));
+      .where(and(eq(channelTable.sourceId, sourceId), eq(channelTable.platformId, platformId)));
   }
 
   async findByUsernameLike(username: string, tx: Tx = db) {

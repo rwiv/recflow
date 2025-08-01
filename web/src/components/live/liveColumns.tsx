@@ -53,7 +53,7 @@ const titleColumn: ColumnDef<LiveDtoWithNodes> = {
     const live = row.original;
     return (
       <div className={cn('my-1', live.isDisabled && DISABLED_CN)}>
-        <a href={getLiveUrl(live.platform.name, live.channel.pid)}>{live.liveTitle}</a>
+        <a href={getLiveUrl(live.platform.name, live.channel.sourceId)}>{live.liveTitle}</a>
       </div>
     );
   },

@@ -6,7 +6,7 @@ import { nnint, nonempty, uuid } from '@/common/common.schema.ts';
 
 export const channelDto = z.object({
   id: uuid,
-  pid: nonempty,
+  sourceId: nonempty,
   username: nonempty,
   profileImgUrl: nonempty.nullable(),
   followerCnt: nnint,
@@ -22,7 +22,7 @@ export const channelDto = z.object({
 export type ChannelDto = z.infer<typeof channelDto>;
 
 export interface ChannelAppend {
-  pid: string;
+  sourceId: string;
   platformId: string;
   priorityId: string;
   isFollowed: boolean;

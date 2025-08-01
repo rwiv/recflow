@@ -1,0 +1,180 @@
+// platform
+Table platform {
+  id uuid [pk, not null]
+  name text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+
+// channel
+Table channel_priority {
+  id uuid [pk, not null]
+  name text [not null]
+  should_save boolean [not null]
+  description text
+  should_notify boolean [not null]
+  tier integer [not null]
+  seq integer [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Table channel {
+  id uuid [pk, not null]
+  platform_id uuid [not null]
+  source_id text [not null]
+  username text [not null]
+  profile_img_url text
+  follower_cnt integer [not null]
+  priority_id uuid [not null]
+  is_followed boolean [not null]
+  adult_only boolean [not null]
+  overseas_first boolean [not null]
+  description text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  last_refreshed_at timestamp
+  stream_checked_at timestamp
+}
+
+Ref: channel.platform_id > platform.id
+Ref: channel.priority_id > channel_priority.id
+
+Table channel_tag {
+  id uuid [pk, not null]
+  name text [not null]
+  description text
+  create_at timestamp [not null]
+  updated_at timestamp
+}
+
+Table channel_tag_map {
+  channel_id uuid [not null]
+  tag_id uuid [not null]
+  created_at timestamp [not null]
+}
+
+Ref: channel_tag_map.channel_id > channel.id
+Ref: channel_tag_map.tag_id > channel_tag.id
+
+
+// criterion
+Table live_criterion {
+  id uuid [pk, not null]
+  platform_id uuid [not null]
+  name text [not null]
+  description text
+  is_deactivated boolean [not null]
+  enforce_creds boolean [not null]
+  adult_only boolean [not null]
+  domestic_only boolean [not null]
+  overseas_first boolean [not null]
+  logging_only boolean [not null]
+  sufficient_user_cnt integer [not null]
+  min_user_cnt integer [not null]
+  min_follow_cnt integer [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Ref: live_criterion.platform_id > platform.id
+
+Table live_criterion_rule {
+  id uuid [pk, not null]
+  name text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Table live_criterion_unit {
+  id uuid [pk, not null]
+  criterion_id uuid [not null]
+  rule_id uuid [not null]
+  value text [not null]
+  is_positive boolean [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Ref: live_criterion_unit.criterion_id > live_criterion.id
+Ref: live_criterion_unit.rule_id > live_criterion_rule.id
+
+
+// node
+Table node_group {
+  id uuid [pk, not null]
+  name text [not null]
+  description text
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Table node {
+  id uuid [pk, not null]
+  name text [not null]
+  description text
+  endpoint text [not null]
+  weight integer [not null]
+  capacity integer [not null]
+  is_cordoned boolean [not null]
+  group_id uuid [not null]
+  lives_cnt integer [not null]
+  failure_cnt integer [not null]
+  is_domestic boolean [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+  last_assigned_at timestamp
+}
+
+Ref: node.group_id > node_group.id
+
+
+// live
+Table live_stream {
+  id uuid [pk, not null]
+  channel_id uuid [not null]
+  source_id text [not null]
+  url text [not null]
+  params text
+  headers text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  checked_at timestamp [not null]
+}
+
+Ref: live_stream.channel_id > channel.id
+
+Table live {
+  id uuid [pk, not null]
+  platform_id uuid [not null]
+  channel_id uuid [not null]
+  source_id text [not null]
+  live_title text [not null]
+  live_details text
+  live_stream_id uuid
+  fs_name text [not null]
+  video_name text [not null]
+  view_cnt integer [not null]
+  is_adult boolean [not null]
+  status text [not null]
+  is_disabled boolean [not null]
+  domestic_only boolean [not null]
+  overseas_first boolean [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Ref: live.channel_id > channel.id
+Ref: live.platform_id > platform.id
+Ref: live.live_stream_id > live_stream.id
+
+Table live_node {
+  live_id uuid [not null]
+  node_id uuid [not null]
+  created_at timestamp [not null]
+}
+
+Ref: live_node.live_id > live.id
+Ref: live_node.node_id > node.id

@@ -26,8 +26,8 @@ export class LiveStreamAuditor {
 
   async checkOne(stream: LiveStreamDto) {
     const platform = stream.channel.platform.name;
-    const pid = stream.channel.pid;
-    const info = await this.fetcher.fetchChannelNotNull(platform, pid, true);
+    const sourceId = stream.channel.sourceId;
+    const info = await this.fetcher.fetchChannelNotNull(platform, sourceId, true);
     if (!info.openLive) {
       log.debug('Delete Closed Live Stream', streamAttr(stream));
       return this.remove(stream);

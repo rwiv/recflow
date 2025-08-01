@@ -49,7 +49,7 @@ export class ChannelWriter {
 
   async createWithFetch(appendFetch: ChannelAppendWithFetch) {
     const platform = await this.pfFinder.findByIdNotNull(appendFetch.platformId);
-    const info = await this.fetcher.fetchChannelNotNull(platform.name, appendFetch.pid, false);
+    const info = await this.fetcher.fetchChannelNotNull(platform.name, appendFetch.sourceId, false);
     const appendInfo: ChannelAppendWithInfo = { ...appendFetch };
     return this.createWithInfo(appendInfo, info);
   }
@@ -83,7 +83,7 @@ export class ChannelWriter {
     }
 
     const platform = await this.pfFinder.findByIdNotNull(append.platformId, tx);
-    if (await this.chFinder.findByPidAndPlatform(append.pid, platform.name, tx)) {
+    if (await this.chFinder.findByPlatformAndSourceId(platform.name, append.sourceId, tx)) {
       throw new ConflictError(`Channel already exist ${append.username}`);
     }
 
@@ -168,7 +168,7 @@ export class ChannelWriter {
     }
 
     try {
-      const info = await this.fetcher.fetchChannel(channel.platform.name, channel.pid, false);
+      const info = await this.fetcher.fetchChannel(channel.platform.name, channel.sourceId, false);
       if (!info) {
         log.debug(`During the refresh process, fetched channelInfo is null`, channelAttr(channel));
         return this.update(channel.id, {}, { refresh: true });

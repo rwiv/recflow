@@ -63,7 +63,7 @@ export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
     live_uid: live.sourceId,
     live_title: live.liveTitle,
     video_name: live.videoName,
-    channel_uid: live.channel.pid,
+    channel_uid: live.channel.sourceId,
     channel_name: live.channel.username,
     grade_name: live.channel.priority.name,
   };
@@ -90,7 +90,7 @@ export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options): LiveInfoAttr {
     platform: liveInfo.type,
     live_uid: liveInfo.liveId,
     live_title: liveInfo.liveTitle,
-    channel_uid: liveInfo.pid,
+    channel_uid: liveInfo.sourceId,
     channel_name: liveInfo.channelName,
   };
   if (opts) {
@@ -112,7 +112,7 @@ export function channelAttr(channel: ChannelDto) {
   return {
     platform: channel.platform.name,
     channel_id: channel.id,
-    channel_uid: channel.pid,
+    channel_uid: channel.sourceId,
     channel_name: channel.username,
     grade_name: channel.priority.name,
   };
@@ -121,7 +121,7 @@ export function channelAttr(channel: ChannelDto) {
 export function streamAttr(stream: LiveStreamDto) {
   return {
     channel_id: stream.channel.id,
-    channel_uid: stream.channel.pid,
+    channel_uid: stream.channel.sourceId,
     channel_name: stream.channel.username,
     source_id: stream.sourceId,
     stream_url: stream.url,

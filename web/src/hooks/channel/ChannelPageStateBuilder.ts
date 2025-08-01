@@ -5,11 +5,11 @@ import { ChannelSortType, channelSortTypeEnum } from '@/client/common/common.sch
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;
   pageSize: number = DEFAULT_CHANNEL_PAGE_SIZE;
-  priority: string | undefined;
+  grade: string | undefined;
   includeTags: string[] = [];
   excludeTags: string[] = [];
   sortBy: ChannelSortType = 'updatedAt';
-  pid: string | undefined;
+  sourceId: string | undefined;
   username: string | undefined;
   isSingle: boolean = false;
 
@@ -33,9 +33,9 @@ export class ChannelPageStateBuilder {
     return this;
   }
 
-  setPriority(priority: string | null | undefined): this {
+  setGrade(priority: string | null | undefined): this {
     if (priority !== null) {
-      this.priority = priority;
+      this.grade = priority;
     }
     return this;
   }
@@ -49,12 +49,12 @@ export class ChannelPageStateBuilder {
     return this;
   }
 
-  setPid(pid: string | null | undefined): this {
-    if (pid === null) {
+  setSourceId(sourceId: string | null | undefined): this {
+    if (sourceId === null) {
       return this;
     }
-    if (pid) {
-      this.pid = pid;
+    if (sourceId) {
+      this.sourceId = sourceId;
       this.isSingle = true;
     }
     return this;

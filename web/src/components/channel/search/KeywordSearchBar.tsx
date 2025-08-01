@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router';
 import { Button } from '@/components/ui/button.tsx';
 import { Search } from 'lucide-react';
 
-type Criteria = 'pid' | 'username';
+type Criteria = 'sourceId' | 'username';
 
 export function KeywordSearchBar() {
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ export function KeywordSearchBar() {
     setInput('');
     if (criteria === 'username') {
       navigate(`/channels?uname=${input}`);
-    } else if (criteria === 'pid') {
-      navigate(`/channels?pid=${input}`);
+    } else if (criteria === 'sourceId') {
+      navigate(`/channels?uid=${input}`);
     } else {
       throw new Error(`Invalid criteria: ${criteria}`);
     }
@@ -60,7 +60,7 @@ interface SearchCriteriaSelectProps {
 
 export function SearchCriteriaSelect({ criteria, setCriteria }: SearchCriteriaSelectProps) {
   const onValueChange = (value: string) => {
-    const selected = checkType(value, ['pid', 'username'] as const);
+    const selected = checkType(value, ['sourceId', 'username'] as const);
     if (selected) {
       setCriteria(selected);
     }
@@ -74,7 +74,7 @@ export function SearchCriteriaSelect({ criteria, setCriteria }: SearchCriteriaSe
       <SelectContent>
         <SelectGroup>
           <SelectItem value="username">Username</SelectItem>
-          <SelectItem value="pid">UserID</SelectItem>
+          <SelectItem value="sourceId">UserID</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

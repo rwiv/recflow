@@ -5,7 +5,7 @@ export function mockChannelEnt(overrides: Partial<ChannelEnt> = {}): ChannelEnt 
   return {
     id: faker.string.uuid(),
     platformId: faker.string.uuid(),
-    pid: faker.string.uuid(),
+    sourceId: faker.string.uuid(),
     username: faker.string.uuid(),
     profileImgUrl: faker.string.uuid(),
     followerCnt: faker.number.int({ min: 1, max: 100 }),

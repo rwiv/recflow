@@ -165,7 +165,7 @@ export class LiveFinalizer {
     const doneMsg: StdlDoneMessage = {
       status: doneCmd,
       platform: live.platform.name,
-      uid: live.channel.pid,
+      uid: live.channel.sourceId,
       videoName: live.videoName,
       fsName: live.fsName,
     };

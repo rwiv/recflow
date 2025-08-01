@@ -35,8 +35,8 @@ export class ChzzkFetcher {
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));
   }
 
-  async fetchChannel(pid: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
-    let url = `${this.baseUrl}/channels/v1/${pid}`;
+  async fetchChannel(sourceId: string, hasLiveInfo: boolean): Promise<ChannelInfo> {
+    let url = `${this.baseUrl}/channels/v1/${sourceId}`;
     const params = new URLSearchParams();
     if (hasLiveInfo) {
       params.set('hasLiveInfo', 'true');
@@ -45,7 +45,7 @@ export class ChzzkFetcher {
       url += `?${params.toString()}`;
     }
     const res = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(this.env.httpTimeout) });
-    const attr = { channel_uid: pid, status: res.status, url: res.url };
+    const attr = { channel_uid: sourceId, status: res.status, url: res.url };
     await checkResponse(res, attr, 'Failed to fetch channel');
     return channelFromChzzk(chzzkChannelInfo.parse(await res.json()));
   }

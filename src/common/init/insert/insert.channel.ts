@@ -36,8 +36,8 @@ export class DevChannelInserter {
     const conf = readBatchConfig(confPath);
     const pairs: [PlatformName, string][] = [];
     for (const batchInfo of conf.channels) {
-      for (const pid of batchInfo.pids) {
-        pairs.push([batchInfo.platform, pid]);
+      for (const sourceId of batchInfo.uids) {
+        pairs.push([batchInfo.platform, sourceId]);
       }
     }
     const promises = [];

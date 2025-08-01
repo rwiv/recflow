@@ -29,8 +29,8 @@ export class LiveFinder {
     }
   }
 
-  async findByPid(pid: string, opts: FindOptions = {}, tx: Tx = db) {
-    const entities = await this.liveRepo.findByPid(pid, tx);
+  async findBySourceId(sourceId: string, opts: FindOptions = {}, tx: Tx = db) {
+    const entities = await this.liveRepo.findBySourceId(sourceId, tx);
     return this.mapper.mapAll(entities, tx, opts);
   }
 

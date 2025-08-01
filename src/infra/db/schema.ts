@@ -34,7 +34,7 @@ export const channelTable = pgTable(
     platformId: uuid('platform_id')
       .notNull()
       .references(() => platformTable.id),
-    pid: text().notNull(),
+    sourceId: text('source_id').notNull(),
     username: text().notNull(),
     profileImgUrl: text('profile_img_url'),
     followerCnt: integer('follower_cnt').notNull(),
@@ -53,7 +53,7 @@ export const channelTable = pgTable(
   (t) => [
     index('channel_platform_id_idx').on(t.platformId),
     index('channel_priority_id_idx').on(t.priorityId),
-    index('channel_pid_idx').on(t.pid),
+    index('channel_source_id_idx').on(t.sourceId),
     index('channel_username_idx').on(t.username),
     index('channel_follow_cnt_idx').on(t.followerCnt),
     index('channel_created_at_idx').on(t.createdAt),

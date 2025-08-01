@@ -115,7 +115,7 @@ describe('ChannelService', () => {
 
 function chanReq(n: number, maxTagNum: number, tagIds: string[], priIds: string[], pfIds: string[]) {
   return mockChannelEntAppend({
-    pid: `pid${n}`,
+    sourceId: `uid${n}`,
     username: `user${n}`,
     isFollowed: false,
     platformId: faker.helpers.arrayElement(pfIds),

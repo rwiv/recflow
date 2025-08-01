@@ -45,7 +45,7 @@ export class SoopLiveFilter {
 
     // by channel
     if (!cr.loggingOnly) {
-      const channel = await this.chFinder.findByPidAndPlatform(liveInfo.pid, 'soop');
+      const channel = await this.chFinder.findByPlatformAndSourceId('soop', liveInfo.sourceId);
       if (channel) {
         if (channel.priority.shouldNotify) {
           return liveInfo;
@@ -70,7 +70,7 @@ export class SoopLiveFilter {
   }
 
   private async checkFollowerCnt(liveInfo: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel('soop', liveInfo.pid, false);
+    const channel = await this.fetcher.fetchChannel('soop', liveInfo.sourceId, false);
     if (channel === null) {
       return null;
     }

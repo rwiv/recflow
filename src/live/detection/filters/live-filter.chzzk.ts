@@ -42,7 +42,7 @@ export class ChzzkLiveFilter {
 
     // by channel
     if (!cr.loggingOnly) {
-      const channel = await this.chFinder.findByPlatformAndSourceId('chzzk', liveInfo.sourceId);
+      const channel = await this.chFinder.findByPlatformAndSourceId('chzzk', liveInfo.channelUid);
       if (channel) {
         if (channel.grade.shouldNotify) {
           return liveInfo;
@@ -67,7 +67,7 @@ export class ChzzkLiveFilter {
   }
 
   private async checkFollowerCnt(liveInfo: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel('chzzk', liveInfo.sourceId, false);
+    const channel = await this.fetcher.fetchChannel('chzzk', liveInfo.channelUid, false);
     if (!channel) {
       return null;
     }

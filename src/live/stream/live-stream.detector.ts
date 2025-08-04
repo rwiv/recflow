@@ -47,7 +47,7 @@ export class LiveStreamDetector {
     const attr = {
       channel_uid: info.sourceId,
       channel_name: info.username,
-      live_source_id: info.liveInfo.liveId,
+      live_uid: info.liveInfo.liveUid,
       live_title: info.liveInfo.liveTitle,
       stream_url: streamInfo.url,
     };
@@ -56,7 +56,7 @@ export class LiveStreamDetector {
       return this.updateChannel(channelId, info);
     }
 
-    await this.lsService.create({ sourceId: info.liveInfo.liveId, channelId, streamInfo });
+    await this.lsService.create({ sourceId: info.liveInfo.liveUid, channelId, streamInfo });
     await this.updateChannel(channelId, info);
 
     log.debug('Live Stream Detected', attr);

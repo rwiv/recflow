@@ -88,9 +88,9 @@ export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
 export function liveInfoAttr(liveInfo: LiveInfo, opts?: Options): LiveInfoAttr {
   const attr: LiveInfoAttr = {
     platform: liveInfo.type,
-    live_uid: liveInfo.liveId,
+    live_uid: liveInfo.liveUid,
     live_title: liveInfo.liveTitle,
-    channel_uid: liveInfo.sourceId,
+    channel_uid: liveInfo.channelUid,
     channel_name: liveInfo.channelName,
   };
   if (opts) {

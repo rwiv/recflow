@@ -29,8 +29,8 @@ export class LiveFinder {
     }
   }
 
-  async findBySourceId(sourceId: string, opts: FindOptions = {}, tx: Tx = db) {
-    const entities = await this.liveRepo.findBySourceId(sourceId, tx);
+  async findByChannelSourceId(channelSourceId: string, opts: FindOptions = {}, tx: Tx = db) {
+    const entities = await this.liveRepo.findByChannelSourceId(channelSourceId, tx);
     return this.mapper.mapAll(entities, tx, opts);
   }
 

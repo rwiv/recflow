@@ -54,12 +54,12 @@ export class LiveRepository {
     return tx.select().from(liveTable).where(eq(liveTable.isDisabled, isDisabled)).orderBy(asc(liveTable.createdAt));
   }
 
-  async findBySourceId(sourceId: string, tx: Tx = db) {
+  async findByChannelSourceId(channelSourceId: string, tx: Tx = db) {
     const rows = await tx
       .select({ lives: liveTable })
       .from(liveTable)
       .innerJoin(channelTable, eq(liveTable.channelId, channelTable.id))
-      .where(eq(channelTable.sourceId, sourceId));
+      .where(eq(channelTable.sourceId, channelSourceId));
     return rows.map((row) => row.lives);
   }
 

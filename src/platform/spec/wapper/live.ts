@@ -6,9 +6,9 @@ import { nnint, nonempty } from '../../../common/data/common.schema.js';
 
 export const liveInfo = z.object({
   type: platformNameEnum,
-  sourceId: nonempty,
+  channelUid: nonempty,
   channelName: nonempty,
-  liveId: nonempty,
+  liveUid: nonempty,
   liveTitle: nonempty,
   viewCnt: nnint,
   isAdult: z.boolean(),
@@ -20,9 +20,9 @@ export type LiveInfo = z.infer<typeof liveInfo>;
 export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
   return {
     type: 'chzzk',
-    sourceId: info.channelId,
+    channelUid: info.channelId,
     channelName: info.channelName,
-    liveId: info.liveId.toString(),
+    liveUid: info.liveId.toString(),
     liveTitle: info.liveTitle,
     viewCnt: info.concurrentUserCount,
     isAdult: info.adult,
@@ -34,9 +34,9 @@ export function liveFromChzzk(info: ChzzkLiveInfo): LiveInfo {
 export function liveFromSoop(info: SoopLiveInfo): LiveInfo {
   return {
     type: 'soop',
-    sourceId: info.userId,
+    channelUid: info.userId,
     channelName: info.userNick,
-    liveId: info.broadNo,
+    liveUid: info.broadNo,
     liveTitle: info.broadTitle,
     viewCnt: info.viewCnt,
     isAdult: info.adult,

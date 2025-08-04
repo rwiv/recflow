@@ -50,7 +50,7 @@ export class LiveDetector {
   private async registerQueriedLives(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
     const promises = [];
     for (const live of lives) {
-      const channelInfo = await this.fetchInfo(live.type, live.sourceId, false);
+      const channelInfo = await this.fetchInfo(live.type, live.channelUid, false);
       if (!channelInfo) continue;
       promises.push(this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id }));
     }
@@ -66,12 +66,12 @@ export class LiveDetector {
   }
 
   private async setLoggingOnlyLivesOne(criterion: PlatformCriterionDto, live: LiveInfo) {
-    if (await this.historyRepo.exists(criterion.platform.name, live.liveId)) {
+    if (await this.historyRepo.exists(criterion.platform.name, live.liveUid)) {
       return;
     }
 
     let grade: GradeDto | undefined = undefined;
-    const channel = await this.channelFinder.findByPlatformAndSourceId(criterion.platform.name, live.sourceId);
+    const channel = await this.channelFinder.findByPlatformAndSourceId(criterion.platform.name, live.channelUid);
     if (channel) {
       grade = channel.grade;
     }
@@ -82,18 +82,18 @@ export class LiveDetector {
 
   private async fetchInfo(
     pfName: PlatformName,
-    sourceId: string,
+    channelUid: string,
     isFollowed: boolean,
     tx: Tx = db,
   ): Promise<ChannelLiveInfo | null> {
-    if ((await this.liveFinder.findBySourceId(sourceId, {}, tx)).length > 0) return null;
+    if ((await this.liveFinder.findByChannelSourceId(channelUid, {}, tx)).length > 0) return null;
 
     if (isFollowed) {
-      const chanInfo = await this.fetcher.fetchChannel(pfName, sourceId, false);
+      const chanInfo = await this.fetcher.fetchChannel(pfName, channelUid, false);
       if (!chanInfo?.openLive) return null;
     }
 
-    const chanWithLive = await this.fetcher.fetchChannel(pfName, sourceId, true);
+    const chanWithLive = await this.fetcher.fetchChannel(pfName, channelUid, true);
     // If the live status is not applied to the list (it can actually happen in chzzk)
     if (!chanWithLive?.liveInfo) return null;
 

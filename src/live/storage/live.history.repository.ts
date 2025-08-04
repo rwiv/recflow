@@ -10,9 +10,9 @@ export const LIVE_HISTORY_KEY_PREFIX = 'live:history';
 
 const liveHistory = z.object({
   platform: platformNameEnum,
-  liveId: nonempty,
+  liveUid: nonempty,
   title: nonempty,
-  channelId: nonempty,
+  channelUid: nonempty,
   channelName: nonempty,
   gradeName: nonempty.nullable(),
   gradeTier: nnint.nullable(),
@@ -35,8 +35,8 @@ export class LiveHistoryRepository {
   async set(platform: PlatformName, liveInfo: LiveInfo, grade: GradeDto | null) {
     const history: LiveHistory = {
       platform,
-      liveId: liveInfo.liveId,
-      channelId: liveInfo.sourceId,
+      liveUid: liveInfo.liveUid,
+      channelUid: liveInfo.channelUid,
       channelName: liveInfo.channelName,
       title: liveInfo.liveTitle,
       gradeName: grade?.name ?? null,
@@ -45,14 +45,14 @@ export class LiveHistoryRepository {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const key = this.getKey(platform, liveInfo.liveId);
+    const key = this.getKey(platform, liveInfo.liveUid);
     const data = JSON.stringify(liveHistory.parse(history));
     const opts: SetOptions = { exSec: 60 * 60 * 24 * 3 }; // 3 days
     await this.redis.set(key, data, opts);
   }
 
-  async exists(platform: PlatformName, liveId: string): Promise<boolean> {
-    return await this.redis.exists(this.getKey(platform, liveId));
+  async exists(platform: PlatformName, liveUid: string): Promise<boolean> {
+    return await this.redis.exists(this.getKey(platform, liveUid));
   }
 
   private getKey(platform: PlatformName, liveId: string) {

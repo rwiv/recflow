@@ -20,8 +20,8 @@ export class LiveRefresher {
     const live = await this.liveFinder.findEarliestUpdatedOne(tx);
     if (!live) return; // db에 라이브가 하나도 존재하지 않는 경우
 
-    const liveInfo = (await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true))
-      ?.liveInfo;
+    const channelInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
+    const liveInfo = channelInfo?.liveInfo;
     // 방송이 종료되었으나 cleanup cycle 이전에 refresh가 진행되면 record는 active이지만 fetchedChannel.liveInfo는 null이 될 수 있다.
     if (!liveInfo) return;
 

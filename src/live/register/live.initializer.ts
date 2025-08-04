@@ -80,7 +80,7 @@ export class LiveInitializer {
       }
     }
 
-    let channel = await this.chFinder.findByPlatformAndSourceId(liveInfo.type, liveInfo.sourceId);
+    let channel = await this.chFinder.findByPlatformAndSourceId(liveInfo.type, liveInfo.channelUid);
     if (!channel) {
       const none = await this.grService.findByNameNotNull(DEFAULT_PRIORITY_NAME);
       const append: ChannelAppendWithInfo = { gradeId: none.id, isFollowed: false };
@@ -128,7 +128,7 @@ export class LiveInitializer {
   }
 
   async getLiveStream(req: NewLiveRequest, liveInfo: LiveInfo, channel: ChannelDto): Promise<LiveStreamDto | null> {
-    const query: LiveStreamQuery = { sourceId: liveInfo.liveId, channelId: channel.id };
+    const query: LiveStreamQuery = { sourceId: liveInfo.liveUid, channelId: channel.id };
     const exists = await this.streamService.findByQueryLatestOne(query);
     if (exists) {
       const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
@@ -138,7 +138,7 @@ export class LiveInitializer {
 
     if (req.stream) {
       return await this.streamService.create({
-        sourceId: liveInfo.liveId,
+        sourceId: liveInfo.liveUid,
         channelId: channel.id,
         streamInfo: req.stream,
       });
@@ -169,7 +169,7 @@ export class LiveInitializer {
       return null;
     }
 
-    return await this.streamService.create({ sourceId: liveInfo.liveId, channelId: channel.id, streamInfo });
+    return await this.streamService.create({ sourceId: liveInfo.liveUid, channelId: channel.id, streamInfo });
   }
 
   private async createDisabledLive(

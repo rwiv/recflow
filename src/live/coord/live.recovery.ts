@@ -96,7 +96,7 @@ export class LiveRecoveryManager {
 
     // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
-    if (live.sourceId !== chanInfo.liveInfo?.liveId) {
+    if (live.sourceId !== chanInfo.liveInfo?.liveUid) {
       if (live.platform.name === 'soop') {
         await this.registerSameLive(live);
       }

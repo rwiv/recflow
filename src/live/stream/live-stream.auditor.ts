@@ -32,7 +32,7 @@ export class LiveStreamAuditor {
       log.debug('Delete Closed Live Stream', streamAttr(stream));
       return this.remove(stream);
     }
-    if (info.liveInfo?.liveId !== stream.sourceId) {
+    if (info.liveInfo?.liveUid !== stream.sourceId) {
       log.debug('Delete Restarted Live Stream', streamAttr(stream));
       return this.remove(stream);
     }

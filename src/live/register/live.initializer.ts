@@ -127,10 +127,14 @@ export class LiveInitializer {
     return this.registrar.register(newReq);
   }
 
-  async getLiveStream(req: NewLiveRequest, liveInfo: LiveInfo, channel: ChannelDto): Promise<LiveStreamDto | null> {
+  private async getLiveStream(
+    req: NewLiveRequest,
+    liveInfo: LiveInfo,
+    channel: ChannelDto,
+  ): Promise<LiveStreamDto | null> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveUid, channelId: channel.id };
     const exists = await this.streamService.findByQueryLatestOne(query);
-    if (exists) {
+    if (exists && (await this.stlink.fetchM3u8(exists))) {
       const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
       log.debug('Use existing stream record', attr);
       return exists;

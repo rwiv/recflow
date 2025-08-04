@@ -30,11 +30,11 @@ export class LiveStreamAuditor {
     const info = await this.fetcher.fetchChannelNotNull(platform, sourceId, true);
     if (!info.openLive) {
       log.debug('Delete Closed Live Stream', streamAttr(stream));
-      return this.remove(stream);
+      return this.removeIfPassible(stream);
     }
     if (info.liveInfo?.liveUid !== stream.sourceId) {
       log.debug('Delete Restarted Live Stream', streamAttr(stream));
-      return this.remove(stream);
+      return this.removeIfPassible(stream);
     }
     const liveCnt = await this.streamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
@@ -49,7 +49,7 @@ export class LiveStreamAuditor {
     await this.streamService.update(stream.id, { checkedAt: new Date() });
   }
 
-  private async remove(stream: LiveStreamDto) {
+  private async removeIfPassible(stream: LiveStreamDto) {
     const liveCnt = await this.streamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
       await this.streamService.delete(stream.id);

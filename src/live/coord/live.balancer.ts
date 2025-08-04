@@ -47,7 +47,7 @@ export class LiveBalancer {
       return;
     }
     if (await this.stdlRedis.isInvalidLive(live)) {
-      log.error(`Skip allocation task because Live is invalid`, liveAttr(live));
+      log.warn(`Skip allocation task because Live is invalid`, liveAttr(live));
       return;
     }
     const nodes = await this.nodeRepo.findByLiveId(live.id);

@@ -4,7 +4,7 @@ import { Env } from '../../common/config/env.js';
 import { PlatformName } from '../spec/storage/platform.enum.schema.js';
 import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
 import { z } from 'zod';
-import { headers, nonempty, queryParams } from '../../common/data/common.schema.js';
+import { headers, nonempty, queryParams, RetryOptions } from '../../common/data/common.schema.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { delay } from '../../utils/time.js';
 import { LiveDto, streamInfo, StreamInfo } from '../../live/spec/live.dto.schema.js';
@@ -30,7 +30,7 @@ export const proxyType = z.enum(['domestic', 'overseas']);
 export type ProxyType = z.infer<typeof proxyType>;
 
 const RETRY_LIMIT = 2;
-const RETRY_DELAY_MS = 100;
+const RETRY_DELAY_MS = 500;
 
 @Injectable()
 export class Stlink {
@@ -112,8 +112,11 @@ export class Stlink {
     return this.fetchM3u8(live.stream);
   }
 
-  async fetchM3u8(stream: StreamInfo): Promise<string | null> {
-    for (let retryCnt = 0; retryCnt <= RETRY_LIMIT; retryCnt++) {
+  async fetchM3u8(stream: StreamInfo, opts?: RetryOptions): Promise<string | null> {
+    const retryLimit = opts?.limit ?? RETRY_LIMIT;
+    const baseRetryDelayMs = opts?.delayMs ?? RETRY_DELAY_MS;
+    const backoff = opts?.backoff ?? false;
+    for (let retryCnt = 0; retryCnt <= retryLimit; retryCnt++) {
       try {
         const res = await fetch(stream.url, {
           headers: stream.headers,
@@ -124,10 +127,10 @@ export class Stlink {
         }
         return await res.text();
       } catch (e) {
-        if (retryCnt === RETRY_LIMIT) {
+        if (retryCnt === retryLimit) {
           return null;
         }
-        await delay(RETRY_DELAY_MS);
+        await delay(backoff ? baseRetryDelayMs * 2 ** retryCnt : baseRetryDelayMs);
       }
     }
     return null;

@@ -7,6 +7,7 @@ import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { Stlink } from '../../platform/stlink/stlink.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveStreamService } from './live-stream.service.js';
+import { liveInfoAttr } from '../../common/attr/attr.live.js';
 
 export const QUERY_LIMIT = 10; // TODO: use config
 
@@ -44,15 +45,10 @@ export class LiveStreamDetector {
     if (!streamInfo) {
       return this.updateChannel(channelId, info);
     }
-    const attr = {
-      channel_uid: info.sourceId,
-      channel_name: info.username,
-      live_uid: info.liveInfo.liveUid,
-      live_title: info.liveInfo.liveTitle,
-      stream_url: streamInfo.url,
-    };
+    const attr = { ...liveInfoAttr(info.liveInfo), stream_url: streamInfo.url };
 
     if (!(await this.stlink.fetchM3u8(streamInfo))) {
+      log.error('M3U8 not available', attr);
       return this.updateChannel(channelId, info);
     }
 

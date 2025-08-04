@@ -120,9 +120,7 @@ export function channelAttr(channel: ChannelDto) {
 
 export function streamAttr(stream: LiveStreamDto) {
   return {
-    channel_id: stream.channel.id,
-    channel_uid: stream.channel.sourceId,
-    channel_name: stream.channel.username,
+    ...channelAttr(stream.channel),
     source_id: stream.sourceId,
     stream_url: stream.url,
   };

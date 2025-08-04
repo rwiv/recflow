@@ -19,3 +19,10 @@ export const errorResponse = z.object({
   code: z.string().optional(),
 });
 export type ErrorResponse = z.infer<typeof errorResponse>;
+
+export const retryOptions = z.object({
+  limit: z.number().int().positive().optional(),
+  delayMs: z.number().int().nonnegative().optional(),
+  backoff: z.boolean().optional(),
+});
+export type RetryOptions = z.infer<typeof retryOptions>;

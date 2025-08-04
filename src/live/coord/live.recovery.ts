@@ -105,9 +105,8 @@ export class LiveRecoveryManager {
     }
 
     // Finish if live m3u8 is not valid
-    const m3u8Text = await this.stlink.fetchM3u8ByLive(live);
-    if (!m3u8Text) {
-      await this.finishLive(live.id, 'Delete live because m3u8 is not valid', 'error');
+    if (!(await this.stlink.fetchM3u8ByLive(live))) {
+      await this.finishLive(live.id, 'Delete live because m3u8 is not valid', 'warn');
       return;
     }
 

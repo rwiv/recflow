@@ -19,6 +19,8 @@ interface LiveAttr {
   criterion_name?: string;
   node_name?: string;
   node_assigned_count?: number;
+  source_id?: string;
+  stream_url?: string;
   stack_trace?: string;
 }
 
@@ -44,6 +46,7 @@ interface Options {
   cr?: CriterionDto;
   node?: NodeDtoWithLives | null;
   gr?: GradeDto;
+  st?: boolean;
   err?: unknown;
 }
 
@@ -68,7 +71,7 @@ export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
     grade_name: live.channel.grade.name,
   };
   if (opts) {
-    const { node, cr, err } = opts;
+    const { node, cr, st, err } = opts;
     if (node) {
       attr.node_name = node.name;
       if (node.lives) {
@@ -77,6 +80,10 @@ export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
     }
     if (cr) {
       attr.criterion_name = cr.name;
+    }
+    if (st && live.stream) {
+      attr.source_id = live.stream.sourceId;
+      attr.stream_url = live.stream.url;
     }
     if (err) {
       attr.stack_trace = stacktrace(err);

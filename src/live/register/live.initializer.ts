@@ -27,6 +27,7 @@ import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
+import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 
 export interface NewLiveRequest {
   channelInfo: ChannelLiveInfo;
@@ -58,10 +59,20 @@ export class LiveInitializer {
   ) {}
 
   async createNewLiveByLive(base: LiveDto): Promise<string | null> {
-    if (!base.liveStreamId) {
-      throw new ValidationError('LiveStreamId is not set', { attr: liveAttr(base) });
+    // Validate m3u8
+    const stream = base.stream;
+    if (!stream) {
+      throw new MissingValueError('LiveStream is not set', { attr: liveAttr(base) });
+    }
+    if (!(await this.stlink.fetchM3u8(stream))) {
+      log.warn('M3U8 not available', {
+        ...liveAttr(base, { st: true }),
+        called_by: 'LiveInitializer.createNewLiveByLive',
+      });
+      return null;
     }
 
+    // Create new live record
     const live = await this.liveWriter.createByLive(base.id);
     const newReq: LiveRegisterRequest = {
       live,
@@ -169,7 +180,7 @@ export class LiveInitializer {
     // If m3u8 is not available (e.g. soop standby mode)
     if (!(await this.stlink.fetchM3u8(streamInfo))) {
       // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-      log.warn('M3U8 not available', channelAttr(channel));
+      log.warn('M3U8 not available', { ...channelAttr(channel), called_by: 'LiveInitializer.getLiveStream' });
       return null;
     }
 

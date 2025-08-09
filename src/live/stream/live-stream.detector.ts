@@ -48,7 +48,7 @@ export class LiveStreamDetector {
     const attr = { ...liveInfoAttr(info.liveInfo), stream_url: streamInfo.url };
 
     if (!(await this.stlink.fetchM3u8(streamInfo))) {
-      log.error('M3U8 not available', attr);
+      log.error('M3U8 not available', { ...attr, called_by: 'LiveStreamDetector.checkOne' });
       return this.updateChannel(channelId, info);
     }
 

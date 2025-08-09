@@ -43,7 +43,7 @@ export class LiveStreamAuditor {
       // If m3u8 is not available (e.g. soop standby mode)
       if (!(await this.stlink.fetchM3u8(stream, { limit: RETRY_LIMIT, delayMs: RETRY_DELAY_MS, backoff: true }))) {
         // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
-        log.warn('M3U8 not available', streamAttr(stream));
+        log.warn('M3U8 not available', { ...streamAttr(stream), called_by: 'LiveStreamAuditor.checkOne' });
         await this.streamService.delete(stream.id);
         return;
       }

@@ -13,9 +13,7 @@ import { nonempty } from '../../data/common.schema.js';
 const criterionBatchInsert = z.object({
   name: nonempty,
   enforceCreds: z.boolean(),
-  sufficientUserCnt: z.number().int().nonnegative(),
   minUserCnt: z.number().int().nonnegative(),
-  minFollowCnt: z.number().int().nonnegative(),
 });
 const chzzkCriterionBatchInsert = criterionBatchInsert.extend({
   positiveTags: z.array(nonempty),

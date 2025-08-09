@@ -29,7 +29,6 @@ Table channel {
   follower_cnt integer [not null]
   grade_id uuid [not null]
   is_followed boolean [not null]
-  adult_only boolean [not null]
   overseas_first boolean [not null]
   description text
   created_at timestamp [not null]
@@ -57,48 +56,6 @@ Table channel_tag_map {
 
 Ref: channel_tag_map.channel_id > channel.id
 Ref: channel_tag_map.tag_id > channel_tag.id
-
-
-// criterion
-Table live_criterion {
-  id uuid [pk, not null]
-  platform_id uuid [not null]
-  name text [not null]
-  description text
-  is_deactivated boolean [not null]
-  enforce_creds boolean [not null]
-  adult_only boolean [not null]
-  domestic_only boolean [not null]
-  overseas_first boolean [not null]
-  logging_only boolean [not null]
-  sufficient_user_cnt integer [not null]
-  min_user_cnt integer [not null]
-  min_follow_cnt integer [not null]
-  created_at timestamp [not null]
-  updated_at timestamp
-}
-
-Ref: live_criterion.platform_id > platform.id
-
-Table live_criterion_rule {
-  id uuid [pk, not null]
-  name text [not null]
-  created_at timestamp [not null]
-  updated_at timestamp
-}
-
-Table live_criterion_unit {
-  id uuid [pk, not null]
-  criterion_id uuid [not null]
-  rule_id uuid [not null]
-  value text [not null]
-  is_positive boolean [not null]
-  created_at timestamp [not null]
-  updated_at timestamp
-}
-
-Ref: live_criterion_unit.criterion_id > live_criterion.id
-Ref: live_criterion_unit.rule_id > live_criterion_rule.id
 
 
 // node
@@ -178,3 +135,42 @@ Table live_node {
 
 Ref: live_node.live_id > live.id
 Ref: live_node.node_id > node.id
+
+
+// criterion
+Table live_criterion {
+  id uuid [pk, not null]
+  platform_id uuid [not null]
+  name text [not null]
+  description text
+  is_deactivated boolean [not null]
+  enforce_creds boolean [not null]
+  domestic_only boolean [not null]
+  overseas_first boolean [not null]
+  logging_only boolean [not null]
+  min_user_cnt integer [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Ref: live_criterion.platform_id > platform.id
+
+Table live_criterion_rule {
+  id uuid [pk, not null]
+  name text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Table live_criterion_unit {
+  id uuid [pk, not null]
+  criterion_id uuid [not null]
+  rule_id uuid [not null]
+  value text [not null]
+  is_positive boolean [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Ref: live_criterion_unit.criterion_id > live_criterion.id
+Ref: live_criterion_unit.rule_id > live_criterion_rule.id

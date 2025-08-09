@@ -12,6 +12,7 @@ interface LiveAttr {
   live_id: string;
   live_uid: string;
   live_title: string;
+  live_viewers: number;
   video_name: string;
   channel_uid: string;
   channel_name: string;
@@ -65,6 +66,7 @@ export function liveAttr(live: LiveDto, opts?: Options): LiveAttr {
     live_id: live.id,
     live_uid: live.sourceId,
     live_title: live.liveTitle,
+    live_viewers: live.viewCnt,
     video_name: live.videoName,
     channel_uid: live.channel.sourceId,
     channel_name: live.channel.username,

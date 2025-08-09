@@ -1,6 +1,5 @@
 import { ChzzkLiveInfo } from '../../../platform/spec/raw/chzzk.js';
 import { LiveInfo } from '../../../platform/spec/wapper/live.js';
-import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
@@ -8,10 +7,7 @@ import { ChzzkCriterionDto } from '../../../criterion/spec/criterion.dto.schema.
 
 @Injectable()
 export class ChzzkLiveFilter {
-  constructor(
-    private readonly fetcher: PlatformFetcher,
-    private readonly chFinder: ChannelFinder,
-  ) {}
+  constructor(private readonly chFinder: ChannelFinder) {}
 
   async getFiltered(liveInfos: LiveInfo[], cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
     const promises = [];
@@ -56,25 +52,10 @@ export class ChzzkLiveFilter {
     }
 
     // by user count
-    if (liveInfo.viewCnt >= cr.sufficientUserCnt) {
-      return liveInfo;
-    }
     if (liveInfo.viewCnt >= cr.minUserCnt) {
-      return this.checkFollowerCnt(liveInfo, cr.minFollowCnt);
+      return liveInfo;
     }
 
     return null;
-  }
-
-  private async checkFollowerCnt(liveInfo: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel('chzzk', liveInfo.channelUid, false);
-    if (!channel) {
-      return null;
-    }
-    if (channel.followerCnt >= minFollowerCnt) {
-      return liveInfo;
-    } else {
-      return null;
-    }
   }
 }

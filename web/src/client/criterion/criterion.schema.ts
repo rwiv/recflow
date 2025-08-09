@@ -13,9 +13,7 @@ export const criterionDto = z.object({
   domesticOnly: z.boolean(),
   overseasFirst: z.boolean(),
   loggingOnly: z.boolean(),
-  sufficientUserCnt: z.coerce.number().int().nonnegative(),
   minUserCnt: z.coerce.number().int().nonnegative(),
-  minFollowCnt: z.coerce.number().int().nonnegative(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });

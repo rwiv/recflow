@@ -14,9 +14,7 @@ export function mockPlatformCriterionDto(overrides: Partial<PlatformCriterionDto
     domesticOnly: faker.datatype.boolean(),
     overseasFirst: faker.datatype.boolean(),
     loggingOnly: faker.datatype.boolean(),
-    sufficientUserCnt: faker.number.int({ min: 50, max: 1000 }),
     minUserCnt: faker.number.int({ min: 5, max: 100 }),
-    minFollowCnt: faker.number.int({ min: 100, max: 10000 }),
     positiveTags: faker.helpers.arrayElements(['Game', 'Music', 'Cooking', 'Exercise', 'Reading'], {
       min: 1,
       max: 3,

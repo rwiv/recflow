@@ -42,9 +42,7 @@ const formSchema = chzzkCriterionAppend.omit({ platformId: true }).extend({
   domesticOnly: z.boolean(),
   overseasFirst: z.boolean(),
   loggingOnly: z.boolean(),
-  sufficientUserCnt: nonempty,
   minUserCnt: nonempty,
-  minFollowCnt: nonempty,
 });
 
 export function ChzzkCriterionCreateButton() {
@@ -77,9 +75,7 @@ export function CreateForm({ cb }: { cb: () => void }) {
       domesticOnly: false,
       overseasFirst: false,
       loggingOnly: false,
-      sufficientUserCnt: '',
       minUserCnt: '',
-      minFollowCnt: '',
       positiveTags: [],
       negativeTags: [],
       positiveKeywords: [],
@@ -118,14 +114,12 @@ export function CreateForm({ cb }: { cb: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <TextFormField form={form} name="name" label="Name" />
         <CheckFormField form={form} name="enforceCreds" label="Enforce Credentials" />
-        <CheckFormField form={form} name="adultOnly" label="Adult Only" />
+        {/*<CheckFormField form={form} name="adultOnly" label="Adult Only" />*/}
         {/*<CheckFormField form={form} name="domesticOnly" label="Domestic Only" />*/}
         {/*<CheckFormField form={form} name="overseasFirst" label="Overseas First " />*/}
         <CheckFormField form={form} name="loggingOnly" label="Logging Only" />
         <TextFormField form={form} name="description" label="Description" />
-        <TextFormField form={form} name="sufficientUserCnt" label="Sufficient User Count" placeholder="0" />
         <TextFormField form={form} name="minUserCnt" label="Minimum User Count" placeholder="0" />
-        <TextFormField form={form} name="minFollowCnt" label="Minimum Follow Count" placeholder="0" />
         {unitReqs.map((unit, idx) => (
           <FormField
             key={idx}

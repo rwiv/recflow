@@ -61,24 +61,10 @@ const loggingOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
-const sufficientUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
-  accessorKey: 'sufficientUserCnt',
-  header: () => <div className="justify-self-center">SUC</div>,
-  cell: ({ row }) => <CriterionFieldUpdateForm type="sufficientUserCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
 const minUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'minUserCnt',
-  header: () => <div className="justify-self-center">MUC</div>,
+  header: () => <div className="justify-self-center">Viewers</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
-const minFollowCntColumn: ColumnDef<ChzzkCriterionDto> = {
-  accessorKey: 'minFollowCnt',
-  header: () => <div className="justify-self-center">MFC</div>,
-  cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
@@ -115,9 +101,7 @@ export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
   // domesticOnlyColumn,
   // overseasFirstColumn,
   loggingOnlyColumn,
-  sufficientUserCntColumn,
   minUserCntColumn,
-  minFollowCntColumn,
   createUnitColumn('positiveTags', 'p_tags'),
   createUnitColumn('negativeTags', 'n_tags'),
   createUnitColumn('positiveKeywords', 'p_keywords'),

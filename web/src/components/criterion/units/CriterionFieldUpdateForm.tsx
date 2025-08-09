@@ -5,7 +5,7 @@ import { updateCriterion } from '@/client/criterion/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
 
-type Type = 'sufficientUserCnt' | 'minUserCnt' | 'minFollowCnt';
+type Type = 'minUserCnt';
 
 interface CriterionFieldUpdateForm {
   type: Type;
@@ -20,12 +20,8 @@ export function CriterionFieldUpdateForm({ type, criterion }: CriterionFieldUpda
 
   const submit = async (value: string) => {
     try {
-      if (type === 'sufficientUserCnt') {
-        await updateCriterion(criterion.id, { sufficientUserCnt: numSchema.parse(value) });
-      } else if (type === 'minUserCnt') {
+      if (type === 'minUserCnt') {
         await updateCriterion(criterion.id, { minUserCnt: numSchema.parse(value) });
-      } else if (type === 'minFollowCnt') {
-        await updateCriterion(criterion.id, { minFollowCnt: numSchema.parse(value) });
       }
       await queryClient.invalidateQueries({ queryKey: [CHZZK_CRITERIA_QUERY_KEY] });
       await queryClient.invalidateQueries({ queryKey: [SOOP_CRITERIA_QUERY_KEY] });
@@ -43,12 +39,8 @@ export function CriterionFieldUpdateForm({ type, criterion }: CriterionFieldUpda
 
 function getValue(type: Type, criterion: CriterionDto) {
   switch (type) {
-    case 'sufficientUserCnt':
-      return criterion.sufficientUserCnt.toString();
     case 'minUserCnt':
       return criterion.minUserCnt.toString();
-    case 'minFollowCnt':
-      return criterion.minFollowCnt.toString();
     default:
       throw new Error(`Invalid type: ${type}`);
   }

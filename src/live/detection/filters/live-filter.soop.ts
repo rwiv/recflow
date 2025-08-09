@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { LiveInfo } from '../../../platform/spec/wapper/live.js';
-import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { ChannelFinder } from '../../../channel/service/channel.finder.js';
 import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
 import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
@@ -8,10 +7,7 @@ import { SoopLiveInfo } from '../../../platform/spec/raw/soop.js';
 
 @Injectable()
 export class SoopLiveFilter {
-  constructor(
-    private readonly fetcher: PlatformFetcher,
-    private readonly chFinder: ChannelFinder,
-  ) {}
+  constructor(private readonly chFinder: ChannelFinder) {}
 
   async getFiltered(liveInfos: LiveInfo[], cr: SoopCriterionDto): Promise<LiveInfo[]> {
     const promises = [];
@@ -59,25 +55,10 @@ export class SoopLiveFilter {
     }
 
     // by user count
-    if (liveInfo.viewCnt >= cr.sufficientUserCnt) {
-      return liveInfo;
-    }
     if (liveInfo.viewCnt >= cr.minUserCnt) {
-      return this.checkFollowerCnt(liveInfo, cr.minFollowCnt);
+      return liveInfo;
     }
 
     return null;
-  }
-
-  private async checkFollowerCnt(liveInfo: LiveInfo, minFollowerCnt: number): Promise<LiveInfo | null> {
-    const channel = await this.fetcher.fetchChannel('soop', liveInfo.channelUid, false);
-    if (channel === null) {
-      return null;
-    }
-    if (channel.followerCnt >= minFollowerCnt) {
-      return liveInfo;
-    } else {
-      return null;
-    }
   }
 }

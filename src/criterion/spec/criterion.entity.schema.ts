@@ -13,9 +13,7 @@ export const criterionEnt = z.object({
   domesticOnly: z.boolean(),
   overseasFirst: z.boolean(),
   loggingOnly: z.boolean(),
-  sufficientUserCnt: z.number().int().nonnegative(),
   minUserCnt: z.number().int().nonnegative(),
-  minFollowCnt: z.number().int().nonnegative(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
 });

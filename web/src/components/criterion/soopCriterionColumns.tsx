@@ -61,24 +61,10 @@ const loggingOnlyColumn: ColumnDef<SoopCriterionDto> = {
   meta: { header: { width: NORMAL_WIDTH } },
 };
 
-const sufficientUserCntColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'sufficientUserCnt',
-  header: () => <div className="justify-self-center">SUC</div>,
-  cell: ({ row }) => <CriterionFieldUpdateForm type="sufficientUserCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
 const minUserCntColumn: ColumnDef<SoopCriterionDto> = {
   accessorKey: 'minUserCnt',
   header: () => <div className="justify-self-center">MUC</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
-};
-
-const minFollowCntColumn: ColumnDef<SoopCriterionDto> = {
-  accessorKey: 'minFollowCnt',
-  header: () => <div className="justify-self-center">MFC</div>,
-  cell: ({ row }) => <CriterionFieldUpdateForm type="minFollowCnt" criterion={row.original} />,
   meta: { header: { width: EDITABLE_WIDTH } },
 };
 
@@ -115,9 +101,7 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   // domesticOnlyColumn,
   // overseasFirstColumn,
   loggingOnlyColumn,
-  sufficientUserCntColumn,
   minUserCntColumn,
-  minFollowCntColumn,
   createUnitColumn('positiveTags', 'p_tags'),
   createUnitColumn('negativeTags', 'n_tags'),
   createUnitColumn('positiveKeywords', 'p_keywords'),

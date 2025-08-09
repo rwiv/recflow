@@ -10,13 +10,14 @@ import {
 } from '@/components/criterion/units/criterion_badges.tsx';
 
 const NORMAL_WIDTH = '7rem';
-const EDITABLE_WIDTH = '6rem';
+const NAME_WIDTH = '10rem';
+const USER_CNT_WIDTH = '7rem';
 
 const nameColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'name',
   header: () => <div className="justify-self-center">Name</div>,
   cell: ({ row }) => <div className="justify-self-center">{row.original.name}</div>,
-  meta: { header: { width: NORMAL_WIDTH } },
+  meta: { header: { width: NAME_WIDTH } },
 };
 
 const isDeactivatedColumn: ColumnDef<ChzzkCriterionDto> = {
@@ -65,7 +66,7 @@ const minUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
   accessorKey: 'minUserCnt',
   header: () => <div className="justify-self-center">Viewers</div>,
   cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
-  meta: { header: { width: EDITABLE_WIDTH } },
+  meta: { header: { width: USER_CNT_WIDTH } },
 };
 
 type RuleKey =
@@ -102,10 +103,10 @@ export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
   // overseasFirstColumn,
   loggingOnlyColumn,
   minUserCntColumn,
-  createUnitColumn('positiveTags', 'p_tags'),
-  createUnitColumn('negativeTags', 'n_tags'),
-  createUnitColumn('positiveKeywords', 'p_keywords'),
-  createUnitColumn('negativeKeywords', 'n_keywords'),
-  createUnitColumn('positiveWps', 'p_wps'),
-  createUnitColumn('negativeWps', 'n_wps'),
+  createUnitColumn('positiveTags', '+Tags'),
+  createUnitColumn('negativeTags', '-Tags'),
+  createUnitColumn('positiveKeywords', '+Keywords'),
+  createUnitColumn('negativeKeywords', '-Keywords'),
+  createUnitColumn('positiveWps', '+WP'),
+  createUnitColumn('negativeWps', '-WP'),
 ];

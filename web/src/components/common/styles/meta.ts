@@ -15,15 +15,18 @@ export interface StyleMeta {
 export function getStyleHeader<T>(header: Header<T, unknown>) {
   const meta = header.column.columnDef.meta as ColumnMetaStyle | undefined;
   const cn = meta?.header?.className || undefined;
-  const style = meta?.header?.width
-    ? css({ width: meta.header.width, height: meta.header.height })
-    : undefined;
+  const style = meta?.header ? getStyle(meta.header) : undefined;
   return { cn, style };
 }
 
 export function getStyleCell<T>(cell: Cell<T, unknown>) {
   const meta = cell.column.columnDef.meta as ColumnMetaStyle | undefined;
   const cn = meta?.cell?.className || undefined;
-  const style = meta?.cell?.width ? css({ width: meta.cell.width, height: meta.cell.height }) : undefined;
+  const style = meta?.cell ? getStyle(meta.cell) : undefined;
   return { cn, style };
+}
+
+function getStyle(style: StyleMeta) {
+  const { width, height } = style;
+  return css({ width, height });
 }

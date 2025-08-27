@@ -76,9 +76,9 @@ export class LiveRecoveryManager {
     // Finish if live is invalid
     if (await this.stdlRedis.isInvalidLive(live)) {
       this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
-      // if (live.platform.name === 'soop') {
-      //   await this.registerSameLive(live);
-      // }
+      if (live.platform.name === 'soop') {
+        await this.registerSameLive(live);
+      }
       await this.finishLive(live.id, 'Live is invalid', 'error');
       return;
     }

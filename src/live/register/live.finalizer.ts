@@ -98,7 +98,7 @@ export class LiveFinalizer {
   }
 
   async finishLive(req: LiveFinishRequest) {
-    for (let retryCnt = 0; retryCnt < RETRY_LIMIT; retryCnt++) {
+    for (let retryCnt = 0; retryCnt <= RETRY_LIMIT; retryCnt++) {
       const live = await this.liveFinder.findById(req.liveId, { nodes: true });
       if (!live) {
         log.error(`Live not found`, { liveId: req.liveId });

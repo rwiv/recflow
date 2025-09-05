@@ -21,8 +21,8 @@ export const errorResponse = z.object({
 export type ErrorResponse = z.infer<typeof errorResponse>;
 
 export const retryOptions = z.object({
-  limit: z.number().int().positive().optional(),
-  delayMs: z.number().int().nonnegative().optional(),
-  backoff: z.boolean().optional(),
+  limit: z.number().int().positive(),
+  delayMs: z.number().int().nonnegative(),
+  backoff: z.boolean(),
 });
 export type RetryOptions = z.infer<typeof retryOptions>;

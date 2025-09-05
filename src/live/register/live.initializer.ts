@@ -201,7 +201,7 @@ export class LiveInitializer {
         recordId: existsLive.id,
         exitCmd: 'finish',
         isPurge: true,
-        msg: 'Live already exists, but will be disabled',
+        logMsg: 'Live already exists, but will be disabled',
         logLevel: 'warn',
       });
     }

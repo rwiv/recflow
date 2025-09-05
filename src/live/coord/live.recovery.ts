@@ -12,7 +12,7 @@ import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
-import { Stlink } from '../../platform/stlink/stlink.js';
+import { longRetryOpts, Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
@@ -83,30 +83,23 @@ export class LiveRecoveryManager {
       return;
     }
 
-    // Finish if live not open
-    let withAuth = live.isAdult;
-    if (live.channel.isFollowed && this.env.stlink.enforceAuthForFollowed) {
-      withAuth = true;
-    }
-    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.sourceId, withAuth);
-    if (!streamInfo.openLive) {
-      await this.finishLive(live.id, 'Delete uncleaned live', 'info');
-      return;
-    }
-
     // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
     if (live.sourceId !== chanInfo.liveInfo?.liveUid) {
-      if (live.platform.name === 'soop') {
-        await this.registerSameLive(live);
+      let logMsg = 'Delete uncleaned live';
+      if (chanInfo.liveInfo) {
+        logMsg = 'Delete restarted live';
+        if (live.platform.name === 'soop') {
+          await this.registerSameLive(live);
+        }
       }
-      await this.finishLive(live.id, 'Delete restarted live', 'warn');
+      await this.finishLive(live.id, logMsg, 'warn');
       return;
     }
 
-    // Finish if live m3u8 is not valid
-    if (!(await this.stlink.fetchM3u8ByLive(live))) {
-      await this.finishLive(live.id, 'Delete live because m3u8 is not valid', 'warn');
+    // Finish if live not open
+    if (live.stream && !(await this.stlink.fetchM3u8(live.stream, longRetryOpts))) {
+      await this.finishLive(live.id, 'Delete invalid m3u8 live', 'info');
       return;
     }
 
@@ -115,14 +108,8 @@ export class LiveRecoveryManager {
     await Promise.allSettled(ps);
   }
 
-  private finishLive(liveId: string, message: string, logLevel: LogLevel) {
-    return this.liveRegistrar.finishLive({
-      recordId: liveId,
-      isPurge: true,
-      exitCmd: 'finish',
-      msg: message,
-      logLevel: logLevel,
-    });
+  private finishLive(recordId: string, logMsg: string, logLevel: LogLevel) {
+    return this.liveRegistrar.finishLive({ recordId, isPurge: true, exitCmd: 'finish', logMsg, logLevel });
   }
 
   private async registerSameLive(live: LiveDto) {

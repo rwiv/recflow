@@ -29,8 +29,8 @@ export type StlinkStreamInfo = z.infer<typeof stlinkStreamInfo>;
 export const proxyType = z.enum(['domestic', 'overseas']);
 export type ProxyType = z.infer<typeof proxyType>;
 
-const RETRY_LIMIT = 2;
-const RETRY_DELAY_MS = 500;
+export const defaultRetryOpts: RetryOptions = { limit: 2, delayMs: 500, backoff: false };
+export const longRetryOpts: RetryOptions = { limit: 9, delayMs: 500, backoff: true };
 
 @Injectable()
 export class Stlink {
@@ -105,18 +105,8 @@ export class Stlink {
     return stlinkStreamInfo.parse(await res.json());
   }
 
-  async fetchM3u8ByLive(live: LiveDto): Promise<string | null> {
-    if (!live.stream) {
-      throw new ValidationError('StreamInfo not found', { attr: liveAttr(live) });
-    }
-    return this.fetchM3u8(live.stream);
-  }
-
-  async fetchM3u8(stream: StreamInfo, opts?: RetryOptions): Promise<string | null> {
-    const retryLimit = opts?.limit ?? RETRY_LIMIT;
-    const baseRetryDelayMs = opts?.delayMs ?? RETRY_DELAY_MS;
-    const backoff = opts?.backoff ?? false;
-    for (let retryCnt = 0; retryCnt <= retryLimit; retryCnt++) {
+  async fetchM3u8(stream: StreamInfo, opts: RetryOptions = defaultRetryOpts): Promise<string | null> {
+    for (let retryCnt = 0; retryCnt <= opts.limit; retryCnt++) {
       try {
         const res = await fetch(stream.url, {
           headers: stream.headers,
@@ -127,10 +117,10 @@ export class Stlink {
         }
         return await res.text();
       } catch (e) {
-        if (retryCnt === retryLimit) {
+        if (retryCnt === opts.limit) {
           return null;
         }
-        await delay(backoff ? baseRetryDelayMs * 2 ** retryCnt : baseRetryDelayMs);
+        await delay(opts.backoff ? opts.delayMs * 2 ** retryCnt : opts.delayMs);
       }
     }
     return null;

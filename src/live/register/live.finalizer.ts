@@ -54,8 +54,6 @@ export const liveFinishRequest = z.object({
   liveId: uuid,
   exitCmd: exitCmd,
   isPurge: z.boolean(),
-  msg: z.string(),
-  logLevel: logLevel,
 });
 export type LiveFinishRequest = z.infer<typeof liveFinishRequest>;
 
@@ -114,8 +112,7 @@ export class LiveFinalizer {
           // LiveCleaner may have already removed live
           if (live) {
             await this.liveWriter.update(live.id, { status: 'deleted' }, tx);
-            const deleted = await this.liveWriter.delete(live.id, req.isPurge, true, tx);
-            // logging(req.msg, { ...liveAttr(deleted), cmd: req.exitCmd }, req.logLevel);
+            await this.liveWriter.delete(live.id, req.isPurge, true, tx);
           }
         });
         return;

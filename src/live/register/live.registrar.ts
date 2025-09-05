@@ -24,7 +24,7 @@ export interface LiveFinishRequest {
   recordId: string;
   isPurge?: boolean;
   exitCmd?: ExitCmd;
-  msg?: string;
+  logMsg?: string;
   logLevel?: LogLevel;
 }
 
@@ -106,14 +106,18 @@ export class LiveRegistrar {
     const isPurge = req.isPurge ?? false;
     const logLevel = req.logLevel ?? 'info';
     let exitCmd = req.exitCmd ?? 'delete';
-    let msg = req.msg ?? 'Delete live';
-    if (!req.msg && !isPurge) {
-      msg = 'Disable live';
+    let logMsg = req.logMsg ?? 'Delete live';
+    if (!req.logMsg && !isPurge) {
+      logMsg = 'Disable live';
     }
 
     const live = await this.liveFinder.findById(recordId, { nodes: true });
     if (!live) {
       log.warn(`Failed to finish live: Not found LiveRecord: id=${recordId}`);
+      return null;
+    }
+    if (live.status === 'finalizing' || live.status === 'deleted') {
+      log.warn(`Failed to finish live: LiveRecord is already finished: id=${recordId}`);
       return null;
     }
     assert(live.nodes);
@@ -123,7 +127,7 @@ export class LiveRegistrar {
 
     if (exitCmd === 'delete') {
       const deleted = await this.liveWriter.delete(recordId, isPurge, false);
-      logging(msg, { ...liveAttr(deleted), cmd: exitCmd }, logLevel);
+      logging(logMsg, { ...liveAttr(deleted), cmd: exitCmd }, logLevel);
       return deleted;
     }
 
@@ -133,8 +137,8 @@ export class LiveRegistrar {
     }
     await this.liveWriter.update(live.id, { status: 'finalizing' });
     await this.liveWriter.disable(live.id, false, true); // if Live is not disabled, it will become a recovery target and cause an error
-    await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge, msg, logLevel });
-    logging(msg, { ...liveAttr(live), cmd: exitCmd }, logLevel);
+    await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge });
+    logging(logMsg, { ...liveAttr(live), cmd: exitCmd }, logLevel);
     return live; // not delete live record
   }
 }

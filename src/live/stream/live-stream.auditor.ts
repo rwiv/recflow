@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { LiveStreamService } from './live-stream.service.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { Stlink } from '../../platform/stlink/stlink.js';
+import { longRetryOpts, Stlink } from '../../platform/stlink/stlink.js';
 import { LiveStreamDto } from '../spec/live.dto.schema.js';
 import { log } from 'jslog';
 import { streamAttr } from '../../common/attr/attr.live.js';
 
 export const BATCH_NUM = 10; // TODO: use config
-export const RETRY_LIMIT = 5;
-export const RETRY_DELAY_MS = 1000;
 
 @Injectable()
 export class LiveStreamAuditor {
@@ -41,7 +39,7 @@ export class LiveStreamAuditor {
     const liveCnt = await this.streamService.findLiveCountByStreamId(stream.id);
     if (liveCnt === 0) {
       // If m3u8 is not available (e.g. soop standby mode)
-      if (!(await this.stlink.fetchM3u8(stream, { limit: RETRY_LIMIT, delayMs: RETRY_DELAY_MS, backoff: true }))) {
+      if (!(await this.stlink.fetchM3u8(stream, longRetryOpts))) {
         // If a live is created in a disabled, It cannot detect the situation where the live was set to standby and then reactivated in Soop
         log.warn('M3U8 not available', { ...streamAttr(stream), called_by: 'LiveStreamAuditor.checkOne' });
         await this.streamService.delete(stream.id);

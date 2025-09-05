@@ -116,10 +116,6 @@ export class LiveRegistrar {
       log.warn(`Failed to finish live: Not found LiveRecord: id=${recordId}`);
       return null;
     }
-    if (live.status === 'finalizing' || live.status === 'deleted') {
-      log.warn(`Failed to finish live: LiveRecord is already finished: id=${recordId}`);
-      return null;
-    }
     assert(live.nodes);
     if (live.nodes.length === 0) {
       exitCmd = 'delete';
@@ -131,7 +127,7 @@ export class LiveRegistrar {
       return deleted;
     }
 
-    if (live.deletedAt) {
+    if (live.deletedAt || live.status === 'finalizing' || live.status === 'deleted') {
       log.warn('Live is already finished', liveAttr(live));
       return null;
     }

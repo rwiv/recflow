@@ -167,7 +167,7 @@ export class LiveWriter {
           await this.unbind({ liveId, nodeId: node.id }, txx);
         }
       }
-      const update: LiveUpdate = { isDisabled: true };
+      const update: LiveUpdate = { isDisabled: true, status: 'deleted' };
       if (finished) {
         update.deletedAt = new Date();
       }

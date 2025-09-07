@@ -63,6 +63,7 @@ export function CreateForm({ nodeGroups, cb }: { nodeGroups: NodeGroupDto[]; cb:
       isDomestic: false,
       groupId: '',
       failureCnt: 0,
+      livesCnt: 0,
     },
   });
 

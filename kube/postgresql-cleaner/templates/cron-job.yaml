@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.metadata.name }}
+  namespace: {{ .Values.metadata.namespace }}
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ .Values.metadata.name }}
+          containers:
+            - name: {{ .Values.metadata.name }}
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+              command:
+                - "/bin/sh"
+                - "-c"
+                - |
+                  echo "Checking for pods state..."
+
+                  CRASHED_PODS=$( \
+                    kubectl get pods -n {{ .Values.metadata.namespace }} -l {{ .Values.app.selector }} -o json \
+                    | jq -r '.items[] | select(.status.containerStatuses[]?.state.waiting.reason == "CrashLoopBackOff") | .metadata.name' \
+                  )
+
+                  if [ -z "$CRASHED_PODS" ]; then
+                    echo "No crashed pods found."
+                    exit 0
+                  fi
+
+                  for pod in $CRASHED_PODS; do
+                    echo "Deleting pod: $pod"
+                    kubectl delete pod $pod -n {{ .Values.metadata.namespace }}
+                  done
+          restartPolicy: OnFailure

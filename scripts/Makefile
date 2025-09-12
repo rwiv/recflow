@@ -6,6 +6,14 @@ helm-server-rm:
 	helm uninstall stmgr -n media
 
 
+# expose
+helm-expose-run:
+	-@helm install stmgr-expose ../kube/expose -n media
+
+helm-expose-rm:
+	-@helm uninstall stmgr-expose -n media
+
+
 # postgresql
 helm-pg-dep:
 	-@helm dependency update ../kube/postgresql
@@ -40,13 +48,6 @@ delete-pg-stage-pvc:
 	kubectl delete pvc data-stmgr-postgresql-0 -n stage
 
 
-helm-pg-cleaner-run:
-	helm install stmgr-postgresql-cleaner ../kube/postgresql-cleaner -n media
-
-helm-pg-cleaner-rm:
-	helm uninstall stmgr-postgresql-cleaner -n media
-
-
 helm-pg-exporter-run:
 	helm install stmgr-postgresql-exporter ../kube/postgresql-exporter -n media
 
@@ -76,11 +77,3 @@ helm-stage-redis-run:
 
 helm-stage-redis-rm:
 	-@helm uninstall stmgr-redis -n stage
-
-
-# expose
-helm-expose-run:
-	-@helm install stmgr-expose ../kube/expose -n media
-
-helm-expose-rm:
-	-@helm uninstall stmgr-expose -n media

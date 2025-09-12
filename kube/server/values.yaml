@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/stmgr
-  tag: 2.2.8
+  tag: 2.3.1
   pullSecret: image-pull-secret
 
 affinity: ~
@@ -56,7 +56,7 @@ app:
     liveStateExpireSec: 604800 # 7 days
     stdlClearBatchSize: 50
     cacheExpireSec: 86400 # 24 hours
-    maxConcurrentLive: 4
+    maxConcurrentLive: 3
 
 externals:
   stdl:
@@ -73,7 +73,7 @@ externals:
       replicaPort: 6379
       secrets:
         auth:
-          name: stdl-redis-auth
+          name: stdl-redis-server
           passwordKey: password
     queue:
       secretName: stdl-queue

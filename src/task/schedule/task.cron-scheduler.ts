@@ -14,6 +14,7 @@ import { JobsOptions } from 'bullmq/dist/esm/types/index.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { getJobOpts } from './task.utils.js';
+import { TaskErrorHandler } from './task.error-handler.js';
 
 @Injectable()
 export class TaskCronScheduler {
@@ -24,6 +25,7 @@ export class TaskCronScheduler {
     @Inject(ENV) private readonly env: Env,
     @Inject(TASK_REDIS) private readonly redis: Redis,
     private readonly lm: TaskLockManager,
+    private readonly eh: TaskErrorHandler,
     private readonly crFinder: CriterionFinder,
   ) {
     this.jobOpts = getJobOpts(this.env);
@@ -31,22 +33,26 @@ export class TaskCronScheduler {
 
   @Cron('* * * * * *')
   async handleCron() {
-    await this.check();
+    try {
+      await this.check();
+    } catch (e) {
+      this.eh.handle(e);
+    }
   }
 
   async check() {
-    const promises: Promise<void>[] = [];
-
+    const ps1: Promise<void>[] = [];
     for (const [taskName, taskDef] of Object.entries(cronTaskDefs)) {
-      promises.push(this.checkTask(taskName, taskDef));
+      ps1.push(this.checkTask(taskName, taskDef));
     }
+    await Promise.allSettled(ps1);
 
+    const ps2: Promise<void>[] = [];
     const criteria = (await this.crFinder.findAll()).filter((cr) => !cr.isDeactivated);
     for (const cr of criteria) {
-      promises.push(this.checkCriterion(cr));
+      ps2.push(this.checkCriterion(cr));
     }
-
-    await Promise.allSettled(promises);
+    await Promise.allSettled(ps2);
   }
 
   private async checkTask(taskName: string, taskDef: TaskDef) {

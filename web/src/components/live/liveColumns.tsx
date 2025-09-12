@@ -17,7 +17,7 @@ const DISABLED_CN = 'opacity-40';
 const DEFAULT_WIDTH = '10rem';
 const CHANNEL_WIDTH = '15rem';
 const PRIORITY_WIDTH = '9rem';
-const NODES_WIDTH = '18rem';
+const NODES_WIDTH = '24rem';
 
 const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   accessorKey: 'channel',

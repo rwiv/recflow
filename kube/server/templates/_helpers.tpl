@@ -39,6 +39,11 @@
       key: {{ .Values.app.redis.secrets.auth.passwordKey }}
 - name: FS_NAME
   value: {{ .Values.app.fsName }}
+- name: STDL_API_TOKEN
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externals.stdl.auth.secretName }}
+      key: {{ .Values.externals.stdl.auth.tokenKey }}
 - name: STDL_DEFAULT_LOCATION
   value: {{ .Values.externals.stdl.locations.default }}
 - name: STDL_FOLLOWED_LOCATION

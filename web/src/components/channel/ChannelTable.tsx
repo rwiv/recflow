@@ -2,8 +2,6 @@ import { ChannelTableContent } from '@/components/channel/content/ChannelTableCo
 import { useEffect } from 'react';
 import { PageNavigation } from '@/components/channel/search/ChannelNavigation.tsx';
 import { GradeSelect } from '@/components/channel/search/GradeSelect.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { css } from '@emotion/react';
 import { KeywordSearchBar } from '@/components/channel/search/KeywordSearchBar.tsx';
 import { SortSelect } from '@/components/channel/search/SortSelect.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +11,7 @@ import { fetchChannels } from '@/client/channel/channel.client.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 import { LoadingComponent } from '@/components/common/layout/LoadingComponent.tsx';
 import { TagQuerySelect } from '@/components/channel/search/TagQuerySelect.tsx';
+import { PlatformSelect } from './search/PlatformSelect';
 
 interface ChannelTableProps {
   pageState: ChannelPageState;
@@ -62,12 +61,10 @@ export function ChannelTable({ pageState }: ChannelTableProps) {
         </div>
         <div className="flex gap-2">
           <GradeSelect />
+          <PlatformSelect />
           <TagQuerySelect type="include" />
           <TagQuerySelect type="exclude" />
           <SortSelect />
-          <Button variant="outline" css={css({ width: '5.5rem' })}>
-            Refresh
-          </Button>
         </div>
       </div>
       <div className="rounded-md border">

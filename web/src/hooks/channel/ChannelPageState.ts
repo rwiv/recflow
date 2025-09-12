@@ -1,11 +1,13 @@
 import { CHANNELS_QUERY_KEY } from '@/common/constants.ts';
 import { ChannelPageStateBuilder } from '@/hooks/channel/ChannelPageStateBuilder.ts';
 import { ChannelSortType } from '@/client/common/common.schema.ts';
+import { PlatformName } from '@/client/common/platform.schema.ts';
 
 export class ChannelPageState {
   curPageNum: number;
   pageSize: number;
   grade: string | undefined;
+  platform: PlatformName | undefined;
   includeTags: string[];
   excludeTags: string[];
   sortBy: ChannelSortType = 'updatedAt';
@@ -17,6 +19,7 @@ export class ChannelPageState {
     this.curPageNum = builder.curPageNum;
     this.pageSize = builder.pageSize;
     this.grade = builder.grade;
+    this.platform = builder.platform;
     this.includeTags = builder.includeTags;
     this.excludeTags = builder.excludeTags;
     this.sortBy = builder.sortBy;
@@ -34,6 +37,7 @@ export class ChannelPageState {
       .setCurPageNum(this.curPageNum)
       .setPageSize(this.pageSize)
       .setGrade(this.grade)
+      .setPlatform(this.platform)
       .setIncludeTags(this.includeTags)
       .setExcludeTags(this.excludeTags)
       .setSorted(this.sortBy);
@@ -66,6 +70,9 @@ export class ChannelPageState {
     if (this.grade) {
       params.set('gr', this.grade);
     }
+    if (this.platform) {
+      params.set('pf', this.platform);
+    }
     if (this.includeTags.length > 0) {
       params.set('it', this.includeTags.join(','));
     }
@@ -83,6 +90,7 @@ export class ChannelPageState {
       CHANNELS_QUERY_KEY,
       this.curPageNum,
       this.grade,
+      this.platform,
       this.includeTags.join(','),
       this.excludeTags.join(','),
       this.sortBy,

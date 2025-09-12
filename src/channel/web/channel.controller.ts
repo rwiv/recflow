@@ -30,6 +30,7 @@ import { GradeService } from '../service/grade.service.js';
 import { ChannelMapOptions } from '../spec/channel.types.js';
 import { ChannelMapper } from '../service/channel.mapper.js';
 import { ChannelSearchRequest, ChannelTagSearchRequest } from '../storage/channel.search.js';
+import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')
@@ -46,6 +47,7 @@ export class ChannelController {
   async channels(
     @Query('st') st?: string,
     @Query('gr') grade?: string,
+    @Query('pf') platform?: string,
     @Query('it') includeTagsStr?: string,
     @Query('et') excludeTagsStr?: string,
     @Query('uid') sourceId?: string,
@@ -80,8 +82,9 @@ export class ChannelController {
     }
     const pageQ: PageQuery = { page: pageNum, size };
     const page = pageQuery.parse(pageQ);
+    const platformName = platform ? platformNameEnum.parse(platform) : undefined;
 
-    const req: ChannelSearchRequest = { page, sortBy, gradeName: grade, withTotal: true };
+    const req: ChannelSearchRequest = { page, sortBy, gradeName: grade, platformName, withTotal: true };
 
     if (includeTagsStr || excludeTagsStr) {
       const tagReq: ChannelTagSearchRequest = {

@@ -7,9 +7,10 @@ import { TagCommandRepository } from './tag.command.js';
 import { TagQueryRepository } from './tag.query.js';
 import { ChannelCacheStore } from './channel.cache.store.js';
 import { InfraModule } from '../../infra/infra.module.js';
+import { PlatformModule } from '../../platform/platform.module.js';
 
 @Module({
-  imports: [InfraModule],
+  imports: [InfraModule, PlatformModule],
   providers: [
     GradeRepository,
     ChannelCommandRepository,

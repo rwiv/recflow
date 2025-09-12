@@ -1,11 +1,13 @@
 import { DEFAULT_CHANNEL_PAGE_SIZE } from '@/common/constants.ts';
 import { ChannelPageState } from '@/hooks/channel/ChannelPageState.ts';
 import { ChannelSortType, channelSortTypeEnum } from '@/client/common/common.schema.ts';
+import { PlatformName } from '@/client/common/platform.schema.ts';
 
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;
   pageSize: number = DEFAULT_CHANNEL_PAGE_SIZE;
   grade: string | undefined;
+  platform: PlatformName | undefined;
   includeTags: string[] = [];
   excludeTags: string[] = [];
   sortBy: ChannelSortType = 'updatedAt';
@@ -36,6 +38,13 @@ export class ChannelPageStateBuilder {
   setGrade(grade: string | null | undefined): this {
     if (grade !== null) {
       this.grade = grade;
+    }
+    return this;
+  }
+
+  setPlatform(platform: PlatformName | null | undefined): this {
+    if (platform !== null) {
+      this.platform = platform;
     }
     return this;
   }

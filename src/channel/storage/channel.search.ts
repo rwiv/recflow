@@ -12,11 +12,14 @@ import { channelSortTypeEnum, ChannelSortType } from '../spec/channel.dto.schema
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { PageQuery } from '../../common/data/common.schema.js';
+import { PlatformName } from 'src/platform/spec/storage/platform.enum.schema.js';
+import { PlatformRepository } from '../../platform/storage/platform.repository.js';
 
 export interface ChannelSearchRequest {
   page?: PageQuery;
   sortBy?: ChannelSortType;
   gradeName?: string;
+  platformName?: PlatformName;
   withTotal?: boolean;
 }
 
@@ -29,14 +32,16 @@ export interface ChannelTagSearchRequest extends ChannelSearchRequest {
 export class ChannelSearchRepository {
   constructor(
     private readonly tagQuery: TagQueryRepository,
+    private readonly pfRepo: PlatformRepository,
     private readonly grRepo: GradeRepository,
   ) {}
 
   async findByQuery(req: ChannelSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
-    const { page, sortBy, gradeName, withTotal } = req;
+    const { page, sortBy, gradeName, platformName, withTotal } = req;
     let qb = tx.select().from(channelTable).$dynamic();
     const conds: SQLWrapper[] = [];
     if (gradeName) await this.withGrade(conds, gradeName, tx);
+    if (platformName) await this.withPlatform(conds, platformName, tx);
     qb = qb.where(and(...conds));
 
     let total = undefined;
@@ -96,7 +101,7 @@ export class ChannelSearchRepository {
   // }
 
   async findByTags(req: ChannelTagSearchRequest, tx: Tx = db): Promise<ChannelPageEntResult> {
-    const { includeTagNames, excludeTagNames, page, sortBy, gradeName, withTotal } = req;
+    const { includeTagNames, excludeTagNames, page, sortBy, gradeName, platformName, withTotal } = req;
     const includeTagIds = await this.tagQuery.findIdsByNames(includeTagNames, tx);
     let excludeTagIds: string[] = [];
     if (excludeTagNames.length > 0) {
@@ -121,6 +126,7 @@ export class ChannelSearchRepository {
     }
 
     if (gradeName) await this.withGrade(conds, gradeName, tx);
+    if (platformName) await this.withPlatform(conds, platformName, tx);
     qb = qb.where(and(...conds));
 
     let total = undefined;
@@ -149,6 +155,12 @@ export class ChannelSearchRepository {
     const grade = await this.grRepo.findByName(gradeName, tx);
     if (!grade) throw NotFoundError.from('Grade', 'name', gradeName);
     conditions.push(eq(channelTable.gradeId, grade.id));
+  }
+
+  private async withPlatform(conditions: SQLWrapper[], platformName: PlatformName, tx: Tx = db) {
+    const platform = await this.pfRepo.findByName(platformName, tx);
+    if (!platform) throw NotFoundError.from('Platform', 'name', platformName);
+    conditions.push(eq(channelTable.platformId, platform.id));
   }
 
   private withPage<T extends PgSelect>(qb: T, page: PageQuery) {

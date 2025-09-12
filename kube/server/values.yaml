@@ -51,18 +51,21 @@ app:
     liveRecoveryInitWaitSec: 40
     liveFinishTimeoutSec: 180 # 3 minutes
     nodeResetCycleSec: 43200 # 12 hours
-    nodeFailureThreshold: 10
+    nodeFailureThreshold: 50
     liveStateInitWaitSec: 120 # 2 minutes
     liveStateExpireSec: 604800 # 7 days
     stdlClearBatchSize: 50
     cacheExpireSec: 86400 # 24 hours
-    maxConcurrentLive: 3
+    maxConcurrentLive: 4
 
 externals:
   stdl:
     locations:
       default: local
       followed: local
+    auth:
+      secretName: stdl-auth
+      tokenKey: bearer-token
     redis:
       masterHost: stdl-redis-master.media.svc.cluster.local
       masterPort: 6379

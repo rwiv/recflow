@@ -15,11 +15,7 @@ export class StdlImpl extends Stdl {
     const attr = { url };
     const failureMsg = 'Failed to get recording status';
     try {
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: { 'content-type': 'application/json' },
-        signal: AbortSignal.timeout(this.env.httpTimeout),
-      });
+      const res = await fetch(url, this.getRequest('GET'));
       await checkResponse(res, attr, failureMsg);
       return nodeStatusResponse.parse(await res.json()).recordings;
     } catch (err) {
@@ -32,11 +28,7 @@ export class StdlImpl extends Stdl {
     const attr = { url };
     const failureMsg = 'Failed to get recording status with stats';
     try {
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: { 'content-type': 'application/json' },
-        signal: AbortSignal.timeout(this.env.httpTimeout),
-      });
+      const res = await fetch(url, this.getRequest('GET'));
       await checkResponse(res, attr, failureMsg);
       return nodeStatusResponse.parse(await res.json()).recordings;
     } catch (err) {
@@ -49,11 +41,7 @@ export class StdlImpl extends Stdl {
     const attr = { url, live_record_id: liveRecordId };
     const failureMsg = 'Failed to start recording';
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        signal: AbortSignal.timeout(this.env.httpTimeout),
-      });
+      const res = await fetch(url, this.getRequest('POST'));
       await checkResponse(res, attr, failureMsg);
     } catch (err) {
       throw getHttpRequestError(failureMsg, err, attr);
@@ -65,11 +53,7 @@ export class StdlImpl extends Stdl {
     const attr = { url, live_record_id: liveRecordId };
     const failureMsg = 'Failed to cancel recording';
     try {
-      const res = await fetch(url, {
-        method: 'DELETE',
-        headers: { 'content-type': 'application/json' },
-        signal: AbortSignal.timeout(this.env.httpTimeout),
-      });
+      const res = await fetch(url, this.getRequest('DELETE'));
       await checkResponse(res, attr, failureMsg);
     } catch (err) {
       throw getHttpRequestError(failureMsg, err, attr);
@@ -78,5 +62,16 @@ export class StdlImpl extends Stdl {
 
   private getRecordingsUrl(endpoint: string) {
     return `${endpoint}/api/recordings`;
+  }
+
+  private getRequest(method: string): RequestInit {
+    return {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.env.stdlApiToken}`,
+      },
+      signal: AbortSignal.timeout(this.env.httpTimeout),
+    };
   }
 }

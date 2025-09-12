@@ -57,6 +57,7 @@ export class DevInitializer {
     await this.ngRepo.create({ name: 'group1' });
     await this.ngRepo.create({ name: 'group2' });
     await this.ngRepo.create({ name: 'group3' });
+    await this.ngRepo.create({ name: 'group4' });
   }
 
   private async addCriterionRules() {

@@ -5,6 +5,7 @@ import { DEFAULT_CHANNEL_PAGE_NUMBER } from '@/common/constants.ts';
 import { useEffect } from 'react';
 import { ChannelPageStateBuilder } from '@/hooks/channel/ChannelPageStateBuilder.ts';
 import { PageHeaderTab } from '@/components/common/layout/PageHeaderTab.tsx';
+import { platformNameEnum } from '@/client/common/platform.schema.ts';
 
 export function ChannelPage() {
   const [searchParams] = useSearchParams();
@@ -36,9 +37,13 @@ function getPageState(params: URLSearchParams) {
       page = parsed;
     }
   }
+  const platformNameRaw = params.get('pf');
+  const platformName = platformNameRaw ? platformNameEnum.parse(platformNameRaw) : null;
+
   builder.setCurPageNum(page);
   builder.setSorted(params.get('st'));
   builder.setGrade(params.get('gr'));
+  builder.setPlatform(platformName);
   builder.setIncludeTags(params.get('it')?.split(',') ?? []);
   builder.setExcludeTags(params.get('et')?.split(',') ?? []);
   builder.setSourceId(params.get('uid'));

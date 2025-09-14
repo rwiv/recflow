@@ -66,10 +66,9 @@ export class LiveRecoveryManager {
       log.error(`Live not found`, liveAttr(invalidLive.live));
       return;
     }
-
     // Skip already finished live
     if (live.isDisabled) {
-      log.error('Live is disabled', liveAttr(live));
+      log.debug('Live is already disabled', liveAttr(live));
       return;
     }
 
@@ -80,6 +79,17 @@ export class LiveRecoveryManager {
         await this.registerSameLive(live);
       }
       await this.finishLive(live.id, 'Live is invalid', 'error');
+      return;
+    }
+
+    // Finish if live not open
+    let withAuth = live.isAdult;
+    if (live.channel.isFollowed && this.env.stlink.enforceAuthForFollowed) {
+      withAuth = true;
+    }
+    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.sourceId, withAuth);
+    if (!streamInfo.openLive) {
+      await this.finishLive(live.id, 'Delete uncleaned live', 'info');
       return;
     }
 
@@ -98,7 +108,7 @@ export class LiveRecoveryManager {
     }
 
     // Finish if live not open
-    if (live.stream && !(await this.stlink.fetchM3u8(live.stream, longRetryOpts))) {
+    if (live.stream && !(await this.stlink.fetchM3u8(live.stream))) {
       await this.finishLive(live.id, 'Delete invalid m3u8 live', 'info');
       return;
     }

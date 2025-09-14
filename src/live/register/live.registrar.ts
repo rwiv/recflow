@@ -101,7 +101,7 @@ export class LiveRegistrar {
     log.debug('Deregister node in live', liveAttr(live, { node }));
   }
 
-  async finishLive(req: LiveFinishRequest): Promise<LiveDto | null> {
+  async finishLive(req: LiveFinishRequest, tx: Tx = db): Promise<LiveDto | null> {
     const recordId = req.recordId;
     const isPurge = req.isPurge ?? false;
     const logLevel = req.logLevel ?? 'info';
@@ -131,8 +131,10 @@ export class LiveRegistrar {
       log.warn('Live is already finished', liveAttr(live));
       return null;
     }
-    await this.liveWriter.update(live.id, { status: 'finalizing' });
-    await this.liveWriter.disable(live.id, false, true); // if Live is not disabled, it will become a recovery target and cause an error
+    await tx.transaction(async (txx) => {
+      await this.liveWriter.update(live.id, { status: 'finalizing' }, txx);
+      await this.liveWriter.disable(live.id, false, true, txx); // if Live is not disabled, it will become a recovery target and cause an error
+    });
     await this.finalizer.requestFinishLive({ liveId: live.id, exitCmd, isPurge });
     logging(logMsg, { ...liveAttr(live), cmd: exitCmd }, logLevel);
     return live; // not delete live record

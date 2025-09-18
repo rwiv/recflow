@@ -9,8 +9,8 @@ vault:
   refreshAfter: 30s
 
 redis:
-  global:
-    storageClass: longhorn
+#  global:
+#    storageClass: longhorn
   auth:
     existingSecret: stmgr-redis-auth
     existingSecretPasswordKey: password
@@ -21,13 +21,14 @@ redis:
       ports:
         redis: 6379
     persistence:
-      enabled: true
-      size: 2Gi
-    resources:
-      requests:
-        memory: 512Mi
-      limits:
-        memory: 1024Mi
+      enabled: false
+#      enabled: true
+#      size: 2Gi
+#    resources:
+#      requests:
+#        memory: 512Mi
+#      limits:
+#        memory: 1024Mi
   replica:
     replicaCount: 0
   tls:

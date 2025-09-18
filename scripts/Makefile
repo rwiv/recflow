@@ -72,8 +72,8 @@ helm-prod-redis-run:
 helm-prod-redis-rm:
 	-@helm uninstall stmgr-redis -n media
 
-delete-prod-redis-pvc:
-	-@kubectl delete pvc redis-data-stmgr-redis-master-0 -n media
+#delete-prod-redis-pvc:
+#	-@kubectl delete pvc redis-data-stmgr-redis-master-0 -n media
 
 helm-stage-redis-run:
 	-@helm install stmgr-redis ../kube/redis -n stage \

@@ -8,11 +8,10 @@ import { Env } from '../../common/config/env.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
-import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
+import { isValidRecStatus, RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
-import { longRetryOpts, Stlink } from '../../platform/stlink/stlink.js';
 import assert from 'assert';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
@@ -42,7 +41,6 @@ export class LiveRecoveryManager {
     @Inject(STDL) private readonly stdl: Stdl,
     @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     @Inject(NOTIFIER) private readonly notifier: Notifier,
-    private readonly stlink: Stlink,
     private readonly liveFinder: LiveFinder,
     private readonly liveInitializer: LiveInitializer,
     private readonly liveRegistrar: LiveRegistrar,
@@ -61,7 +59,7 @@ export class LiveRecoveryManager {
   }
 
   private async checkInvalidLive(invalidLive: TargetLive) {
-    const live = await this.liveFinder.findById(invalidLive.live.id); // latest live dto
+    const live = await this.liveFinder.findById(invalidLive.live.id, { nodes: true }); // latest live dto
     if (!live) {
       log.error(`Live not found`, liveAttr(invalidLive.live));
       return;
@@ -82,34 +80,33 @@ export class LiveRecoveryManager {
       return;
     }
 
-    // Finish if live not open
-    let withAuth = live.isAdult;
-    if (live.channel.isFollowed && this.env.stlink.enforceAuthForFollowed) {
-      withAuth = true;
-    }
-    const streamInfo = await this.stlink.fetchStreamInfo(live.platform.name, live.channel.sourceId, withAuth);
-    if (!streamInfo.openLive) {
-      await this.finishLive(live.id, 'Delete uncleaned live', 'info');
-      return;
-    }
-
     // Finish if live is restarted
     const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
-    if (live.sourceId !== chanInfo.liveInfo?.liveUid) {
-      let logMsg = 'Delete uncleaned live';
-      if (chanInfo.liveInfo) {
-        logMsg = 'Delete restarted live';
-        if (live.platform.name === 'soop') {
-          await this.registerSameLive(live);
-        }
+    const liveInfo = chanInfo.liveInfo;
+    if (!liveInfo) {
+      await this.finishLive(live.id, 'Delete uncleaned live', 'warn');
+      return;
+    }
+    if (live.sourceId !== liveInfo.liveUid) {
+      if (live.platform.name === 'soop') {
+        await this.registerSameLive(live);
       }
-      await this.finishLive(live.id, logMsg, 'warn');
+      await this.finishLive(live.id, 'Delete restarted live', 'warn');
       return;
     }
 
-    // Finish if live not open
-    if (live.stream && !(await this.stlink.fetchM3u8(live.stream))) {
-      await this.finishLive(live.id, 'Delete invalid m3u8 live', 'info');
+    // Finish if live is fatal
+    assert(live.nodes);
+    let allFailed = true;
+    for (const nodeRecs of await this.stdl.getNodeRecorderStatusList(live.nodes)) {
+      const recStatus = nodeRecs.find((status) => status.id === live.id);
+      if (recStatus && isValidRecStatus(recStatus)) {
+        allFailed = false;
+        break;
+      }
+    }
+    if (allFailed) {
+      await this.finishLive(live.id, 'Delete fatal live', 'info');
       return;
     }
 
@@ -175,7 +172,7 @@ export class LiveRecoveryManager {
 
         // Filter valid recordings in node
         const recStatus = nodeRecs.find((status) => status.id === live.id);
-        if (recStatus && ['recording', 'completed'].includes(recStatus.status)) {
+        if (recStatus && isValidRecStatus(recStatus)) {
           continue;
         }
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);

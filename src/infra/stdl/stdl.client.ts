@@ -33,6 +33,11 @@ export abstract class Stdl {
     return nodeStatusMap;
   }
 
+  async getNodeRecorderStatusList(nodes: NodeDto[]): Promise<RecordingStatus[][]> {
+    const promises = nodes.map((node) => this.getStatus(node.endpoint));
+    return await Promise.all(promises);
+  }
+
   abstract startRecording(endpoint: string, recordId: string): Promise<void>;
   abstract cancelRecording(endpoint: string, recordId: string): Promise<void>;
 }
@@ -58,3 +63,7 @@ export const nodeStatusResponse = z.object({
   recordings: z.array(recordingStatus),
 });
 export type NodeStatusResponse = z.infer<typeof nodeStatusResponse>;
+
+export function isValidRecStatus(recStatus: RecordingStatus): boolean {
+  return ['recording', 'completed'].includes(recStatus.status);
+}

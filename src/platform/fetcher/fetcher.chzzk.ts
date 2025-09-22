@@ -21,15 +21,15 @@ export class ChzzkFetcher {
   async fetchLives(cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, ChzzkLiveInfo>();
     for (const tag of cr.positiveTags) {
-      const res = await this.fetchLivesByTag(tag);
+      const res = await this.fetchLivesByTag(tag.value);
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     for (const keyword of cr.positiveKeywords) {
-      const res = await this.fetchLivesByKeyword(keyword);
+      const res = await this.fetchLivesByKeyword(keyword.value);
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     for (const watchPartyNo of cr.positiveWps) {
-      const res = await this.fetchLivesByWatchParty(nnint.parse(watchPartyNo));
+      const res = await this.fetchLivesByWatchParty(nnint.parse(watchPartyNo.value));
       res.forEach((info) => infoMap.set(info.channelId, info));
     }
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));

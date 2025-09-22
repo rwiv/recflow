@@ -25,6 +25,9 @@ export class CriterionMapper {
     const wps = this.findUnitsValues(units, wpRule.id);
     return {
       ...criterion,
+      tagRuleId: tagRule.id,
+      keywordRuleId: keywordRule.id,
+      wpRuleId: wpRule.id,
       positiveTags: tags.positive,
       negativeTags: tags.negative,
       positiveKeywords: keywords.positive,
@@ -45,6 +48,9 @@ export class CriterionMapper {
     const cates = this.findUnitsValues(units, cateRule.id);
     return {
       ...criterion,
+      tagRuleId: tagRule.id,
+      keywordRuleId: keywordRule.id,
+      cateRuleId: cateRule.id,
       positiveTags: tags.positive,
       negativeTags: tags.negative,
       positiveKeywords: keywords.positive,
@@ -55,8 +61,12 @@ export class CriterionMapper {
   }
 
   private findUnitsValues(units: CriterionUnitEnt[], ruleId: string) {
-    const positive = units.filter((u) => u.isPositive && u.ruleId === ruleId).map((u) => u.value);
-    const negative = units.filter((u) => !u.isPositive && u.ruleId === ruleId).map((u) => u.value);
+    const positive = units
+      .filter((u) => u.isPositive && u.ruleId === ruleId)
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    const negative = units
+      .filter((u) => !u.isPositive && u.ruleId === ruleId)
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
     return { positive, negative };
   }
 }

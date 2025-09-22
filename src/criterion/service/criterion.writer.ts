@@ -4,6 +4,7 @@ import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js
 import {
   ChzzkCriterionAppend,
   ChzzkCriterionDto,
+  CriterionUnitDto,
   CriterionUpdate,
   SoopCriterionAppend,
   SoopCriterionDto,
@@ -19,6 +20,7 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { CriterionRuleFinder } from './criterion.rule.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { Tx } from '../../infra/db/types.js';
 
 @Injectable()
 export class CriterionWriter {
@@ -28,6 +30,14 @@ export class CriterionWriter {
     private readonly pfFinder: PlatformFinder,
     private readonly ruleFinder: CriterionRuleFinder,
   ) {}
+
+  async createUnit(append: CriterionUnitEntAppend, tx: Tx = db) {
+    await this.unitRepo.create(append, tx);
+  }
+
+  async deleteUnit(unitId: string, tx: Tx = db) {
+    await this.unitRepo.delete(unitId, tx);
+  }
 
   async createChzzkCriterion(append: ChzzkCriterionAppend): Promise<ChzzkCriterionDto> {
     const platform = await this.pfFinder.findByIdNotNull(append.platformId);
@@ -58,6 +68,9 @@ export class CriterionWriter {
       return {
         ...ent,
         platform,
+        tagRuleId: tagRule.id,
+        keywordRuleId: kwRule.id,
+        wpRuleId: wpRule.id,
         positiveTags: find(unitEntities, tagRule, true),
         negativeTags: find(unitEntities, tagRule, false),
         positiveKeywords: find(unitEntities, kwRule, true),
@@ -97,6 +110,9 @@ export class CriterionWriter {
       return {
         ...ent,
         platform,
+        tagRuleId: tagRule.id,
+        keywordRuleId: kwRule.id,
+        cateRuleId: cateRule.id,
         positiveTags: find(unitEntities, tagRule, true),
         negativeTags: find(unitEntities, tagRule, false),
         positiveKeywords: find(unitEntities, kwRule, true),
@@ -155,10 +171,10 @@ function unitAppend(
   return { criterionId: criterion.id, ruleId: rule.id, value, isPositive };
 }
 
-function find(unitEntities: CriterionUnitEnt[], rule: CriterionRuleEnt, positive: boolean): string[] {
+function find(unitEntities: CriterionUnitEnt[], rule: CriterionRuleEnt, positive: boolean): CriterionUnitDto[] {
   if (positive) {
-    return unitEntities.filter((it) => it.ruleId === rule.id && it.isPositive).map((it) => it.value);
+    return unitEntities.filter((it) => it.ruleId === rule.id && it.isPositive);
   } else {
-    return unitEntities.filter((it) => it.ruleId === rule.id && !it.isPositive).map((it) => it.value);
+    return unitEntities.filter((it) => it.ruleId === rule.id && !it.isPositive);
   }
 }

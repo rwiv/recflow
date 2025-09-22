@@ -27,15 +27,15 @@ export class SoopLiveFilter {
     // ignore
     const content = liveInfo.content as SoopLiveInfo;
     for (const ignoredTag of cr.negativeTags) {
-      if (content.hashTags?.includes(ignoredTag)) return null;
+      if (content.hashTags?.includes(ignoredTag.value)) return null;
     }
     for (const ignoredKeyword of cr.negativeKeywords) {
-      if (content.broadTitle.includes(ignoredKeyword)) return null;
+      if (content.broadTitle.includes(ignoredKeyword.value)) return null;
     }
     const cateNo = content.broadCateNo;
     if (cateNo) {
       for (const ignoredCate of cr.negativeCates) {
-        if (parseInt(cateNo) === parseInt(ignoredCate)) return null;
+        if (parseInt(cateNo) === parseInt(ignoredCate.value)) return null;
       }
     }
 

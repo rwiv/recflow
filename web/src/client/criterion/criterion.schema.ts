@@ -2,6 +2,17 @@ import { z } from 'zod';
 import { nonempty, uuid } from '@/common/common.schema.ts';
 import { platformDto } from '@/client/common/platform.schema.ts';
 
+export const criterionUnitDto = z.object({
+  id: uuid,
+  criterionId: uuid,
+  ruleId: uuid,
+  value: nonempty,
+  isPositive: z.boolean(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
+});
+export type CriterionUnitDto = z.infer<typeof criterionUnitDto>;
+
 export const criterionDto = z.object({
   id: uuid,
   name: nonempty,
@@ -32,33 +43,63 @@ export const criterionUpdate = criterionDto
 export type CriterionUpdate = z.infer<typeof criterionUpdate>;
 
 export const chzzkCriterionDto = criterionDto.extend({
-  positiveTags: z.array(nonempty),
-  negativeTags: z.array(nonempty),
-  positiveKeywords: z.array(nonempty),
-  negativeKeywords: z.array(nonempty),
-  positiveWps: z.array(nonempty),
-  negativeWps: z.array(nonempty),
+  tagRuleId: uuid,
+  keywordRuleId: uuid,
+  wpRuleId: uuid,
+  positiveTags: z.array(criterionUnitDto),
+  negativeTags: z.array(criterionUnitDto),
+  positiveKeywords: z.array(criterionUnitDto),
+  negativeKeywords: z.array(criterionUnitDto),
+  positiveWps: z.array(criterionUnitDto),
+  negativeWps: z.array(criterionUnitDto),
 });
 export type ChzzkCriterionDto = z.infer<typeof chzzkCriterionDto>;
 
 export const chzzkCriterionAppend = chzzkCriterionDto
   .partial({ id: true, description: true, createdAt: true, updatedAt: true })
-  .omit({ platform: true })
-  .extend({ platformId: uuid });
+  .omit({ platform: true, tagRuleId: true, keywordRuleId: true, wpRuleId: true })
+  .extend({
+    platformId: uuid,
+    positiveTags: z.array(nonempty),
+    negativeTags: z.array(nonempty),
+    positiveKeywords: z.array(nonempty),
+    negativeKeywords: z.array(nonempty),
+    positiveWps: z.array(nonempty),
+    negativeWps: z.array(nonempty),
+  });
 export type ChzzkCriterionAppend = z.infer<typeof chzzkCriterionAppend>;
 
 export const soopCriterionDto = criterionDto.extend({
-  positiveTags: z.array(nonempty),
-  negativeTags: z.array(nonempty),
-  positiveKeywords: z.array(nonempty),
-  negativeKeywords: z.array(nonempty),
-  positiveCates: z.array(nonempty),
-  negativeCates: z.array(nonempty),
+  tagRuleId: uuid,
+  keywordRuleId: uuid,
+  cateRuleId: uuid,
+  positiveTags: z.array(criterionUnitDto),
+  negativeTags: z.array(criterionUnitDto),
+  positiveKeywords: z.array(criterionUnitDto),
+  negativeKeywords: z.array(criterionUnitDto),
+  positiveCates: z.array(criterionUnitDto),
+  negativeCates: z.array(criterionUnitDto),
 });
 export type SoopCriterionDto = z.infer<typeof soopCriterionDto>;
 
 export const soopCriterionAppend = soopCriterionDto
   .partial({ id: true, description: true, createdAt: true, updatedAt: true })
-  .omit({ platform: true })
-  .extend({ platformId: uuid });
+  .omit({ platform: true, tagRuleId: true, keywordRuleId: true, cateRuleId: true })
+  .extend({
+    platformId: uuid,
+    positiveTags: z.array(nonempty),
+    negativeTags: z.array(nonempty),
+    positiveKeywords: z.array(nonempty),
+    negativeKeywords: z.array(nonempty),
+    positiveCates: z.array(nonempty),
+    negativeCates: z.array(nonempty),
+  });
 export type SoopCriterionAppend = z.infer<typeof soopCriterionAppend>;
+
+export const criterionUnitAppend = z.object({
+  criterionId: nonempty,
+  ruleId: nonempty,
+  value: nonempty,
+  isPositive: z.boolean(),
+});
+export type CriterionUnitAppend = z.infer<typeof criterionUnitAppend>;

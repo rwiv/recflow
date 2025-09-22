@@ -1,6 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { SoopCriterionDto } from '@/client/criterion/criterion.schema.ts';
-import { Badge } from '@/components/ui/badge.tsx';
 import { createSelectColumn } from '@/components/common/table/column_utils.tsx';
 import { CriterionFieldUpdateForm } from '@/components/criterion/units/CriterionFieldUpdateForm.tsx';
 import {
@@ -8,6 +7,9 @@ import {
   CriterionEnforceCredentialsBadge,
   CriterionLoggingOnlyBadge,
 } from '@/components/criterion/units/criterion_badges.tsx';
+import { CriterionUnit } from '@/components/criterion/units/CriterionUnit.tsx';
+import { SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
+import { CriterionUnitAddButton } from '@/components/criterion/units/CriterionUnitAddButton.tsx';
 
 const NORMAL_WIDTH = '7rem';
 const NAME_WIDTH = '10rem';
@@ -77,17 +79,28 @@ type RuleKey =
   | 'positiveCates'
   | 'negativeCates';
 
-function createUnitColumn(key: RuleKey, header: string): ColumnDef<SoopCriterionDto> {
+type RuleIdKey = 'tagRuleId' | 'keywordRuleId' | 'cateRuleId';
+
+function createUnitColumn(
+  ruleKey: RuleKey,
+  ruleIdKey: RuleIdKey,
+  isPositive: boolean,
+  header: string,
+): ColumnDef<SoopCriterionDto> {
   return {
-    accessorKey: key,
-    header: () => <div className="justify-self-center">{header}</div>,
+    accessorKey: ruleKey,
+    header: () => <div className="justify-self-center cursor-pointer">{header}</div>,
     cell: ({ row }) => (
       <div className="justify-self-center space-x-1">
-        {row.original[key].map((value, i) => (
-          <Badge key={i} variant="secondary" className="cursor-default">
-            {value}
-          </Badge>
+        {row.original[ruleKey].map((unit) => (
+          <CriterionUnit key={unit.id} unit={unit} queryKey={SOOP_CRITERIA_QUERY_KEY} />
         ))}
+        <CriterionUnitAddButton
+          criterionId={row.original.id}
+          ruleId={row.original[ruleIdKey]}
+          isPositive={isPositive}
+          queryKey={SOOP_CRITERIA_QUERY_KEY}
+        />
       </div>
     ),
   };
@@ -103,10 +116,10 @@ export const soopCriterionColumns: ColumnDef<SoopCriterionDto>[] = [
   // overseasFirstColumn,
   loggingOnlyColumn,
   minUserCntColumn,
-  createUnitColumn('positiveTags', '+Tags'),
-  createUnitColumn('negativeTags', '-Tags'),
-  createUnitColumn('positiveKeywords', '+Keywords'),
-  createUnitColumn('negativeKeywords', '-Keywords'),
-  createUnitColumn('positiveCates', '+Cates'),
-  createUnitColumn('negativeCates', '-Cates'),
+  createUnitColumn('positiveTags', 'tagRuleId', true, '+Tags'),
+  createUnitColumn('negativeTags', 'tagRuleId', false, '-Tags'),
+  createUnitColumn('positiveKeywords', 'keywordRuleId', true, '+Keywords'),
+  createUnitColumn('negativeKeywords', 'keywordRuleId', false, '-Keywords'),
+  createUnitColumn('positiveCates', 'cateRuleId', true, '+Cates'),
+  createUnitColumn('negativeCates', 'cateRuleId', false, '-Cates'),
 ];

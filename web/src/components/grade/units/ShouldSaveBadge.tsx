@@ -4,7 +4,7 @@ import { GRADES_QUERY_KEY } from '@/common/constants.ts';
 import { DefaultAlertDialog } from '@/components/common/layout/AlertDialog.tsx';
 import { updateGrade } from '@/client/channel/grade.client.ts';
 import { GradeDto } from '@/client/channel/grade.schema.ts';
-import { switchBatchCn } from '@/components/common/styles/common.ts';
+import { switchBadgeCn1 } from '@/components/common/styles/common.ts';
 
 export function ShouldSaveBadge({ grade }: { grade: GradeDto }) {
   const queryClient = useQueryClient();
@@ -19,7 +19,7 @@ export function ShouldSaveBadge({ grade }: { grade: GradeDto }) {
     <DefaultAlertDialog onAction={onClick}>
       <div className="justify-self-center">
         <button className="uppercase">
-          <Badge className={switchBatchCn(grade.shouldSave)}>{content}</Badge>
+          <Badge className={switchBadgeCn1(grade.shouldSave)}>{content}</Badge>
         </button>
       </div>
     </DefaultAlertDialog>

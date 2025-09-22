@@ -4,6 +4,7 @@ import {
   ChzzkCriterionAppend,
   chzzkCriterionDto,
   ChzzkCriterionDto,
+  CriterionUnitAppend,
   CriterionUpdate,
   SoopCriterionAppend,
   soopCriterionDto,
@@ -43,4 +44,13 @@ export async function updateCriterion(id: string, form: CriterionUpdate) {
 
 export async function deleteCriterion(criterionId: string) {
   await request(`${configs.endpoint}/api/criteria/${criterionId}`, { method: 'DELETE' });
+}
+
+export async function createCriterionUnit(append: CriterionUnitAppend) {
+  const { method, headers, body } = getIngredients('POST', append);
+  await request(`${configs.endpoint}/api/criteria/units`, { method, headers, body });
+}
+
+export async function deleteCriterionUnit(unitId: string) {
+  await request(`${configs.endpoint}/api/criteria/units/${unitId}`, { method: 'DELETE' });
 }

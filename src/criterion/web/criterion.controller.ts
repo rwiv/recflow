@@ -8,6 +8,7 @@ import {
   CriterionUpdate,
   SoopCriterionAppend,
 } from '../spec/criterion.dto.schema.js';
+import { CriterionUnitEntAppend } from '../spec/criterion.entity.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/criteria')
@@ -16,6 +17,16 @@ export class CriterionController {
     private readonly criterionFinder: CriterionFinder,
     private readonly criterionWriter: CriterionWriter,
   ) {}
+
+  @Post('/units')
+  createUnit(@Body() append: CriterionUnitEntAppend) {
+    return this.criterionWriter.createUnit(append);
+  }
+
+  @Delete('/units/:unitId')
+  deleteUnit(@Param('unitId') unitId: string) {
+    return this.criterionWriter.deleteUnit(unitId);
+  }
 
   @Get('/chzzk')
   findChzzkCriteria() {

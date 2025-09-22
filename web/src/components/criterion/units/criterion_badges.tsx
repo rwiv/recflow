@@ -2,7 +2,7 @@ import { CriterionDto } from '@/client/criterion/criterion.schema.ts';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { updateCriterion } from '@/client/criterion/criterion.client.ts';
 import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/common/constants.ts';
-import { switchBatchCn } from '@/components/common/styles/common.ts';
+import { switchBadgeCn1, switchBadgeCn2 } from '@/components/common/styles/common.ts';
 import { SwitchBadge } from '@/components/common/layout/SwitchBadge.tsx';
 
 async function refresh(queryClient: QueryClient) {
@@ -18,9 +18,10 @@ export function CriterionActivationBadge({ criterion }: { criterion: CriterionDt
   };
   return (
     <SwitchBadge
+      variant="default"
       onClick={onClick}
       content={criterion.isDeactivated ? 'OFF' : 'ON'}
-      className={switchBatchCn(!criterion.isDeactivated)}
+      className={switchBadgeCn1(!criterion.isDeactivated)}
     />
   );
 }
@@ -31,7 +32,14 @@ export function CriterionEnforceCredentialsBadge({ criterion }: { criterion: Cri
     await updateCriterion(criterion.id, { enforceCreds: !criterion.enforceCreds });
     await refresh(queryClient);
   };
-  return <SwitchBadge onClick={onClick} content={criterion.enforceCreds ? 'ON' : 'OFF'} />;
+  return (
+    <SwitchBadge
+      variant="outline"
+      onClick={onClick}
+      content={criterion.enforceCreds ? 'ON' : 'OFF'}
+      className={switchBadgeCn2(criterion.enforceCreds)}
+    />
+  );
 }
 
 export function CriterionDomesticOnlyBadge({ criterion }: { criterion: CriterionDto }) {
@@ -67,5 +75,12 @@ export function CriterionLoggingOnlyBadge({ criterion }: { criterion: CriterionD
     await updateCriterion(criterion.id, { loggingOnly: !criterion.loggingOnly });
     await refresh(queryClient);
   };
-  return <SwitchBadge onClick={onClick} content={criterion.loggingOnly ? 'ON' : 'OFF'} />;
+  return (
+    <SwitchBadge
+      variant="outline"
+      onClick={onClick}
+      content={criterion.loggingOnly ? 'ON' : 'OFF'}
+      className={switchBadgeCn2(criterion.loggingOnly)}
+    />
+  );
 }

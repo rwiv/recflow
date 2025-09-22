@@ -1,6 +1,23 @@
 import { faker } from '@faker-js/faker';
-import { PlatformCriterionDto } from './criterion.dto.schema.js';
+import { CriterionUnitDto, PlatformCriterionDto } from './criterion.dto.schema.js';
 import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
+
+export function mockCriterionUnit(overrides: Partial<CriterionUnitDto> = {}): CriterionUnitDto {
+  return {
+    id: faker.string.uuid(),
+    criterionId: faker.string.uuid(),
+    ruleId: faker.string.uuid(),
+    value: faker.lorem.words(),
+    isPositive: faker.datatype.boolean(),
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
+    ...overrides,
+  };
+}
+
+function createMockUnits(values: string[], min: number, max: number): CriterionUnitDto[] {
+  return faker.helpers.arrayElements(values, { min, max }).map((v) => mockCriterionUnit({ value: v }));
+}
 
 export function mockPlatformCriterionDto(overrides: Partial<PlatformCriterionDto> = {}): PlatformCriterionDto {
   return {
@@ -15,15 +32,16 @@ export function mockPlatformCriterionDto(overrides: Partial<PlatformCriterionDto
     overseasFirst: faker.datatype.boolean(),
     loggingOnly: faker.datatype.boolean(),
     minUserCnt: faker.number.int({ min: 5, max: 100 }),
-    positiveTags: faker.helpers.arrayElements(['Game', 'Music', 'Cooking', 'Exercise', 'Reading'], {
-      min: 1,
-      max: 3,
-    }),
-    negativeTags: faker.helpers.arrayElements(['Inappropriate', 'Spam', 'Advertisement'], { min: 0, max: 2 }),
-    positiveKeywords: faker.helpers.arrayElements(['Fun', 'Useful', 'Interesting'], { min: 1, max: 3 }),
-    negativeKeywords: faker.helpers.arrayElements(['Boring', 'Useless', 'Disappointing'], { min: 0, max: 2 }),
-    positiveWps: faker.helpers.arrayElements(['Good', 'Excellent', 'Perfect'], { min: 1, max: 3 }),
-    negativeWps: faker.helpers.arrayElements(['Bad', 'Worst', 'Failure'], { min: 0, max: 2 }),
+    tagRuleId: faker.string.uuid(),
+    keywordRuleId: faker.string.uuid(),
+    cateRuleId: faker.string.uuid(),
+    wpRuleId: faker.string.uuid(),
+    positiveTags: createMockUnits(['Game', 'Music', 'Cooking', 'Exercise', 'Reading'], 1, 3),
+    negativeTags: createMockUnits(['Inappropriate', 'Spam', 'Advertisement'], 0, 2),
+    positiveKeywords: createMockUnits(['Fun', 'Useful', 'Interesting'], 1, 3),
+    negativeKeywords: createMockUnits(['Boring', 'Useless', 'Disappointing'], 0, 2),
+    positiveWps: createMockUnits(['Good', 'Excellent', 'Perfect'], 1, 3),
+    negativeWps: createMockUnits(['Bad', 'Worst', 'Failure'], 0, 2),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     ...overrides,

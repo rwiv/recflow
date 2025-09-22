@@ -24,15 +24,15 @@ export class SoopFetcher {
       withCred = true;
     }
     for (const tag of cr.positiveTags) {
-      const res = await this.fetchLivesByTag(tag);
+      const res = await this.fetchLivesByTag(tag.value);
       res.forEach((info) => infoMap.set(info.userId, info));
     }
     for (const keyword of cr.positiveKeywords) {
-      const res = await this.fetchLivesByKeyword(keyword);
+      const res = await this.fetchLivesByKeyword(keyword.value);
       res.forEach((info) => infoMap.set(info.userId, info));
     }
     for (const cateNo of cr.positiveCates) {
-      const res = await this.fetchLivesByCategory(cateNo, withCred);
+      const res = await this.fetchLivesByCategory(cateNo.value, withCred);
       res.forEach((info) => infoMap.set(info.userId, info));
     }
     return Array.from(infoMap.values()).map((info) => liveFromSoop(info));

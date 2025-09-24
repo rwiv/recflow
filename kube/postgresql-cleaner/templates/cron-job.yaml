@@ -21,7 +21,7 @@ spec:
 
                   CRASHED_PODS=$( \
                     kubectl get pods -n {{ .Values.metadata.namespace }} -l {{ .Values.app.selector }} -o json \
-                    | jq -r '.items[] | select(.status.containerStatuses[]?.state.waiting.reason == "CrashLoopBackOff") | .metadata.name' \
+                    | jq -r '.items[] | select(.status.containerStatuses[]?.state.waiting.reason == "CrashLoopBackOff" or .status.phase == "Unknown") | .metadata.name' \
                   )
 
                   if [ -z "$CRASHED_PODS" ]; then

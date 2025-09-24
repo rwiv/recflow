@@ -5,7 +5,7 @@ import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { GradeService } from '../../channel/service/grade.service.js';
 import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/grade.constants.js';
-import { channelAttr, liveAttr } from '../../common/attr/attr.live.js';
+import { channelAttr, liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
@@ -28,6 +28,7 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
+import { LiveFinder } from '../data/live.finder.js';
 
 export interface NewLiveRequest {
   channelInfo: ChannelLiveInfo;
@@ -51,6 +52,7 @@ export class LiveInitializer {
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
     private readonly grService: GradeService,
+    private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
     private readonly streamService: LiveStreamService,
     private readonly registrar: LiveRegistrar,
@@ -117,7 +119,11 @@ export class LiveInitializer {
       return this.createDisabledLive(liveInfo, channel, undefined, headMessage, true, cr);
     }
 
-    const args: LiveCreateArgs = {
+    if ((await this.liveFinder.findByChannelSourceId(channel.sourceId)).length > 0) {
+      log.debug('Already exists live', liveInfoAttr(liveInfo, { cr }));
+      return null;
+    }
+    const live = await this.liveWriter.createByLiveInfo({
       liveInfo: req.channelInfo.liveInfo,
       fields: {
         channelId: channel.id,
@@ -126,16 +132,8 @@ export class LiveInitializer {
         overseasFirst: selectArgs.overseasFirst,
         liveStreamId: stream.id,
       },
-    };
-    const live = await this.liveWriter.createByLiveInfo(args);
-    const newReq: LiveRegisterRequest = {
-      ...req,
-      live,
-      node,
-      criterion: cr,
-      logMessage: 'New Live',
-    };
-    return this.registrar.register(newReq);
+    });
+    return this.registrar.register({ ...req, live, node, criterion: cr, logMessage: 'New Live' });
   }
 
   private async getLiveStream(

@@ -20,7 +20,6 @@ import { Stlink } from '../../platform/stlink/stlink.js';
 import { LogLevel } from '../../utils/log.js';
 import { LiveCreateArgs, LiveWriter } from '../data/live.writer.js';
 import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 import { LiveStreamService } from '../stream/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live-stream.repository.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
@@ -29,6 +28,8 @@ import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { LiveFinder } from '../data/live.finder.js';
+
+const NEW_LIVE_INIT_WAIT_MS = 10_000;
 
 export interface NewLiveRequest {
   channelInfo: ChannelLiveInfo;
@@ -119,8 +120,9 @@ export class LiveInitializer {
       return this.createDisabledLive(liveInfo, channel, undefined, headMessage, true, cr);
     }
 
-    if ((await this.liveFinder.findByChannelSourceId(channel.sourceId)).length > 0) {
-      log.debug('Already exists live', liveInfoAttr(liveInfo, { cr }));
+    const exists = await this.liveFinder.findByChannelSourceId(channel.sourceId);
+    if (exists.length > 0 && exists[0].createdAt >= new Date(Date.now() - NEW_LIVE_INIT_WAIT_MS)) {
+      log.warn('Already exists live', liveInfoAttr(liveInfo, { cr }));
       return null;
     }
     const live = await this.liveWriter.createByLiveInfo({

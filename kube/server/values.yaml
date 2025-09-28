@@ -27,7 +27,7 @@ resources:
     memory: 500Mi
 
 app:
-  replicas: 3
+  replicas: 2
   fsName: ~
   redis:
     host: stmgr-redis-master.media.svc.cluster.local

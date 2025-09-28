@@ -48,11 +48,11 @@ delete-pg-stage-pvc:
 	kubectl delete pvc data-stmgr-postgresql-0 -n stage
 
 
-helm-pg-cleaner-run:
-	helm install stmgr-postgresql-cleaner ../kube/postgresql-cleaner -n media
-
-helm-pg-cleaner-rm:
-	helm uninstall stmgr-postgresql-cleaner -n media
+#helm-pg-cleaner-run:
+#	helm install stmgr-postgresql-cleaner ../kube/postgresql-cleaner -n media
+#
+#helm-pg-cleaner-rm:
+#	helm uninstall stmgr-postgresql-cleaner -n media
 
 
 helm-pg-exporter-run:
@@ -72,8 +72,8 @@ helm-prod-redis-run:
 helm-prod-redis-rm:
 	-@helm uninstall stmgr-redis -n media
 
-#delete-prod-redis-pvc:
-#	-@kubectl delete pvc redis-data-stmgr-redis-master-0 -n media
+delete-prod-redis-pvc:
+	-@kubectl delete pvc redis-data-stmgr-redis-master-0 -n media
 
 helm-stage-redis-run:
 	-@helm install stmgr-redis ../kube/redis -n stage \

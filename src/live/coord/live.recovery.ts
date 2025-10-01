@@ -60,14 +60,18 @@ export class LiveRecoveryManager {
       if (state.isInvalid) {
         const live = lives.find((live) => live.id === state.id);
         if (!live) throw NotFoundError.from('Live', 'id', state.id);
-        ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error', { checkM3u8: false }));
+        ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error'));
       }
     }
     await Promise.allSettled(ps);
   }
 
-  private async finishLiveWithRestart(live: LiveDto, logMsg: string, logLevel: LogLevel, opts: { checkM3u8: boolean }) {
+  private async finishLiveWithRestart(live: LiveDto, logMsg: string, logLevel: LogLevel) {
     try {
+      const opts = { checkM3u8: true };
+      if (live.platform.name === 'soop') {
+        opts.checkM3u8 = false;
+      }
       return await this.liveInitializer.createNewLiveByLive(live, opts);
     } catch (e) {
       log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });

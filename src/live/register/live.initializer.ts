@@ -24,7 +24,7 @@ import { LiveStreamService } from '../stream/live-stream.service.js';
 import { LiveStreamQuery } from '../storage/live-stream.repository.js';
 import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveRegisterRequest, LiveRegistrar } from './live.registrar.js';
+import { LiveRegistrar } from './live.registrar.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
 import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
 import { LiveFinder } from '../data/live.finder.js';
@@ -61,27 +61,21 @@ export class LiveInitializer {
     private readonly helper: LiveRegisterHelper,
   ) {}
 
-  async createNewLiveByLive(base: LiveDto): Promise<string | null> {
+  async createNewLiveByLive(base: LiveDto, opts: { checkM3u8: boolean } = { checkM3u8: true }): Promise<string | null> {
     // Validate m3u8
     const stream = base.stream;
     if (!stream) {
       throw new MissingValueError('LiveStream is not set', { attr: liveAttr(base) });
     }
-    if (!(await this.stlink.fetchM3u8(stream))) {
-      log.warn('M3U8 not available', {
-        ...liveAttr(base, { st: true }),
-        called_by: 'LiveInitializer.createNewLiveByLive',
-      });
+    if (opts.checkM3u8 && !(await this.stlink.fetchM3u8(stream))) {
+      const called_by = 'LiveInitializer.createNewLiveByLive';
+      log.warn('M3U8 not available', { ...liveAttr(base, { st: true }), called_by });
       return null;
     }
 
     // Create new live record
     const live = await this.liveWriter.createByLive(base.id);
-    const newReq: LiveRegisterRequest = {
-      live,
-      logMessage: 'New Same Live',
-    };
-    return this.registrar.register(newReq);
+    return this.registrar.register({ live, logMessage: 'New Same Live' });
   }
 
   async createNewLive(req: NewLiveRequest): Promise<string | null> {

@@ -114,6 +114,15 @@ export class StdlRedisImpl extends StdlRedis {
     await this.master.del(nums.map((num) => `${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`));
   }
 
+  async updateIsInvalid(liveId: string, isInvalid: boolean) {
+    const state = await this.getLiveState(liveId, true);
+    if (!state) {
+      throw NotFoundError.from('Live', 'id', liveId);
+    }
+    state.isInvalid = isInvalid;
+    await this.master.set(`${LIVE_PREFIX}:${state.id}`, JSON.stringify(state), { EX: this.liveStateExpireSec });
+  }
+
   private getClient(useMaster: boolean = false) {
     return useMaster ? this.master : this.replica;
   }

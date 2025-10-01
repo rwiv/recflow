@@ -40,8 +40,8 @@ export abstract class StdlRedis {
   abstract deleteSegNumSet(liveId: string, keyword: SegmentKeyword): Promise<void>;
   abstract deleteSegmentStates(liveId: string, nums: string[]): Promise<void>;
 
-  async isInvalidLive(live: LiveDto): Promise<boolean> {
-    const liveState = await this.getLiveState(live.id, false);
+  async isInvalidLive(live: LiveDto, useMaster: boolean = false): Promise<boolean> {
+    const liveState = await this.getLiveState(live.id, useMaster);
     if (!liveState) {
       log.error(`Live not found in redis`, liveAttr(live));
       return true;

@@ -71,7 +71,7 @@ export class LiveRecoveryManager {
     }
 
     // Finish if live is invalid
-    if (await this.stdlRedis.isInvalidLive(live)) {
+    if (await this.stdlRedis.isInvalidLive(live, true)) {
       this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
       if (live.platform.name === 'soop') {
         await this.registerSameLive(live);
@@ -121,7 +121,7 @@ export class LiveRecoveryManager {
 
   private async registerSameLive(live: LiveDto) {
     try {
-      return await this.liveInitializer.createNewLiveByLive(live);
+      return await this.liveInitializer.createNewLiveByLive(live, { checkM3u8: false });
     } catch (e) {
       log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
     }

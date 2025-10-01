@@ -15,6 +15,9 @@ export const LIVE_REFRESH_DEF: TaskDef = { delay: 2 * 1000, ex: 60 };
 export const LIVE_RECOVERY_NAME = 'live_recovery';
 export const LIVE_RECOVERY_DEF: TaskDef = { delay: 1000, ex: 3 * 60 };
 
+export const LIVE_INVALID_RECOVERY_NAME = 'live_invalid_recovery';
+export const LIVE_INVALID_RECOVERY_DEF: TaskDef = { delay: 500, ex: 30 };
+
 export const LIVE_STATE_CLEANUP_NAME = 'live_state_cleanup';
 export const LIVE_STATE_CLEANUP_DEF: TaskDef = { delay: 1000, ex: 60 };
 

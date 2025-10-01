@@ -12,6 +12,7 @@ import {
   LIVE_STATE_CLEANUP_NAME,
   LIVE_ALLOCATION_NAME,
   LIVE_FINISH_NAME,
+  LIVE_INVALID_RECOVERY_NAME,
 } from './live.task.contants.js';
 import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
 import { LiveBalancer } from '../../live/coord/live.balancer.js';
@@ -57,9 +58,15 @@ export class LiveTaskInitializer {
 
     const recoveryTask: Task = {
       name: LIVE_RECOVERY_NAME,
-      run: () => this.liveRecoveryManager.check(),
+      run: () => this.liveRecoveryManager.checkLives(),
     };
     createWorker(recoveryTask, cronOpts, this.runner);
+
+    const invalidRecoveryTask: Task = {
+      name: LIVE_INVALID_RECOVERY_NAME,
+      run: () => this.liveRecoveryManager.checkInvalidLives(),
+    };
+    createWorker(invalidRecoveryTask, cronOpts, this.runner);
 
     const liveStateCleanupTask: Task = {
       name: LIVE_STATE_CLEANUP_NAME,

@@ -21,6 +21,7 @@ import { db } from '../../infra/db/db.js';
 import { LogLevel } from '../../utils/log.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { LiveInitializer } from '../register/live.initializer.js';
+import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 
 interface InvalidNode {
   node: NodeDto;
@@ -50,7 +51,31 @@ export class LiveRecoveryManager {
     private readonly fetcher: PlatformFetcher,
   ) {}
 
-  async check() {
+  async checkInvalidLives() {
+    const lives = await this.liveFinder.findAllActives();
+    const liveIds = lives.map((live) => live.id);
+    const states = await this.stdlRedis.getLiveStates(liveIds, false);
+    const ps = [];
+    for (const state of states.filter((s) => s !== null)) {
+      if (state.isInvalid) {
+        const live = lives.find((live) => live.id === state.id);
+        if (!live) throw NotFoundError.from('Live', 'id', state.id);
+        ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error', { checkM3u8: false }));
+      }
+    }
+    await Promise.allSettled(ps);
+  }
+
+  private async finishLiveWithRestart(live: LiveDto, logMsg: string, logLevel: LogLevel, opts: { checkM3u8: boolean }) {
+    try {
+      return await this.liveInitializer.createNewLiveByLive(live, opts);
+    } catch (e) {
+      log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
+    }
+    await this.finishLive(live.id, logMsg, logLevel);
+  }
+
+  async checkLives() {
     const promises = [];
     for (const live of await this.retrieveInvalidNodes()) {
       promises.push(this.checkInvalidLive(live));
@@ -69,14 +94,9 @@ export class LiveRecoveryManager {
       log.debug('Live is already disabled', liveAttr(live));
       return;
     }
-
-    // Finish if live is invalid
+    // Skip invalid live
     if (await this.stdlRedis.isInvalidLive(live, true)) {
-      this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
-      if (live.platform.name === 'soop') {
-        await this.registerSameLive(live);
-      }
-      await this.finishLive(live.id, 'Live is invalid', 'error');
+      log.debug('Skip invalid live recovery', liveAttr(live));
       return;
     }
 
@@ -85,13 +105,6 @@ export class LiveRecoveryManager {
     const liveInfo = chanInfo.liveInfo;
     if (!liveInfo) {
       await this.finishLive(live.id, 'Delete uncleaned live', 'warn');
-      return;
-    }
-    if (live.sourceId !== liveInfo.liveUid) {
-      if (live.platform.name === 'soop') {
-        await this.registerSameLive(live);
-      }
-      await this.finishLive(live.id, 'Delete restarted live', 'warn');
       return;
     }
 
@@ -117,14 +130,6 @@ export class LiveRecoveryManager {
 
   private finishLive(recordId: string, logMsg: string, logLevel: LogLevel) {
     return this.liveRegistrar.finishLive({ recordId, isPurge: true, exitCmd: 'finish', logMsg, logLevel });
-  }
-
-  private async registerSameLive(live: LiveDto) {
-    try {
-      return await this.liveInitializer.createNewLiveByLive(live, { checkM3u8: false });
-    } catch (e) {
-      log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
-    }
   }
 
   private async checkInvalidNode(tgtLive: LiveDto, invalidNode: NodeDto) {

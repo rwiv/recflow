@@ -61,7 +61,7 @@ export class LiveInitializer {
     private readonly helper: LiveRegisterHelper,
   ) {}
 
-  async createNewLiveByLive(base: LiveDto, opts: { checkM3u8: boolean } = { checkM3u8: true }): Promise<string | null> {
+  async createNewLiveByLive(base: LiveDto, opts: { checkM3u8: boolean }): Promise<string | null> {
     // Validate m3u8
     const stream = base.stream;
     if (!stream) {

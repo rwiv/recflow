@@ -66,19 +66,6 @@ export class LiveRecoveryManager {
     await Promise.allSettled(ps);
   }
 
-  private async finishLiveWithRestart(live: LiveDto, logMsg: string, logLevel: LogLevel) {
-    try {
-      const opts = { checkM3u8: true };
-      if (live.platform.name === 'soop') {
-        opts.checkM3u8 = false;
-      }
-      return await this.liveInitializer.createNewLiveByLive(live, opts);
-    } catch (e) {
-      log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
-    }
-    await this.finishLive(live.id, logMsg, logLevel);
-  }
-
   async checkLives() {
     const promises = [];
     for (const live of await this.retrieveInvalidNodes()) {
@@ -111,6 +98,10 @@ export class LiveRecoveryManager {
       await this.finishLive(live.id, 'Delete uncleaned live', 'warn');
       return;
     }
+    if (live.sourceId !== liveInfo.liveUid) {
+      await this.finishLiveWithRestart(live, 'Delete restarted live', 'warn');
+      return;
+    }
 
     // Finish if live is fatal
     assert(live.nodes);
@@ -134,6 +125,20 @@ export class LiveRecoveryManager {
 
   private finishLive(recordId: string, logMsg: string, logLevel: LogLevel) {
     return this.liveRegistrar.finishLive({ recordId, isPurge: true, exitCmd: 'finish', logMsg, logLevel });
+  }
+
+  private async finishLiveWithRestart(live: LiveDto, logMsg: string, logLevel: LogLevel) {
+    try {
+      const opts = { checkM3u8: true };
+      if (live.platform.name === 'soop') {
+        // soop doesn't have enough time to check m3u8
+        opts.checkM3u8 = false;
+      }
+      return await this.liveInitializer.createNewLiveByLive(live, opts);
+    } catch (e) {
+      log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
+    }
+    await this.finishLive(live.id, logMsg, logLevel);
   }
 
   private async checkInvalidNode(tgtLive: LiveDto, invalidNode: NodeDto) {

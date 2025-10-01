@@ -60,6 +60,7 @@ export class LiveRecoveryManager {
       if (state.isInvalid) {
         const live = lives.find((live) => live.id === state.id);
         if (!live) throw NotFoundError.from('Live', 'id', state.id);
+        this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
         ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error'));
       }
     }
@@ -134,7 +135,7 @@ export class LiveRecoveryManager {
         // soop doesn't have enough time to check m3u8
         opts.checkM3u8 = false;
       }
-      return await this.liveInitializer.createNewLiveByLive(live, opts);
+      await this.liveInitializer.createNewLiveByLive(live, opts);
     } catch (e) {
       log.error('Failed to reregister same live', { ...liveAttr(live), stack_trace: stacktrace(e) });
     }

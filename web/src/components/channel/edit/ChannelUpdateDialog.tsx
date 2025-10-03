@@ -1,5 +1,6 @@
 import { RefObject, useRef } from 'react';
 import { z } from 'zod';
+import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -57,6 +58,8 @@ export function CreateForm({ channel, cb }: { channel: ChannelDto; cb: () => voi
         <TextAreaFormField
           form={form}
           name="description"
+          contentClassName="resize-y"
+          contentStyle={css({ height: '6rem' })}
           placeholder="Write a description about channel..."
         />
         <FormSubmitButton />

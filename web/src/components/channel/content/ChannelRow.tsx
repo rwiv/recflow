@@ -6,13 +6,12 @@ import { TagBadge } from '@/components/channel/content/TagBadge.tsx';
 import { ChannelDto } from '@/client/channel/channel.types.ts';
 import { GradeUpdateDialog } from '@/components/channel/edit/GradeUpdateDialog.tsx';
 import { ChannelInfoCell } from '@/components/channel/content/ChannelInfoCell.tsx';
-import { css } from '@emotion/react';
 
 export function ChannelRow({ channel }: { channel: ChannelDto }) {
   return (
     <TableRow>
       <TableCell>
-        <ChannelInfoCell channel={channel} css={css({ width: '15rem' })} />
+        <ChannelInfoCell channel={channel} />
       </TableCell>
       <TableCell>
         <GradeUpdateDialog channel={channel}>

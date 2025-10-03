@@ -8,19 +8,19 @@ export function ChannelTableContent({ channels }: { channels: ChannelDto[] }) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead css={css({ width: '15rem' })}>
+          <TableHead css={css({ width: '16rem' })}>
             <div className="ml-2">Channel</div>
           </TableHead>
           <TableHead css={css({ width: '9rem' })}>Grade</TableHead>
-          <TableHead css={css({ width: '18rem' })}>Tags</TableHead>
+          <TableHead css={css({ width: '16rem' })}>Tags</TableHead>
           <TableHead>Description</TableHead>
           <TableHead css={css({ width: '8rem' })}>
             <div className="justify-self-center">Followers</div>
           </TableHead>
-          <TableHead css={css({ width: '11em' })}>
+          <TableHead css={css({ width: '10em' })}>
             <div className="justify-self-center">UpdatedAt</div>
           </TableHead>
-          <TableHead css={css({ width: '11em' })}>
+          <TableHead css={css({ width: '10em' })}>
             <div className="justify-self-center">CreatedAt</div>
           </TableHead>
           <TableHead css={css({ width: '8em' })}>

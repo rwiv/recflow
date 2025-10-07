@@ -38,4 +38,10 @@ export default tseslint.config(
       '@typescript-eslint/no-misused-promises': 'warn',
     },
   },
+  {
+    files: ['**/*spec.ts'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+    },
+  }
 );

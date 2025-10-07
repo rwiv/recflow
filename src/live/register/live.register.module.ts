@@ -8,9 +8,10 @@ import { ConfigModule } from '../../common/config/config.module.js';
 import { InfraModule } from '../../infra/infra.module.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { CriterionServiceModule } from '../../criterion/service/criterion.service.module.js';
+import { LiveInitializerImpl } from './live.initializer.impl.js';
+import { LiveStreamModule } from '../stream/live.stream.module.js';
 import { LiveInitializer } from './live.initializer.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
-import { LiveStreamModule } from '../stream/live.stream.module.js';
 
 @Module({
   imports: [
@@ -23,7 +24,15 @@ import { LiveStreamModule } from '../stream/live.stream.module.js';
     LiveDataModule,
     LiveStreamModule,
   ],
-  providers: [LiveRegistrar, LiveInitializer, LiveFinalizer, LiveRegisterHelper],
-  exports: [LiveRegistrar, LiveInitializer, LiveFinalizer, LiveRegisterHelper],
+  providers: [
+    LiveRegistrar,
+    LiveFinalizer,
+    LiveRegisterHelper,
+    {
+      provide: LiveInitializer,
+      useClass: LiveInitializerImpl,
+    },
+  ],
+  exports: [LiveRegistrar, LiveFinalizer, LiveInitializer],
 })
 export class LiveRegisterModule {}

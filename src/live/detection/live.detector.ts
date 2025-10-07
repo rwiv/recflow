@@ -11,10 +11,10 @@ import { LiveFinder } from '../data/live.finder.js';
 import { LiveHistoryRepository } from '../storage/live.history.repository.js';
 import { PlatformLiveFilter } from './live.filter.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { LiveInitializer } from '../register/live.initializer.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { BaseError } from '../../utils/errors/base/BaseError.js';
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
+import { LiveInitializer } from '../register/live.initializer.js';
 
 @Injectable()
 export class LiveDetector {

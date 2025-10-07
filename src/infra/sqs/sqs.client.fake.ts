@@ -4,7 +4,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SQSClientFake extends SQSClient {
-  async send(msg: string): Promise<void> {
+  send(msg: string): Promise<void> {
     log.debug(`SQSClientMock.senc(${msg})`);
+    return Promise.resolve();
   }
 }

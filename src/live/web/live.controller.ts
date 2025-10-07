@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Post, Query, UseFilters } from '@nestjs/common';
 import { LiveRegistrar } from '../register/live.registrar.js';
-import { LiveInitializer } from '../register/live.initializer.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { exitCmd } from '../spec/event.schema.js';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
@@ -17,6 +16,7 @@ import { Redis } from 'ioredis';
 import { NODE_DRAIN_NAME } from '../../task/node/node.tasks.constants.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
+import { LiveInitializer } from '../register/live.initializer.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')

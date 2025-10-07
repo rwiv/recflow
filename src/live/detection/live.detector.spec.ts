@@ -3,11 +3,13 @@ import { dummyPlatformCriterionDto } from '../../criterion/spec/criterion.dto.sc
 import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
 import { dummyChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.dummy.js';
 import { LiveDetector } from './live.detector.js';
+import { LiveInitializer } from '../register/live.initializer.js';
+import { LiveInitializerMock } from '../register/live.initializer.mock.js';
 
 describe('LiveCoordinator', () => {
   let coordinator: LiveDetector;
   let mockFetcher: { fetchLives: MockInstance; fetchChannel: MockInstance };
-  let mockLiveInitializer: { createNewLive: MockInstance };
+  let mockLiveInitializer: LiveInitializer;
   let mockChannelFinder: { findFollowedChannels: MockInstance };
   let mockLiveFinder: { findByChannelSourceId: MockInstance };
   let mockFilter: { getFiltered: MockInstance };
@@ -15,7 +17,7 @@ describe('LiveCoordinator', () => {
 
   beforeEach(() => {
     mockFetcher = { fetchLives: vi.fn(), fetchChannel: vi.fn() };
-    mockLiveInitializer = { createNewLive: vi.fn() };
+    mockLiveInitializer = new LiveInitializerMock();
     mockChannelFinder = { findFollowedChannels: vi.fn() };
     mockLiveFinder = { findByChannelSourceId: vi.fn() };
     mockFilter = { getFiltered: vi.fn() };
@@ -23,7 +25,7 @@ describe('LiveCoordinator', () => {
     coordinator = new LiveDetector(
       mockChannelFinder as any,
       mockLiveFinder as any,
-      mockLiveInitializer as any,
+      mockLiveInitializer,
       mockFetcher as any,
       mockFilter as any,
       mockHistoryRepo as any,

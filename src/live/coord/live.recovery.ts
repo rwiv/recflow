@@ -20,8 +20,8 @@ import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
 import { LogLevel } from '../../utils/log.js';
 import { stacktrace } from '../../utils/errors/utils.js';
-import { LiveInitializer } from '../register/live.initializer.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { LiveInitializer } from '../register/live.initializer.js';
 
 interface InvalidNode {
   node: NodeDto;

@@ -1,29 +1,29 @@
 import { beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { mockPlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.mocks.js';
 import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
-import { mockChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.mocks.js';
+import { dummyChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.mocks.js';
 import { LiveDetector } from './live.detector.js';
 
 describe('LiveCoordinator', () => {
   let coordinator: LiveDetector;
   let mockFetcher: { fetchLives: MockInstance; fetchChannel: MockInstance };
-  let mockLiveRegistrar: { register: MockInstance };
+  let mockLiveInitializer: { createNewLive: MockInstance };
   let mockChannelFinder: { findFollowedChannels: MockInstance };
-  let mockLiveFinder: { findByPid: MockInstance };
+  let mockLiveFinder: { findByChannelSourceId: MockInstance };
   let mockFilter: { getFiltered: MockInstance };
   let mockHistoryRepo: { exists: MockInstance; set: MockInstance };
 
   beforeEach(() => {
     mockFetcher = { fetchLives: vi.fn(), fetchChannel: vi.fn() };
-    mockLiveRegistrar = { register: vi.fn() };
+    mockLiveInitializer = { createNewLive: vi.fn() };
     mockChannelFinder = { findFollowedChannels: vi.fn() };
-    mockLiveFinder = { findByPid: vi.fn() };
+    mockLiveFinder = { findByChannelSourceId: vi.fn() };
     mockFilter = { getFiltered: vi.fn() };
     mockHistoryRepo = { exists: vi.fn(), set: vi.fn() };
     coordinator = new LiveDetector(
       mockChannelFinder as any,
       mockLiveFinder as any,
-      mockLiveRegistrar as any,
+      mockLiveInitializer as any,
       mockFetcher as any,
       mockFilter as any,
       mockHistoryRepo as any,
@@ -33,24 +33,27 @@ describe('LiveCoordinator', () => {
   describe('registerQueriedLives', () => {
     it('openLive가 true인 경우 등록', async () => {
       // Given
-      const mockChannel0 = mockChzzkChannelLiveInfo({ openLive: true });
-      const mockChannel1 = mockChzzkChannelLiveInfo({ openLive: false });
-      const mockChannel2 = mockChzzkChannelLiveInfo({ openLive: true });
+      const chInfo0 = dummyChzzkChannelLiveInfo({ openLive: true });
+      const chInfo1 = dummyChzzkChannelLiveInfo({ openLive: false });
+      const chInfo2 = dummyChzzkChannelLiveInfo({ openLive: true });
 
-      mockChannelFinder.findFollowedChannels.mockResolvedValue([mockChannel0, mockChannel1, mockChannel2]);
+      mockChannelFinder.findFollowedChannels.mockResolvedValue([chInfo0, chInfo1, chInfo2]);
+      mockLiveFinder.findByChannelSourceId.mockResolvedValue([]);
       mockFetcher.fetchChannel
-        .mockResolvedValueOnce(mockChannel0)
-        .mockResolvedValueOnce(mockChannel0)
-        .mockResolvedValueOnce(mockChannel1)
-        .mockResolvedValueOnce(mockChannel2)
-        .mockResolvedValueOnce(mockChannel2);
+        .mockResolvedValueOnce(chInfo0)
+        .mockResolvedValueOnce(chInfo0)
+        .mockResolvedValueOnce(chInfo1)
+        .mockResolvedValueOnce(chInfo2)
+        .mockResolvedValueOnce(chInfo2);
 
       // When
       await coordinator.checkFollowedLives();
 
       // Then
-      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(1, { channelInfo: mockChannel0 });
-      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(2, { channelInfo: mockChannel2 });
+      expect(mockLiveInitializer.createNewLive).toHaveBeenNthCalledWith(1, {
+        channelInfo: chInfo2,
+        isFollowed: true,
+      });
     });
   });
 
@@ -62,9 +65,9 @@ describe('LiveCoordinator', () => {
         loggingOnly: false,
       });
 
-      const mockChannel0 = mockChzzkChannelLiveInfo();
-      const mockChannel1 = mockChzzkChannelLiveInfo();
-      const mockChannel2 = mockChzzkChannelLiveInfo();
+      const mockChannel0 = dummyChzzkChannelLiveInfo();
+      const mockChannel1 = dummyChzzkChannelLiveInfo();
+      const mockChannel2 = dummyChzzkChannelLiveInfo();
 
       const queriedLives = [mockChannel0.liveInfo, mockChannel1.liveInfo, mockChannel2.liveInfo];
       const filteredLives = [mockChannel0.liveInfo, mockChannel2.liveInfo];
@@ -77,11 +80,11 @@ describe('LiveCoordinator', () => {
       await coordinator.checkQueriedLives(mockCriterion);
 
       // Then
-      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(1, {
+      expect(mockLiveInitializer.createNewLive).toHaveBeenNthCalledWith(1, {
         channelInfo: mockChannel0,
         criterion: mockCriterion,
       });
-      expect(mockLiveRegistrar.register).toHaveBeenNthCalledWith(2, {
+      expect(mockLiveInitializer.createNewLive).toHaveBeenNthCalledWith(2, {
         channelInfo: mockChannel2,
         criterion: mockCriterion,
       });
@@ -94,10 +97,10 @@ describe('LiveCoordinator', () => {
         loggingOnly: true,
       });
 
-      const mockChannel0 = mockChzzkChannelLiveInfo();
-      const mockChannel1 = mockChzzkChannelLiveInfo();
-      const mockChannel2 = mockChzzkChannelLiveInfo();
-      const mockChannel3 = mockChzzkChannelLiveInfo();
+      const mockChannel0 = dummyChzzkChannelLiveInfo();
+      const mockChannel1 = dummyChzzkChannelLiveInfo();
+      const mockChannel2 = dummyChzzkChannelLiveInfo();
+      const mockChannel3 = dummyChzzkChannelLiveInfo();
 
       const queriedLives = [mockChannel0.liveInfo, mockChannel1.liveInfo, mockChannel2.liveInfo, mockChannel3.liveInfo];
       const filteredLives = [

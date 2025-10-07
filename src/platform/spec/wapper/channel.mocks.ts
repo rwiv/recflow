@@ -5,7 +5,7 @@ import { mockSoopChannelInfo } from '../raw/soop.mocks.js';
 import { channelFromChzzk, channelFromSoop, channelLiveInfo, ChannelLiveInfo } from './channel.js';
 import { LiveInfo } from './live.js';
 
-export function mockChzzkChannelLiveInfo(
+export function dummyChzzkChannelLiveInfo(
   overrides: Partial<ChzzkChannelInfo> = {},
   liveInfo?: LiveInfo,
 ): ChannelLiveInfo {
@@ -16,7 +16,7 @@ export function mockChzzkChannelLiveInfo(
   return channelLiveInfo.parse(channelInfo);
 }
 
-export function mockSoopChannelLiveInfo(
+export function dummySoopChannelLiveInfo(
   overrides: Partial<SoopChannelInfo> = {},
   liveInfo?: LiveInfo,
 ): ChannelLiveInfo {

@@ -5,9 +5,10 @@ import { UntfNotifier } from './notify/notifier.untf.js';
 import { MockNotifier } from './notify/notifier.mock.js';
 import { StdlMock } from './stdl/stdl.client.mock.js';
 import { StdlImpl } from './stdl/stdl.client.impl.js';
-import { NOTIFIER, SERVER_REDIS, SQS, STDL, STDL_REDIS, TASK_REDIS } from './infra.tokens.js';
+import { NOTIFIER, SERVER_REDIS, STDL, STDL_REDIS, TASK_REDIS } from './infra.tokens.js';
 import { SQSClientMock } from './sqs/sqs.client.mock.js';
 import { SQSClientImpl } from './sqs/sqs.client.impl.js';
+import { SQSClient } from './sqs/sqs.client.js';
 
 @Module({
   imports: [ConfigModule],
@@ -43,10 +44,10 @@ import { SQSClientImpl } from './sqs/sqs.client.impl.js';
       useClass: process.env.NODE_ENV === 'dev' ? MockNotifier : UntfNotifier,
     },
     {
-      provide: SQS,
+      provide: SQSClient,
       useClass: process.env.NODE_ENV === 'dev' ? SQSClientMock : SQSClientImpl,
     },
   ],
-  exports: [SERVER_REDIS, TASK_REDIS, STDL, STDL_REDIS, NOTIFIER, SQS],
+  exports: [SERVER_REDIS, TASK_REDIS, STDL, STDL_REDIS, NOTIFIER, SQSClient],
 })
 export class InfraModule {}

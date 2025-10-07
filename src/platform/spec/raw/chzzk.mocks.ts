@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ChzzkChannelInfo, ChzzkLiveInfo } from './chzzk.js';
 
-export function mockChzzkLiveInfo(overrides: Partial<ChzzkLiveInfo> = {}): ChzzkLiveInfo {
+export function dummyChzzkLiveInfo(overrides: Partial<ChzzkLiveInfo> = {}): ChzzkLiveInfo {
   return {
     channelId: faker.string.alphanumeric(10),
     channelName: faker.internet.displayName(),
@@ -25,7 +25,7 @@ export function mockChzzkLiveInfo(overrides: Partial<ChzzkLiveInfo> = {}): Chzzk
   };
 }
 
-export function mockChzzkChannelInfo(overrides: Partial<ChzzkChannelInfo> = {}): ChzzkChannelInfo {
+export function dummyChzzkChannelInfo(overrides: Partial<ChzzkChannelInfo> = {}): ChzzkChannelInfo {
   const channelInfo = {
     channelId: faker.string.alphanumeric(10),
     channelName: faker.internet.displayName(),
@@ -35,7 +35,7 @@ export function mockChzzkChannelInfo(overrides: Partial<ChzzkChannelInfo> = {}):
     liveInfo: null,
     ...overrides,
   };
-  channelInfo.liveInfo = mockChzzkLiveInfo({
+  channelInfo.liveInfo = dummyChzzkLiveInfo({
     channelId: channelInfo.channelId,
     channelName: channelInfo.channelName,
     channelImageUrl: channelInfo.channelImageUrl,

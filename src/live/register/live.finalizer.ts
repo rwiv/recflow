@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SQS, STDL, TASK_REDIS } from '../../infra/infra.tokens.js';
+import { STDL, TASK_REDIS } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { log } from 'jslog';
@@ -21,7 +21,6 @@ import { HttpError } from '../../utils/errors/base/HttpError.js';
 import { getHttpRequestError } from '../../utils/http.js';
 import { SQSClient } from '../../infra/sqs/sqs.client.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { logLevel } from '../../utils/log.js';
 import { Queue } from 'bullmq';
 import { LIVE_FINISH_NAME } from '../../task/live/live.task.contants.js';
 import { Redis } from 'ioredis';
@@ -66,7 +65,7 @@ export class LiveFinalizer {
   constructor(
     @Inject(ENV) private readonly env: Env,
     @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(SQS) private readonly sqs: SQSClient,
+    private readonly sqs: SQSClient,
     @Inject(TASK_REDIS) private readonly taskRedis: Redis,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,

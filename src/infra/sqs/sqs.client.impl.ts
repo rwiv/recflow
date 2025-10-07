@@ -20,11 +20,12 @@ const sqsMessage = z.object({
 export type SQSMessage = z.infer<typeof sqsMessage>;
 
 @Injectable()
-export class SQSClientImpl implements SQSClient {
+export class SQSClientImpl extends SQSClient {
   private readonly sqs: AwsSQSClient;
   private readonly queueUrl: string;
 
   constructor(@Inject(ENV) env: Env) {
+    super();
     this.sqs = new AwsSQSClient({
       region: env.sqs.regionName,
       credentials: {

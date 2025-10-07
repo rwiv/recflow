@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
@@ -18,11 +17,11 @@ const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
 export class LiveBalancer {
   constructor(
     @Inject(ENV) private readonly env: Env,
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly nodeRepo: NodeRepository,
+    private readonly stdl: Stdl,
+    private readonly stdlRedis: StdlRedis,
   ) {}
 
   async check() {

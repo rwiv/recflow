@@ -1,11 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import assert from 'assert';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
-import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
@@ -44,14 +43,14 @@ export interface LiveRegisterRequest {
 @Injectable()
 export class LiveRegistrar {
   constructor(
-    @Inject(NOTIFIER) private readonly notifier: Notifier,
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly nodeSelector: NodeSelector,
     private readonly liveWriter: LiveWriter,
     private readonly liveFinder: LiveFinder,
     private readonly finalizer: LiveFinalizer,
     private readonly helper: LiveRegisterHelper,
+    private readonly stdl: Stdl,
+    private readonly stdlRedis: StdlRedis,
+    private readonly notifier: Notifier,
   ) {}
 
   async register(req: LiveRegisterRequest): Promise<string | null> {

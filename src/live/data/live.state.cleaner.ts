@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NOTIFIER, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
 import { log } from 'jslog';
 import { LiveFinder } from './live.finder.js';
@@ -15,9 +14,9 @@ import assert from 'assert';
 export class LiveStateCleaner {
   constructor(
     @Inject(ENV) private readonly env: Env,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
-    @Inject(NOTIFIER) private readonly notifier: Notifier,
     private readonly liveFinder: LiveFinder,
+    private readonly stdlRedis: StdlRedis,
+    private readonly notifier: Notifier,
   ) {}
 
   async cleanup() {

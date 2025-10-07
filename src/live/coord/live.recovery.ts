@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NOTIFIER, STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeWriter } from '../../node/service/node.writer.js';
@@ -39,9 +38,6 @@ interface TargetLive {
 export class LiveRecoveryManager {
   constructor(
     @Inject(ENV) private readonly env: Env,
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
-    @Inject(NOTIFIER) private readonly notifier: Notifier,
     private readonly liveFinder: LiveFinder,
     private readonly liveInitializer: LiveInitializer,
     private readonly liveRegistrar: LiveRegistrar,
@@ -49,6 +45,9 @@ export class LiveRecoveryManager {
     private readonly nodeWriter: NodeWriter,
     private readonly nodeFinder: NodeFinder,
     private readonly fetcher: PlatformFetcher,
+    private readonly stdl: Stdl,
+    private readonly stdlRedis: StdlRedis,
+    private readonly notifier: Notifier,
   ) {}
 
   async checkInvalidLives() {

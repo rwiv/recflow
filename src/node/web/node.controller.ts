@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { STDL } from '../../infra/infra.tokens.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../service/node.finder.js';
@@ -13,7 +12,7 @@ export class NodeController {
   constructor(
     private readonly finder: NodeFinder,
     private readonly writer: NodeWriter,
-    @Inject(STDL) private readonly stdl: Stdl,
+    private readonly stdl: Stdl,
   ) {}
 
   @Get('/')

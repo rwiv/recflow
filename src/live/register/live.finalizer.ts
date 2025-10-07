@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STDL, TASK_REDIS } from '../../infra/infra.tokens.js';
+import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
 import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
 import { log } from 'jslog';
@@ -64,11 +64,11 @@ const RETRY_DELAY_MS = 3000; // 3 sec
 export class LiveFinalizer {
   constructor(
     @Inject(ENV) private readonly env: Env,
-    @Inject(STDL) private readonly stdl: Stdl,
-    private readonly sqs: SQSClient,
     @Inject(TASK_REDIS) private readonly taskRedis: Redis,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
+    private readonly stdl: Stdl,
+    private readonly sqs: SQSClient,
   ) {}
 
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {

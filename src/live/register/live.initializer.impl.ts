@@ -9,7 +9,6 @@ import { channelAttr, liveAttr, liveInfoAttr } from '../../common/attr/attr.live
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
-import { NOTIFIER } from '../../infra/infra.tokens.js';
 import { Notifier } from '../../infra/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
@@ -48,8 +47,6 @@ export interface NewLiveRequest {
 export class LiveInitializerImpl extends LiveInitializer {
   constructor(
     @Inject(ENV) private readonly env: Env,
-    @Inject(NOTIFIER) private readonly notifier: Notifier,
-    private readonly stlink: Stlink,
     private readonly nodeSelector: NodeSelector,
     private readonly chWriter: ChannelWriter,
     private readonly chFinder: ChannelFinder,
@@ -60,6 +57,8 @@ export class LiveInitializerImpl extends LiveInitializer {
     private readonly registrar: LiveRegistrar,
     private readonly crFinder: CriterionFinder,
     private readonly helper: LiveRegisterHelper,
+    private readonly notifier: Notifier,
+    private readonly stlink: Stlink,
   ) {
     super();
   }

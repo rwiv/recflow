@@ -1,11 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { NodeGroupService } from '../../node/service/node-group.service.js';
 import { Stdl } from '../../infra/stdl/stdl.client.js';
-import { STDL, STDL_REDIS } from '../../infra/infra.tokens.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -30,13 +29,13 @@ export type DrainArgs = z.infer<typeof drainArgs>;
 @Injectable()
 export class LiveDrainer {
   constructor(
-    @Inject(STDL) private readonly stdl: Stdl,
-    @Inject(STDL_REDIS) private readonly stdlRedis: StdlRedis,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly liveFinder: LiveFinder,
     private readonly nodeFinder: NodeFinder,
     private readonly nodeGroupService: NodeGroupService,
     private readonly nodeWriter: NodeWriter,
+    private readonly stdl: Stdl,
+    private readonly stdlRedis: StdlRedis,
   ) {}
 
   async drain(args: DrainArgs) {

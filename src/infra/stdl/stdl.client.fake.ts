@@ -16,7 +16,7 @@ const nodesSchema = z.array(nodeDto);
 const livesSchema = z.array(liveDto);
 
 @Injectable()
-export class StdlMock extends Stdl {
+export class StdlFake extends Stdl {
   private failureCnt: number = 0;
   constructor(@Inject(ENV) private readonly env: Env) {
     super();

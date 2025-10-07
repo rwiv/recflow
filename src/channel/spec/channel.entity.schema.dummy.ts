@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ChannelEnt } from './channel.entity.schema.js';
 
-export function mockChannelEnt(overrides: Partial<ChannelEnt> = {}): ChannelEnt {
+export function dummyChannelEnt(overrides: Partial<ChannelEnt> = {}): ChannelEnt {
   return {
     id: faker.string.uuid(),
     platformId: faker.string.uuid(),

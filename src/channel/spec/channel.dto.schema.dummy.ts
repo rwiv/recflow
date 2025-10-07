@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
 import { ChannelAppend, ChannelDto } from './channel.dto.schema.js';
-import { mockGradeDto } from './grade.schema.mocks.js';
-import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
+import { dummyGradeDto } from './grade.schema.dummy.js';
+import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
 import { ChannelEntAppend } from './channel.entity.schema.js';
 
-export function mockChannelEntAppend(overrides: Partial<ChannelAppend> = {}): ChannelEntAppend {
+export function dummyChannelEntAppend(overrides: Partial<ChannelAppend> = {}): ChannelEntAppend {
   return {
     platformId: faker.string.uuid(),
     sourceId: faker.string.uuid(),
@@ -17,11 +17,11 @@ export function mockChannelEntAppend(overrides: Partial<ChannelAppend> = {}): Ch
   };
 }
 
-export function mockChannelAppend(overrides: Partial<ChannelAppend> = {}): ChannelAppend {
-  return mockChannelEntAppend(overrides);
+export function dummyChannelAppend(overrides: Partial<ChannelAppend> = {}): ChannelAppend {
+  return dummyChannelEntAppend(overrides);
 }
 
-export function mockChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto {
+export function dummyChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto {
   return {
     id: faker.string.uuid(),
     sourceId: faker.string.uuid(),
@@ -36,8 +36,8 @@ export function mockChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto 
     updatedAt: faker.date.recent(),
     lastRefreshedAt: faker.date.recent(),
     streamCheckedAt: faker.date.recent(),
-    platform: mockPlatformDto(),
-    grade: mockGradeDto(),
+    platform: dummyPlatformDto(),
+    grade: dummyGradeDto(),
     ...overrides,
   };
 }

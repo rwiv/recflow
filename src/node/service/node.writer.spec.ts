@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterAll, expect } from 'vitest';
 import { dropTables } from '../../infra/db/utils.js';
-import { mockNodeAppend } from '../spec/node.dto.schema.mocks.js';
+import { dummyNodeAppend } from '../spec/node.dto.schema.dummy.js';
 import { notNull } from '../../utils/null.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
@@ -25,7 +25,7 @@ describe('test NodeWriter', async () => {
 
   it('create', async () => {
     const ng = notNull(await ngRepo.findByName('main'));
-    const node = await nodeWriter.create(mockNodeAppend(), true);
+    const node = await nodeWriter.create(dummyNodeAppend(), true);
     const found1 = notNull(await nodeFinder.findById(node.id, {}));
     expect(found1.name).eq('node1');
 

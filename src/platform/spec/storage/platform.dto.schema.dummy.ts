@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { platformNameEnum } from './platform.enum.schema.js';
 import { PlatformDto } from './platform.dto.schema.js';
 
-export function mockPlatformDto(overrides: Partial<PlatformDto> = {}): PlatformDto {
+export function dummyPlatformDto(overrides: Partial<PlatformDto> = {}): PlatformDto {
   return {
     id: faker.string.uuid(),
     name: faker.helpers.arrayElement(platformNameEnum.options),

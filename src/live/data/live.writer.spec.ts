@@ -1,9 +1,9 @@
 import { afterAll, beforeEach, describe, it, expect } from 'vitest';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { GradeService } from '../../channel/service/grade.service.js';
-import { mockChannelAppend } from '../../channel/spec/channel.dto.schema.mocks.js';
+import { dummyChannelAppend } from '../../channel/spec/channel.dto.schema.dummy.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
-import { mockLiveInfoChzzk } from '../../platform/spec/wapper/live.mocks.js';
+import { dummyLiveInfoChzzk } from '../../platform/spec/wapper/live.dummy.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
@@ -33,10 +33,10 @@ describe('ChannelService', () => {
     const pf = await pfFinder.findByNameNotNull('chzzk');
     const gr = await grService.findByNameNotNull('none');
 
-    const cha = mockChannelAppend({ platformId: pf.id, gradeId: gr.id });
+    const cha = dummyChannelAppend({ platformId: pf.id, gradeId: gr.id });
     const ch = await chWriter.createWithTagNames(cha, ['tag1', 'tag2']);
 
-    const li1 = mockLiveInfoChzzk({ channelId: ch.sourceId });
+    const li1 = dummyLiveInfoChzzk({ channelId: ch.sourceId });
     const args1: LiveCreateArgs = {
       liveInfo: li1,
       fields: {
@@ -50,7 +50,7 @@ describe('ChannelService', () => {
     const live1 = await liveWriter.createByLiveInfo(args1);
     expect(live1.liveTitle).toBe(li1.liveTitle);
 
-    const li2 = mockLiveInfoChzzk({ channelId: ch.sourceId });
+    const li2 = dummyLiveInfoChzzk({ channelId: ch.sourceId });
     await liveWriter.updateByLive(live1.id, li2);
     const live2 = await liveFinder.findById(live1.id);
     assert(live2);
@@ -59,7 +59,7 @@ describe('ChannelService', () => {
 
     await expect(() => {
       const args2 = { ...args1 };
-      args2.liveInfo = mockLiveInfoChzzk({ channelId: ch.sourceId });
+      args2.liveInfo = dummyLiveInfoChzzk({ channelId: ch.sourceId });
       args2.fields.videoName = live1.videoName;
       return liveWriter.createByLiveInfo(args2);
     }).rejects.toThrowError(ConflictError);

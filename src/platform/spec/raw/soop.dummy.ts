@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { SoopChannelInfo, SoopLiveInfo } from './soop.js';
 
-export function mockSoopLiveInfo(overrides: Partial<SoopLiveInfo> = {}): SoopLiveInfo {
+export function dummySoopLiveInfo(overrides: Partial<SoopLiveInfo> = {}): SoopLiveInfo {
   return {
     userId: faker.string.alphanumeric(10),
     userNick: faker.internet.displayName(),
@@ -20,7 +20,7 @@ export function mockSoopLiveInfo(overrides: Partial<SoopLiveInfo> = {}): SoopLiv
   };
 }
 
-export function mockSoopChannelInfo(overrides: Partial<SoopChannelInfo> = {}): SoopChannelInfo {
+export function dummySoopChannelInfo(overrides: Partial<SoopChannelInfo> = {}): SoopChannelInfo {
   const channelInfo: SoopChannelInfo = {
     userId: faker.string.alphanumeric(10),
     userNick: faker.internet.displayName(),
@@ -31,7 +31,7 @@ export function mockSoopChannelInfo(overrides: Partial<SoopChannelInfo> = {}): S
     liveInfo: null,
     ...overrides,
   };
-  channelInfo.liveInfo = mockSoopLiveInfo({
+  channelInfo.liveInfo = dummySoopLiveInfo({
     userId: channelInfo.userId,
     userNick: channelInfo.userNick,
   });

@@ -1,7 +1,7 @@
 import { ChzzkChannelInfo } from '../raw/chzzk.js';
-import { dummyChzzkChannelInfo } from '../raw/chzzk.mocks.js';
+import { dummyChzzkChannelInfo } from '../raw/chzzk.dummy.js';
 import { SoopChannelInfo } from '../raw/soop.js';
-import { mockSoopChannelInfo } from '../raw/soop.mocks.js';
+import { dummySoopChannelInfo } from '../raw/soop.dummy.js';
 import { channelFromChzzk, channelFromSoop, channelLiveInfo, ChannelLiveInfo } from './channel.js';
 import { LiveInfo } from './live.js';
 
@@ -20,7 +20,7 @@ export function dummySoopChannelLiveInfo(
   overrides: Partial<SoopChannelInfo> = {},
   liveInfo?: LiveInfo,
 ): ChannelLiveInfo {
-  const channelInfo = channelFromSoop(mockSoopChannelInfo(overrides));
+  const channelInfo = channelFromSoop(dummySoopChannelInfo(overrides));
   if (liveInfo) {
     channelInfo.liveInfo = liveInfo;
   }

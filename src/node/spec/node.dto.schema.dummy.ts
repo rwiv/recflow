@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { NodeAppend, NodeDto } from './node.dto.schema.js';
 
-export function mockNodeAppend(overrides: Partial<NodeAppend> = {}): NodeAppend {
+export function dummyNodeAppend(overrides: Partial<NodeAppend> = {}): NodeAppend {
   return {
     name: faker.lorem.words(2),
     endpoint: faker.internet.url(),
@@ -12,7 +12,7 @@ export function mockNodeAppend(overrides: Partial<NodeAppend> = {}): NodeAppend 
   };
 }
 
-export function mockNodeDto(overrides: Partial<NodeDto> = {}): NodeDto {
+export function dummyNodeDto(overrides: Partial<NodeDto> = {}): NodeDto {
   return {
     id: faker.string.uuid(),
     name: faker.lorem.words(2),

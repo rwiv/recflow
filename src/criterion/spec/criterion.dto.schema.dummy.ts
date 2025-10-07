@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { CriterionUnitDto, PlatformCriterionDto } from './criterion.dto.schema.js';
-import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
+import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
 
-export function mockCriterionUnit(overrides: Partial<CriterionUnitDto> = {}): CriterionUnitDto {
+export function dummyCriterionUnit(overrides: Partial<CriterionUnitDto> = {}): CriterionUnitDto {
   return {
     id: faker.string.uuid(),
     criterionId: faker.string.uuid(),
@@ -15,16 +15,16 @@ export function mockCriterionUnit(overrides: Partial<CriterionUnitDto> = {}): Cr
   };
 }
 
-function createMockUnits(values: string[], min: number, max: number): CriterionUnitDto[] {
-  return faker.helpers.arrayElements(values, { min, max }).map((v) => mockCriterionUnit({ value: v }));
+function newDummyUnits(values: string[], min: number, max: number): CriterionUnitDto[] {
+  return faker.helpers.arrayElements(values, { min, max }).map((v) => dummyCriterionUnit({ value: v }));
 }
 
-export function mockPlatformCriterionDto(overrides: Partial<PlatformCriterionDto> = {}): PlatformCriterionDto {
+export function dummyPlatformCriterionDto(overrides: Partial<PlatformCriterionDto> = {}): PlatformCriterionDto {
   return {
     id: faker.string.uuid(),
     name: faker.lorem.words(2),
     description: faker.lorem.sentence(),
-    platform: mockPlatformDto(),
+    platform: dummyPlatformDto(),
     isDeactivated: faker.datatype.boolean(),
     adultOnly: faker.datatype.boolean(),
     enforceCreds: faker.datatype.boolean(),
@@ -36,12 +36,12 @@ export function mockPlatformCriterionDto(overrides: Partial<PlatformCriterionDto
     keywordRuleId: faker.string.uuid(),
     cateRuleId: faker.string.uuid(),
     wpRuleId: faker.string.uuid(),
-    positiveTags: createMockUnits(['Game', 'Music', 'Cooking', 'Exercise', 'Reading'], 1, 3),
-    negativeTags: createMockUnits(['Inappropriate', 'Spam', 'Advertisement'], 0, 2),
-    positiveKeywords: createMockUnits(['Fun', 'Useful', 'Interesting'], 1, 3),
-    negativeKeywords: createMockUnits(['Boring', 'Useless', 'Disappointing'], 0, 2),
-    positiveWps: createMockUnits(['Good', 'Excellent', 'Perfect'], 1, 3),
-    negativeWps: createMockUnits(['Bad', 'Worst', 'Failure'], 0, 2),
+    positiveTags: newDummyUnits(['Game', 'Music', 'Cooking', 'Exercise', 'Reading'], 1, 3),
+    negativeTags: newDummyUnits(['Inappropriate', 'Spam', 'Advertisement'], 0, 2),
+    positiveKeywords: newDummyUnits(['Fun', 'Useful', 'Interesting'], 1, 3),
+    negativeKeywords: newDummyUnits(['Boring', 'Useless', 'Disappointing'], 0, 2),
+    positiveWps: newDummyUnits(['Good', 'Excellent', 'Perfect'], 1, 3),
+    negativeWps: newDummyUnits(['Bad', 'Worst', 'Failure'], 0, 2),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     ...overrides,

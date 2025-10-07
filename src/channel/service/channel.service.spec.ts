@@ -1,5 +1,5 @@
 import { afterAll, describe, it } from 'vitest';
-import { mockChannelAppend } from '../spec/channel.dto.schema.mocks.js';
+import { dummyChannelAppend } from '../spec/channel.dto.schema.dummy.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
@@ -86,7 +86,7 @@ describe('ChannelService', () => {
 });
 
 function add(n: number, gradeId: string, platformId: string, followerCnt: number, tagNames: string[]) {
-  const ch = mockChannelAppend({
+  const ch = dummyChannelAppend({
     sourceId: `uid${n}`,
     username: `user${n}`,
     gradeId,

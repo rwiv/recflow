@@ -1,5 +1,5 @@
 import { describe, it } from 'vitest';
-import { mockChannelEntAppend } from '../spec/channel.dto.schema.mocks.js';
+import { dummyChannelEntAppend } from '../spec/channel.dto.schema.dummy.js';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
@@ -114,7 +114,7 @@ describe('ChannelService', () => {
 });
 
 function chanReq(n: number, maxTagNum: number, tagIds: string[], priIds: string[], pfIds: string[]) {
-  return mockChannelEntAppend({
+  return dummyChannelEntAppend({
     sourceId: `uid${n}`,
     username: `user${n}`,
     isFollowed: false,

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
-import { mockPlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.mocks.js';
-import { mockPlatformDto } from '../../platform/spec/storage/platform.dto.schema.mocks.js';
-import { dummyChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.mocks.js';
+import { dummyPlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.dummy.js';
+import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
+import { dummyChzzkChannelLiveInfo } from '../../platform/spec/wapper/channel.dummy.js';
 import { LiveDetector } from './live.detector.js';
 
 describe('LiveCoordinator', () => {
@@ -60,63 +60,58 @@ describe('LiveCoordinator', () => {
   describe('registerQueriedLives', () => {
     it('정상적인 라이브 등록 시나리오', async () => {
       // Given
-      const mockCriterion = mockPlatformCriterionDto({
-        platform: mockPlatformDto({ name: 'chzzk' }),
+      const cr = dummyPlatformCriterionDto({
+        platform: dummyPlatformDto({ name: 'chzzk' }),
         loggingOnly: false,
       });
 
-      const mockChannel0 = dummyChzzkChannelLiveInfo();
-      const mockChannel1 = dummyChzzkChannelLiveInfo();
-      const mockChannel2 = dummyChzzkChannelLiveInfo();
+      const ch0 = dummyChzzkChannelLiveInfo();
+      const ch1 = dummyChzzkChannelLiveInfo();
+      const ch2 = dummyChzzkChannelLiveInfo();
 
-      const queriedLives = [mockChannel0.liveInfo, mockChannel1.liveInfo, mockChannel2.liveInfo];
-      const filteredLives = [mockChannel0.liveInfo, mockChannel2.liveInfo];
+      const queriedLives = [ch0.liveInfo, ch1.liveInfo, ch2.liveInfo];
+      const filteredLives = [ch0.liveInfo, ch2.liveInfo];
 
       mockFetcher.fetchLives.mockResolvedValue(queriedLives);
       mockFilter.getFiltered.mockResolvedValue(filteredLives);
-      mockFetcher.fetchChannel.mockResolvedValueOnce(mockChannel0).mockResolvedValueOnce(mockChannel2);
+      mockFetcher.fetchChannel.mockResolvedValueOnce(ch0).mockResolvedValueOnce(ch2);
 
       // When
-      await coordinator.checkQueriedLives(mockCriterion);
+      await coordinator.checkQueriedLives(cr);
 
       // Then
       expect(mockLiveInitializer.createNewLive).toHaveBeenNthCalledWith(1, {
-        channelInfo: mockChannel0,
-        criterion: mockCriterion,
+        channelInfo: ch0,
+        criterion: cr,
       });
       expect(mockLiveInitializer.createNewLive).toHaveBeenNthCalledWith(2, {
-        channelInfo: mockChannel2,
-        criterion: mockCriterion,
+        channelInfo: ch2,
+        criterion: cr,
       });
     });
 
     it('loggingOnly가 true일 때', async () => {
       // Given
-      const mockCriterion = mockPlatformCriterionDto({
-        platform: mockPlatformDto({ name: 'chzzk' }),
+      const cr = dummyPlatformCriterionDto({
+        platform: dummyPlatformDto({ name: 'chzzk' }),
         loggingOnly: true,
       });
 
-      const mockChannel0 = dummyChzzkChannelLiveInfo();
-      const mockChannel1 = dummyChzzkChannelLiveInfo();
-      const mockChannel2 = dummyChzzkChannelLiveInfo();
-      const mockChannel3 = dummyChzzkChannelLiveInfo();
+      const ch0 = dummyChzzkChannelLiveInfo();
+      const ch1 = dummyChzzkChannelLiveInfo();
+      const ch2 = dummyChzzkChannelLiveInfo();
+      const ch3 = dummyChzzkChannelLiveInfo();
 
-      const queriedLives = [mockChannel0.liveInfo, mockChannel1.liveInfo, mockChannel2.liveInfo, mockChannel3.liveInfo];
-      const filteredLives = [
-        mockChannel0.liveInfo,
-        mockChannel1.liveInfo,
-        mockChannel2.liveInfo,
-        mockChannel3.liveInfo,
-      ];
+      const queriedLives = [ch0.liveInfo, ch1.liveInfo, ch2.liveInfo, ch3.liveInfo];
+      const filteredLives = [ch0.liveInfo, ch1.liveInfo, ch2.liveInfo, ch3.liveInfo];
 
       mockFetcher.fetchLives.mockResolvedValue(queriedLives);
       mockFilter.getFiltered.mockResolvedValue(filteredLives);
       mockFetcher.fetchChannel
-        .mockResolvedValueOnce(mockChannel0)
-        .mockResolvedValueOnce(mockChannel1)
-        .mockResolvedValueOnce(mockChannel2)
-        .mockResolvedValueOnce(mockChannel3);
+        .mockResolvedValueOnce(ch0)
+        .mockResolvedValueOnce(ch1)
+        .mockResolvedValueOnce(ch2)
+        .mockResolvedValueOnce(ch3);
       mockHistoryRepo.exists
         .mockResolvedValueOnce(false)
         .mockResolvedValueOnce(true)
@@ -124,12 +119,12 @@ describe('LiveCoordinator', () => {
         .mockResolvedValueOnce(false);
 
       // When
-      await coordinator.checkQueriedLives(mockCriterion);
+      await coordinator.checkQueriedLives(cr);
 
       // Then
-      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(1, 'chzzk', mockChannel0.liveInfo);
-      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(2, 'chzzk', mockChannel2.liveInfo);
-      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(3, 'chzzk', mockChannel3.liveInfo);
+      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(1, 'chzzk', ch0.liveInfo);
+      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(2, 'chzzk', ch2.liveInfo);
+      expect(mockHistoryRepo.set).toHaveBeenNthCalledWith(3, 'chzzk', ch3.liveInfo);
     });
   });
 });

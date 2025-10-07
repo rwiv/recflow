@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { GradeDto } from './grade.schema.js';
 
-export function mockGradeDto(overrides: Partial<GradeDto> = {}): GradeDto {
+export function dummyGradeDto(overrides: Partial<GradeDto> = {}): GradeDto {
   return {
     id: faker.string.uuid(),
     name: faker.lorem.words(2),

@@ -4,8 +4,6 @@ import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { GradeDto } from '../../channel/spec/grade.schema.js';
 import { liveInfoAttr } from '../../common/attr/attr.live.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { db } from '../../infra/db/db.js';
-import { Tx } from '../../infra/db/types.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
@@ -14,6 +12,9 @@ import { LiveHistoryRepository } from '../storage/live.history.repository.js';
 import { PlatformLiveFilter } from './live.filter.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { LiveInitializer } from '../register/live.initializer.js';
+import { stacktrace } from '../../utils/errors/utils.js';
+import { BaseError } from '../../utils/errors/base/BaseError.js';
+import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 
 @Injectable()
 export class LiveDetector {
@@ -27,45 +28,49 @@ export class LiveDetector {
   ) {}
 
   async checkFollowedLives() {
-    const followedChannels = await this.channelFinder.findFollowedChannels();
-    const promises = [];
-    for (const ch of followedChannels) {
-      const channelInfo = await this.fetchInfo(ch.platform.name, ch.sourceId, true);
-      if (!channelInfo) continue;
-      promises.push(this.liveInitializer.createNewLive({ channelInfo, isFollowed: true }));
-    }
-    await Promise.allSettled(promises);
+    const followedChannels: ChannelDto[] = await this.channelFinder.findFollowedChannels();
+    await Promise.allSettled(followedChannels.map((ch: ChannelDto) => this.registerLiveByChannel(ch)));
   }
 
   async checkQueriedLives(criterion: PlatformCriterionDto) {
-    const queriedLives = await this.fetcher.fetchLives(criterion);
-    const filtered = await this.filter.getFiltered(criterion, queriedLives);
+    const queriedLives: LiveInfo[] = await this.fetcher.fetchLives(criterion);
+    const filtered: LiveInfo[] = await this.filter.getFiltered(criterion, queriedLives);
     if (criterion.loggingOnly) {
-      await this.setLoggingOnlyLives(criterion, filtered);
+      await Promise.allSettled(filtered.map((live: LiveInfo) => this.addLiveHistory(live, criterion)));
     } else {
-      await this.registerQueriedLives(criterion, filtered);
+      await Promise.allSettled(filtered.map((live: LiveInfo) => this.registerLiveByLive(live, criterion)));
     }
   }
 
-  private async registerQueriedLives(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
-    const promises = [];
-    for (const live of lives) {
-      const channelInfo = await this.fetchInfo(live.type, live.channelUid, false);
-      if (!channelInfo) continue;
-      promises.push(this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id }));
+  private async registerLiveByChannel(ch: ChannelDto) {
+    try {
+      const channelInfo: ChannelLiveInfo | null = await this.fetchInfo({
+        platformName: ch.platform.name,
+        channelUid: ch.sourceId,
+        preCheck: true,
+      });
+      if (!channelInfo) return;
+      await this.liveInitializer.createNewLive({ channelInfo, isFollowed: true });
+    } catch (err) {
+      printError(err);
     }
-    await Promise.allSettled(promises);
   }
 
-  private async setLoggingOnlyLives(criterion: PlatformCriterionDto, lives: LiveInfo[]) {
-    const promises = [];
-    for (const live of lives) {
-      promises.push(this.setLoggingOnlyLivesOne(criterion, live));
+  private async registerLiveByLive(live: LiveInfo, criterion: PlatformCriterionDto) {
+    try {
+      const channelInfo: ChannelLiveInfo | null = await this.fetchInfo({
+        platformName: live.type,
+        channelUid: live.channelUid,
+        preCheck: false,
+      });
+      if (!channelInfo) return;
+      await this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id });
+    } catch (err) {
+      printError(err);
     }
-    await Promise.allSettled(promises);
   }
 
-  private async setLoggingOnlyLivesOne(criterion: PlatformCriterionDto, live: LiveInfo) {
+  private async addLiveHistory(live: LiveInfo, criterion: PlatformCriterionDto) {
     if (await this.historyRepo.exists(criterion.platform.name, live.liveUid)) {
       return;
     }
@@ -80,15 +85,15 @@ export class LiveDetector {
     log.info('New Logging Only Live', liveInfoAttr(live, { cr: criterion, gr: grade }));
   }
 
-  private async fetchInfo(
-    pfName: PlatformName,
-    channelUid: string,
-    isFollowed: boolean,
-    tx: Tx = db,
-  ): Promise<ChannelLiveInfo | null> {
-    if ((await this.liveFinder.findByChannelSourceId(channelUid, {}, tx)).length > 0) return null;
+  private async fetchInfo(req: {
+    platformName: PlatformName;
+    channelUid: string;
+    preCheck: boolean;
+  }): Promise<ChannelLiveInfo | null> {
+    const { platformName: pfName, channelUid, preCheck } = req;
+    if ((await this.liveFinder.findByChannelSourceId(channelUid, {})).length > 0) return null;
 
-    if (isFollowed) {
+    if (preCheck) {
       const chanInfo = await this.fetcher.fetchChannel(pfName, channelUid, false);
       if (!chanInfo?.openLive) return null;
     }
@@ -98,5 +103,15 @@ export class LiveDetector {
     if (!chanWithLive?.liveInfo) return null;
 
     return channelLiveInfo.parse(chanWithLive);
+  }
+}
+
+function printError(err: unknown) {
+  if (err instanceof BaseError) {
+    log.warn(err.message, { ...err.attr, stack_trace: stacktrace(err) });
+  } else if (err instanceof Error) {
+    log.warn(err.message, { stack_trace: stacktrace(err) });
+  } else {
+    log.error('UnknownError', { stack_trace: stacktrace(err) });
   }
 }

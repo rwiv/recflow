@@ -1,4 +1,4 @@
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
 import { LiveEnt } from '../spec/live.entity.schema.js';
 import { ChannelFinder } from '../../channel/service/channel.finder.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
@@ -25,12 +25,12 @@ export class LiveMapper {
     private readonly streamService: LiveStreamService,
   ) {}
 
-  async mapAll(lives: LiveEnt[], tx: Tx = db, opt: LiveFieldsReq): Promise<LiveDtoWithNodes[]> {
+  async mapAll(lives: LiveEnt[], tx: Tx = db, opt: LiveFieldsReq): Promise<LiveDtoMapped[]> {
     const promises = lives.map((live) => this.map(live, tx, opt));
     return Promise.all(promises);
   }
 
-  async map(liveEnt: LiveEnt, tx: Tx = db, opt: LiveFieldsReq = {}): Promise<LiveDtoWithNodes> {
+  async map(liveEnt: LiveEnt, tx: Tx = db, opt: LiveFieldsReq = {}): Promise<LiveDtoMapped> {
     const platformP = this.pfFinder.findByIdNotNull(liveEnt.platformId, tx);
     const channelP = this.channelFinder.findById(liveEnt.channelId, tx);
     const platform = await platformP;
@@ -42,7 +42,7 @@ export class LiveMapper {
       stream = await this.streamService.findById(liveEnt.liveStreamId, tx);
     }
 
-    let result: LiveDtoWithNodes = {
+    let result: LiveDtoMapped = {
       ...liveEnt,
       channel,
       platform,

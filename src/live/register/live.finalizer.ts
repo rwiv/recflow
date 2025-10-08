@@ -10,7 +10,7 @@ import { liveAttr } from '../../common/attr/attr.live.js';
 import { delay } from '../../utils/time.js';
 import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
 import { z } from 'zod';
 import { uuid } from '../../common/data/common.schema.js';
 import { ENV } from '../../common/config/config.module.js';
@@ -131,7 +131,7 @@ export class LiveFinalizer {
     }
   }
 
-  private async _finishLive(live: LiveDtoWithNodes, cmd: ExitCmd) {
+  private async _finishLive(live: LiveDtoMapped, cmd: ExitCmd) {
     assert(live.nodes);
     if (live.nodes.length === 0) {
       return;

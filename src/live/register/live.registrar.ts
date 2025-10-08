@@ -14,7 +14,7 @@ import { logging, LogLevel } from '../../utils/log.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveWriter } from '../data/live.writer.js';
 import { ExitCmd } from '../spec/event.schema.js';
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { LiveFinalizer } from './live.finalizer.js';
 import { LiveRegisterHelper, NodeSelectArgs } from './live.register-helper.js';
@@ -28,7 +28,7 @@ export interface LiveFinishRequest {
 }
 
 export interface LiveRegisterRequest {
-  live: LiveDtoWithNodes;
+  live: LiveDtoMapped;
 
   node?: NodeDto;
 

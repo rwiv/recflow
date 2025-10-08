@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { NodeSelectorArgs } from '../../node/service/node.selector.js';
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 
 export interface NodeSelectArgs {
@@ -16,7 +16,7 @@ export class LiveRegisterHelper {
   getNodeSelectArgs(
     req: NodeSelectArgs,
     channel: ChannelDto,
-    live: LiveDtoWithNodes | undefined,
+    live: LiveDtoMapped | undefined,
     criterion: CriterionDto | undefined,
   ): NodeSelectorArgs {
     let domesticOnly = false;

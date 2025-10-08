@@ -2,7 +2,7 @@ import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { GradeDto } from '../../channel/spec/grade.schema.js';
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { LiveDto, LiveStreamDto } from '../../live/spec/live.dto.schema.js';
-import { NodeDtoWithLives } from '../../node/spec/node.dto.mapped.schema.js';
+import { NodeDtoMapped } from '../../node/spec/node.dto.schema.mapped.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -45,7 +45,7 @@ interface NodeAttr {
 
 interface Options {
   cr?: CriterionDto;
-  node?: NodeDtoWithLives | null;
+  node?: NodeDtoMapped | null;
   gr?: GradeDto;
   st?: boolean;
   err?: unknown;

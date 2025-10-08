@@ -3,7 +3,7 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { Stdl } from '../../external/stdl/client/stdl.client.js';
 import { LiveFinder } from '../data/live.finder.js';
-import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
+import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
@@ -32,7 +32,7 @@ export class LiveBalancer {
     handleSettled(await Promise.allSettled(ps));
   }
 
-  private async checkOne(live: LiveDtoWithNodes) {
+  private async checkOne(live: LiveDtoMapped) {
     // Check if live is disabled or too recently created
     if (live.isDisabled) {
       return;

@@ -3,7 +3,7 @@ import { NodeFinder } from './node.finder.js';
 import { NodeDto } from '../spec/node.dto.schema.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { NodeDtoWithLives } from '../spec/node.dto.mapped.schema.js';
+import { NodeDtoMapped } from '../spec/node.dto.schema.mapped.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
 
 export interface NodeSelectorArgs {
@@ -17,7 +17,7 @@ export interface NodeSelectorArgs {
 export class NodeSelector {
   constructor(private readonly nodeFinder: NodeFinder) {}
 
-  async match(args: NodeSelectorArgs, tx: Tx = db): Promise<NodeDtoWithLives | null> {
+  async match(args: NodeSelectorArgs, tx: Tx = db): Promise<NodeDtoMapped | null> {
     if (args.domesticOnly && args.overseasFirst) {
       throw new ValidationError('Invalid options: domesticOnly and overseasFirst cannot be both true');
     }
@@ -34,7 +34,7 @@ export class NodeSelector {
     return this._match(args, tx);
   }
 
-  async _match(opts: NodeSelectorArgs, tx: Tx = db): Promise<NodeDtoWithLives | null> {
+  async _match(opts: NodeSelectorArgs, tx: Tx = db): Promise<NodeDtoMapped | null> {
     // search for available nodes
     let nodes = await this.findCandidateNodes(opts, tx);
     if (nodes.length === 0) {
@@ -62,7 +62,7 @@ export class NodeSelector {
     return minNode;
   }
 
-  private async findCandidateNodes(opts: NodeSelectorArgs, tx: Tx): Promise<NodeDtoWithLives[]> {
+  private async findCandidateNodes(opts: NodeSelectorArgs, tx: Tx): Promise<NodeDtoMapped[]> {
     return (await this.nodeFinder.findAll({}, tx))
       .filter((node) => !node.isCordoned)
       .filter((node) => !opts.ignoreNodeIds.includes(node.id))

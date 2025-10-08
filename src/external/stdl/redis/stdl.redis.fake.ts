@@ -17,8 +17,10 @@ export class StdlRedisFake extends StdlRedis {
     this.segNums = new Map();
   }
 
-  async createLiveState(live: LiveDto): Promise<void> {
-    this.liveStates.set(live.id, liveDtoToState(live, this.location));
+  async createLiveState(live: LiveDto): Promise<LiveState> {
+    const liveState = liveDtoToState(live, this.location);
+    this.liveStates.set(live.id, liveState);
+    return liveState;
   }
 
   async getLiveState(liveRecordId: string, useMaster: boolean): Promise<LiveState | null> {
@@ -42,6 +44,10 @@ export class StdlRedisFake extends StdlRedis {
 
   async getLivesIds(useMaster: boolean): Promise<string[]> {
     return Array.from(this.liveStates.keys());
+  }
+
+  setSegNums(liveId: string, keyword: SegmentKeyword, nums: string[]) {
+    this.segNums.set(getSegNumsKey(liveId, keyword), nums);
   }
 
   async getSegNums(liveId: string, keyword: SegmentKeyword, useMaster: boolean): Promise<string[]> {

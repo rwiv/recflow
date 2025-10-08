@@ -4,7 +4,7 @@ import { LiveState, SegmentKeyword } from './stdl.redis.data.js';
 import { LiveDto } from '../../../live/spec/live.dto.schema.js';
 
 export abstract class StdlRedis {
-  abstract createLiveState(live: LiveDto): Promise<void>;
+  abstract createLiveState(live: LiveDto): Promise<LiveState>;
   abstract getLiveState(id: string, useMaster: boolean): Promise<LiveState | null>;
   abstract getLiveStates(liveRecordIds: string[], useMaster: boolean): Promise<(LiveState | null)[]>;
   abstract deleteLiveState(id: string): Promise<void>;

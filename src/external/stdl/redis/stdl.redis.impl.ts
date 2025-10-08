@@ -23,7 +23,7 @@ export class StdlRedisImpl extends StdlRedis {
     super();
   }
 
-  async createLiveState(live: LiveDto): Promise<void> {
+  async createLiveState(live: LiveDto): Promise<LiveState> {
     let location = this.defaultLocation;
     if (live.channel.isFollowed) {
       location = this.followedLocation;
@@ -31,7 +31,9 @@ export class StdlRedisImpl extends StdlRedis {
     if (live.domesticOnly) {
       location = 'local';
     }
-    await this.set(liveDtoToState(live, location));
+    const liveState = liveDtoToState(live, location);
+    await this.set(liveState);
+    return liveState;
   }
 
   async set(state: LiveState): Promise<void> {

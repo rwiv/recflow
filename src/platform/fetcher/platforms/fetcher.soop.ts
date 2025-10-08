@@ -6,6 +6,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../../common/config/config.module.js';
 import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
 import { checkResponse } from '../../../utils/http.js';
+import { printError } from '../../../utils/log.js';
 
 @Injectable()
 export class SoopFetcher {
@@ -24,16 +25,28 @@ export class SoopFetcher {
       withCred = true;
     }
     for (const tag of cr.positiveTags) {
-      const res = await this.fetchLivesByTag(tag.value);
-      res.forEach((info) => infoMap.set(info.userId, info));
+      try {
+        const res = await this.fetchLivesByTag(tag.value);
+        res.forEach((info) => infoMap.set(info.userId, info));
+      } catch (err) {
+        printError(err);
+      }
     }
     for (const keyword of cr.positiveKeywords) {
-      const res = await this.fetchLivesByKeyword(keyword.value);
-      res.forEach((info) => infoMap.set(info.userId, info));
+      try {
+        const res = await this.fetchLivesByKeyword(keyword.value);
+        res.forEach((info) => infoMap.set(info.userId, info));
+      } catch (err) {
+        printError(err);
+      }
     }
     for (const cateNo of cr.positiveCates) {
-      const res = await this.fetchLivesByCategory(cateNo.value, withCred);
-      res.forEach((info) => infoMap.set(info.userId, info));
+      try {
+        const res = await this.fetchLivesByCategory(cateNo.value, withCred);
+        res.forEach((info) => infoMap.set(info.userId, info));
+      } catch (err) {
+        printError(err);
+      }
     }
     return Array.from(infoMap.values()).map((info) => liveFromSoop(info));
   }

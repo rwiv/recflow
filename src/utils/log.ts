@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { log } from 'jslog';
+import { BaseError } from './errors/base/BaseError.js';
+import { stacktrace } from './errors/utils.js';
 
 export const logLevel = z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']);
 export type LogLevel = z.infer<typeof logLevel>;
@@ -26,5 +28,15 @@ export function logging(msg: string, attr: object, level: LogLevel) {
       break;
     default:
       throw new Error(`Unknown log level: ${level}`);
+  }
+}
+
+export function printError(err: unknown) {
+  if (err instanceof BaseError) {
+    log.warn(err.message, { ...err.attr, stack_trace: stacktrace(err) });
+  } else if (err instanceof Error) {
+    log.warn(err.message, { stack_trace: stacktrace(err) });
+  } else {
+    log.error('UnknownError', { stack_trace: stacktrace(err) });
   }
 }

@@ -7,6 +7,7 @@ import { ENV } from '../../../common/config/config.module.js';
 import { ChzzkCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
 import { nnint } from '../../../common/data/common.schema.js';
 import { checkResponse } from '../../../utils/http.js';
+import { printError } from '../../../utils/log.js';
 
 @Injectable()
 export class ChzzkFetcher {
@@ -21,16 +22,28 @@ export class ChzzkFetcher {
   async fetchLives(cr: ChzzkCriterionDto): Promise<LiveInfo[]> {
     const infoMap = new Map<string, ChzzkLiveInfo>();
     for (const tag of cr.positiveTags) {
-      const res = await this.fetchLivesByTag(tag.value);
-      res.forEach((info) => infoMap.set(info.channelId, info));
+      try {
+        const res = await this.fetchLivesByTag(tag.value);
+        res.forEach((info) => infoMap.set(info.channelId, info));
+      } catch (err) {
+        printError(err);
+      }
     }
     for (const keyword of cr.positiveKeywords) {
-      const res = await this.fetchLivesByKeyword(keyword.value);
-      res.forEach((info) => infoMap.set(info.channelId, info));
+      try {
+        const res = await this.fetchLivesByKeyword(keyword.value);
+        res.forEach((info) => infoMap.set(info.channelId, info));
+      } catch (err) {
+        printError(err);
+      }
     }
     for (const watchPartyNo of cr.positiveWps) {
-      const res = await this.fetchLivesByWatchParty(nnint.parse(watchPartyNo.value));
-      res.forEach((info) => infoMap.set(info.channelId, info));
+      try {
+        const res = await this.fetchLivesByWatchParty(nnint.parse(watchPartyNo.value));
+        res.forEach((info) => infoMap.set(info.channelId, info));
+      } catch (err) {
+        printError(err);
+      }
     }
     return Array.from(infoMap.values()).map((it) => liveFromChzzk(it));
   }

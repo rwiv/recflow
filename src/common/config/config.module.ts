@@ -7,7 +7,7 @@ export const ENV = 'ENV';
   providers: [
     {
       provide: ENV,
-      useValue: readEnv(),
+      useFactory: () => readEnv(),
     },
   ],
   exports: [ENV],

@@ -1,6 +1,7 @@
-import { describe, it } from 'vitest';
+import { describe, it, beforeAll } from 'vitest';
+import { TestingModule } from '@nestjs/testing';
 import { dummyChannelEntAppend } from '../spec/channel.dto.schema.dummy.js';
-import { createTestApp } from '../../common/helpers/helper.app.js';
+import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
@@ -12,14 +13,24 @@ import { GradeService } from '../service/grade.service.js';
 import { ChannelCommandRepository } from './channel.command.js';
 import { ChannelSearchRepository, ChannelTagSearchRequest } from './channel.search.js';
 
-describe.skip('ChannelService', async () => {
-  const app = await createTestApp();
-  const init = app.get(DevInitializer);
-  const pfFinder = app.get(PlatformFinder);
-  const grService = app.get(GradeService);
-  const tagCmd = app.get(TagCommandRepository);
-  const chanCmd = app.get(ChannelCommandRepository);
-  const chSearchRepo = app.get(ChannelSearchRepository);
+describe.skip('ChannelService', () => {
+  let moduleRef: TestingModule;
+  let init: DevInitializer;
+  let pfFinder: PlatformFinder;
+  let grService: GradeService;
+  let tagCmd: TagCommandRepository;
+  let chanCmd: ChannelCommandRepository;
+  let chSearchRepo: ChannelSearchRepository;
+
+  beforeAll(async () => {
+    moduleRef = await newTestingModuleRef();
+    init = moduleRef.get(DevInitializer);
+    pfFinder = moduleRef.get(PlatformFinder);
+    grService = moduleRef.get(GradeService);
+    tagCmd = moduleRef.get(TagCommandRepository);
+    chanCmd = moduleRef.get(ChannelCommandRepository);
+    chSearchRepo = moduleRef.get(ChannelSearchRepository);
+  });
 
   it('drop', async () => {
     await dropTables();

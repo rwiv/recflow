@@ -1,6 +1,7 @@
-import { afterAll, describe, it } from 'vitest';
+import { beforeAll, afterAll, describe, it } from 'vitest';
+import { TestingModule } from '@nestjs/testing';
 import { dummyChannelAppend } from '../spec/channel.dto.schema.dummy.js';
-import { createTestApp } from '../../common/helpers/helper.app.js';
+import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
 import { ChannelFinder } from './channel.finder.js';
@@ -11,16 +12,27 @@ import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ChannelSearchRepository, ChannelTagSearchRequest } from '../storage/channel.search.js';
 import assert from 'assert';
 
-const app = await createTestApp();
-const init = app.get(DevInitializer);
-const pfFinder = app.get(PlatformFinder);
-const grService = app.get(GradeService);
-const chFinder = app.get(ChannelFinder);
-const chSearchRepo = app.get(ChannelSearchRepository);
-const chWriter = app.get(ChannelWriter);
-const chMapper = app.get(ChannelMapper);
-
 describe.skip('ChannelService', () => {
+  let moduleRef: TestingModule;
+  let init: DevInitializer;
+  let pfFinder: PlatformFinder;
+  let grService: GradeService;
+  let chFinder: ChannelFinder;
+  let chSearchRepo: ChannelSearchRepository;
+  let chWriter: ChannelWriter;
+  let chMapper: ChannelMapper;
+
+  beforeAll(async () => {
+    moduleRef = await newTestingModuleRef();
+    init = moduleRef.get(DevInitializer);
+    pfFinder = moduleRef.get(PlatformFinder);
+    grService = moduleRef.get(GradeService);
+    chFinder = moduleRef.get(ChannelFinder);
+    chSearchRepo = moduleRef.get(ChannelSearchRepository);
+    chWriter = moduleRef.get(ChannelWriter);
+    chMapper = moduleRef.get(ChannelMapper);
+  });
+
   afterAll(async () => {
     await dropTables();
   });
@@ -83,15 +95,15 @@ describe.skip('ChannelService', () => {
       console.log(`${r.username}: [${r.tags?.map((t) => t.name).join(',')}]`);
     }
   });
-});
 
-function add(n: number, gradeId: string, platformId: string, followerCnt: number, tagNames: string[]) {
-  const ch = dummyChannelAppend({
-    sourceId: `uid${n}`,
-    username: `user${n}`,
-    gradeId,
-    followerCnt,
-    platformId,
-  });
-  return chWriter.createWithTagNames(ch, tagNames);
-}
+  function add(n: number, gradeId: string, platformId: string, followerCnt: number, tagNames: string[]) {
+    const ch = dummyChannelAppend({
+      sourceId: `uid${n}`,
+      username: `user${n}`,
+      gradeId,
+      followerCnt,
+      platformId,
+    });
+    return chWriter.createWithTagNames(ch, tagNames);
+  }
+});

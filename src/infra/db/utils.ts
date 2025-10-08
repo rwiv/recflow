@@ -1,4 +1,3 @@
-import { db } from './db.js';
 import {
   channelTagMapTable,
   channelTable,
@@ -14,8 +13,12 @@ import {
   liveNodeTable,
   liveStreamTable,
 } from './schema.js';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { readEnv } from '../../common/config/env.js';
 
 export async function dropTables() {
+  const db = drizzle(readEnv().pg.url);
+
   await db.delete(liveCriterionUnitTable);
   await db.delete(liveCriterionRuleTable);
   await db.delete(liveCriterionTable);

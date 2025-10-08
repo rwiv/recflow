@@ -1,20 +1,20 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
-import request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module.js';
 import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import request from 'supertest';
 import { App } from 'supertest/types.js';
+import { newTestApp } from '../src/common/helpers/helper.app.js';
+import { GlobalModule } from '../src/common/global/global.module.js';
 
 describe.skip('AppController', () => {
   let app: INestApplication<App>;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [GlobalModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
+    app = await newTestApp(moduleFixture);
   });
 
   afterAll(async () => {

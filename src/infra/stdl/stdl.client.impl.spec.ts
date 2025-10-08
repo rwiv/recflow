@@ -1,10 +1,13 @@
-import { describe, it } from 'vitest';
+import { describe, it, beforeAll } from 'vitest';
 import { StdlImpl } from './stdl.client.impl.js';
 import { readEnv } from '../../common/config/env.js';
 
 describe.skip('StdlImpl', () => {
-  const env = readEnv();
-  const stdl = new StdlImpl(env);
+  let stdl: StdlImpl;
+
+  beforeAll(() => {
+    stdl = new StdlImpl(readEnv());
+  });
 
   const stdlUrl = '';
 

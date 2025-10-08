@@ -1,11 +1,17 @@
-import { describe, it } from 'vitest';
 import path from 'path';
-import { createTestApp } from '../../helpers/helper.app.js';
+import { beforeAll, describe, it } from 'vitest';
+import { TestingModule } from '@nestjs/testing';
+import { newTestingModuleRef } from '../../helpers/helper.app.js';
 import { DevChannelInserter } from './insert.channel.js';
 
-describe.skip('DevChannelInserter', async () => {
-  const app = await createTestApp();
-  const inserter = app.get(DevChannelInserter);
+describe.skip('DevChannelInserter', () => {
+  let moduleRef: TestingModule;
+  let inserter: DevChannelInserter;
+
+  beforeAll(async () => {
+    moduleRef = await newTestingModuleRef();
+    inserter = moduleRef.get(DevChannelInserter);
+  });
 
   it('writeTestChannelInfosFile', async () => {
     await inserter.writeTestChannelInfosFile(

@@ -1,8 +1,9 @@
-import { afterAll, beforeEach, describe, it, expect } from 'vitest';
+import { describe, it, expect, afterAll, beforeAll, beforeEach } from 'vitest';
+import { TestingModule } from '@nestjs/testing';
 import { ChannelWriter } from '../../channel/service/channel.writer.js';
 import { GradeService } from '../../channel/service/grade.service.js';
 import { dummyChannelAppend } from '../../channel/spec/channel.dto.schema.dummy.js';
-import { createTestApp } from '../../common/helpers/helper.app.js';
+import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
 import { dummyLiveInfoChzzk } from '../../platform/spec/wapper/live.dummy.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
 import { dropTables } from '../../infra/db/utils.js';
@@ -12,14 +13,24 @@ import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
 import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
 
-describe.skip('ChannelService', async () => {
-  const app = await createTestApp();
-  const init = app.get(DevInitializer);
-  const pfFinder = app.get(PlatformFinder);
-  const grService = app.get(GradeService);
-  const liveWriter = app.get(LiveWriter);
-  const liveFinder = app.get(LiveFinder);
-  const chWriter = app.get(ChannelWriter);
+describe.skip('ChannelService', () => {
+  let moduleRef: TestingModule;
+  let init: DevInitializer;
+  let pfFinder: PlatformFinder;
+  let grService: GradeService;
+  let liveWriter: LiveWriter;
+  let liveFinder: LiveFinder;
+  let chWriter: ChannelWriter;
+
+  beforeAll(async () => {
+    moduleRef = await newTestingModuleRef();
+    init = moduleRef.get(DevInitializer);
+    pfFinder = moduleRef.get(PlatformFinder);
+    grService = moduleRef.get(GradeService);
+    liveWriter = moduleRef.get(LiveWriter);
+    liveFinder = moduleRef.get(LiveFinder);
+    chWriter = moduleRef.get(ChannelWriter);
+  });
 
   beforeEach(async () => {
     await init.initDev();

@@ -1,15 +1,24 @@
-import { it } from 'vitest';
-import { createTestApp } from '../../common/helpers/helper.app.js';
+import { beforeAll, describe, it } from 'vitest';
+import { TestingModule } from '@nestjs/testing';
+import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
 import { ChzzkFetcher } from './platforms/fetcher.chzzk.js';
 import { SoopFetcher } from './platforms/fetcher.soop.js';
 import { PlatformFetcherImpl } from './fetcher.impl.js';
+import { PlatformFetcher } from './fetcher.js';
 
-it.skip('test PlatformFetcher', async () => {
-  const app = await createTestApp();
-  const fetcher = new PlatformFetcherImpl(app.get(ChzzkFetcher), app.get(SoopFetcher));
+describe.skip('PlatformFetcher', () => {
+  let moduleRef: TestingModule;
+  let fetcher: PlatformFetcher;
 
-  const platform = 'chzzk';
-  const sourceId = '';
-  const channelInfo = await fetcher.fetchChannel(platform, sourceId, true);
-  console.log(channelInfo);
+  beforeAll(async () => {
+    moduleRef = await newTestingModuleRef();
+    fetcher = new PlatformFetcherImpl(moduleRef.get(ChzzkFetcher), moduleRef.get(SoopFetcher));
+  });
+
+  it('fetchChannel', async () => {
+    const platform = 'chzzk';
+    const sourceId = '';
+    const channelInfo = await fetcher.fetchChannel(platform, sourceId, true);
+    console.log(channelInfo);
+  });
 });

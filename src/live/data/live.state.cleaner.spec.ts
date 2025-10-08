@@ -1,10 +1,16 @@
-import { describe, it } from 'vitest';
-import { createTestApp } from '../../common/helpers/helper.app.js';
+import { beforeAll, describe, it } from 'vitest';
+import { TestingModule } from '@nestjs/testing';
+import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
 import { LiveStateCleaner } from './live.state.cleaner.js';
 
-describe.skip('LiveStateCleaner', async () => {
-  const app = await createTestApp();
-  const cleaner = app.get(LiveStateCleaner);
+describe.skip('LiveStateCleaner', () => {
+  let moduleRef: TestingModule;
+  let cleaner: LiveStateCleaner;
+
+  beforeAll(async () => {
+    moduleRef = await newTestingModuleRef();
+    cleaner = moduleRef.get(LiveStateCleaner);
+  });
 
   it('test getTargetIds', async () => {
     const targetIds = await cleaner.getTargetIds();

@@ -1,28 +1,25 @@
 import { ChzzkChannelInfo } from '../raw/chzzk.js';
-import { dummyChzzkChannelInfo } from '../raw/chzzk.dummy.js';
 import { SoopChannelInfo } from '../raw/soop.js';
+import { dummyChzzkChannelInfo } from '../raw/chzzk.dummy.js';
 import { dummySoopChannelInfo } from '../raw/soop.dummy.js';
-import { channelFromChzzk, channelFromSoop, channelLiveInfo, ChannelLiveInfo } from './channel.js';
+import { channelFromChzzk, channelFromSoop, channelInfo, ChannelInfo } from './channel.js';
 import { LiveInfo } from './live.js';
 
-export function dummyChzzkChannelLiveInfo(
+export function dummyChannelInfoChzzk(
   overrides: Partial<ChzzkChannelInfo> = {},
-  liveInfo?: LiveInfo,
-): ChannelLiveInfo {
-  const channelInfo = channelFromChzzk(dummyChzzkChannelInfo(overrides));
-  if (liveInfo) {
-    channelInfo.liveInfo = liveInfo;
+  liveInfo?: LiveInfo | null,
+): ChannelInfo {
+  const chInfo = channelFromChzzk(dummyChzzkChannelInfo(overrides));
+  if (liveInfo !== undefined) {
+    chInfo.liveInfo = liveInfo;
   }
-  return channelLiveInfo.parse(channelInfo);
+  return channelInfo.parse(chInfo);
 }
 
-export function dummySoopChannelLiveInfo(
-  overrides: Partial<SoopChannelInfo> = {},
-  liveInfo?: LiveInfo,
-): ChannelLiveInfo {
-  const channelInfo = channelFromSoop(dummySoopChannelInfo(overrides));
-  if (liveInfo) {
-    channelInfo.liveInfo = liveInfo;
+export function dummyChannelInfoSoop(overrides: Partial<SoopChannelInfo> = {}, liveInfo?: LiveInfo): ChannelInfo {
+  const chInfo = channelFromSoop(dummySoopChannelInfo(overrides));
+  if (liveInfo !== undefined) {
+    chInfo.liveInfo = liveInfo;
   }
-  return channelLiveInfo.parse(channelInfo);
+  return channelInfo.parse(chInfo);
 }

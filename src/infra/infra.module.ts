@@ -51,6 +51,6 @@ import { StdlRedis } from './stdl/stdl.redis.js';
       inject: [InfraFactory],
     },
   ],
-  exports: [SERVER_REDIS, TASK_REDIS, Stdl, StdlRedis, Notifier, SQSClient],
+  exports: [Stdl, StdlRedis, Notifier, SQSClient, SERVER_REDIS, TASK_REDIS],
 })
 export class InfraModule {}

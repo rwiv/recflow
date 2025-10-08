@@ -1,11 +1,11 @@
-import { channelFromSoop, ChannelInfo } from '../spec/wapper/channel.js';
-import { liveFromSoop, LiveInfo } from '../spec/wapper/live.js';
-import { Env } from '../../common/config/env.js';
-import { soopChannelInfo, SoopLiveInfo, soopLiveInfoResponse } from '../spec/raw/soop.js';
+import { channelFromSoop, ChannelInfo } from '../../spec/wapper/channel.js';
+import { liveFromSoop, LiveInfo } from '../../spec/wapper/live.js';
+import { Env } from '../../../common/config/env.js';
+import { soopChannelInfo, SoopLiveInfo, soopLiveInfoResponse } from '../../spec/raw/soop.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { SoopCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { checkResponse } from '../../utils/http.js';
+import { ENV } from '../../../common/config/config.module.js';
+import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
+import { checkResponse } from '../../../utils/http.js';
 
 @Injectable()
 export class SoopFetcher {

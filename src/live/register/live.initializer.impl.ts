@@ -35,7 +35,7 @@ export interface NewLiveRequest {
   channelInfo: ChannelLiveInfo;
 
   isFollowed?: boolean;
-  criterionId?: string;
+  criterion?: CriterionDto;
 
   logMessage?: string;
   logLevel?: LogLevel;
@@ -82,13 +82,7 @@ export class LiveInitializerImpl extends LiveInitializer {
 
   async createNewLive(req: NewLiveRequest): Promise<string | null> {
     const liveInfo = req.channelInfo.liveInfo;
-    let cr = undefined;
-    if (req.criterionId) {
-      cr = await this.crFinder.findById(req.criterionId);
-      if (!cr) {
-        throw NotFoundError.from('Criterion', 'id', req.criterionId);
-      }
-    }
+    const cr = req.criterion;
 
     let channel = await this.chFinder.findByPlatformAndSourceId(liveInfo.type, liveInfo.channelUid);
     if (!channel) {
@@ -160,9 +154,8 @@ export class LiveInitializerImpl extends LiveInitializer {
     if (req.isFollowed && this.env.stlink.enforceAuthForFollowed) {
       withAuth = true;
     }
-    if (req.criterionId) {
-      const cr = await this.crFinder.findById(req.criterionId);
-      if (cr?.enforceCreds) {
+    if (req.criterion) {
+      if (req.criterion?.enforceCreds) {
         withAuth = true;
       }
     }

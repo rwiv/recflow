@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../common/config/config.module.js';
 import { PlatformFetcher } from './fetcher/fetcher.js';
-import { ChzzkFetcher } from './fetcher/fetcher.chzzk.js';
-import { SoopFetcher } from './fetcher/fetcher.soop.js';
+import { PlatformFetcherImpl } from './fetcher/fetcher.impl.js';
+import { ChzzkFetcher } from './fetcher/platforms/fetcher.chzzk.js';
+import { SoopFetcher } from './fetcher/platforms/fetcher.soop.js';
 import { PlatformRepository } from './storage/platform.repository.js';
 import { PlatformFinder } from './storage/platform.finder.js';
 import { PlatformController } from './storage/platform.controller.js';
@@ -15,7 +16,6 @@ import { InfraModule } from '../infra/infra.module.js';
   imports: [ConfigModule, InfraModule],
   controllers: [PlatformController],
   providers: [
-    PlatformFetcher,
     ChzzkFetcher,
     SoopFetcher,
     PlatformRepository,
@@ -23,6 +23,10 @@ import { InfraModule } from '../infra/infra.module.js';
     PlatformWriter,
     PlatformCacheStore,
     Stlink,
+    {
+      provide: PlatformFetcher,
+      useClass: PlatformFetcherImpl,
+    },
   ],
   exports: [PlatformFetcher, PlatformRepository, PlatformFinder, PlatformWriter, PlatformCacheStore, Stlink],
 })

@@ -64,7 +64,7 @@ export class LiveDetector {
         preCheck: false,
       });
       if (!channelInfo) return;
-      await this.liveInitializer.createNewLive({ channelInfo, criterionId: criterion.id });
+      await this.liveInitializer.createNewLive({ channelInfo, criterion });
     } catch (err) {
       printError(err);
     }

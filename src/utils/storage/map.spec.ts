@@ -1,8 +1,8 @@
 import { describe, it, afterEach, expect, beforeAll } from 'vitest';
-import { createRedisClient } from './redis.js';
 import { AsyncMap } from './interface.js';
 import { RedisMap } from './map.redis.js';
 import { readEnv } from '../../common/config/env.js';
+import { createRedisClient } from '../redis.js';
 
 describe.skip('RedisMap (with real Redis client)', async () => {
   let map: AsyncMap<string, { name: string }>;

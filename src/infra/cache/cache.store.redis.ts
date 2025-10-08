@@ -1,16 +1,14 @@
 import { RedisClientType } from 'redis';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { CacheStore, SetOptions } from './cache.store.js';
 
-export interface SetOptions {
-  keepEx?: boolean;
-  exSec?: number;
-}
-
-export class RedisStore {
+export class RedisCacheStore extends CacheStore {
   constructor(
     public readonly client: RedisClientType,
     public readonly exSec: number,
-  ) {}
+  ) {
+    super();
+  }
 
   async get(key: string): Promise<string | null> {
     return await this.client.get(key);
@@ -60,5 +58,25 @@ export class RedisStore {
 
   async deleteBatch(keys: string[]): Promise<void> {
     await this.client.del(keys);
+  }
+
+  async dropAllKeys() {
+    const keys = await this.allKeys('*', 100);
+    if (keys.length > 0) {
+      await this.deleteBatch(keys);
+    }
+  }
+
+  async allKeys(pattern: string, cnt: number) {
+    const keys: string[] = [];
+    let cursor = 0;
+
+    do {
+      const scanResult = await this.client.scan(cursor, { MATCH: pattern, COUNT: cnt });
+      cursor = scanResult.cursor;
+      keys.push(...scanResult.keys);
+    } while (cursor !== 0);
+
+    return keys;
   }
 }

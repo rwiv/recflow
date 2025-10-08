@@ -1,10 +1,16 @@
 import fs from 'fs';
-import { RedisConfig } from '../../common/config/config.types.js';
 import { createClient, RedisClientType } from 'redis';
 import { Redis } from 'ioredis';
 import { log } from 'jslog';
 import { RedisClientOptions } from '@redis/client';
-import { stacktrace } from '../../utils/errors/utils.js';
+import { stacktrace } from './errors/utils.js';
+
+export interface RedisConfig {
+  host: string;
+  port: number;
+  password: string;
+  caPath?: string;
+}
 
 export async function createRedisClient(conf: RedisConfig, database: number = 0, logging: boolean = false) {
   const { password, caPath } = conf;

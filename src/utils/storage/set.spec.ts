@@ -1,10 +1,10 @@
 import { describe, it, beforeAll, afterEach, expect } from 'vitest';
 import path from 'path';
 import dotenv from 'dotenv';
-import { createRedisClient } from './redis.js';
 import { AsyncSet } from './interface.js';
 import { RedisSet } from './set.redis.js';
 import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
+import { createRedisClient } from '../redis.js';
 
 describe.skip('RedisSet', () => {
   let set: AsyncSet<string>;

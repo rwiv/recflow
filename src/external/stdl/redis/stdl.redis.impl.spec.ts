@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readEnv } from '../../../common/config/env.js';
 import { StdlRedisImpl } from './stdl.redis.impl.js';
-import { createRedisClient } from '../../../infra/redis/redis.client.js';
+import { createRedisClient } from '../../../utils/redis.js';
 import { dummyLiveDto } from '../../../live/spec/live.dto.schema.dummy.js';
 
 describe.skip('StdlRedisImpl', () => {
@@ -24,17 +24,17 @@ describe.skip('StdlRedisImpl', () => {
     const ls2 = await client.createLiveState(dummyLiveDto());
 
     // Then
-    expect(await client.getLiveState('not', _)).toEqual(null);
-    expect(await client.getLiveState(ls1.id, _)).toEqual(ls1);
-    expect(await client.getLiveStates([ls1.id, ls2.id], _)).toEqual([ls1, ls2]);
-    expect(await client.getLivesIds(_)).toEqual([ls1.id, ls2.id]);
+    await expect(client.getLiveState('not', _)).resolves.toEqual(null);
+    await expect(client.getLiveState(ls1.id, _)).resolves.toEqual(ls1);
+    await expect(client.getLiveStates([ls1.id, ls2.id], _)).resolves.toEqual([ls1, ls2]);
+    await expect(client.getLivesIds(_)).resolves.toEqual([ls1.id, ls2.id]);
 
     // When
     await client.deleteLiveState(ls1.id);
 
     // Then
-    expect(await client.getLiveState(ls1.id, _)).toEqual(null);
-    expect(await client.getLivesIds(_)).toEqual([ls2.id]);
+    await expect(client.getLiveState(ls1.id, _)).resolves.toEqual(null);
+    await expect(client.getLivesIds(_)).resolves.toEqual([ls2.id]);
 
     // Clear
     await client.deleteLiveState(ls2.id);

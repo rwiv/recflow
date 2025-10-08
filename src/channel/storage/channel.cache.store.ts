@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { RedisStore } from '../../infra/redis/redis.store.js';
 import { channelDto, ChannelDto } from '../spec/channel.dto.schema.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
+import { CacheStore } from '../../infra/cache/cache.store.js';
 
 export const CHANNEL_KEY_PREFIX = 'channel';
 export const CHANNELS_KEY_PREFIX = 'channels';
@@ -14,16 +14,16 @@ export interface SetOptions {
 
 @Injectable()
 export class ChannelCacheStore {
-  constructor(@Inject(SERVER_REDIS) private readonly redis: RedisStore) {}
+  constructor(@Inject(SERVER_REDIS) private readonly cache: CacheStore) {}
 
   async findById(id: string): Promise<ChannelDto | null> {
-    const data = await this.redis.get(`${CHANNEL_KEY_PREFIX}:${id}`);
+    const data = await this.cache.get(`${CHANNEL_KEY_PREFIX}:${id}`);
     if (!data) return null;
     return channelDto.parse(JSON.parse(data));
   }
 
   async findByPlatformAndSourceId(pfName: PlatformName, sourceId: string): Promise<ChannelDto | null> {
-    const data = await this.redis.get(`${CHANNEL_KEY_PREFIX}:${pfName}:${sourceId}`);
+    const data = await this.cache.get(`${CHANNEL_KEY_PREFIX}:${pfName}:${sourceId}`);
     if (!data) return null;
     return channelDto.parse(JSON.parse(data));
   }
@@ -31,33 +31,33 @@ export class ChannelCacheStore {
   async set(data: ChannelDto, opts: SetOptions | undefined = undefined): Promise<void> {
     const reqOpts = opts ?? {};
     const text = JSON.stringify(channelDto.parse(data));
-    const p1 = this.redis.set(`${CHANNEL_KEY_PREFIX}:${data.id}`, text, reqOpts);
-    const p2 = this.redis.set(this.pfUidKey(data), text, reqOpts);
+    const p1 = this.cache.set(`${CHANNEL_KEY_PREFIX}:${data.id}`, text, reqOpts);
+    const p2 = this.cache.set(this.pfUidKey(data), text, reqOpts);
     await Promise.all([p1, p2]);
   }
 
   async addFollowedChannel(id: string) {
-    await this.redis.addItem(FOLLOWED_CHANNELS_KEY, id);
+    await this.cache.addItem(FOLLOWED_CHANNELS_KEY, id);
   }
 
   async removeFollowedChannel(id: string) {
-    await this.redis.deleteItem(FOLLOWED_CHANNELS_KEY, id);
+    await this.cache.deleteItem(FOLLOWED_CHANNELS_KEY, id);
   }
 
   async getFollowedChannelIds(): Promise<string[]> {
-    return this.redis.list(FOLLOWED_CHANNELS_KEY);
+    return this.cache.list(FOLLOWED_CHANNELS_KEY);
   }
 
   async delete(id: string) {
     const cache = await this.findById(id);
     if (cache) {
-      await this.redis.delete(this.pfUidKey(cache));
+      await this.cache.delete(this.pfUidKey(cache));
     }
-    await this.redis.delete(`${CHANNEL_KEY_PREFIX}:${id}`);
+    await this.cache.delete(`${CHANNEL_KEY_PREFIX}:${id}`);
   }
 
   async deleteByDto(dto: ChannelDto) {
-    await this.redis.deleteBatch([`${CHANNEL_KEY_PREFIX}:${dto.id}`, this.pfUidKey(dto)]);
+    await this.cache.deleteBatch([`${CHANNEL_KEY_PREFIX}:${dto.id}`, this.pfUidKey(dto)]);
   }
 
   private pfUidKey(data: ChannelDto) {

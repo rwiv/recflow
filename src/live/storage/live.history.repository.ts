@@ -3,9 +3,10 @@ import { z } from 'zod';
 import { GradeDto } from '../../channel/spec/grade.schema.js';
 import { nnint, nonempty } from '../../common/data/common.schema.js';
 import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { RedisStore, SetOptions } from '../../infra/redis/redis.store.js';
 import { PlatformName, platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { CacheStore, SetOptions } from '../../infra/cache/cache.store.js';
+
 export const LIVE_HISTORY_KEY_PREFIX = 'live:history';
 
 const liveHistory = z.object({
@@ -24,10 +25,10 @@ export type LiveHistory = z.infer<typeof liveHistory>;
 
 @Injectable()
 export class LiveHistoryRepository {
-  constructor(@Inject(SERVER_REDIS) private readonly redis: RedisStore) {}
+  constructor(@Inject(SERVER_REDIS) private readonly cache: CacheStore) {}
 
   async get(platform: PlatformName, liveId: string) {
-    const data = await this.redis.get(this.getKey(platform, liveId));
+    const data = await this.cache.get(this.getKey(platform, liveId));
     if (!data) return null;
     return liveHistory.parse(JSON.parse(data));
   }
@@ -48,11 +49,11 @@ export class LiveHistoryRepository {
     const key = this.getKey(platform, liveInfo.liveUid);
     const data = JSON.stringify(liveHistory.parse(history));
     const opts: SetOptions = { exSec: 60 * 60 * 24 * 3 }; // 3 days
-    await this.redis.set(key, data, opts);
+    await this.cache.set(key, data, opts);
   }
 
   async exists(platform: PlatformName, liveUid: string): Promise<boolean> {
-    return await this.redis.exists(this.getKey(platform, liveUid));
+    return await this.cache.exists(this.getKey(platform, liveUid));
   }
 
   private getKey(platform: PlatformName, liveId: string) {

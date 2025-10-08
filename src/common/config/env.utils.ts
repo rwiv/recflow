@@ -1,14 +1,7 @@
-import {
-  AmqpConfig,
-  PostgresConfig,
-  RedisConfig,
-  SQSConfig,
-  StlinkConfig,
-  StreamqConfig,
-  UntfConfig,
-} from './config.types.js';
+import { AmqpConfig, PostgresConfig, SQSConfig, StlinkConfig, StreamqConfig, UntfConfig } from './config.types.js';
 import { z } from 'zod';
 import { DEFAULT_UNTF_TOPIC } from '../data/constants.js';
+import { RedisConfig } from '../../utils/redis.js';
 
 const nnint = z.coerce.number().int().nonnegative();
 

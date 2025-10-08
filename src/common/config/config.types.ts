@@ -1,10 +1,3 @@
-export interface RedisConfig {
-  host: string;
-  port: number;
-  password: string;
-  caPath?: string;
-}
-
 export interface AmqpConfig {
   host: string;
   port: number;

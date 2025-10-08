@@ -14,7 +14,7 @@ import { CriterionModule } from './criterion/criterion.module.js';
 import { TaskModule } from './task/task.module.js';
 import { PlatformModule } from './platform/platform.module.js';
 import { readEnv } from './common/config/env.js';
-import { createIoRedisClient } from './infra/redis/redis.client.js';
+import { createIoRedisClient } from './utils/redis.js';
 import { taskDefs } from './task/spec/task.queue-defs.js';
 import { GlobalModule } from './common/global/global.module.js';
 

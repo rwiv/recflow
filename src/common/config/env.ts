@@ -1,4 +1,4 @@
-import { UntfConfig, PostgresConfig, StreamqConfig, RedisConfig, StlinkConfig, SQSConfig } from './config.types.js';
+import { UntfConfig, PostgresConfig, StreamqConfig, StlinkConfig, SQSConfig } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
@@ -13,6 +13,7 @@ import {
   readUntfConfig,
 } from './env.utils.js';
 import { z } from 'zod';
+import { RedisConfig } from '../../utils/redis.js';
 
 export const nodeEnvEnum = z.enum(['dev', 'test', 'prod']);
 export type NodeEnv = z.infer<typeof nodeEnvEnum>;

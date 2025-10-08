@@ -3,7 +3,6 @@ import { dummyPlatformCriterionDto } from '../../criterion/spec/criterion.dto.sc
 import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
 import { dummyChannelInfoChzzk } from '../../platform/spec/wapper/channel.dummy.js';
 import { LiveDetector } from './live.detector.js';
-import { LiveInitializer } from '../register/live.initializer.js';
 import { LiveInitializerMock } from '../register/live.initializer.mock.js';
 import { PlatformFetcherFake } from '../../platform/fetcher/fetcher.fake.js';
 import { channelInfoToDto } from '../../channel/spec/channel.dto.schema.dummy.js';
@@ -12,7 +11,7 @@ import { ChannelInfo, channelLiveInfo } from '../../platform/spec/wapper/channel
 describe('LiveCoordinator', () => {
   let coordinator: LiveDetector;
   let fakeFetcher: PlatformFetcherFake;
-  let mockLiveInit: LiveInitializer;
+  let mockLiveInit: LiveInitializerMock;
   let mockChannelFinder: { findFollowedChannels: MockInstance };
   let mockLiveFinder: { findByChannelSourceId: MockInstance };
   let mockFilter: { getFiltered: MockInstance };
@@ -51,8 +50,8 @@ describe('LiveCoordinator', () => {
       await coordinator.checkFollowedLives();
 
       // Then
-      expect(mockLiveInit.createNewLive).toHaveBeenNthCalledWith(1, { channelInfo: ch1, isFollowed: true });
-      expect(mockLiveInit.createNewLive).toHaveBeenNthCalledWith(2, { channelInfo: ch3, isFollowed: true });
+      expect(mockLiveInit._createNewLive).toHaveBeenNthCalledWith(1, { channelInfo: ch1, isFollowed: true });
+      expect(mockLiveInit._createNewLive).toHaveBeenNthCalledWith(2, { channelInfo: ch3, isFollowed: true });
     });
   });
 
@@ -80,8 +79,8 @@ describe('LiveCoordinator', () => {
       await coordinator.checkQueriedLives(criterion);
 
       // Then
-      expect(mockLiveInit.createNewLive).toHaveBeenNthCalledWith(1, { channelInfo: ch1, criterion });
-      expect(mockLiveInit.createNewLive).toHaveBeenNthCalledWith(2, { channelInfo: ch3, criterion });
+      expect(mockLiveInit._createNewLive).toHaveBeenNthCalledWith(1, { channelInfo: ch1, criterion });
+      expect(mockLiveInit._createNewLive).toHaveBeenNthCalledWith(2, { channelInfo: ch3, criterion });
     });
   });
 });

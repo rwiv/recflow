@@ -6,7 +6,7 @@ import path from 'path';
 import { readEnv, Env } from '../src/common/config/env.js';
 import { StdlImpl } from '../src/external/stdl/client/stdl.client.impl.js';
 import { StdlRedisImpl } from '../src/external/stdl/redis/stdl.redis.impl.js';
-import { createRedisClient } from '../src/infra/redis/redis.client.js';
+import { createRedisClient } from '../src/utils/redis.js';
 
 const recoveryTestConf = z.object({
   liveRecordId: z.string(),

@@ -9,9 +9,8 @@ import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../../cri
 import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/grade.constants.js';
 import { GradeService } from '../../channel/service/grade.service.js';
 import { PlatformWriter } from '../../platform/storage/platform.writer.js';
-import { dropAllKeys } from '../../infra/redis/redis.utils.js';
 import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { RedisStore } from '../../infra/redis/redis.store.js';
+import { CacheStore } from '../../infra/cache/cache.store.js';
 
 @Injectable()
 export class DevInitializer {
@@ -21,12 +20,12 @@ export class DevInitializer {
     private readonly ngRepo: NodeGroupRepository,
     private readonly ruleRepo: CriterionRuleRepository,
     private readonly devInjector: DevChannelInserter,
-    @Inject(SERVER_REDIS) private readonly redis: RedisStore,
+    @Inject(SERVER_REDIS) private readonly cache: CacheStore,
   ) {}
 
   async initDev(withInject: boolean = true) {
     await dropTables();
-    await dropAllKeys(this.redis.client);
+    await this.cache.dropAllKeys();
 
     await this.addPlatforms();
     await this.addPriorities();

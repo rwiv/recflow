@@ -3,8 +3,8 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { stdlLocationType } from './common/stdl.types.js';
 import { StdlRedisImpl } from './redis/stdl.redis.impl.js';
-import { createRedisClient } from '../../utils/storage/redis.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { createRedisClient } from '../../utils/redis.js';
 
 @Injectable()
 export class StdlFactory {

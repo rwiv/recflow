@@ -16,17 +16,17 @@ describe('StdlRedisFake', () => {
     const ls2 = await client.createLiveState(dummyLiveDto());
 
     // Then
-    expect(await client.getLiveState('not', _)).toEqual(null);
-    expect(await client.getLiveState(ls1.id, _)).toEqual(ls1);
-    expect(await client.getLiveStates([ls1.id, ls2.id], _)).toEqual([ls1, ls2]);
-    expect(await client.getLivesIds(_)).toEqual([ls1.id, ls2.id]);
+    await expect(client.getLiveState('not', _)).resolves.toEqual(null);
+    await expect(client.getLiveState(ls1.id, _)).resolves.toEqual(ls1);
+    await expect(client.getLiveStates([ls1.id, ls2.id], _)).resolves.toEqual([ls1, ls2]);
+    await expect(client.getLivesIds(_)).resolves.toEqual([ls1.id, ls2.id]);
 
     // When
     await client.deleteLiveState(ls1.id);
 
     // Then
-    expect(await client.getLiveState(ls1.id, _)).toEqual(null);
-    expect(await client.getLivesIds(_)).toEqual([ls2.id]);
+    await expect(client.getLiveState(ls1.id, _)).resolves.toEqual(null);
+    await expect(client.getLivesIds(_)).resolves.toEqual([ls2.id]);
   });
 
   it('segNums', async () => {
@@ -36,10 +36,12 @@ describe('StdlRedisFake', () => {
     // When
     const ls = await client.createLiveState(dummyLiveDto());
     client.setSegNums(ls.id, kw, ['1', '2']);
-    expect(await client.getSegNums(ls.id, kw, _)).toEqual(['1', '2']);
+    // Then
+    await expect(client.getSegNums(ls.id, kw, _)).resolves.toEqual(['1', '2']);
 
     // When
     await client.deleteSegNumSet(ls.id, kw);
-    expect(await client.getSegNums(ls.id, kw, _)).toEqual([]);
+    // Then
+    await expect(client.getSegNums(ls.id, kw, _)).resolves.toEqual([]);
   });
 });

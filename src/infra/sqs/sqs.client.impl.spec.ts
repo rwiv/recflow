@@ -1,22 +1,25 @@
-import { describe, it } from 'vitest';
+import { describe, it, beforeAll } from 'vitest';
 import { readEnv } from '../../common/config/env.js';
 import { SQSClientImpl } from './sqs.client.impl.js';
 
 describe.skip('SQSClientImpl', () => {
-  const env = readEnv();
-  const client = new SQSClientImpl(env);
+  let sqs: SQSClientImpl;
+
+  beforeAll(() => {
+    sqs = new SQSClientImpl(readEnv());
+  });
 
   it('test send', async () => {
     for (let i = 0; i < 2; i++) {
-      await client.send(`test${i}`);
+      await sqs.send(`test${i}`);
     }
   });
 
   it('test receive', async () => {
-    const messages = await client.receive();
+    const messages = await sqs.receive();
     for (const message of messages) {
       console.log(message.body);
     }
-    await client.delete(messages);
+    await sqs.delete(messages);
   });
 });

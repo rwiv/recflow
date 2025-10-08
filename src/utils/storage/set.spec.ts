@@ -1,4 +1,4 @@
-import { describe, it, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterEach, expect } from 'vitest';
 import path from 'path';
 import dotenv from 'dotenv';
 import { createRedisClient } from './redis.js';
@@ -6,14 +6,19 @@ import { AsyncSet } from './interface.js';
 import { RedisSet } from './set.redis.js';
 import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
 
-describe.skip('RedisSet', async () => {
-  dotenv.config({ path: path.resolve('dev', '.env') });
-  const conf = readStdlRedisMasterConfig();
+describe.skip('RedisSet', () => {
+  let set: AsyncSet<string>;
 
   const testKey = 'test:set';
-  const redis = await createRedisClient(conf);
-  const set: AsyncSet<string> = new RedisSet<string>(redis, testKey);
-  // const set: AsyncSet<string> = new MemorySet<string>();
+
+  beforeAll(async () => {
+    dotenv.config({ path: path.resolve('dev', '.env') });
+    const conf = readStdlRedisMasterConfig();
+
+    const redis = await createRedisClient(conf);
+    set = new RedisSet<string>(redis, testKey);
+    // set = new MemorySet<string>();
+  });
 
   afterEach(async () => {
     await set.clear();

@@ -1,9 +1,9 @@
 import fs from 'fs/promises';
-import { describe, it } from 'vitest';
+import { describe, it, beforeAll } from 'vitest';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import path from 'path';
-import { readEnv } from '../src/common/config/env.js';
+import { readEnv, Env } from '../src/common/config/env.js';
 import { StdlImpl } from '../src/infra/stdl/stdl.client.impl.js';
 import { StdlRedisImpl } from '../src/infra/stdl/stdl.redis.impl.js';
 import { createRedisClient } from '../src/infra/redis/redis.client.js';
@@ -14,8 +14,13 @@ const recoveryTestConf = z.object({
 });
 
 describe.skip('recovery api', () => {
-  const env = readEnv();
-  const stdl = new StdlImpl(env);
+  let env: Env;
+  let stdl: StdlImpl;
+
+  beforeAll(() => {
+    env = readEnv();
+    stdl = new StdlImpl(env);
+  });
 
   it('recovery', async () => {
     const text = await fs.readFile(path.join('dev', 'test', 'recovery_conf.yaml'), 'utf-8');

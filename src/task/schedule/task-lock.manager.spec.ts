@@ -1,18 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { TaskLockManager } from './task-lock.manager.js';
 import { readEnv } from '../../common/config/env.js';
 import { createIoRedisClient } from '../../infra/redis/redis.client.js';
 import assert from 'assert';
 
 describe.skip('TaskLockManager', () => {
-  const env = readEnv();
+  let lm: TaskLockManager;
+
+  beforeAll(() => {
+    const redis = createIoRedisClient(readEnv().serverRedis, 1);
+    lm = new TaskLockManager(redis);
+  });
+
+  const taskName = 'foo';
 
   it('test TaskLockManager', async () => {
-    const taskName = 'foo';
-    const redis = createIoRedisClient(env.serverRedis, 1);
-
-    const lm = new TaskLockManager(redis);
-
     expect(await lm.release(taskName, 'asd')).toBeNull();
 
     const token = await lm.acquire(taskName, 10);

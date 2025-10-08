@@ -1,5 +1,6 @@
 import { beforeAll, afterAll, describe, it } from 'vitest';
 import { TestingModule } from '@nestjs/testing';
+import assert from 'assert';
 import { dummyChannelAppend } from '../spec/channel.dto.schema.dummy.js';
 import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
 import { DevInitializer } from '../../common/init/dev-initializer.js';
@@ -10,7 +11,6 @@ import { ChannelWriter } from './channel.writer.js';
 import { GradeService } from './grade.service.js';
 import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { ChannelSearchRepository, ChannelTagSearchRequest } from '../storage/channel.search.js';
-import assert from 'assert';
 
 describe.skip('ChannelService', () => {
   let moduleRef: TestingModule;

@@ -1,9 +1,13 @@
 import fs from 'fs/promises';
-import { describe, it } from 'vitest';
-import { readEnv } from '../src/common/config/env.js';
+import { describe, it, beforeAll } from 'vitest';
+import { readEnv, Env } from '../src/common/config/env.js';
 
 describe.skip('app api', () => {
-  const env = readEnv();
+  let env: Env;
+
+  beforeAll(() => {
+    env = readEnv();
+  });
 
   it('request channels', async () => {
     const text = await fs.readFile('./dev/test_chzzk.txt', 'utf-8');

@@ -1,20 +1,22 @@
-import { describe, it } from 'vitest';
-import path from 'path';
-import dotenv from 'dotenv';
+import { describe, it, beforeAll } from 'vitest';
+import { RedisClientType } from 'redis';
 import { createRedisClient } from './redis.client.js';
-import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
 import { allKeys } from './redis.utils.js';
+import { readEnv } from '../../common/config/env.js';
 
 describe.skip('redis', () => {
-  dotenv.config({ path: path.resolve('dev', '.env') });
-  const conf = readStdlRedisMasterConfig();
+  let redis: RedisClientType;
+
+  beforeAll(async () => {
+    const env = readEnv();
+    redis = await createRedisClient(env.stdlRedisMaster);
+  });
 
   const pattern = '*';
   // const pattern = 'stmgr:*';
   const targetKey = '';
 
   it('get', async () => {
-    const redis = await createRedisClient(conf);
     const value = await redis.get(targetKey);
     if (value) {
       console.log(JSON.parse(value));
@@ -22,13 +24,11 @@ describe.skip('redis', () => {
   });
 
   it('allKeys', async () => {
-    const redis = await createRedisClient(conf);
     const res = await allKeys(redis, pattern);
     console.log(res);
   });
 
   // it('keys', async () => {
-  //   const redis = await createRedisClient(env.redis);
   //   for (const key of await allKeys(redis, pattern)) {
   //     await redis.del(key);
   //   }

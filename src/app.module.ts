@@ -18,21 +18,12 @@ import { createIoRedisClient } from './infra/redis/redis.client.js';
 import { taskDefs } from './task/spec/task.queue-defs.js';
 import { GlobalModule } from './common/global/global.module.js';
 
-const env = readEnv();
-const bull = createIoRedisClient(env.serverRedis, 1);
-
-const bullModules = [];
-for (const taskName in taskDefs) {
-  bullModules.push(BullModule.registerQueue({ name: taskName, connection: bull }));
-  bullModules.push(BullBoardModule.forFeature({ name: taskName, adapter: BullMQAdapter }));
-}
-
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({ rootPath: join(import.meta.dirname, '..', 'public') }),
     BullBoardModule.forRoot({ route: '/queues', adapter: ExpressAdapter }),
-    ...bullModules,
+    ...getBullModules(),
     InitModule,
     PlatformModule,
     LiveModule,
@@ -44,3 +35,15 @@ for (const taskName in taskDefs) {
   ],
 })
 export class AppModule {}
+
+function getBullModules() {
+  const env = readEnv();
+  const bull = createIoRedisClient(env.serverRedis, 1);
+
+  const bullModules = [];
+  for (const taskName in taskDefs) {
+    bullModules.push(BullModule.registerQueue({ name: taskName, connection: bull }));
+    bullModules.push(BullBoardModule.forFeature({ name: taskName, adapter: BullMQAdapter }));
+  }
+  return bullModules;
+}

@@ -8,13 +8,13 @@ import { NodeWriter } from './node.writer.js';
 import { NodeFinder } from './node.finder.js';
 import { NodeGroupRepository } from '../storage/node-group.repository.js';
 
-const app = await createTestApp();
-const init = app.get(DevInitializer);
-const nodeWriter = app.get(NodeWriter);
-const nodeFinder = app.get(NodeFinder);
-const ngRepo = app.get(NodeGroupRepository);
+describe.skip('test NodeWriter', async () => {
+  const app = await createTestApp();
+  const init = app.get(DevInitializer);
+  const nodeWriter = app.get(NodeWriter);
+  const nodeFinder = app.get(NodeFinder);
+  const ngRepo = app.get(NodeGroupRepository);
 
-describe('test NodeWriter', async () => {
   beforeEach(async () => {
     await init.initDev();
   });

@@ -6,10 +6,10 @@ import { AsyncSet } from './interface.js';
 import { RedisSet } from './set.redis.js';
 import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
 
-dotenv.config({ path: path.resolve('dev', '.env') });
-const conf = readStdlRedisMasterConfig();
+describe.skip('RedisSet', async () => {
+  dotenv.config({ path: path.resolve('dev', '.env') });
+  const conf = readStdlRedisMasterConfig();
 
-describe('RedisSet', async () => {
   const testKey = 'test:set';
   const redis = await createRedisClient(conf);
   const set: AsyncSet<string> = new RedisSet<string>(redis, testKey);

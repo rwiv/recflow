@@ -12,15 +12,15 @@ import { GradeService } from '../service/grade.service.js';
 import { ChannelCommandRepository } from './channel.command.js';
 import { ChannelSearchRepository, ChannelTagSearchRequest } from './channel.search.js';
 
-const app = await createTestApp();
-const init = app.get(DevInitializer);
-const pfFinder = app.get(PlatformFinder);
-const grService = app.get(GradeService);
-const tagCmd = app.get(TagCommandRepository);
-const chanCmd = app.get(ChannelCommandRepository);
-const chSearchRepo = app.get(ChannelSearchRepository);
+describe.skip('ChannelService', async () => {
+  const app = await createTestApp();
+  const init = app.get(DevInitializer);
+  const pfFinder = app.get(PlatformFinder);
+  const grService = app.get(GradeService);
+  const tagCmd = app.get(TagCommandRepository);
+  const chanCmd = app.get(ChannelCommandRepository);
+  const chSearchRepo = app.get(ChannelSearchRepository);
 
-describe('ChannelService', () => {
   it('drop', async () => {
     await dropTables();
   });

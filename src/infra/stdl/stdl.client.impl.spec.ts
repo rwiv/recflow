@@ -1,17 +1,20 @@
-import { it } from 'vitest';
+import { describe, it } from 'vitest';
 import { StdlImpl } from './stdl.client.impl.js';
 import { readEnv } from '../../common/config/env.js';
 
-const stdlUrl = '';
-const env = readEnv();
-const stdl = new StdlImpl(env);
+describe.skip('StdlImpl', () => {
+  const env = readEnv();
+  const stdl = new StdlImpl(env);
 
-it('test getStatus', async () => {
-  const status = await stdl.getStatus(stdlUrl);
-  console.log(status);
-});
+  const stdlUrl = '';
 
-it('test cancelRecording', async () => {
-  const recordId = '';
-  await stdl.cancelRecording(stdlUrl, recordId);
+  it('getStatus', async () => {
+    const status = await stdl.getStatus(stdlUrl);
+    console.log(status);
+  });
+
+  it('cancelRecording', async () => {
+    const recordId = '';
+    await stdl.cancelRecording(stdlUrl, recordId);
+  });
 });

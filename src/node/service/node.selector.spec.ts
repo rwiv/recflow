@@ -12,6 +12,5 @@ describe('ChannelService', () => {
     ];
     const sorted = sortedByEarliestAssigned(nodes);
     expect(sorted[0].lastAssignedAt).toBe(null);
-    console.log(sorted);
   });
 });

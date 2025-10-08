@@ -1,7 +1,7 @@
 import { it } from 'vitest';
 import { processSets } from './set.js';
 
-it('test', () => {
+it('utils.set', () => {
   const setA = new Set([1, 2, 3, 4, 5]);
   const setB = new Set([3, 4, 5, 6, 7]);
 

@@ -1,17 +1,19 @@
-import { it } from 'vitest';
+import { describe, it } from 'vitest';
 import { createTestApp } from '../../common/helpers/helper.app.js';
 import { LiveStateCleaner } from './live.state.cleaner.js';
 
-const app = await createTestApp();
-const cleaner = app.get(LiveStateCleaner);
+describe.skip('LiveStateCleaner', async () => {
+  const app = await createTestApp();
+  const cleaner = app.get(LiveStateCleaner);
 
-it('test getTargetIds', async () => {
-  const targetIds = await cleaner.getTargetIds();
-  console.log(targetIds.length);
-  console.log(targetIds);
-});
+  it('test getTargetIds', async () => {
+    const targetIds = await cleaner.getTargetIds();
+    console.log(targetIds.length);
+    console.log(targetIds);
+  });
 
-it('test clearLive', async () => {
-  const liveId = '';
-  await cleaner.clearLive(liveId);
+  it('test clearLive', async () => {
+    const liveId = '';
+    await cleaner.clearLive(liveId);
+  });
 });

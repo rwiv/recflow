@@ -8,6 +8,7 @@ import { Stlink } from '../../platform/stlink/stlink.js';
 import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveStreamService } from './live-stream.service.js';
 import { liveInfoAttr } from '../../common/attr/attr.live.js';
+import { handleSettled } from '../../utils/log.js';
 
 export const QUERY_LIMIT = 10; // TODO: use config
 
@@ -23,11 +24,11 @@ export class LiveStreamDetector {
 
   async check(platform: PlatformName) {
     const channels = await this.streamRepo.findChannelsForCheckStream(platform, QUERY_LIMIT);
-    const promises = [];
+    const ps = [];
     for (const channel of channels) {
-      promises.push(this.checkOne(platform, channel.id, channel.sourceId));
+      ps.push(this.checkOne(platform, channel.id, channel.sourceId));
     }
-    await Promise.allSettled(promises);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   async checkOne(platform: PlatformName, channelId: string, sourceId: string) {

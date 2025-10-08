@@ -15,6 +15,7 @@ import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
 import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { getJobOpts } from './task.utils.js';
 import { TaskErrorHandler } from './task.error-handler.js';
+import { handleSettled } from '../../utils/log.js';
 
 @Injectable()
 export class TaskCronScheduler {
@@ -45,14 +46,14 @@ export class TaskCronScheduler {
     for (const [taskName, taskDef] of Object.entries(cronTaskDefs)) {
       ps1.push(this.checkTask(taskName, taskDef));
     }
-    await Promise.allSettled(ps1);
+    handleSettled(await Promise.allSettled(ps1));
 
     const ps2: Promise<void>[] = [];
     const criteria = (await this.crFinder.findAll()).filter((cr) => !cr.isDeactivated);
     for (const cr of criteria) {
       ps2.push(this.checkCriterion(cr));
     }
-    await Promise.allSettled(ps2);
+    handleSettled(await Promise.allSettled(ps2));
   }
 
   private async checkTask(taskName: string, taskDef: TaskDef) {

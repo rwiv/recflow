@@ -4,6 +4,7 @@ import { LiveFinder } from '../data/live.finder.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { ExitCmd } from '../spec/event.schema.js';
+import { handleSettled } from '../../utils/log.js';
 
 @Injectable()
 export class LiveCleaner {
@@ -14,11 +15,11 @@ export class LiveCleaner {
   ) {}
 
   async cleanup() {
-    const promises = [];
+    const ps = [];
     for (const live of await this.liveFinder.findAll()) {
-      promises.push(this.finishLive(live));
+      ps.push(this.finishLive(live));
     }
-    await Promise.allSettled(promises);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   private async finishLive(live: LiveDto) {

@@ -17,7 +17,7 @@ import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
 import { Notifier } from '../../external/notify/notifier.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
-import { LogLevel } from '../../utils/log.js';
+import { LogLevel, handleSettled } from '../../utils/log.js';
 import { stacktrace } from '../../utils/errors/utils.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { LiveInitializer } from '../register/live.initializer.js';
@@ -63,15 +63,15 @@ export class LiveRecoveryManager {
         ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error'));
       }
     }
-    await Promise.allSettled(ps);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   async checkLives() {
-    const promises = [];
+    const ps = [];
     for (const live of await this.retrieveInvalidNodes()) {
-      promises.push(this.checkInvalidLive(live));
+      ps.push(this.checkInvalidLive(live));
     }
-    await Promise.allSettled(promises);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   private async checkInvalidLive(invalidLive: TargetLive) {
@@ -120,7 +120,7 @@ export class LiveRecoveryManager {
 
     // Recovery invalid nodes in live
     const ps = invalidLive.invalidNodes.map((ivNode) => this.checkInvalidNode(live, ivNode.node));
-    await Promise.allSettled(ps);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   private finishLive(recordId: string, logMsg: string, logLevel: LogLevel) {

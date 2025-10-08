@@ -10,6 +10,7 @@ import { Notifier } from '../../external/notify/notifier.js';
 import { findMissingNums } from '../../utils/numbers.js';
 import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
 import { segmentKeyword } from '../../external/stdl/redis/stdl.redis.data.js';
+import { handleSettled } from '../../utils/log.js';
 
 @Injectable()
 export class LiveStateCleaner {
@@ -21,11 +22,11 @@ export class LiveStateCleaner {
   ) {}
 
   async cleanup() {
-    const promises = [];
+    const ps = [];
     for (const targetId of await this.getTargetIds()) {
-      promises.push(this.clearLive(targetId));
+      ps.push(this.clearLive(targetId));
     }
-    await Promise.allSettled(promises);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   async getTargetIds() {

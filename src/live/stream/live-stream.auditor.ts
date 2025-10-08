@@ -5,6 +5,7 @@ import { longRetryOpts, Stlink } from '../../platform/stlink/stlink.js';
 import { LiveStreamDto } from '../spec/live.dto.schema.js';
 import { log } from 'jslog';
 import { streamAttr } from '../../common/attr/attr.live.js';
+import { handleSettled } from '../../utils/log.js';
 
 export const BATCH_NUM = 10; // TODO: use config
 
@@ -17,11 +18,11 @@ export class LiveStreamAuditor {
   ) {}
 
   async check() {
-    const promises = [];
+    const ps = [];
     for (const stream of await this.streamService.findEarliestChecked(BATCH_NUM)) {
-      promises.push(this.checkOne(stream));
+      ps.push(this.checkOne(stream));
     }
-    await Promise.allSettled(promises);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   async checkOne(stream: LiveStreamDto) {

@@ -40,3 +40,11 @@ export function printError(err: unknown) {
     log.error('UnknownError', { stack_trace: stacktrace(err) });
   }
 }
+
+export function handleSettled<T>(settled: PromiseSettledResult<T>[]) {
+  for (const result of settled) {
+    if (result.status === 'rejected') {
+      printError(result.reason);
+    }
+  }
+}

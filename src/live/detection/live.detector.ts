@@ -13,7 +13,7 @@ import { PlatformLiveFilter } from './live.filter.js';
 import { LiveInfo } from '../../platform/spec/wapper/live.js';
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { LiveInitializer } from '../register/live.initializer.js';
-import { printError } from '../../utils/log.js';
+import { printError, handleSettled } from '../../utils/log.js';
 
 @Injectable()
 export class LiveDetector {
@@ -28,16 +28,19 @@ export class LiveDetector {
 
   async checkFollowedLives() {
     const followedChannels: ChannelDto[] = await this.channelFinder.findFollowedChannels();
-    await Promise.allSettled(followedChannels.map((ch: ChannelDto) => this.registerLiveByChannel(ch)));
+    const ps = followedChannels.map((ch: ChannelDto) => this.registerLiveByChannel(ch));
+    handleSettled(await Promise.allSettled(ps));
   }
 
   async checkQueriedLives(criterion: PlatformCriterionDto) {
     const queriedLives: LiveInfo[] = await this.fetcher.fetchLives(criterion);
     const filtered: LiveInfo[] = await this.filter.getFiltered(criterion, queriedLives);
     if (criterion.loggingOnly) {
-      await Promise.allSettled(filtered.map((live: LiveInfo) => this.addLiveHistory(live, criterion)));
+      const ps = filtered.map((live: LiveInfo) => this.addLiveHistory(live, criterion));
+      handleSettled(await Promise.allSettled(ps));
     } else {
-      await Promise.allSettled(filtered.map((live: LiveInfo) => this.registerLiveByLive(live, criterion)));
+      const ps = filtered.map((live: LiveInfo) => this.registerLiveByLive(live, criterion));
+      handleSettled(await Promise.allSettled(ps));
     }
   }
 
@@ -90,7 +93,9 @@ export class LiveDetector {
     preCheck: boolean;
   }): Promise<ChannelLiveInfo | null> {
     const { platformName: pfName, channelUid, preCheck } = req;
-    if ((await this.liveFinder.findByChannelSourceId(channelUid, {})).length > 0) return null;
+
+    const exists = await this.liveFinder.findByChannelSourceId(channelUid, {});
+    if (exists.length > 0) return null;
 
     if (preCheck) {
       const chanInfo = await this.fetcher.fetchChannel(pfName, channelUid, false);

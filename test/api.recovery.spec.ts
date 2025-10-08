@@ -35,7 +35,7 @@ describe.skip('recovery api', () => {
 
     const master = await createRedisClient(env.stdlRedisMaster);
     const replica = await createRedisClient(env.stdlRedisReplica);
-    const stdlRedis = new StdlRedisImpl(master, replica, 3600 * 24, 'local', 'local', 'none');
+    const stdlRedis = new StdlRedisImpl(master, replica, 3600 * 24, 'local', 'local');
 
     await stdlRedis.updateIsInvalid(conf.liveRecordId, true);
 

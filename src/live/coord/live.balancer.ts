@@ -7,7 +7,7 @@ import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
-import { LogLevel } from '../../utils/log.js';
+import { LogLevel, handleSettled } from '../../utils/log.js';
 import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
 import { NodeRepository } from '../../node/storage/node.repository.js';
 
@@ -25,11 +25,11 @@ export class LiveBalancer {
   ) {}
 
   async check() {
-    const promises = [];
+    const ps = [];
     for (const live of await this.liveFinder.findAll()) {
-      promises.push(this.checkOne(live));
+      ps.push(this.checkOne(live));
     }
-    await Promise.allSettled(promises);
+    handleSettled(await Promise.allSettled(ps));
   }
 
   private async checkOne(live: LiveDtoWithNodes) {

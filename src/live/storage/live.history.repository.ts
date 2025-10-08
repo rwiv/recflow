@@ -27,8 +27,8 @@ export type LiveHistory = z.infer<typeof liveHistory>;
 export class LiveHistoryRepository {
   constructor(@Inject(SERVER_REDIS) private readonly cache: CacheStore) {}
 
-  async get(platform: PlatformName, liveId: string) {
-    const data = await this.cache.get(this.getKey(platform, liveId));
+  async get(platform: PlatformName, liveUid: string) {
+    const data = await this.cache.get(this.getKey(platform, liveUid));
     if (!data) return null;
     return liveHistory.parse(JSON.parse(data));
   }
@@ -56,7 +56,7 @@ export class LiveHistoryRepository {
     return await this.cache.exists(this.getKey(platform, liveUid));
   }
 
-  private getKey(platform: PlatformName, liveId: string) {
-    return `${LIVE_HISTORY_KEY_PREFIX}:${platform}:${liveId}`;
+  private getKey(platform: PlatformName, liveUid: string) {
+    return `${LIVE_HISTORY_KEY_PREFIX}:${platform}:${liveUid}`;
   }
 }

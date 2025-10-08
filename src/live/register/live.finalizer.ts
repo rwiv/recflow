@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
-import { RecordingStatus, Stdl } from '../../infra/stdl/stdl.client.js';
+import { RecordingStatus, Stdl } from '../../external/stdl/client/stdl.client.js';
 import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -19,7 +19,7 @@ import { LiveWriter } from '../data/live.writer.js';
 import { db } from '../../infra/db/db.js';
 import { HttpError } from '../../utils/errors/base/HttpError.js';
 import { getHttpRequestError } from '../../utils/http.js';
-import { SQSClient } from '../../infra/sqs/sqs.client.js';
+import { SQSClient } from '../../external/sqs/sqs.client.js';
 import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { Queue } from 'bullmq';
 import { LIVE_FINISH_NAME } from '../../task/live/live.task.contants.js';

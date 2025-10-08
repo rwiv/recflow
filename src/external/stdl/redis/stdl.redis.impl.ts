@@ -1,9 +1,9 @@
 import { liveState, LiveState, SegmentKeyword, StdlRedis } from './stdl.redis.js';
 import { RedisClientType } from 'redis';
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { LiveDto } from '../../../live/spec/live.dto.schema.js';
+import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
 import { StdlLocationType } from './stdl.types.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';

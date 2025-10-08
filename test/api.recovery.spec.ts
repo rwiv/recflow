@@ -4,8 +4,8 @@ import yaml from 'js-yaml';
 import { z } from 'zod';
 import path from 'path';
 import { readEnv, Env } from '../src/common/config/env.js';
-import { StdlImpl } from '../src/infra/stdl/stdl.client.impl.js';
-import { StdlRedisImpl } from '../src/infra/stdl/stdl.redis.impl.js';
+import { StdlImpl } from '../src/external/stdl/client/stdl.client.impl.js';
+import { StdlRedisImpl } from '../src/external/stdl/redis/stdl.redis.impl.js';
 import { createRedisClient } from '../src/infra/redis/redis.client.js';
 
 const recoveryTestConf = z.object({

@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { Stdl } from '../../infra/stdl/stdl.client.js';
+import { Stdl } from '../../external/stdl/client/stdl.client.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDtoWithNodes } from '../spec/live.dto.mapped.schema.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { LogLevel } from '../../utils/log.js';
-import { StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
 import { NodeRepository } from '../../node/storage/node.repository.js';
 
 const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes

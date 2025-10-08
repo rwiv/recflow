@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { Stdl } from '../../infra/stdl/stdl.client.js';
+import { Stdl } from '../../external/stdl/client/stdl.client.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../service/node.finder.js';
 import { NodeWriter } from '../service/node.writer.js';

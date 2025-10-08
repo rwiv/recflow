@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { RecordingStatus, Stdl } from './stdl.client.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
+import { ENV } from '../../../common/config/config.module.js';
+import { Env } from '../../../common/config/env.js';
 import assert from 'assert';
-import { nodeDto } from '../../node/spec/node.dto.schema.js';
-import { liveDto } from '../../live/spec/live.dto.schema.js';
+import { nodeDto } from '../../../node/spec/node.dto.schema.js';
+import { liveDto } from '../../../live/spec/live.dto.schema.js';
 import { z } from 'zod';
 
 const FAILURE_CNT_THRESHOLD = 10;

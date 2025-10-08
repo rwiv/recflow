@@ -9,7 +9,7 @@ import { channelAttr, liveAttr, liveInfoAttr } from '../../common/attr/attr.live
 import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
-import { Notifier } from '../../infra/notify/notifier.js';
+import { Notifier } from '../../external/notify/notifier.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { NodeSelector } from '../../node/service/node.selector.js';

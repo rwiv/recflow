@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RecordingStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { checkResponse, getHttpRequestError } from '../../utils/http.js';
+import { ENV } from '../../../common/config/config.module.js';
+import { Env } from '../../../common/config/env.js';
+import { checkResponse, getHttpRequestError } from '../../../utils/http.js';
 
 @Injectable()
 export class StdlImpl extends Stdl {

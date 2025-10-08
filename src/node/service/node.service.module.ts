@@ -7,11 +7,10 @@ import { NodeMapper } from './node.mapper.js';
 import { NodeSelector } from './node.selector.js';
 import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
 import { NodeGroupService } from './node-group.service.js';
-import { InfraModule } from '../../infra/infra.module.js';
 import { ChannelServiceModule } from '../../channel/service/channel.service.module.js';
 
 @Module({
-  imports: [NodeStorageModule, LiveStorageModule, PlatformModule, InfraModule, ChannelServiceModule],
+  imports: [NodeStorageModule, LiveStorageModule, PlatformModule, ChannelServiceModule],
   providers: [NodeMapper, NodeWriter, NodeFinder, NodeSelector, NodeGroupService],
   exports: [NodeWriter, NodeFinder, NodeSelector, NodeGroupService],
 })

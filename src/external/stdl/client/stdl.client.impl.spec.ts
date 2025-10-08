@@ -1,6 +1,6 @@
 import { describe, it, beforeAll } from 'vitest';
 import { StdlImpl } from './stdl.client.impl.js';
-import { readEnv } from '../../common/config/env.js';
+import { readEnv } from '../../../common/config/env.js';
 
 describe.skip('StdlImpl', () => {
   let stdl: StdlImpl;

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { segmentKeyword, StdlRedis } from '../../infra/stdl/stdl.redis.js';
+import { segmentKeyword, StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
 import { log } from 'jslog';
 import { LiveFinder } from './live.finder.js';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { subLists } from '../../utils/list.js';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { Notifier } from '../../infra/notify/notifier.js';
+import { Notifier } from '../../external/notify/notifier.js';
 import { findMissingNums } from '../../utils/numbers.js';
 import assert from 'assert';
 

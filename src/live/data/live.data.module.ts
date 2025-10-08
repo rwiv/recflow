@@ -10,19 +10,21 @@ import { LiveRefresher } from './live.refresher.js';
 import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveStateCleaner } from './live.state.cleaner.js';
-import { InfraModule } from '../../infra/infra.module.js';
 import { LiveStreamModule } from '../stream/live.stream.module.js';
+import { StdlModule } from '../../external/stdl/stdl.module.js';
+import { NotifierModule } from '../../external/notify/notifier.module.js';
 
 @Module({
   imports: [
     ConfigModule,
-    InfraModule,
     PlatformModule,
     ChannelServiceModule,
     NodeStorageModule,
     NodeServiceModule,
     LiveStorageModule,
     LiveStreamModule,
+    StdlModule,
+    NotifierModule,
   ],
   providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner],
   exports: [LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner],

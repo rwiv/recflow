@@ -1,8 +1,8 @@
 import { describe, it, beforeAll } from 'vitest';
 import { RedisClientType } from 'redis';
-import { readEnv } from '../../common/config/env.js';
+import { readEnv } from '../../../common/config/env.js';
 import { StdlRedisImpl } from './stdl.redis.impl.js';
-import { createRedisClient } from '../redis/redis.client.js';
+import { createRedisClient } from '../../../infra/redis/redis.client.js';
 import { LiveState } from './stdl.redis.js';
 
 describe.skip('', () => {

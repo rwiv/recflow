@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { stdlLocationType } from './stdl.types.js';
+import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
+import { nnint, nonempty, uuid } from '../../../common/data/common.schema.js';
+import { NodeDto } from '../../../node/spec/node.dto.schema.js';
+import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
+import { stdlLocationType } from '../redis/stdl.types.js';
 
 export abstract class Stdl {
   abstract getStatus(endpoint: string): Promise<RecordingStatus[]>;

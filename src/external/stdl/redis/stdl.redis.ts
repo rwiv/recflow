@@ -1,33 +1,7 @@
-import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
-import { z } from 'zod';
-import { LiveDto } from '../../../live/spec/live.dto.schema.js';
-import { headers, nonempty, queryParams, uuid } from '../../../common/data/common.schema.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../../common/attr/attr.live.js';
-import { stdlLocationType } from './stdl.types.js';
-
-export const liveState = z.object({
-  id: uuid,
-  platform: platformNameEnum,
-  channelId: nonempty,
-  channelName: nonempty,
-  liveId: nonempty,
-  liveTitle: nonempty,
-  platformCookie: nonempty.nullable(),
-  streamUrl: nonempty,
-  streamParams: queryParams.nullable(),
-  streamHeaders: headers,
-  videoName: nonempty,
-  fsName: nonempty,
-  location: stdlLocationType,
-  isInvalid: z.boolean(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
-export type LiveState = z.infer<typeof liveState>;
-
-export const segmentKeyword = z.enum(['success', 'failed', 'retrying']);
-export type SegmentKeyword = z.infer<typeof segmentKeyword>;
+import { LiveState, SegmentKeyword } from './stdl.redis.data.js';
+import { LiveDto } from '../../../live/spec/live.dto.schema.js';
 
 export abstract class StdlRedis {
   abstract createLiveState(live: LiveDto): Promise<void>;

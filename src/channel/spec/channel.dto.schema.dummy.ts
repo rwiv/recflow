@@ -27,7 +27,7 @@ export function dummyChannelDto(overrides: Partial<ChannelDto> = {}): ChannelDto
     id: faker.string.uuid(),
     sourceId: faker.string.uuid(),
     username: faker.string.uuid(),
-    profileImgUrl: faker.string.uuid(),
+    profileImgUrl: faker.internet.url(),
     followerCnt: faker.number.int({ min: 1, max: 100 }),
     isFollowed: faker.datatype.boolean(),
     overseasFirst: faker.datatype.boolean(),

@@ -1,9 +1,11 @@
-import { liveState, LiveState, SegmentKeyword, StdlRedis } from './stdl.redis.js';
+import { StdlRedis } from './stdl.redis.js';
+import { liveState, LiveState, SegmentKeyword } from './stdl.redis.data.js';
 import { RedisClientType } from 'redis';
 import { LiveDto } from '../../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
-import { StdlLocationType } from './stdl.types.js';
+import { StdlLocationType } from '../common/stdl.types.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
+import { liveDtoToState } from './stdl.redis.utils.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
@@ -17,16 +19,11 @@ export class StdlRedisImpl extends StdlRedis {
     private readonly liveStateExpireSec: number,
     private readonly defaultLocation: StdlLocationType,
     private readonly followedLocation: StdlLocationType,
-    private readonly fsName: string,
   ) {
     super();
   }
 
   async createLiveState(live: LiveDto): Promise<void> {
-    if (!live.stream) {
-      throw NotFoundError.from('live.stream', 'id', live.id);
-    }
-
     let location = this.defaultLocation;
     if (live.channel.isFollowed) {
       location = this.followedLocation;
@@ -34,27 +31,7 @@ export class StdlRedisImpl extends StdlRedis {
     if (live.domesticOnly) {
       location = 'local';
     }
-
-    const now = new Date();
-    const state: LiveState = {
-      id: live.id,
-      platform: live.platform.name,
-      channelId: live.channel.sourceId,
-      channelName: live.channel.username,
-      liveId: live.sourceId,
-      liveTitle: live.liveTitle,
-      platformCookie: null,
-      streamUrl: live.stream.url,
-      streamParams: live.stream.params,
-      streamHeaders: live.stream.headers,
-      videoName: live.videoName,
-      fsName: this.fsName,
-      location,
-      isInvalid: false,
-      createdAt: now,
-      updatedAt: now,
-    };
-    return this.set(state);
+    await this.set(liveDtoToState(live, location));
   }
 
   async set(state: LiveState): Promise<void> {
@@ -97,24 +74,23 @@ export class StdlRedisImpl extends StdlRedis {
     await this.master.zRem(LIVES_KEY, liveRecordId);
   }
 
-  async getLivesIds(useMaster: boolean) {
+  async getLivesIds(useMaster: boolean): Promise<string[]> {
     return await this.getClient(useMaster).zRange(LIVES_KEY, 0, -1);
   }
 
-  async getSegNums(liveId: string, keyword: SegmentKeyword, useMaster: boolean) {
-    const key = `${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`;
-    return await this.getClient(useMaster).zRange(key, 0, -1);
+  async getSegNums(liveId: string, keyword: SegmentKeyword, useMaster: boolean): Promise<string[]> {
+    return await this.getClient(useMaster).zRange(getSegKey(liveId, keyword), 0, -1);
   }
 
-  async deleteSegNumSet(liveId: string, keyword: SegmentKeyword) {
-    await this.master.del(`${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`);
+  async deleteSegNumSet(liveId: string, keyword: SegmentKeyword): Promise<void> {
+    await this.master.del(getSegKey(liveId, keyword));
   }
 
   async deleteSegmentStates(liveId: string, nums: string[]): Promise<void> {
     await this.master.del(nums.map((num) => `${LIVE_PREFIX}:${liveId}:${SEGMENT_PREFIX}:${num}`));
   }
 
-  async updateIsInvalid(liveId: string, isInvalid: boolean) {
+  async updateIsInvalid(liveId: string, isInvalid: boolean): Promise<void> {
     const state = await this.getLiveState(liveId, true);
     if (!state) {
       throw NotFoundError.from('Live', 'id', liveId);
@@ -126,4 +102,8 @@ export class StdlRedisImpl extends StdlRedis {
   private getClient(useMaster: boolean = false) {
     return useMaster ? this.master : this.replica;
   }
+}
+
+function getSegKey(liveId: string, keyword: SegmentKeyword) {
+  return `${LIVE_PREFIX}:${liveId}:${SEGMENTS_PREFIX}:${keyword}`;
 }

@@ -55,7 +55,7 @@ const nonempty = z.string().nonempty();
 export function readEnv(): Env {
   if (process.env.NODE_ENV !== 'prod') {
     dotenv.config({ path: path.resolve('dev', '.env') });
-    log.info('dotenv loaded');
+    log.debug('dotenv loaded');
   }
   let nodeEnv = process.env.NODE_ENV;
   if (!nodeEnv) {

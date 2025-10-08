@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { sortedByEarliestAssigned } from './node.selector.js';
 
-describe('ChannelService', () => {
+describe('NodeSelector', () => {
   it('sortedByEarliestAssigned', () => {
     const nodes: any[] = [
       { id: '1', lastAssignedAt: new Date('2021-01-03') },

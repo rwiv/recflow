@@ -65,14 +65,20 @@ externals:
       secretName: stdl-auth
       tokenKey: bearer-token
     redis:
-      masterHost: stdl-redis-master.media.svc.cluster.local
-      masterPort: 6379
-      replicaHost: stdl-redis-replicas.media.svc.cluster.local
-      replicaPort: 6379
-      secrets:
-        auth:
-          name: stdl-redis-server
-          passwordKey: password
+      isInternal: false
+      internal:
+        masterHost: stdl-redis-master.media.svc.cluster.local
+        masterPort: 6379
+        replicaHost: stdl-redis-replicas.media.svc.cluster.local
+        replicaPort: 6379
+      external:
+        secretName: stdl-redis-client
+        hostKey: host
+        masterPortKey: master-port
+        replicaPortKey: replica-port
+      server:
+        secretName: stdl-redis-server
+        passwordKey: password
     queue:
       secretName: stdl-queue
       regionNameKey: region-name

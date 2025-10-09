@@ -135,6 +135,7 @@ export class LiveInitializerImpl extends LiveInitializer {
   ): Promise<LiveStreamDto | null> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveUid, channelId: channel.id };
     const exists = await this.streamService.findByQueryLatestOne(query);
+    // TODO: fix this (await this.stlink.fetchM3u8(exists))
     if (exists && (await this.stlink.fetchM3u8(exists))) {
       const attr = { ...channelAttr(channel), source_id: exists.sourceId, stream_url: exists.url };
       log.debug('Use existing stream record', attr);

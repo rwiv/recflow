@@ -1,1 +1,1 @@
-export const DEFAULT_UNTF_TOPIC = 'stmgr';
+export const DEFAULT_UNTF_TOPIC = 'recflow';

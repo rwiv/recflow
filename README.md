@@ -1,4 +1,4 @@
-# stmgr
+# recflow
 
 라이브 스트리밍 채널 데이터 관리, 라이브 녹화 라이프 사이클 관리 서버
 
@@ -11,9 +11,9 @@
 
 ## System Architecture
 
-<img src="https://github.com/rwiv/stdocs/blob/main/diagrams/stmgr-infra.png">
+<img src="https://github.com/rwiv/stdocs/blob/main/diagrams/recflow-infra.png">
 
-- [stmgr](https://github.com/rwiv/stmgr)
+- [recflow](https://github.com/rwiv/recflow)
 - [stdl](https://github.com/rwiv/stdl)
 - [vidt](https://github.com/rwiv/vidt)
 
@@ -22,14 +22,14 @@
 
 ### 채널 데이터 관리
 
-<img src="https://github.com/rwiv/stdocs/blob/main/imgs/stmgr/recording_lives.png">
+<img src="https://github.com/rwiv/stdocs/blob/main/imgs/recflow/recording_lives.png">
 
 고급 채널 쿼리 (e.g. 태그 필터링, 팔로워 순 정렬, 페이지네이션...)
 
 
 ### 라이브 녹화
 
-<img src="https://github.com/rwiv/stdocs/blob/main/imgs/stmgr/channel_query.gif">
+<img src="https://github.com/rwiv/stdocs/blob/main/imgs/recflow/channel_query.gif">
 
 - 특정 조건(criterion)을 만족하는 라이브를 자동으로 감지해 [stdl](https://github.com/rwiv/stdl) 노드에게 녹화 요청을 전송
 - 녹화 장애 감지/복구 기능
@@ -41,7 +41,7 @@
 
 ## ERD + Domain Architecture
 
-<img src="https://github.com/rwiv/stdocs/blob/main/diagrams/stmgr_erd.png">
+<img src="https://github.com/rwiv/stdocs/blob/main/diagrams/recflow_erd.png">
 
 - `Channel` domain
   - tables: platform, channel, channel_grade, channel_tag, channel_tag_map

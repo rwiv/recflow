@@ -1,6 +1,6 @@
 ## 라이브 녹화 페이지
 
-<img src="https://github.com/rwiv/stdocs/blob/main/imgs/stmgr/recording_lives.png">
+<img src="https://github.com/rwiv/stdocs/blob/main/imgs/recflow/recording_lives.png">
 
 
 

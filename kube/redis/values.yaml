@@ -1,18 +1,18 @@
 metadata:
-  name: stmgr-redis
+  name: recflow-redis
   namespace: media
 vault:
   mount: kube
-  path: media/stmgr/redis
+  path: media/recflow/redis
   version: 1
-  secretName: stmgr-redis-auth
+  secretName: recflow-redis-auth
   refreshAfter: 30s
 
 redis:
   global:
     storageClass: longhorn
   auth:
-    existingSecret: stmgr-redis-auth
+    existingSecret: recflow-redis-auth
     existingSecretPasswordKey: password
   master:
     count: 1

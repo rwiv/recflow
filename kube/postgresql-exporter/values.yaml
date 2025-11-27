@@ -1,12 +1,12 @@
 prometheus-postgres-exporter:
-  fullnameOverride: stmgr-postgresql-exporter
+  fullnameOverride: recflow-postgresql-exporter
   config:
     datasource:
-      host: stmgr-postgresql.media.svc.cluster.local
-      database: stmgr
+      host: recflow-postgresql.media.svc.cluster.local
+      database: recflow
       user: admin
       passwordSecret:
-        name: stmgr-postgresql
+        name: recflow-postgresql
         key: password
   serviceMonitor:
     enabled: true

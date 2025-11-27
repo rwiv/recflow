@@ -1,9 +1,9 @@
 global:
-  name: stmgr
+  name: recflow
   namespace: media
 
 image:
-  repository: harbor.rwiv.xyz/private/stmgr
+  repository: harbor.rwiv.xyz/private/recflow
   tag: 2.4.3
   pullSecret: image-pull-secret
 
@@ -30,17 +30,17 @@ app:
   replicas: 2
   fsName: ~
   redis:
-    host: stmgr-redis-master.media.svc.cluster.local
+    host: recflow-redis-master.media.svc.cluster.local
     port: 6379
     secrets:
       auth:
-        name: stmgr-redis-auth
+        name: recflow-redis-auth
         passwordKey: password
   postgres:
-    host: stmgr-postgresql.media.svc.cluster.local
+    host: recflow-postgresql.media.svc.cluster.local
     port: 5432
-    database: stmgr
-    secretName: stmgr-postgresql
+    database: recflow
+    secretName: recflow-postgresql
     usernameKey: username
     passwordKey: password
   configs:
@@ -57,30 +57,30 @@ app:
     maxConcurrentLive: 3
 
 externals:
-  stdl:
+  recnode:
     locations:
       default: local
       followed: local
     auth:
-      secretName: stdl-auth
+      secretName: recnode-auth
       tokenKey: bearer-token
     redis:
       isInternal: false
       internal:
-        masterHost: stdl-redis-master.media.svc.cluster.local
+        masterHost: recnode-redis-master.media.svc.cluster.local
         masterPort: 6379
-        replicaHost: stdl-redis-replicas.media.svc.cluster.local
+        replicaHost: recnode-redis-replicas.media.svc.cluster.local
         replicaPort: 6379
       external:
-        secretName: stdl-redis-client
+        secretName: recnode-redis-client
         hostKey: host
         masterPortKey: master-port
         replicaPortKey: replica-port
       server:
-        secretName: stdl-redis-server
+        secretName: recnode-redis-server
         passwordKey: password
     queue:
-      secretName: stdl-queue
+      secretName: recnode-queue
       regionNameKey: region-name
       queueUrlKey: queue-url
   streamq:

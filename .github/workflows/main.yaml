@@ -4,7 +4,7 @@ on:
     tags:
       - v**
 env:
-  APP_NAME: stmgr
+  APP_NAME: recflow
   IMAGE_PREFIX: private
   IMAGE_REGISTRY: harbor.rwiv.xyz
   IMAGE_DOCKERFILE_PATH: docker/Dockerfile

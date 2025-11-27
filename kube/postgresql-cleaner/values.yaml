@@ -1,5 +1,5 @@
 metadata:
-  name: stmgr-postgresql-cleaner
+  name: recflow-postgresql-cleaner
   namespace: media
 
 image:
@@ -7,4 +7,4 @@ image:
   tag: 1.33.4
 
 app:
-  selector: app.kubernetes.io/instance=stmgr-postgresql
+  selector: app.kubernetes.io/instance=recflow-postgresql

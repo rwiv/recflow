@@ -1,7 +1,7 @@
 services:
-  stmgr:
-    image: stmgr:latest
-    container_name: stmgr
+  recflow:
+    image: recflow:latest
+    container_name: recflow
     environment:
       NODE_ENV: dev
       CONFIG_PATH: /app/conf.yaml

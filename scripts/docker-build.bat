@@ -1,5 +1,5 @@
 cd ..
-set IMG=stmgr:latest
+set IMG=recflow:latest
 set DOCKERFILE=./docker/Dockerfile
 
 docker rmi %IMG%

@@ -16,24 +16,24 @@ export function readServerRedisConfig(): RedisConfig {
 }
 
 export function readRecnodeRedisMasterConfig(): RedisConfig {
-  const host = process.env.STDL_REDIS_MASTER_HOST;
-  const port = nnint.parse(process.env.STDL_REDIS_MASTER_PORT);
-  const password = process.env.STDL_REDIS_PASSWORD;
+  const host = process.env.RECNODE_REDIS_MASTER_HOST;
+  const port = nnint.parse(process.env.RECNODE_REDIS_MASTER_PORT);
+  const password = process.env.RECNODE_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
     throw Error('recnode-redis-master env is not set');
   }
-  const caPath = process.env.STDL_REDIS_CA_PATH;
+  const caPath = process.env.RECNODE_REDIS_CA_PATH;
   return { host, port, password, caPath };
 }
 
 export function readRecnodeRedisReplicaConfig(): RedisConfig {
-  const host = process.env.STDL_REDIS_REPLICA_HOST;
-  const port = nnint.parse(process.env.STDL_REDIS_REPLICA_PORT);
-  const password = process.env.STDL_REDIS_PASSWORD;
+  const host = process.env.RECNODE_REDIS_REPLICA_HOST;
+  const port = nnint.parse(process.env.RECNODE_REDIS_REPLICA_PORT);
+  const password = process.env.RECNODE_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
     throw Error('recnode-redis-replica env is not set');
   }
-  const caPath = process.env.STDL_REDIS_CA_PATH;
+  const caPath = process.env.RECNODE_REDIS_CA_PATH;
   return { host, port, password, caPath };
 }
 

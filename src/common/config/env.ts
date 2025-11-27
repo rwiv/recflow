@@ -74,9 +74,9 @@ export function readEnv(): Env {
     serverRedis: readServerRedisConfig(),
 
     fsName: nonempty.parse(process.env.FS_NAME),
-    recnodeApiToken: nonempty.parse(process.env.STDL_API_TOKEN),
-    recnodeDefaultLocation: nonempty.parse(process.env.STDL_DEFAULT_LOCATION),
-    recnodeFollowedLocation: nonempty.parse(process.env.STDL_FOLLOWED_LOCATION),
+    recnodeApiToken: nonempty.parse(process.env.RECNODE_API_TOKEN),
+    recnodeDefaultLocation: nonempty.parse(process.env.RECNODE_DEFAULT_LOCATION),
+    recnodeFollowedLocation: nonempty.parse(process.env.RECNODE_FOLLOWED_LOCATION),
     recnodeRedisMaster: readRecnodeRedisMasterConfig(),
     recnodeRedisReplica: readRecnodeRedisReplicaConfig(),
 
@@ -89,7 +89,7 @@ export function readEnv(): Env {
 
     liveStateInitWaitSec: nnint.parse(process.env.LIVE_STATE_INIT_WAIT_SEC),
     liveStateExpireSec: nnint.parse(process.env.LIVE_STATE_EXPIRE_SEC),
-    recnodeClearBatchSize: nnint.parse(process.env.STDL_CLEAR_BATCH_SIZE),
+    recnodeClearBatchSize: nnint.parse(process.env.RECNODE_CLEAR_BATCH_SIZE),
     cacheExpireSec: nnint.parse(process.env.CACHE_EXPIRE_SEC),
 
     maxConcurrentLive: nnint.parse(process.env.MAX_CONCURRENT_LIVE),

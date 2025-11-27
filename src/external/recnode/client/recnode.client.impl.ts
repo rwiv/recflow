@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RecordingStatus, nodeStatusResponse, Stdl } from './stdl.client.js';
+import { RecordingStatus, nodeStatusResponse, Recnode } from './recnode.client.js';
 import { ENV } from '../../../common/config/config.module.js';
 import { Env } from '../../../common/config/env.js';
 import { checkResponse, getHttpRequestError } from '../../../utils/http.js';
 
 @Injectable()
-export class StdlImpl extends Stdl {
+export class RecnodeImpl extends Recnode {
   constructor(@Inject(ENV) private readonly env: Env) {
     super();
   }
@@ -69,7 +69,7 @@ export class StdlImpl extends Stdl {
       method,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.env.stdlApiToken}`,
+        Authorization: `Bearer ${this.env.recnodeApiToken}`,
       },
       signal: AbortSignal.timeout(this.env.httpTimeout),
     };

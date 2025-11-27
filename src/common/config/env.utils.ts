@@ -15,23 +15,23 @@ export function readServerRedisConfig(): RedisConfig {
   return { host, port, password };
 }
 
-export function readStdlRedisMasterConfig(): RedisConfig {
+export function readRecnodeRedisMasterConfig(): RedisConfig {
   const host = process.env.STDL_REDIS_MASTER_HOST;
   const port = nnint.parse(process.env.STDL_REDIS_MASTER_PORT);
   const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
-    throw Error('stdl-redis-master env is not set');
+    throw Error('recnode-redis-master env is not set');
   }
   const caPath = process.env.STDL_REDIS_CA_PATH;
   return { host, port, password, caPath };
 }
 
-export function readStdlRedisReplicaConfig(): RedisConfig {
+export function readRecnodeRedisReplicaConfig(): RedisConfig {
   const host = process.env.STDL_REDIS_REPLICA_HOST;
   const port = nnint.parse(process.env.STDL_REDIS_REPLICA_PORT);
   const password = process.env.STDL_REDIS_PASSWORD;
   if (host === undefined || password === undefined) {
-    throw Error('stdl-redis-replica env is not set');
+    throw Error('recnode-redis-replica env is not set');
   }
   const caPath = process.env.STDL_REDIS_CA_PATH;
   return { host, port, password, caPath };

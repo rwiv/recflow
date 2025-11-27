@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { exitCmd, ExitCmd } from '../spec/event.schema.js';
-import { RecordingStatus, Stdl } from '../../external/stdl/client/stdl.client.js';
+import { RecordingStatus, Recnode } from '../../external/recnode/client/recnode.client.js';
 import { log } from 'jslog';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
@@ -26,18 +26,18 @@ import { LIVE_FINISH_NAME } from '../../task/live/live.task.contants.js';
 import { Redis } from 'ioredis';
 import { getJobOpts } from '../../task/schedule/task.utils.js';
 
-export const stdlDoneStatusEnum = z.enum(['complete', 'canceled']);
-export type StdlDoneStatus = z.infer<typeof stdlDoneStatusEnum>;
+export const recnodeDoneStatusEnum = z.enum(['complete', 'canceled']);
+export type RecnodeDoneStatus = z.infer<typeof recnodeDoneStatusEnum>;
 
-export const stdlDoneMessage = z.object({
-  status: stdlDoneStatusEnum,
+export const recnodeDoneMessage = z.object({
+  status: recnodeDoneStatusEnum,
   platform: platformNameEnum,
   uid: z.string().nonempty(),
   videoName: z.string().nonempty(),
   fsName: z.string().nonempty(),
 });
 
-export type StdlDoneMessage = z.infer<typeof stdlDoneMessage>;
+export type RecnodeDoneMessage = z.infer<typeof recnodeDoneMessage>;
 
 interface TargetRecorder {
   status: RecordingStatus;
@@ -67,20 +67,20 @@ export class LiveFinalizer {
     @Inject(TASK_REDIS) private readonly taskRedis: Redis,
     private readonly liveFinder: LiveFinder,
     private readonly liveWriter: LiveWriter,
-    private readonly stdl: Stdl,
+    private readonly recnode: Recnode,
     private readonly sqs: SQSClient,
   ) {}
 
   async cancelRecorder(live: LiveDto, node: NodeDto): Promise<TargetRecorder | null> {
     try {
-      const recStatus = await this.stdl.findStatus(node.endpoint, live.id);
+      const recStatus = await this.recnode.findStatus(node.endpoint, live.id);
       if (!recStatus) {
         log.debug(`Recording already finished`, liveAttr(live, { node }));
         return null;
       }
 
       log.debug('Cancel Recording', liveAttr(live, { node }));
-      await this.stdl.cancelRecording(node.endpoint, recStatus.id);
+      await this.recnode.cancelRecording(node.endpoint, recStatus.id);
 
       return { status: recStatus, node };
     } catch (err) {
@@ -148,17 +148,17 @@ export class LiveFinalizer {
       }
     }
 
-    // Add StdlDone task
+    // Add RecnodeDone task
     if (cmd === 'delete') {
       return;
     }
-    let doneCmd: StdlDoneStatus = 'complete';
+    let doneCmd: RecnodeDoneStatus = 'complete';
     if (cmd === 'cancel') {
       doneCmd = 'canceled';
     } else if (cmd === 'finish') {
       doneCmd = 'complete';
     }
-    const doneMsg: StdlDoneMessage = {
+    const doneMsg: RecnodeDoneMessage = {
       status: doneCmd,
       platform: live.platform.name,
       uid: live.channel.sourceId,
@@ -166,7 +166,7 @@ export class LiveFinalizer {
       fsName: live.fsName,
     };
 
-    log.debug(`Start adding StdlDone task`, liveAttr(live));
+    log.debug(`Start adding RecnodeDone task`, liveAttr(live));
 
     const startTime = Date.now();
     while (true) {
@@ -183,7 +183,7 @@ export class LiveFinalizer {
       await this.sqs.send(JSON.stringify(doneMsg));
       break;
     }
-    log.debug(`Complete adding StdlDone task`, liveAttr(live));
+    log.debug(`Complete adding RecnodeDone task`, liveAttr(live));
   }
 
   private async isCompleteRecording(live: LiveDto, tgRecs: TargetRecorder[]) {
@@ -192,7 +192,7 @@ export class LiveFinalizer {
     }
 
     const promises: Promise<NodeStats>[] = tgRecs.map(async (target) => {
-      return { node: target.node, statusList: await this.stdl.getStatus(target.node.endpoint) };
+      return { node: target.node, statusList: await this.recnode.getStatus(target.node.endpoint) };
     });
     for (const candidate of await Promise.all(promises)) {
       for (const status of candidate.statusList) {

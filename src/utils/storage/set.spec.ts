@@ -3,7 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { AsyncSet } from './interface.js';
 import { RedisSet } from './set.redis.js';
-import { readStdlRedisMasterConfig } from '../../common/config/env.utils.js';
+import { readRecnodeRedisMasterConfig } from '../../common/config/env.utils.js';
 import { createRedisClient } from '../redis.js';
 
 describe.skip('RedisSet', () => {
@@ -13,7 +13,7 @@ describe.skip('RedisSet', () => {
 
   beforeAll(async () => {
     dotenv.config({ path: path.resolve('dev', '.env') });
-    const conf = readStdlRedisMasterConfig();
+    const conf = readRecnodeRedisMasterConfig();
 
     const redis = await createRedisClient(conf);
     set = new RedisSet<string>(redis, testKey);

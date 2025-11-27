@@ -52,7 +52,7 @@ app:
     nodeFailureThreshold: 50
     liveStateInitWaitSec: 120 # 2 minutes
     liveStateExpireSec: 604800 # 7 days
-    stdlClearBatchSize: 50
+    recnodeClearBatchSize: 50
     cacheExpireSec: 86400 # 24 hours
     maxConcurrentLive: 3
 

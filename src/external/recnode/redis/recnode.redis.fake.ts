@@ -1,14 +1,14 @@
-import { StdlRedis } from './stdl.redis.js';
-import { liveDtoToState } from './stdl.redis.utils.js';
-import { LiveState, SegmentKeyword } from './stdl.redis.data.js';
+import { RecnodeRedis } from './recnode.redis.js';
+import { liveDtoToState } from './recnode.redis.utils.js';
+import { LiveState, SegmentKeyword } from './recnode.redis.data.js';
 import { LiveDto } from '../../../live/spec/live.dto.schema.js';
-import { StdlLocationType } from '../common/stdl.types.js';
+import { RecnodeLocationType } from '../common/recnode.types.js';
 
-export class StdlRedisFake extends StdlRedis {
+export class RecnodeRedisFake extends RecnodeRedis {
   private liveStates: Map<string, LiveState> = new Map();
   private segNums: Map<string, string[]> = new Map();
 
-  constructor(private location: StdlLocationType) {
+  constructor(private location: RecnodeLocationType) {
     super();
   }
 

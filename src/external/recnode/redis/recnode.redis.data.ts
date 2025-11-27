@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { headers, nonempty, queryParams, uuid } from '../../../common/data/common.schema.js';
 import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
-import { stdlLocationType } from '../common/stdl.types.js';
+import { recnodeLocationType } from '../common/recnode.types.js';
 
 export const liveState = z.object({
   id: uuid,
@@ -16,7 +16,7 @@ export const liveState = z.object({
   streamHeaders: headers,
   videoName: nonempty,
   fsName: nonempty,
-  location: stdlLocationType,
+  location: recnodeLocationType,
   isInvalid: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

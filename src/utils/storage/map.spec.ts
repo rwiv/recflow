@@ -9,7 +9,7 @@ describe.skip('RedisMap (with real Redis client)', async () => {
 
   beforeAll(async () => {
     const env = readEnv();
-    const redis = await createRedisClient(env.stdlRedisMaster);
+    const redis = await createRedisClient(env.recnodeRedisMaster);
     map = new RedisMap(redis, keysKey, keyPrefix);
     // map = new MemoryMap();
   });

@@ -6,8 +6,8 @@ import {
   readPgConfig,
   readServerRedisConfig,
   readSQSConfig,
-  readStdlRedisMasterConfig,
-  readStdlRedisReplicaConfig,
+  readRecnodeRedisMasterConfig,
+  readRecnodeRedisReplicaConfig,
   readStlinkConfig,
   readStreamqConfig,
   readUntfConfig,
@@ -29,11 +29,11 @@ export interface Env {
   serverRedis: RedisConfig;
 
   fsName: string;
-  stdlApiToken: string;
-  stdlDefaultLocation: string;
-  stdlFollowedLocation: string;
-  stdlRedisMaster: RedisConfig;
-  stdlRedisReplica: RedisConfig;
+  recnodeApiToken: string;
+  recnodeDefaultLocation: string;
+  recnodeFollowedLocation: string;
+  recnodeRedisMaster: RedisConfig;
+  recnodeRedisReplica: RedisConfig;
 
   httpTimeout: number;
   liveAllocationInitWaitSec: number;
@@ -44,7 +44,7 @@ export interface Env {
 
   liveStateInitWaitSec: number;
   liveStateExpireSec: number;
-  stdlClearBatchSize: number;
+  recnodeClearBatchSize: number;
   cacheExpireSec: number;
 
   maxConcurrentLive: number;
@@ -74,11 +74,11 @@ export function readEnv(): Env {
     serverRedis: readServerRedisConfig(),
 
     fsName: nonempty.parse(process.env.FS_NAME),
-    stdlApiToken: nonempty.parse(process.env.STDL_API_TOKEN),
-    stdlDefaultLocation: nonempty.parse(process.env.STDL_DEFAULT_LOCATION),
-    stdlFollowedLocation: nonempty.parse(process.env.STDL_FOLLOWED_LOCATION),
-    stdlRedisMaster: readStdlRedisMasterConfig(),
-    stdlRedisReplica: readStdlRedisReplicaConfig(),
+    recnodeApiToken: nonempty.parse(process.env.STDL_API_TOKEN),
+    recnodeDefaultLocation: nonempty.parse(process.env.STDL_DEFAULT_LOCATION),
+    recnodeFollowedLocation: nonempty.parse(process.env.STDL_FOLLOWED_LOCATION),
+    recnodeRedisMaster: readRecnodeRedisMasterConfig(),
+    recnodeRedisReplica: readRecnodeRedisReplicaConfig(),
 
     httpTimeout: nnint.parse(process.env.HTTP_TIMEOUT_MS),
     liveAllocationInitWaitSec: nnint.parse(process.env.LIVE_ALLOCATION_INIT_WAIT_SEC),
@@ -89,7 +89,7 @@ export function readEnv(): Env {
 
     liveStateInitWaitSec: nnint.parse(process.env.LIVE_STATE_INIT_WAIT_SEC),
     liveStateExpireSec: nnint.parse(process.env.LIVE_STATE_EXPIRE_SEC),
-    stdlClearBatchSize: nnint.parse(process.env.STDL_CLEAR_BATCH_SIZE),
+    recnodeClearBatchSize: nnint.parse(process.env.STDL_CLEAR_BATCH_SIZE),
     cacheExpireSec: nnint.parse(process.env.CACHE_EXPIRE_SEC),
 
     maxConcurrentLive: nnint.parse(process.env.MAX_CONCURRENT_LIVE),

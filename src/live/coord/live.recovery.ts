@@ -7,13 +7,13 @@ import { Env } from '../../common/config/env.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { log } from 'jslog';
-import { isValidRecStatus, RecordingStatus, Stdl } from '../../external/stdl/client/stdl.client.js';
+import { isValidRecStatus, RecordingStatus, Recnode } from '../../external/recnode/client/recnode.client.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import assert from 'assert';
 import { liveAttr } from '../../common/attr/attr.live.js';
-import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
+import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
 import { Notifier } from '../../external/notify/notifier.js';
 import { Tx } from '../../infra/db/types.js';
 import { db } from '../../infra/db/db.js';
@@ -45,15 +45,15 @@ export class LiveRecoveryManager {
     private readonly nodeWriter: NodeWriter,
     private readonly nodeFinder: NodeFinder,
     private readonly fetcher: PlatformFetcher,
-    private readonly stdl: Stdl,
-    private readonly stdlRedis: StdlRedis,
+    private readonly recnode: Recnode,
+    private readonly recnodeRedis: RecnodeRedis,
     private readonly notifier: Notifier,
   ) {}
 
   async checkInvalidLives() {
     const lives = await this.liveFinder.findAllActives();
     const liveIds = lives.map((live) => live.id);
-    const states = await this.stdlRedis.getLiveStates(liveIds, false);
+    const states = await this.recnodeRedis.getLiveStates(liveIds, false);
     const ps = [];
     for (const state of states.filter((s) => s !== null)) {
       if (state.isInvalid) {
@@ -86,7 +86,7 @@ export class LiveRecoveryManager {
       return;
     }
     // Skip invalid live
-    if (await this.stdlRedis.isInvalidLive(live, true)) {
+    if (await this.recnodeRedis.isInvalidLive(live, true)) {
       log.debug('Skip invalid live recovery', liveAttr(live));
       return;
     }
@@ -106,7 +106,7 @@ export class LiveRecoveryManager {
     // Finish if live is fatal
     assert(live.nodes);
     let allFailed = true;
-    for (const nodeRecs of await this.stdl.getNodeRecorderStatusList(live.nodes)) {
+    for (const nodeRecs of await this.recnode.getNodeRecorderStatusList(live.nodes)) {
       const recStatus = nodeRecs.find((status) => status.id === live.id);
       if (recStatus && isValidRecStatus(recStatus)) {
         allFailed = false;
@@ -172,7 +172,7 @@ export class LiveRecoveryManager {
 
   private async retrieveInvalidNodes(): Promise<TargetLive[]> {
     const nodes: NodeDto[] = await this.nodeFinder.findAll({});
-    const nodeRecsMap: Map<string, RecordingStatus[]> = await this.stdl.getNodeRecorderStatusListMap(nodes);
+    const nodeRecsMap: Map<string, RecordingStatus[]> = await this.recnode.getNodeRecorderStatusListMap(nodes);
 
     const initWaitMs = this.env.liveRecoveryInitWaitSec * 1000;
     const threshold = new Date(Date.now() - initWaitMs);

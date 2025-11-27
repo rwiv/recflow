@@ -1,9 +1,9 @@
-import { LiveState } from './stdl.redis.data.js';
-import { StdlLocationType } from '../common/stdl.types.js';
+import { LiveState } from './recnode.redis.data.js';
+import { RecnodeLocationType } from '../common/recnode.types.js';
 import { LiveDto } from '../../../live/spec/live.dto.schema.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
 
-export function liveDtoToState(live: LiveDto, location: StdlLocationType): LiveState {
+export function liveDtoToState(live: LiveDto, location: RecnodeLocationType): LiveState {
   if (!live.stream) {
     throw NotFoundError.from('live.stream', 'id', live.id);
   }

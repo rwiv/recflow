@@ -8,8 +8,8 @@ import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
 import { Notifier } from '../../external/notify/notifier.js';
 import { findMissingNums } from '../../utils/numbers.js';
-import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
-import { segmentKeyword } from '../../external/stdl/redis/stdl.redis.data.js';
+import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
+import { segmentKeyword } from '../../external/recnode/redis/recnode.redis.data.js';
 import { handleSettled } from '../../utils/log.js';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class LiveStateCleaner {
   constructor(
     @Inject(ENV) private readonly env: Env,
     private readonly liveFinder: LiveFinder,
-    private readonly stdlRedis: StdlRedis,
+    private readonly recnodeRedis: RecnodeRedis,
     private readonly notifier: Notifier,
   ) {}
 
@@ -30,14 +30,14 @@ export class LiveStateCleaner {
   }
 
   async getTargetIds() {
-    const liveIds = await this.stdlRedis.getLivesIds(false);
+    const liveIds = await this.recnodeRedis.getLivesIds(false);
 
     const targetIds = [];
-    const rawLiveStates = await this.stdlRedis.getLiveStates(liveIds, false);
+    const rawLiveStates = await this.recnodeRedis.getLiveStates(liveIds, false);
     for (let i = 0; i < rawLiveStates.length; i++) {
       const liveState = rawLiveStates[i];
       if (!liveState) {
-        await this.stdlRedis.deleteLiveState(liveIds[i]);
+        await this.recnodeRedis.deleteLiveState(liveIds[i]);
         continue;
       }
       const initWaitMs = this.env.liveStateInitWaitSec * 1000;
@@ -70,11 +70,11 @@ export class LiveStateCleaner {
 
     for (const keyword of segmentKeyword.options) {
       const start = Date.now();
-      const nums = await this.stdlRedis.getSegNums(liveId, keyword, false);
-      for (const batchNums of subLists(nums, this.env.stdlClearBatchSize)) {
-        await this.stdlRedis.deleteSegmentStates(liveId, batchNums);
+      const nums = await this.recnodeRedis.getSegNums(liveId, keyword, false);
+      for (const batchNums of subLists(nums, this.env.recnodeClearBatchSize)) {
+        await this.recnodeRedis.deleteSegmentStates(liveId, batchNums);
       }
-      await this.stdlRedis.deleteSegNumSet(liveId, keyword);
+      await this.recnodeRedis.deleteSegNumSet(liveId, keyword);
 
       const live_id = liveId;
       if (keyword == 'retrying' && nums.length > 0) {
@@ -89,6 +89,6 @@ export class LiveStateCleaner {
       }
       log.debug('Cleaned live', { live_id, keyword, duration: Date.now() - start, nums_size: nums.length });
     }
-    await this.stdlRedis.deleteLiveState(liveId);
+    await this.recnodeRedis.deleteLiveState(liveId);
   }
 }

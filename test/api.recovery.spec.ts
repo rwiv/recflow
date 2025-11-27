@@ -4,8 +4,8 @@ import yaml from 'js-yaml';
 import { z } from 'zod';
 import path from 'path';
 import { readEnv, Env } from '../src/common/config/env.js';
-import { StdlImpl } from '../src/external/stdl/client/stdl.client.impl.js';
-import { StdlRedisImpl } from '../src/external/stdl/redis/stdl.redis.impl.js';
+import { RecnodeImpl } from '../src/external/recnode/client/recnode.client.impl.js';
+import { RecnodeRedisImpl } from '../src/external/recnode/redis/recnode.redis.impl.js';
 import { createRedisClient } from '../src/utils/redis.js';
 
 const recoveryTestConf = z.object({
@@ -15,17 +15,17 @@ const recoveryTestConf = z.object({
 
 describe.skip('recovery api', () => {
   let env: Env;
-  let stdl: StdlImpl;
+  let recnode: RecnodeImpl;
 
   beforeAll(() => {
     env = readEnv();
-    stdl = new StdlImpl(env);
+    recnode = new RecnodeImpl(env);
   });
 
   it('recovery', async () => {
     const text = await fs.readFile(path.join('dev', 'test', 'recovery_conf.yaml'), 'utf-8');
     const conf = recoveryTestConf.parse(yaml.load(text));
-    const ps = conf.nodeEndpoints.map((endpoint) => stdl.cancelRecording(endpoint, conf.liveRecordId));
+    const ps = conf.nodeEndpoints.map((endpoint) => recnode.cancelRecording(endpoint, conf.liveRecordId));
     await Promise.all(ps);
   });
 
@@ -33,13 +33,13 @@ describe.skip('recovery api', () => {
     const text = await fs.readFile(path.join('dev', 'test', 'recovery_conf.yaml'), 'utf-8');
     const conf = recoveryTestConf.parse(yaml.load(text));
 
-    const master = await createRedisClient(env.stdlRedisMaster);
-    const replica = await createRedisClient(env.stdlRedisReplica);
-    const stdlRedis = new StdlRedisImpl(master, replica, 3600 * 24, 'local', 'local');
+    const master = await createRedisClient(env.recnodeRedisMaster);
+    const replica = await createRedisClient(env.recnodeRedisReplica);
+    const recnodeRedis = new RecnodeRedisImpl(master, replica, 3600 * 24, 'local', 'local');
 
-    await stdlRedis.updateIsInvalid(conf.liveRecordId, true);
+    await recnodeRedis.updateIsInvalid(conf.liveRecordId, true);
 
-    const ps = conf.nodeEndpoints.map((endpoint) => stdl.cancelRecording(endpoint, conf.liveRecordId));
+    const ps = conf.nodeEndpoints.map((endpoint) => recnode.cancelRecording(endpoint, conf.liveRecordId));
     await Promise.all(ps);
   });
 });

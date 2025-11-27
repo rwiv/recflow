@@ -1,24 +1,24 @@
-import { StdlRedis } from './stdl.redis.js';
-import { liveState, LiveState, SegmentKeyword } from './stdl.redis.data.js';
+import { RecnodeRedis } from './recnode.redis.js';
+import { liveState, LiveState, SegmentKeyword } from './recnode.redis.data.js';
 import { RedisClientType } from 'redis';
 import { LiveDto } from '../../../live/spec/live.dto.schema.js';
 import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
-import { StdlLocationType } from '../common/stdl.types.js';
+import { RecnodeLocationType } from '../common/recnode.types.js';
 import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { liveDtoToState } from './stdl.redis.utils.js';
+import { liveDtoToState } from './recnode.redis.utils.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';
 export const SEGMENTS_PREFIX = 'segments';
 export const SEGMENT_PREFIX = 'segment';
 
-export class StdlRedisImpl extends StdlRedis {
+export class RecnodeRedisImpl extends RecnodeRedis {
   constructor(
     private readonly master: RedisClientType,
     private readonly replica: RedisClientType,
     private readonly liveStateExpireSec: number,
-    private readonly defaultLocation: StdlLocationType,
-    private readonly followedLocation: StdlLocationType,
+    private readonly defaultLocation: RecnodeLocationType,
+    private readonly followedLocation: RecnodeLocationType,
   ) {
     super();
   }

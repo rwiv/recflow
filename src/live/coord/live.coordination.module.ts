@@ -9,7 +9,7 @@ import { LiveCleaner } from './live.cleaner.js';
 import { LiveDrainer } from './live.drainer.js';
 import { LiveBalancer } from './live.balancer.js';
 import { LiveRecoveryManager } from './live.recovery.js';
-import { StdlModule } from '../../external/stdl/stdl.module.js';
+import { RecnodeModule } from '../../external/recnode/recnode.module.js';
 import { NotifierModule } from '../../external/notify/notifier.module.js';
 
 @Module({
@@ -20,7 +20,7 @@ import { NotifierModule } from '../../external/notify/notifier.module.js';
     NodeServiceModule,
     LiveDataModule,
     LiveRegisterModule,
-    StdlModule,
+    RecnodeModule,
     NotifierModule,
   ],
   providers: [LiveCleaner, LiveRecoveryManager, LiveDrainer, LiveBalancer],

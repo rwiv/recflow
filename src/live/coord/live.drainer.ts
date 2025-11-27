@@ -4,13 +4,13 @@ import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../../node/service/node.finder.js';
 import { NodeWriter } from '../../node/service/node.writer.js';
 import { NodeGroupService } from '../../node/service/node-group.service.js';
-import { Stdl } from '../../external/stdl/client/stdl.client.js';
+import { Recnode } from '../../external/recnode/client/recnode.client.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { LiveDto } from '../spec/live.dto.schema.js';
 import { stacktrace } from '../../utils/errors/utils.js';
-import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
+import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
 import { delay } from '../../utils/time.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
@@ -34,8 +34,8 @@ export class LiveDrainer {
     private readonly nodeFinder: NodeFinder,
     private readonly nodeGroupService: NodeGroupService,
     private readonly nodeWriter: NodeWriter,
-    private readonly stdl: Stdl,
-    private readonly stdlRedis: StdlRedis,
+    private readonly recnode: Recnode,
+    private readonly recnodeRedis: RecnodeRedis,
   ) {}
 
   async drain(args: DrainArgs) {
@@ -104,7 +104,7 @@ export class LiveDrainer {
     }
 
     // Skip if live is invalid
-    if (await this.stdlRedis.isInvalidLive(live)) {
+    if (await this.recnodeRedis.isInvalidLive(live)) {
       log.error(`Live is invalid`, liveAttr(live));
       return;
     }
@@ -133,12 +133,12 @@ export class LiveDrainer {
         return false;
       }
 
-      if (await this.stdlRedis.isInvalidLive(live)) {
+      if (await this.recnodeRedis.isInvalidLive(live)) {
         log.error(`Live is invalid`, liveAttr(live));
         return false;
       }
 
-      const status = await this.stdl.findStatus(node.endpoint, live.id);
+      const status = await this.recnode.findStatus(node.endpoint, live.id);
       if (exists && status) {
         return true;
       }

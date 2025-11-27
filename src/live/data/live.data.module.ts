@@ -11,7 +11,7 @@ import { NodeStorageModule } from '../../node/storage/node.storage.module.js';
 import { ConfigModule } from '../../common/config/config.module.js';
 import { LiveStateCleaner } from './live.state.cleaner.js';
 import { LiveStreamModule } from '../stream/live.stream.module.js';
-import { StdlModule } from '../../external/stdl/stdl.module.js';
+import { RecnodeModule } from '../../external/recnode/recnode.module.js';
 import { NotifierModule } from '../../external/notify/notifier.module.js';
 
 @Module({
@@ -23,7 +23,7 @@ import { NotifierModule } from '../../external/notify/notifier.module.js';
     NodeServiceModule,
     LiveStorageModule,
     LiveStreamModule,
-    StdlModule,
+    RecnodeModule,
     NotifierModule,
   ],
   providers: [LiveMapper, LiveWriter, LiveFinder, LiveRefresher, LiveStateCleaner],

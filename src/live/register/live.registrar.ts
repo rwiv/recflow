@@ -6,8 +6,8 @@ import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
 import { db } from '../../infra/db/db.js';
 import { Tx } from '../../infra/db/types.js';
 import { Notifier } from '../../external/notify/notifier.js';
-import { Stdl } from '../../external/stdl/client/stdl.client.js';
-import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
+import { Recnode } from '../../external/recnode/client/recnode.client.js';
+import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
 import { NodeSelector } from '../../node/service/node.selector.js';
 import { NodeDto } from '../../node/spec/node.dto.schema.js';
 import { logging, LogLevel } from '../../utils/log.js';
@@ -48,8 +48,8 @@ export class LiveRegistrar {
     private readonly liveFinder: LiveFinder,
     private readonly finalizer: LiveFinalizer,
     private readonly helper: LiveRegisterHelper,
-    private readonly stdl: Stdl,
-    private readonly stdlRedis: StdlRedis,
+    private readonly recnode: Recnode,
+    private readonly recnodeRedis: RecnodeRedis,
     private readonly notifier: Notifier,
   ) {}
 
@@ -77,10 +77,10 @@ export class LiveRegistrar {
     }
     await this.liveWriter.bind({ liveId: live.id, nodeId: node.id }, tx);
 
-    if (!(await this.stdlRedis.getLiveState(live.id, false))) {
-      await this.stdlRedis.createLiveState(live);
+    if (!(await this.recnodeRedis.getLiveState(live.id, false))) {
+      await this.recnodeRedis.createLiveState(live);
     }
-    await this.stdl.startRecording(node.endpoint, live.id);
+    await this.recnode.startRecording(node.endpoint, live.id);
 
     // Send notification
     if (live.channel.grade.shouldNotify) {

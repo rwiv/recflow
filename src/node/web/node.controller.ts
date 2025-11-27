@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
 import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { Stdl } from '../../external/stdl/client/stdl.client.js';
+import { Recnode } from '../../external/recnode/client/recnode.client.js';
 import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { NodeFinder } from '../service/node.finder.js';
 import { NodeWriter } from '../service/node.writer.js';
@@ -12,7 +12,7 @@ export class NodeController {
   constructor(
     private readonly finder: NodeFinder,
     private readonly writer: NodeWriter,
-    private readonly stdl: Stdl,
+    private readonly recnode: Recnode,
   ) {}
 
   @Get('/')
@@ -26,7 +26,7 @@ export class NodeController {
     if (!node) {
       throw NotFoundError.from('Node', 'name', nodeName);
     }
-    return await this.stdl.getStatusWithStats(node.endpoint);
+    return await this.recnode.getStatusWithStats(node.endpoint);
   }
 
   @Get('/:nodeId')

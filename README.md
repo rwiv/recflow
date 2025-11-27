@@ -14,7 +14,7 @@
 <img src="https://github.com/rwiv/stdocs/blob/main/diagrams/recflow-infra.png">
 
 - [recflow](https://github.com/rwiv/recflow)
-- [stdl](https://github.com/rwiv/stdl)
+- [recnode](https://github.com/rwiv/recnode)
 - [vidt](https://github.com/rwiv/vidt)
 
 
@@ -31,7 +31,7 @@
 
 <img src="https://github.com/rwiv/stdocs/blob/main/imgs/recflow/channel_query.gif">
 
-- 특정 조건(criterion)을 만족하는 라이브를 자동으로 감지해 [stdl](https://github.com/rwiv/stdl) 노드에게 녹화 요청을 전송
+- 특정 조건(criterion)을 만족하는 라이브를 자동으로 감지해 [recnode](https://github.com/rwiv/recnode) 노드에게 녹화 요청을 전송
 - 녹화 장애 감지/복구 기능
 
 ### 고급 노드 할당

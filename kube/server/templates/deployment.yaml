@@ -161,7 +161,7 @@ spec:
             - name: LIVE_STATE_EXPIRE_SEC
               value: "{{ .Values.app.configs.liveStateExpireSec }}"
             - name: STDL_CLEAR_BATCH_SIZE
-              value: "{{ .Values.app.configs.stdlClearBatchSize }}"
+              value: "{{ .Values.app.configs.recnodeClearBatchSize }}"
             - name: CACHE_EXPIRE_SEC
               value: "{{ .Values.app.configs.cacheExpireSec }}"
             - name: MAX_CONCURRENT_LIVE

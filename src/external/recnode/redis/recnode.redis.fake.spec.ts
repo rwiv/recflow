@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { StdlRedisFake } from './stdl.redis.fake.js';
+import { RecnodeRedisFake } from './recnode.redis.fake.js';
 import { dummyLiveDto } from '../../../live/spec/live.dto.schema.dummy.js';
 
-describe('StdlRedisFake', () => {
-  const client = new StdlRedisFake('local');
+describe('RecnodeRedisFake', () => {
+  const client = new RecnodeRedisFake('local');
   const _ = true;
 
   afterEach(() => {

@@ -11,7 +11,7 @@ import { LiveInitializerImpl } from './live.initializer.impl.js';
 import { LiveStreamModule } from '../stream/live.stream.module.js';
 import { LiveInitializer } from './live.initializer.js';
 import { LiveRegisterHelper } from './live.register-helper.js';
-import { StdlModule } from '../../external/stdl/stdl.module.js';
+import { RecnodeModule } from '../../external/recnode/recnode.module.js';
 import { NotifierModule } from '../../external/notify/notifier.module.js';
 import { SQSModule } from '../../external/sqs/sqs.module.js';
 import { InfraModule } from '../../infra/infra.module.js';
@@ -26,7 +26,7 @@ import { InfraModule } from '../../infra/infra.module.js';
     CriterionServiceModule,
     LiveDataModule,
     LiveStreamModule,
-    StdlModule,
+    RecnodeModule,
     NotifierModule,
     SQSModule,
   ],

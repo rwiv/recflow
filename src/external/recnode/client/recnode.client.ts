@@ -3,9 +3,9 @@ import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.s
 import { nnint, nonempty, uuid } from '../../../common/data/common.schema.js';
 import { NodeDto } from '../../../node/spec/node.dto.schema.js';
 import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
-import { stdlLocationType } from '../common/stdl.types.js';
+import { recnodeLocationType } from '../common/recnode.types.js';
 
-export abstract class Stdl {
+export abstract class Recnode {
   abstract getStatus(endpoint: string): Promise<RecordingStatus[]>;
   abstract getStatusWithStats(endpoint: string): Promise<RecordingStatus[]>;
 
@@ -42,7 +42,7 @@ export abstract class Stdl {
   abstract cancelRecording(endpoint: string, recordId: string): Promise<void>;
 }
 
-export const stdlStreamStatusEnum = z.enum(['waiting', 'recording', 'completed', 'failed']);
+export const recnodeStreamStatusEnum = z.enum(['waiting', 'recording', 'completed', 'failed']);
 
 export const recordingStatus = z.object({
   id: uuid,
@@ -53,8 +53,8 @@ export const recordingStatus = z.object({
   videoName: nonempty,
   fsName: nonempty,
   num: nnint,
-  location: stdlLocationType,
-  status: stdlStreamStatusEnum,
+  location: recnodeLocationType,
+  status: recnodeStreamStatusEnum,
   stats: z.any().optional(),
 });
 export type RecordingStatus = z.infer<typeof recordingStatus>;

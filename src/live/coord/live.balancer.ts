@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ENV } from '../../common/config/config.module.js';
 import { Env } from '../../common/config/env.js';
-import { Stdl } from '../../external/stdl/client/stdl.client.js';
+import { Recnode } from '../../external/recnode/client/recnode.client.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
 import { LiveRegistrar } from '../register/live.registrar.js';
 import { log } from 'jslog';
 import { liveAttr } from '../../common/attr/attr.live.js';
 import { LogLevel, handleSettled } from '../../utils/log.js';
-import { StdlRedis } from '../../external/stdl/redis/stdl.redis.js';
+import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
 import { NodeRepository } from '../../node/storage/node.repository.js';
 
 const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
@@ -20,8 +20,8 @@ export class LiveBalancer {
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly nodeRepo: NodeRepository,
-    private readonly stdl: Stdl,
-    private readonly stdlRedis: StdlRedis,
+    private readonly recnode: Recnode,
+    private readonly recnodeRedis: RecnodeRedis,
   ) {}
 
   async check() {
@@ -45,7 +45,7 @@ export class LiveBalancer {
     if (live.createdAt >= threshold) {
       return;
     }
-    if (await this.stdlRedis.isInvalidLive(live)) {
+    if (await this.recnodeRedis.isInvalidLive(live)) {
       log.warn(`Skip allocation task because Live is invalid`, liveAttr(live));
       return;
     }
@@ -62,7 +62,7 @@ export class LiveBalancer {
       const first = nodes.sort((a, b) => {
         return b.createdAt.getTime() - a.createdAt.getTime();
       })[0];
-      const status = await this.stdl.findStatus(first.endpoint, live.id);
+      const status = await this.recnode.findStatus(first.endpoint, live.id);
       if (!status || status.status !== 'recording') {
         log.debug('Live is not recording', liveAttr(live));
         return;

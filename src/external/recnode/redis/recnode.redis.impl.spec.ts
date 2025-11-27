@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readEnv } from '../../../common/config/env.js';
-import { StdlRedisImpl } from './stdl.redis.impl.js';
+import { RecnodeRedisImpl } from './recnode.redis.impl.js';
 import { createRedisClient } from '../../../utils/redis.js';
 import { dummyLiveDto } from '../../../live/spec/live.dto.schema.dummy.js';
 
-describe.skip('StdlRedisImpl', () => {
-  let client: StdlRedisImpl;
+describe.skip('RecnodeRedisImpl', () => {
+  let client: RecnodeRedisImpl;
 
   const _ = true;
   const location = 'local';
@@ -13,9 +13,9 @@ describe.skip('StdlRedisImpl', () => {
 
   beforeAll(async () => {
     const env = readEnv();
-    const master = await createRedisClient(env.stdlRedisMaster);
-    const replica = await createRedisClient(env.stdlRedisReplica);
-    client = new StdlRedisImpl(master, replica, exSec, location, location);
+    const master = await createRedisClient(env.recnodeRedisMaster);
+    const replica = await createRedisClient(env.recnodeRedisReplica);
+    client = new RecnodeRedisImpl(master, replica, exSec, location, location);
   });
 
   it('liveState', async () => {

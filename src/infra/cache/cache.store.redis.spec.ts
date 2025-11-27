@@ -8,7 +8,7 @@ describe.skip('RedisCacheStore', () => {
 
   beforeEach(async () => {
     const env = readEnv();
-    const redis = await createRedisClient(env.stdlRedisMaster);
+    const redis = await createRedisClient(env.recnodeRedisMaster);
     cache = new RedisCacheStore(redis, 100);
   });
 

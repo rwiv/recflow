@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { RecordingStatus, Stdl } from './stdl.client.js';
+import { RecordingStatus, Recnode } from './recnode.client.js';
 import { ENV } from '../../../common/config/config.module.js';
 import { Env } from '../../../common/config/env.js';
 import assert from 'assert';
@@ -16,7 +16,7 @@ const nodesSchema = z.array(nodeDto);
 const livesSchema = z.array(liveDto);
 
 @Injectable()
-export class StdlFake extends Stdl {
+export class RecnodeFake extends Recnode {
   private failureCnt: number = 0;
   constructor(@Inject(ENV) private readonly env: Env) {
     super();
@@ -63,12 +63,12 @@ export class StdlFake extends Stdl {
   }
 
   async startRecording(endpoint: string, recordId: string): Promise<void> {
-    log.info(`MockStdlClient.requestRecording(...)`, { endpoint, record_id: recordId });
+    log.info(`MockRecnodeClient.requestRecording(...)`, { endpoint, record_id: recordId });
     await Promise.resolve(undefined);
   }
 
   async cancelRecording(endpoint: string, recordId: string): Promise<void> {
-    log.info(`MockStdlClient.cancel(...)`, { endpoint, record_id: recordId });
+    log.info(`MockRecnodeClient.cancel(...)`, { endpoint, record_id: recordId });
     await Promise.resolve(undefined);
   }
 }

@@ -1,0 +1,125 @@
+import { ColumnDef } from '@tanstack/react-table';
+import { ChzzkCriterionDto } from '@entities/criterion/api/criterion.schema.ts';
+import { createSelectColumn } from '@shared/ui/table/column_utils.tsx';
+import { CriterionFieldUpdateForm } from '@pages/criterion/table/units/CriterionFieldUpdateForm.tsx';
+import {
+  CriterionActivationBadge,
+  CriterionEnforceCredentialsBadge,
+  CriterionLoggingOnlyBadge,
+} from '@pages/criterion/table/units/criterion_badges.tsx';
+import { CriterionUnit } from '@pages/criterion/table/units/CriterionUnit.tsx';
+import { CHZZK_CRITERIA_QUERY_KEY } from '@shared/config/constants.ts';
+import { CriterionUnitAddButton } from '@pages/criterion/table/units/CriterionUnitAddButton.tsx';
+
+const NORMAL_WIDTH = '7rem';
+const NAME_WIDTH = '10rem';
+const USER_CNT_WIDTH = '7rem';
+
+const nameColumn: ColumnDef<ChzzkCriterionDto> = {
+  accessorKey: 'name',
+  header: () => <div className="justify-self-center">Name</div>,
+  cell: ({ row }) => <div className="justify-self-center">{row.original.name}</div>,
+  meta: { header: { width: NAME_WIDTH } },
+};
+
+const isDeactivatedColumn: ColumnDef<ChzzkCriterionDto> = {
+  accessorKey: 'isDeactivated',
+  header: () => <div className="justify-self-center">Activated</div>,
+  cell: ({ row }) => <CriterionActivationBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
+const enforceCredsColumn: ColumnDef<ChzzkCriterionDto> = {
+  accessorKey: 'enforceCreds',
+  header: () => <div className="justify-self-center">CredentialsOnly</div>,
+  cell: ({ row }) => <CriterionEnforceCredentialsBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
+// const adultOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
+//   accessorKey: 'adultOnly',
+//   header: () => <div className="justify-self-center">AdultOnly</div>,
+//   cell: ({ row }) => <CriterionAdultOnlyBadge criterion={row.original} />,
+//   meta: { header: { width: NORMAL_WIDTH } },
+// };
+
+// const domesticOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
+//   accessorKey: 'domesticOnly',
+//   header: () => <div className="justify-self-center">DomesticOnly</div>,
+//   cell: ({ row }) => <CriterionDomesticOnlyBadge criterion={row.original} />,
+//   meta: { header: { width: NORMAL_WIDTH } },
+// };
+//
+// const overseasFirstColumn: ColumnDef<ChzzkCriterionDto> = {
+//   accessorKey: 'overseasFirst',
+//   header: () => <div className="justify-self-center">OverseasFirst</div>,
+//   cell: ({ row }) => <CriterionOverseasFirstBadge criterion={row.original} />,
+//   meta: { header: { width: NORMAL_WIDTH } },
+// };
+
+const loggingOnlyColumn: ColumnDef<ChzzkCriterionDto> = {
+  accessorKey: 'loggingOnly',
+  header: () => <div className="justify-self-center">LoggingOnly</div>,
+  cell: ({ row }) => <CriterionLoggingOnlyBadge criterion={row.original} />,
+  meta: { header: { width: NORMAL_WIDTH } },
+};
+
+const minUserCntColumn: ColumnDef<ChzzkCriterionDto> = {
+  accessorKey: 'minUserCnt',
+  header: () => <div className="justify-self-center">Viewers</div>,
+  cell: ({ row }) => <CriterionFieldUpdateForm type="minUserCnt" criterion={row.original} />,
+  meta: { header: { width: USER_CNT_WIDTH } },
+};
+
+type RuleKey =
+  | 'positiveTags'
+  | 'negativeTags'
+  | 'positiveKeywords'
+  | 'negativeKeywords'
+  | 'positiveWps'
+  | 'negativeWps';
+
+type RuleIdKey = 'tagRuleId' | 'keywordRuleId' | 'wpRuleId';
+
+function createUnitColumn(
+  ruleKey: RuleKey,
+  ruleIdKey: RuleIdKey,
+  isPositive: boolean,
+  header: string,
+): ColumnDef<ChzzkCriterionDto> {
+  return {
+    accessorKey: ruleKey,
+    header: () => <div className="justify-self-center cursor-pointer">{header}</div>,
+    cell: ({ row }) => (
+      <div className="justify-self-center space-x-1">
+        {row.original[ruleKey].map((unit) => (
+          <CriterionUnit key={unit.id} unit={unit} queryKey={CHZZK_CRITERIA_QUERY_KEY} />
+        ))}
+        <CriterionUnitAddButton
+          criterionId={row.original.id}
+          ruleId={row.original[ruleIdKey]}
+          isPositive={isPositive}
+          queryKey={CHZZK_CRITERIA_QUERY_KEY}
+        />
+      </div>
+    ),
+  };
+}
+
+export const chzzkCriterionColumns: ColumnDef<ChzzkCriterionDto>[] = [
+  createSelectColumn('select'),
+  nameColumn,
+  isDeactivatedColumn,
+  enforceCredsColumn,
+  // adultOnlyColumn,
+  // domesticOnlyColumn,
+  // overseasFirstColumn,
+  loggingOnlyColumn,
+  minUserCntColumn,
+  createUnitColumn('positiveTags', 'tagRuleId', true, '+Tags'),
+  createUnitColumn('negativeTags', 'tagRuleId', false, '-Tags'),
+  createUnitColumn('positiveKeywords', 'keywordRuleId', true, '+Keywords'),
+  createUnitColumn('negativeKeywords', 'keywordRuleId', false, '-Keywords'),
+  createUnitColumn('positiveWps', 'wpRuleId', true, '+WP'),
+  createUnitColumn('negativeWps', 'wpRuleId', false, '-WP'),
+];

@@ -2,8 +2,6 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { SerializedStyles } from '@emotion/react';
-import { cn } from '@shared/lib/styles/utils.ts';
-import { Button } from '@shared/ui/cn/button.tsx';
 import {
   Command,
   CommandEmpty,
@@ -12,10 +10,10 @@ import {
   CommandItem,
   CommandList,
 } from '@shared/ui/cn/command.tsx';
+import { Button } from '@shared/ui/cn/button.tsx';
+import { cn } from '@shared/lib/styles/utils.ts';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/cn/popover.tsx';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
-import { fetchTags } from '@entities/channel/tag/api/tag.client.ts';
+import { TagDto, fetchTags, TAGS_QUERY_KEY } from '@entities/channel/tag';
 
 interface TagSelectProps {
   existsTags: TagDto[];

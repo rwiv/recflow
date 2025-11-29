@@ -4,7 +4,7 @@ import { PlatformName } from '@entities/platform/api/platform.schema.ts';
 import { liveDtoWithNodes } from '@entities/live/api/live.mapped.schema.ts';
 import { parseList } from '@shared/lib/schema/schema_utils.ts';
 import { StreamInfo } from '@entities/live/api/live.schema.ts';
-import {ExitCmd} from "@entities/live";
+import { ExitCmd } from '@entities/live';
 
 export async function fetchAllLives() {
   const res = await request(`${configs.endpoint}/api/lives/all`);

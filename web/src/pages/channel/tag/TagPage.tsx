@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
 import { PageHeaderTab } from '@widgets/header';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
-import { fetchTags } from '@entities/channel/tag/api/tag.client.ts';
+import { TagDto, fetchTags, TAGS_QUERY_KEY } from '@entities/channel/tag';
 import { TagTable } from './table';
 
 export function TagPage() {

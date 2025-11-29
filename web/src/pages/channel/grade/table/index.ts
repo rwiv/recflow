@@ -1,1 +1,1 @@
-export {GradeTable} from "./GradeTable.tsx";
+export { GradeTable } from './GradeTable.tsx';

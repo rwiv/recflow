@@ -7,21 +7,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@shared/ui/cn/form.tsx';
 import { SelectItem } from '@shared/ui/cn/select.tsx';
 import { Badge } from '@shared/ui/cn/badge.tsx';
-import { formItemStyle } from '@shared/lib/styles/form.ts';
-import { PlatformDto } from '@entities/platform/api/platform.schema.ts';
-import { nonempty, uuid } from '@shared/lib/schema/schema_common.ts';
-import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { SelectFormField } from '@shared/ui/form/SelectFormField.tsx';
-import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
-import { TextAreaFormField } from '@shared/ui/form/TextAreaFormField.tsx';
-import { PLATFORMS_QUERY_KEY, GRADES_QUERY_KEY } from '@shared/config/constants.ts';
-import { fetchPlatforms } from '@entities/platform/api/platform.client.ts';
-import { uppercase } from '@shared/lib/types/strings.ts';
-import { fetchGrades } from '@entities/channel/grade/api/grade.client.ts';
-import { GradeDto } from '@entities/channel/grade/api/grade.schema.ts';
+import { FormSubmitButton, SelectFormField, TextFormField, TextAreaFormField } from '@shared/ui/form';
+import { formItemStyle } from '@shared/lib/styles';
+import { nonempty, uuid } from '@shared/lib/schema';
+import { DialogButton } from '@shared/ui/dialog';
+import { uppercase } from '@shared/lib/types';
+import { GradeDto, fetchGrades, GRADES_QUERY_KEY } from '@entities/channel/grade';
 import { ChannelAppend, createChannel, useChannelPageStore } from '@entities/channel/channel';
 import { TagCreateSelect } from './TagCreateSelect.tsx';
+import { PLATFORMS_QUERY_KEY, fetchPlatforms, PlatformDto } from '@entities/platform';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

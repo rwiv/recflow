@@ -10,7 +10,8 @@ import { SoopCriterionCreateButton } from '@pages/criterion/table/SoopCriterionC
 import { Button } from '@shared/ui/cn/button.tsx';
 import { deleteCriterion } from '@entities/criterion/api/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { SOOP_CRITERIA_QUERY_KEY } from '@shared/config/constants.ts';
+
+import { SOOP_CRITERIA_QUERY_KEY } from '../config';
 
 export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
   const queryClient = useQueryClient();

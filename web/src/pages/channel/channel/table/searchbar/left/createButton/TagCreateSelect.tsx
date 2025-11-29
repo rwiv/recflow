@@ -1,6 +1,6 @@
+import { KeyboardEventHandler, useState } from 'react';
 import { ChevronsUpDown } from 'lucide-react';
-
-import { Button } from '@shared/ui/cn/button.tsx';
+import { css } from '@emotion/react';
 import {
   Command,
   CommandEmpty,
@@ -9,13 +9,10 @@ import {
   CommandItem,
   CommandList,
 } from '@shared/ui/cn/command.tsx';
+import { Button } from '@shared/ui/cn/button.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/cn/popover.tsx';
-import { KeyboardEventHandler, useState } from 'react';
-import { css } from '@emotion/react';
-import { fetchTags } from '@entities/channel/tag/api/tag.client.ts';
 import { useQuery } from '@tanstack/react-query';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
+import { TagDto, fetchTags, TAGS_QUERY_KEY } from '@entities/channel/tag';
 
 interface EditTagSelectProps {
   existsTagNames: string[];

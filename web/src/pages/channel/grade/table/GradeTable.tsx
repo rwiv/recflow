@@ -1,16 +1,16 @@
-import { TableContent } from '@shared/ui/table/TableContent.tsx';
-import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
-import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { useTable } from '@shared/model';
 import { useQueryClient } from '@tanstack/react-query';
-import { GRADES_QUERY_KEY } from '@shared/config/constants.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
-import { gradeColumns } from '@pages/channel/grade/table/gradeColumns.tsx';
-import { deleteGrade } from '@entities/channel/grade/api/grade.client.ts';
-import { GradeDto } from '@entities/channel/grade/api/grade.schema.ts';
-import { GradeCreateButton } from '@pages/channel/grade/table/GradeCreateButton.tsx';
+import {
+  TableContent,
+  FilterInput,
+  ColumnSelector,
+  SelectedRowCount,
+  PageNavigation,
+} from '@shared/ui/table';
+import { useTable } from '@shared/model';
+import { GradeDto, deleteGrade, GRADES_QUERY_KEY } from '@entities/channel/grade';
+import { gradeColumns } from './gradeColumns.tsx';
+import { GradeCreateButton } from './GradeCreateButton.tsx';
 
 export function GradeTable({ data }: { data: GradeDto[] }) {
   const queryClient = useQueryClient();

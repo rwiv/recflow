@@ -9,8 +9,8 @@ import { chzzkCriterionColumns } from '@pages/criterion/table/chzzkCriterionColu
 import { ChzzkCriterionCreateButton } from '@pages/criterion/table/ChzzkCriterionCreateButton.tsx';
 import { deleteCriterion } from '@entities/criterion/api/criterion.client.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
-import { CHZZK_CRITERIA_QUERY_KEY } from '@shared/config/constants.ts';
 import { useQueryClient } from '@tanstack/react-query';
+import { CHZZK_CRITERIA_QUERY_KEY } from '../config';
 
 export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
   const queryClient = useQueryClient();

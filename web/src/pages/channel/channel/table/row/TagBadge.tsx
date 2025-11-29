@@ -7,11 +7,9 @@ import {
   DropdownMenuTrigger,
 } from '@shared/ui/cn/dropdown-menu.tsx';
 import { Badge } from '@shared/ui/cn/badge.tsx';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
-import { DefaultAlertDialog } from '@shared/ui/dialog/AlertDialog.tsx';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
+import { DefaultAlertDialog } from '@shared/ui/dialog';
 import { ChannelDto, useChannelPageStore } from '@entities/channel/channel';
-import { detachTag } from '@entities/channel/tag/api/tag.client.ts';
+import { TagDto, detachTag, TAGS_QUERY_KEY } from '@entities/channel/tag';
 
 interface TagBadgeProps {
   tag: TagDto;

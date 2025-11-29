@@ -1,5 +1,5 @@
-import {z} from "zod";
-import {uuid} from "@shared/lib/schema/schema_common.ts";
+import { z } from 'zod';
+import { uuid } from '@shared/lib/schema';
 
 export const nodeGroupDto = z.object({
   id: uuid,
@@ -18,5 +18,5 @@ export const nodeGroupAppend = nodeGroupDto.partial({
 });
 export type NodeGroupAppend = z.infer<typeof nodeGroupAppend>;
 
-export const nodeGroupUpdate = nodeGroupDto.omit({id: true, createdAt: true, updatedAt: true}).partial();
+export const nodeGroupUpdate = nodeGroupDto.omit({ id: true, createdAt: true, updatedAt: true }).partial();
 export type NodeGroupUpdate = z.infer<typeof nodeGroupUpdate>;

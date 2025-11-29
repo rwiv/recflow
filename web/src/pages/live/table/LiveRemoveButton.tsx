@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { deleteLive } from '@entities/live/api/live.client.ts';
 import { RefObject, useRef, useState } from 'react';
 import { Button } from '@shared/ui/cn/button.tsx';
-import { LIVES_QUERY_KEY } from '@shared/config/constants.ts';
 import {
   AlertDialog as AlertDialogContainer,
   AlertDialogAction,
@@ -27,7 +26,8 @@ import {
 import { Switch } from '@shared/ui/cn/switch.tsx';
 import { Label } from '@shared/ui/cn/label.tsx';
 import { css, SerializedStyles } from '@emotion/react';
-import {ExitCmd} from "@entities/live";
+import { ExitCmd } from '@entities/live';
+import { LIVES_QUERY_KEY } from '@shared/config';
 
 interface LiveRemoveButtonProps {
   table: Table<LiveDto>;

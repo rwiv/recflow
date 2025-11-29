@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@shared/config/constants.ts';
 import { fetchChzzkCriteria, fetchSoopCriteria } from '@entities/criterion/api/criterion.client.ts';
 import { ChzzkCriterionDto, SoopCriterionDto } from '@entities/criterion/api/criterion.schema.ts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/ui/cn/tabs.tsx';
 import { PageHeaderTab } from '@widgets/header';
 import { ChzzkCriterionTable, SoopCriterionTable } from './table';
+import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from './config';
 
 export function CriterionPage() {
   const { data: chzzkCriteria } = useQuery<ChzzkCriterionDto[]>({

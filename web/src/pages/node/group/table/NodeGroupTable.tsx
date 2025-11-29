@@ -5,13 +5,13 @@ import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
 import { useTable } from '@shared/model';
 import { useQueryClient } from '@tanstack/react-query';
-import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@shared/config/constants.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
 import { NodeGroupCreateButton } from '@pages/node/group/table/NodeGroupCreateButton.tsx';
 import { nodeGroupColumns } from '@pages/node/group/table/nodeGroupColumns.tsx';
 import { drainNodeGroup, deleteNodeGroup } from '@entities/node/group/api/node-group.client.ts';
 import { fetchNodes, updateNode } from '@entities/node/node/api/node.client.ts';
-import {NodeGroupDto} from "@entities/node/group/api/node-group.schema.ts";
+import { NodeGroupDto } from '@entities/node/group/api/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@shared/config';
 
 interface NodeGroupTableProps {
   groups: NodeGroupDto[];

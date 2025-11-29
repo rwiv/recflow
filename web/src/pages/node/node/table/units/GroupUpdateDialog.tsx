@@ -10,12 +10,12 @@ import { SelectFormField } from '@shared/ui/form/SelectFormField.tsx';
 import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
 import { DialogBase } from '@shared/ui/dialog/DialogBase.tsx';
 import { NodeDto } from '@entities/node/node/api/node.schema.ts';
-import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@shared/config/constants.ts';
 import { updateNode } from '@entities/node/node/api/node.client.ts';
 import { uuid } from '@shared/lib/schema/schema_common.ts';
 import { Badge } from '@shared/ui/cn/badge.tsx';
 import { fetchNodeGroups } from '@entities/node/group/api/node-group.client.ts';
-import {NodeGroupDto} from "@entities/node/group/api/node-group.schema.ts";
+import { NodeGroupDto } from '@entities/node/group/api/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@shared/config';
 
 export function NodeGroupBadge({ node }: { node: NodeDto }) {
   return (

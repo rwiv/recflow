@@ -1,16 +1,16 @@
-import { TableContent } from '@shared/ui/table/TableContent.tsx';
-import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
-import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { useTable } from '@shared/model';
 import { useQueryClient } from '@tanstack/react-query';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
-import { tagColumns } from '@pages/channel/tag/table/tagColumns.tsx';
-import { deleteTag } from '@entities/channel/tag/api/tag.client.ts';
-import { TagCreateButton } from '@pages/channel/tag/table/TagCreateButton.tsx';
+import {
+  TableContent,
+  FilterInput,
+  ColumnSelector,
+  SelectedRowCount,
+  PageNavigation,
+} from '@shared/ui/table';
+import { useTable } from '@shared/model';
+import { TagDto, deleteTag, TAGS_QUERY_KEY } from '@entities/channel/tag';
+import { tagColumns } from './tagColumns.tsx';
+import { TagCreateButton } from './TagCreateButton.tsx';
 
 export function TagTable({ data }: { data: TagDto[] }) {
   const queryClient = useQueryClient();

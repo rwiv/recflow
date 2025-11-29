@@ -1,2 +1,2 @@
-export {ChzzkCriterionTable} from "./ChzzkCriterionTable.tsx"
-export {SoopCriterionTable} from "./SoopCriterionTable.tsx";
+export { ChzzkCriterionTable } from './ChzzkCriterionTable.tsx';
+export { SoopCriterionTable } from './SoopCriterionTable.tsx';

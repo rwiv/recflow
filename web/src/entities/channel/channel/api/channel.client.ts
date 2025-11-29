@@ -1,12 +1,7 @@
-import {
-  ChannelAppend,
-  ChannelUpdate,
-  ChannelDto,
-  ChannelPageResult,
-} from '@entities/channel/channel/api/channel.types.ts';
 import { configs } from '@shared/config';
 import { getIngredients, request } from '@shared/lib/http';
-import { ChannelPageState } from '@entities/channel/channel/model/ChannelPageState.ts';
+import { ChannelPageState } from '../model/ChannelPageState.ts';
+import { ChannelAppend, ChannelUpdate, ChannelDto, ChannelPageResult } from './channel.types.ts';
 
 export async function fetchChannels(pageState: ChannelPageState, withTags: boolean = true) {
   let qs = pageState.toQueryString();

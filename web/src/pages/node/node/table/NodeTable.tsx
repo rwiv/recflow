@@ -8,9 +8,9 @@ import { nodeColumns } from '@pages/node/node/table/nodeColumns.tsx';
 import { NodeDto } from '@entities/node/node/api/node.schema.ts';
 import { NodeCreateButton } from '@pages/node/node/table/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { NODES_QUERY_KEY } from '@shared/config/constants.ts';
 import { deleteNode } from '@entities/node/node/api/node.client.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
+import { NODES_QUERY_KEY } from '@shared/config';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
   const queryClient = useQueryClient();

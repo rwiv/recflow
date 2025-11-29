@@ -1,1 +1,1 @@
-export type {ExitCmd} from "./live_request.shema.ts";
+export type { ExitCmd } from './live_request.shema.ts';

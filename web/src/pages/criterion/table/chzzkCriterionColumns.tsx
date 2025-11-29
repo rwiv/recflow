@@ -8,8 +8,8 @@ import {
   CriterionLoggingOnlyBadge,
 } from '@pages/criterion/table/units/criterion_badges.tsx';
 import { CriterionUnit } from '@pages/criterion/table/units/CriterionUnit.tsx';
-import { CHZZK_CRITERIA_QUERY_KEY } from '@shared/config/constants.ts';
 import { CriterionUnitAddButton } from '@pages/criterion/table/units/CriterionUnitAddButton.tsx';
+import { CHZZK_CRITERIA_QUERY_KEY } from '../config';
 
 const NORMAL_WIDTH = '7rem';
 const NAME_WIDTH = '10rem';

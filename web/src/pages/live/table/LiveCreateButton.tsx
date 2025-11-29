@@ -6,7 +6,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createLive } from '@entities/live/api/live.client.ts';
 import { useRef } from 'react';
 import { SelectItem } from '@shared/ui/cn/select.tsx';
-import { LIVES_QUERY_KEY } from '@shared/config/constants.ts';
 import { platformNameEnum } from '@entities/platform/api/platform.schema.ts';
 import { SelectFormField } from '@shared/ui/form/SelectFormField.tsx';
 import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
@@ -14,6 +13,7 @@ import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
 import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
 import { StreamInfo } from '@entities/live/api/live.schema.ts';
 import { headers, queryParams } from '@shared/lib/schema/schema_common.ts';
+import { LIVES_QUERY_KEY } from '@shared/config';
 
 const formSchema = z.object({
   type: platformNameEnum,

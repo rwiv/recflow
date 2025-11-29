@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { SwitchBadge } from '@shared/ui/misc';
 import { switchBadgeCn1 } from '@shared/lib/styles/common.ts';
-import { NODES_QUERY_KEY } from '@shared/config/constants.ts';
 import { updateNode } from '@entities/node/node/api/node.client.ts';
 import { NodeDto } from '@entities/node/node/api/node.schema.ts';
+import { NODES_QUERY_KEY } from '@shared/config';
 
 export function NodeCordonedBadge({ node }: { node: NodeDto }) {
   const queryClient = useQueryClient();

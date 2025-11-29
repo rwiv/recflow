@@ -1,17 +1,14 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form } from '@shared/ui/cn/form.tsx';
-import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
-import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
-import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
+import { useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { css } from '@emotion/react';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { parse } from '@shared/lib/schema/form_utils.ts';
-import { createTag } from '@entities/channel/tag/api/tag.client.ts';
-import { tagAppend } from '@entities/channel/tag/api/tag.schema.ts';
+import { Form } from '@shared/ui/cn/form.tsx';
+import { DialogButton } from '@shared/ui/dialog';
+import { TextFormField, FormSubmitButton } from '@shared/ui/form';
+import { parse } from '@shared/lib/schema';
+import { tagAppend, createTag, TAGS_QUERY_KEY } from '@entities/channel/tag';
 
 export function TagCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

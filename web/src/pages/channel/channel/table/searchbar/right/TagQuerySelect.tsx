@@ -1,13 +1,7 @@
-import { useNavigate } from 'react-router';
-import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore.ts';
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { TAGS_QUERY_KEY } from '@shared/config/constants.ts';
-import { fetchTags } from '@entities/channel/tag/api/tag.client.ts';
-import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/cn/popover.tsx';
-import { Button } from '@shared/ui/cn/button.tsx';
-import { cn } from '@shared/lib/styles/utils.ts';
+import { useNavigate } from 'react-router';
 import { Check, ChevronsUpDown } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Command,
   CommandEmpty,
@@ -16,7 +10,11 @@ import {
   CommandItem,
   CommandList,
 } from '@shared/ui/cn/command.tsx';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
+import { Button } from '@shared/ui/cn/button.tsx';
+import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/cn/popover.tsx';
+import { cn } from '@shared/lib/styles';
+import { useChannelPageStore } from '@entities/channel/channel';
+import { TagDto, fetchTags, TAGS_QUERY_KEY } from '@entities/channel/tag';
 
 export function TagQuerySelect({ type }: { type: 'include' | 'exclude' }) {
   const navigate = useNavigate();

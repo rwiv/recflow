@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAllLives } from '@entities/live/api/live.client.ts';
-import { LIVES_QUERY_KEY } from '@shared/config/constants.ts';
 import { PageHeaderTab } from '@widgets/header';
 import { LiveDto } from '@entities/live/api/live.schema.ts';
 import { LiveTable } from './table';
+import { LIVES_QUERY_KEY } from '@shared/config';
 
 export function LivePage() {
   const { data: lives } = useQuery<LiveDto[]>({

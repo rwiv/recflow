@@ -11,7 +11,12 @@ import {
 } from '@shared/ui/cn/dropdown-menu.tsx';
 import { Button } from '@shared/ui/cn/button.tsx';
 import { DefaultAlertDialog } from '@shared/ui/dialog/AlertDialog.tsx';
-import { ChannelDto, deleteChannel, updateChannelIsFollowed, useChannelPageStore } from '@entities/channel/channel';
+import {
+  ChannelDto,
+  deleteChannel,
+  updateChannelIsFollowed,
+  useChannelPageStore,
+} from '@entities/channel/channel';
 import { ChannelUpdateDialog } from './ChannelUpdateDialog.tsx';
 import { TagAttachDialog } from './TagAttachDialog.tsx';
 

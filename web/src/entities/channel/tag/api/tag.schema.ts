@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uuid } from '@shared/lib/schema/schema_common.ts';
+import { uuid } from '@shared/lib/schema';
 
 export const tagDto = z.object({
   id: uuid,

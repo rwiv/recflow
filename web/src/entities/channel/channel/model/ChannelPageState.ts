@@ -1,5 +1,5 @@
-import { CHANNELS_QUERY_KEY } from '@shared/config/constants.ts';
-import { PlatformName } from '@entities/platform/api/platform.schema.ts';
+import { PlatformName } from '@entities/platform';
+import { CHANNELS_QUERY_KEY } from '../config/constants.ts';
 import { ChannelPageStateBuilder } from './ChannelPageStateBuilder.ts';
 import { ChannelSortType } from './channel_query.schema.ts';
 

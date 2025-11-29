@@ -1,18 +1,14 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form } from '@shared/ui/cn/form.tsx';
-import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { GRADES_QUERY_KEY } from '@shared/config/constants.ts';
-import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
-import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
+import { useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
 import { css } from '@emotion/react';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from '@shared/ui/cn/form.tsx';
+import { DialogButton } from '@shared/ui/dialog';
 import { nonempty, parse } from '@shared/lib/schema';
-import { gradeAppend } from '@entities/channel/grade/api/grade.schema.ts';
-import { createGrade } from '@entities/channel/grade/api/grade.client.ts';
-import { CheckFormField } from '@shared/ui/form/CheckFormField.tsx';
+import { CheckFormField, FormSubmitButton, TextFormField } from '@shared/ui/form';
+import { gradeAppend, createGrade, GRADES_QUERY_KEY } from '@entities/channel/grade';
 
 export function GradeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

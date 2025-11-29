@@ -1,6 +1,6 @@
 import { configs } from '@shared/config';
-import { TagAppend, TagAttachment, TagDetachment, TagDto, TagUpdate } from '@entities/channel/tag/api/tag.schema.ts';
 import { getIngredients, request } from '@shared/lib/http';
+import { TagAppend, TagAttachment, TagDetachment, TagDto, TagUpdate } from '@entities/channel/tag';
 
 export async function fetchTags() {
   const res = await request(`${configs.endpoint}/api/channels/tags`);

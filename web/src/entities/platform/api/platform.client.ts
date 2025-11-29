@@ -1,6 +1,6 @@
-import { request } from '@shared/lib/http';
 import { configs } from '@shared/config';
-import { PlatformDto } from '@entities/platform/api/platform.schema.ts';
+import { request } from '@shared/lib/http';
+import { PlatformDto } from './platform.schema.ts';
 
 export async function fetchPlatforms() {
   const res = await request(`${configs.endpoint}/api/platforms`);

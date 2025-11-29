@@ -1,6 +1,6 @@
-import { liveDto } from '@entities/live/api/live.schema.ts';
 import { z } from 'zod';
-import { nodeDto } from '@entities/node/node/api/node.schema.ts';
+import { nodeDto } from '@entities/node/node';
+import { liveDto } from '@entities/live';
 
 export const liveDtoWithNodes = liveDto.extend({
   nodes: z.array(nodeDto).optional(),

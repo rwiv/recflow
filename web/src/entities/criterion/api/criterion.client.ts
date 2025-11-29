@@ -1,5 +1,6 @@
-import { getIngredients, request } from '@shared/lib/http';
 import { configs } from '@shared/config';
+import { getIngredients, request } from '@shared/lib/http';
+import { parseList } from '@shared/lib/schema';
 import {
   ChzzkCriterionAppend,
   chzzkCriterionDto,
@@ -9,8 +10,7 @@ import {
   SoopCriterionAppend,
   soopCriterionDto,
   SoopCriterionDto,
-} from '@entities/criterion/api/criterion.schema.ts';
-import { parseList } from '@shared/lib/schema/schema_utils.ts';
+} from './criterion.schema.ts';
 
 export async function fetchChzzkCriteria() {
   const res = await request(`${configs.endpoint}/api/criteria/chzzk`);

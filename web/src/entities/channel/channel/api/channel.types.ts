@@ -1,8 +1,8 @@
-import { tagDto } from '@entities/channel/tag/api/tag.schema.ts';
-import { platformDto } from '@entities/platform/api/platform.schema.ts';
-import { gradeDto } from '@entities/channel/grade/api/grade.schema.ts';
 import { z } from 'zod';
-import { nnint, nonempty, uuid } from '@shared/lib/schema/schema_common.ts';
+import { nnint, nonempty, uuid } from '@shared/lib/schema';
+import { tagDto } from '@entities/channel/tag';
+import { platformDto } from '@entities/platform';
+import { gradeDto } from '@entities/channel/grade';
 
 export const channelDto = z.object({
   id: uuid,

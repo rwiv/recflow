@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { createHashRouter, RouteObject } from 'react-router-dom';
 import { RouterProvider } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { configs } from '@shared/config';
+import { configs } from '@shared/config/configs.ts';
 import { Toaster } from '@shared/ui/cn/toaster.tsx';
 import { LivePage } from '@pages/live/LivePage.tsx';
 import { TestPage } from '@pages/test/TestPage.tsx';

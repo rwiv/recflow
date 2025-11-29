@@ -1,1 +1,0 @@
-export { getChannelUrl, getLiveUrl } from './platform_utils';

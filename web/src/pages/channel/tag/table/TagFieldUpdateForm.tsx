@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { TextUpdateForm } from '@shared/ui/form';
-import { TagDto, updateTagDescription, updateTagName, TAGS_QUERY_KEY } from '@entities/channel/tag';
+import { TagDto } from '@entities/channel/tag/api/tag.schema';
+import { updateTagDescription, updateTagName } from '@entities/channel/tag/api/tag.client.ts';
+import { TAGS_QUERY_KEY } from '@pages/channel/tag/config/constants.ts';
+import { TextUpdateForm } from '@shared/ui/form/TextUpdateForm';
 
 type Type = 'name' | 'description';
 

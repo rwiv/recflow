@@ -7,7 +7,7 @@ import {
 } from '@entities/node/group/api/node-group.client.ts';
 
 import { NodeGroupDto } from '@entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@shared/config';
+import { NODE_GROUPS_QUERY_KEY } from '@pages/node/group/config/constants.ts';
 
 type Type = 'name' | 'description';
 

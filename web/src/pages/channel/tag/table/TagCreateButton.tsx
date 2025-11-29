@@ -5,10 +5,13 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { css } from '@emotion/react';
 import { Form } from '@shared/ui/cn/form.tsx';
-import { DialogButton } from '@shared/ui/dialog';
-import { TextFormField, FormSubmitButton } from '@shared/ui/form';
-import { parse } from '@shared/lib/schema';
-import { tagAppend, createTag, TAGS_QUERY_KEY } from '@entities/channel/tag';
+import { parse } from '@shared/lib/schema/form_utils.ts';
+import { DialogButton } from '@shared/ui/dialog/DialogButton';
+import { tagAppend } from '@entities/channel/tag/api/tag.schema';
+import { createTag } from '@entities/channel/tag/api/tag.client.ts';
+import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
+import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
+import { TAGS_QUERY_KEY } from '@pages/channel/tag/config/constants.ts';
 
 export function TagCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

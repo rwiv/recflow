@@ -14,7 +14,7 @@ import { createChzzkCriterion } from '@entities/criterion/api/criterion.client.t
 import { InputListFormItem } from '@shared/ui/form/InputListFormItem.tsx';
 import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
 import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { CHZZK_CRITERIA_QUERY_KEY } from '../config';
+import { CHZZK_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
 
 interface Unit {
   name:

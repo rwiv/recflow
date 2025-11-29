@@ -1,1 +1,0 @@
-export { DEFAULT_CHANNEL_PAGE_NUMBER, DEFAULT_CHANNEL_PAGINATION_SIZE } from './constants.ts';

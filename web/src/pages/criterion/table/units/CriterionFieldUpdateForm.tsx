@@ -3,7 +3,7 @@ import { CriterionDto } from '@entities/criterion/api/criterion.schema.ts';
 import { z } from 'zod';
 import { updateCriterion } from '@entities/criterion/api/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '../../config';
+import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
 
 type Type = 'minUserCnt';
 

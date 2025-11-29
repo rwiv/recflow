@@ -1,5 +1,5 @@
-import { LeftSearchBar } from './left';
-import { RightSearchBar } from './right';
+import { LeftSearchBar } from '@pages/channel/channel/table/searchbar/left/LeftSearchBar.tsx';
+import { RightSearchBar } from '@pages/channel/channel/table/searchbar/right/RightSearchBar.tsx';
 
 export function ChannelSearchBar() {
   return (

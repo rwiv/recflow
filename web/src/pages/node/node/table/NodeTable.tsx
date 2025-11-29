@@ -3,14 +3,14 @@ import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
 import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { useTable } from '@shared/model';
-import { nodeColumns } from '@pages/node/node/table/nodeColumns.tsx';
+import { nodeColumns } from '@pages/node/node/table/columns/nodeColumns.tsx';
 import { NodeDto } from '@entities/node/node/api/node.schema.ts';
 import { NodeCreateButton } from '@pages/node/node/table/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { deleteNode } from '@entities/node/node/api/node.client.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
-import { NODES_QUERY_KEY } from '@shared/config';
+import { useTable } from '@shared/model/useTable.ts';
+import { NODES_QUERY_KEY } from '@pages/node/node/config/constants.ts';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
   const queryClient = useQueryClient();

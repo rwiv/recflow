@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { nnint, nonempty, uuid, headers, queryParams } from '@shared/lib/schema';
-import { platformDto } from '@entities/platform';
-import { channelDto } from '@entities/channel/channel';
+import { nnint, nonempty, uuid, headers, queryParams } from '@shared/lib/schema/schema_common';
+import { platformDto } from '@entities/platform/api/platform.schema.ts';
+import { channelDto } from '@entities/channel/channel/api/channel.types.ts';
 
 export const streamInfo = z.object({
   url: nonempty,

@@ -1,5 +1,5 @@
-import { ChannelCreateButton } from './createButton';
-import { KeywordSearchBar } from './KeywordSearchBar.tsx';
+import { ChannelCreateButton } from '@pages/channel/channel/table/searchbar/left/createButton/ChannelCreateButton.tsx';
+import { KeywordSearchBar } from '@pages/channel/channel/table/searchbar/left/KeywordSearchBar.tsx';
 
 export function LeftSearchBar() {
   return (

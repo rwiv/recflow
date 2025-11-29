@@ -5,12 +5,14 @@ import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@shared/ui/cn/form.tsx';
-import { formItemStyle } from '@shared/lib/styles';
-import { DialogWithTrigger } from '@shared/ui/dialog';
-import { FormSubmitButton } from '@shared/ui/form';
-import { ChannelDto, useChannelPageStore } from '@entities/channel/channel';
-import { attachTag, TAGS_QUERY_KEY } from '@entities/channel/tag';
-import { TagAttachSelect } from './TagAttachSelect.tsx';
+import { DialogWithTrigger } from '@shared/ui/dialog/DialogWithTrigger';
+import { ChannelDto } from '@entities/channel/channel/api/channel.types';
+import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore';
+import { attachTag } from '@entities/channel/tag/api/tag.client';
+import { formItemStyle } from '@shared/lib/styles/form.ts';
+import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
+import { TagAttachSelect } from '@pages/channel/channel/table/row/actions/TagAttachSelect.tsx';
+import { TAGS_QUERY_KEY } from '@pages/channel/tag/config/constants.ts';
 
 interface TagAttachDialogProps {
   channel: ChannelDto;

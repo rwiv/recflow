@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { NodeDto } from '@entities/node/node/api/node.schema.ts';
 import { fetchNodes } from '@entities/node/node/api/node.client.ts';
-import { PageHeaderTab } from '@widgets/header';
-import { NodeTable } from './table';
-import { NODES_QUERY_KEY } from '@shared/config';
+import { NODES_QUERY_KEY } from '@pages/node/node/config/constants.ts';
+import { PageHeaderTab } from '@widgets/header/PageHeaderTab.tsx';
+import { NodeTable } from '@pages/node/node/table/NodeTable.tsx';
 
 export function NodePage() {
   const { data: nodes } = useQuery<NodeDto[]>({

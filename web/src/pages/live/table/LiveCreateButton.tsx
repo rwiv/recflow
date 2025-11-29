@@ -13,7 +13,7 @@ import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
 import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
 import { StreamInfo } from '@entities/live/api/live.schema.ts';
 import { headers, queryParams } from '@shared/lib/schema/schema_common.ts';
-import { LIVES_QUERY_KEY } from '@shared/config';
+import { LIVES_QUERY_KEY } from '@pages/live/config/constants.ts';
 
 const formSchema = z.object({
   type: platformNameEnum,

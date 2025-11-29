@@ -1,7 +1,10 @@
-import { PlatformName } from '@entities/platform';
-import { DEFAULT_CHANNEL_PAGE_SIZE } from '../config/constants.ts';
-import { ChannelSortType, channelSortTypeEnum } from './channel_query.schema.ts';
-import { ChannelPageState } from './ChannelPageState.ts';
+import { PlatformName } from '@entities/platform/api/platform.schema.ts';
+import { DEFAULT_CHANNEL_PAGE_SIZE } from '@entities/channel/channel/config/constants.ts';
+import {
+  ChannelSortType,
+  channelSortTypeEnum,
+} from '@entities/channel/channel/model/channel_query.schema.ts';
+import { ChannelPageState } from '@entities/channel/channel/model/ChannelPageState.ts';
 
 export class ChannelPageStateBuilder {
   curPageNum: number = -1;

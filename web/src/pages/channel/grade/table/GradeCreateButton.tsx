@@ -5,10 +5,15 @@ import { css } from '@emotion/react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@shared/ui/cn/form.tsx';
-import { DialogButton } from '@shared/ui/dialog';
-import { nonempty, parse } from '@shared/lib/schema';
-import { CheckFormField, FormSubmitButton, TextFormField } from '@shared/ui/form';
-import { gradeAppend, createGrade, GRADES_QUERY_KEY } from '@entities/channel/grade';
+import { parse } from '@shared/lib/schema/form_utils.ts';
+import { DialogButton } from '@shared/ui/dialog/DialogButton';
+import { gradeAppend } from '@entities/channel/grade/api/grade.schema';
+import { nonempty } from '@shared/lib/schema/schema_common';
+import { createGrade } from '@entities/channel/grade/api/grade.client';
+import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
+import { CheckFormField } from '@shared/ui/form/CheckFormField.tsx';
+import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
+import { GRADES_QUERY_KEY } from '@entities/channel/grade/config/constants.ts';
 
 export function GradeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

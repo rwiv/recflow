@@ -2,8 +2,8 @@ import { CriterionDto } from '@entities/criterion/api/criterion.schema.ts';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { updateCriterion } from '@entities/criterion/api/criterion.client.ts';
 import { switchBadgeCn1, switchBadgeCn2 } from '@shared/lib/styles/common.ts';
-import { SwitchBadge } from '@shared/ui/misc';
-import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '../../config';
+import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
+import { SwitchBadge } from '@shared/ui/misc/SwitchBadge.tsx';
 
 async function refresh(queryClient: QueryClient) {
   await queryClient.invalidateQueries({ queryKey: [CHZZK_CRITERIA_QUERY_KEY] });

@@ -11,7 +11,8 @@ import { useChannelPageStore } from '@entities/channel/channel/model/useChannelP
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { fetchPlatforms } from '@entities/platform/api/platform.client.ts';
-import { platformNameEnum, PLATFORMS_QUERY_KEY } from '@entities/platform';
+import { PLATFORMS_QUERY_KEY } from '@entities/platform/config/constants.ts';
+import { platformNameEnum } from '@entities/platform/api/platform.schema.ts';
 
 export function PlatformSelect() {
   const navigate = useNavigate();

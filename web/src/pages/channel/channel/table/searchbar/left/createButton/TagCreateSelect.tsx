@@ -12,7 +12,9 @@ import {
 import { Button } from '@shared/ui/cn/button.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/cn/popover.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { TagDto, fetchTags, TAGS_QUERY_KEY } from '@entities/channel/tag';
+import { TAGS_QUERY_KEY } from '@pages/channel/tag/config/constants.ts';
+import { fetchTags } from '@entities/channel/tag/api/tag.client.ts';
+import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
 
 interface EditTagSelectProps {
   existsTagNames: string[];

@@ -13,7 +13,9 @@ import {
 import { Button } from '@shared/ui/cn/button.tsx';
 import { cn } from '@shared/lib/styles/utils.ts';
 import { Popover, PopoverContent, PopoverTrigger } from '@shared/ui/cn/popover.tsx';
-import { TagDto, fetchTags, TAGS_QUERY_KEY } from '@entities/channel/tag';
+import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
+import { TAGS_QUERY_KEY } from '@pages/channel/tag/config/constants.ts';
+import { fetchTags } from '@entities/channel/tag/api/tag.client.ts';
 
 interface TagSelectProps {
   existsTags: TagDto[];

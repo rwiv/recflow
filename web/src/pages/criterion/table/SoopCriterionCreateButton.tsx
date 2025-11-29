@@ -14,7 +14,7 @@ import { createSoopCriterion } from '@entities/criterion/api/criterion.client.ts
 import { InputListFormItem } from '@shared/ui/form/InputListFormItem.tsx';
 import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
 import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { SOOP_CRITERIA_QUERY_KEY } from '../config';
+import { SOOP_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
 
 interface Unit {
   name:

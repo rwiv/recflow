@@ -17,7 +17,8 @@ import { parse } from '@shared/lib/schema/form_utils.ts';
 import { nonempty } from '@shared/lib/schema/schema_common.ts';
 import { fetchNodeGroups } from '@entities/node/group/api/node-group.client.ts';
 import { NodeGroupDto } from '@entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY, NODES_QUERY_KEY } from '@shared/config';
+import { NODE_GROUPS_QUERY_KEY } from '@pages/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@pages/node/node/config/constants.ts';
 
 export function NodeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

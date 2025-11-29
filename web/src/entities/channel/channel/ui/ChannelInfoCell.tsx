@@ -2,8 +2,8 @@ import { SerializedStyles } from '@emotion/react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/ui/cn/avatar.tsx';
 import { Skeleton } from '@shared/ui/cn/skeleton.tsx';
 import { cn } from '@shared/lib/styles/utils.ts';
-import { getChannelUrl } from '@shared/lib/platform';
-import { ChannelDto } from '@entities/channel/channel';
+import { ChannelDto } from '@entities/channel/channel/api/channel.types.ts';
+import { getChannelUrl } from '@entities/channel/channel/lib/channel_utils.ts';
 
 interface ChannelInfoCellProps {
   channel: ChannelDto;

@@ -1,10 +1,11 @@
-import { TagBadge } from './TagBadge.tsx';
-import { ChannelDto, ChannelInfoCell } from '@entities/channel/channel';
 import { TableCell, TableRow } from '@shared/ui/cn/table.tsx';
 import { Badge } from '@shared/ui/cn/badge.tsx';
 import { prettyDate } from '@shared/lib/types/date.ts';
-import { ChannelActions } from './actions';
-import { GradeUpdateDialog } from './GradeUpdateDialog.tsx';
+import { ChannelDto } from '@entities/channel/channel/api/channel.types.ts';
+import { GradeUpdateDialog } from '@pages/channel/channel/table/row/GradeUpdateDialog.tsx';
+import { ChannelInfoCell } from '@entities/channel/channel/ui/ChannelInfoCell.tsx';
+import { ChannelActions } from '@pages/channel/channel/table/row/actions/ChannelActions.tsx';
+import { TagBadge } from '@pages/channel/channel/table/row/TagBadge.tsx';
 
 export function ChannelRow({ channel }: { channel: ChannelDto }) {
   return (

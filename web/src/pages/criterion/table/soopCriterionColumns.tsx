@@ -9,7 +9,7 @@ import {
 } from '@pages/criterion/table/units/criterion_badges.tsx';
 import { CriterionUnit } from '@pages/criterion/table/units/CriterionUnit.tsx';
 import { CriterionUnitAddButton } from '@pages/criterion/table/units/CriterionUnitAddButton.tsx';
-import { SOOP_CRITERIA_QUERY_KEY } from '../config';
+import { SOOP_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
 
 const NORMAL_WIDTH = '7rem';
 const NAME_WIDTH = '10rem';

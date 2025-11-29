@@ -26,8 +26,8 @@ import {
 import { Switch } from '@shared/ui/cn/switch.tsx';
 import { Label } from '@shared/ui/cn/label.tsx';
 import { css, SerializedStyles } from '@emotion/react';
-import { ExitCmd } from '@entities/live';
-import { LIVES_QUERY_KEY } from '@shared/config';
+import { ExitCmd } from '@entities/live/model/live_request.shema.ts';
+import { LIVES_QUERY_KEY } from '@pages/live/config/constants.ts';
 
 interface LiveRemoveButtonProps {
   table: Table<LiveDto>;

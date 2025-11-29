@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
-import { useChannelPageStore, ChannelPageStateBuilder } from '@entities/channel/channel';
-import { platformNameEnum } from '@entities/platform';
-import { PageHeaderTab } from '@widgets/header';
-import { ChannelTable } from './table';
-import { DEFAULT_CHANNEL_PAGE_NUMBER } from './config';
+import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore.ts';
+import { DEFAULT_CHANNEL_PAGE_NUMBER } from '@pages/channel/channel/config/constants.ts';
+import { ChannelPageStateBuilder } from '@entities/channel/channel/model/ChannelPageStateBuilder.ts';
+import { platformNameEnum } from '@entities/platform/api/platform.schema.ts';
+import { PageHeaderTab } from '@widgets/header/PageHeaderTab.tsx';
+import { ChannelTable } from '@pages/channel/channel/table/table/ChannelTable.tsx';
 
 export function ChannelPage() {
   const [searchParams] = useSearchParams();

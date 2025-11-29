@@ -3,14 +3,14 @@ import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
 import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { useTable } from '@shared/model';
 import { ChzzkCriterionDto } from '@entities/criterion/api/criterion.schema.ts';
 import { chzzkCriterionColumns } from '@pages/criterion/table/chzzkCriterionColumns.tsx';
 import { ChzzkCriterionCreateButton } from '@pages/criterion/table/ChzzkCriterionCreateButton.tsx';
 import { deleteCriterion } from '@entities/criterion/api/criterion.client.ts';
 import { Button } from '@shared/ui/cn/button.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { CHZZK_CRITERIA_QUERY_KEY } from '../config';
+import { CHZZK_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
+import { useTable } from '@shared/model/useTable.ts';
 
 export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
   const queryClient = useQueryClient();

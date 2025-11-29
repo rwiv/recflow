@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { nonempty, uuid } from '@shared/lib/schema';
-import { platformDto } from '@entities/platform';
+import { nonempty, uuid } from '@shared/lib/schema/schema_common';
+import { platformDto } from '@entities/platform/api/platform.schema.ts';
 
 export const criterionUnitDto = z.object({
   id: uuid,

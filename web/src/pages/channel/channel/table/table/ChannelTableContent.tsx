@@ -1,7 +1,7 @@
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@shared/ui/cn/table.tsx';
 import { css } from '@emotion/react';
-import { ChannelDto } from '@entities/channel/channel';
-import { ChannelRow } from '../row';
+import { ChannelDto } from '@entities/channel/channel/api/channel.types.ts';
+import { ChannelRow } from '@pages/channel/channel/table/row/ChannelRow.tsx';
 
 export function ChannelTableContent({ channels }: { channels: ChannelDto[] }) {
   return (

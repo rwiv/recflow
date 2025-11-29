@@ -1,7 +1,7 @@
-import { GradeSelect } from './GradeSelect.tsx';
-import { PlatformSelect } from './PlatformSelect.tsx';
-import { TagQuerySelect } from './TagQuerySelect.tsx';
-import { SortSelect } from './SortSelect.tsx';
+import { GradeSelect } from '@pages/channel/channel/table/searchbar/right/GradeSelect.tsx';
+import { PlatformSelect } from '@pages/channel/channel/table/searchbar/right/PlatformSelect.tsx';
+import { TagQuerySelect } from '@pages/channel/channel/table/searchbar/right/TagQuerySelect.tsx';
+import { SortSelect } from '@pages/channel/channel/table/searchbar/right/SortSelect.tsx';
 
 export function RightSearchBar() {
   return (

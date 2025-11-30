@@ -2,7 +2,6 @@ import { env } from '@shared/config/env.ts';
 
 const isDev = env.MODE === 'development';
 const isProd = env.MODE === 'production';
-const isStage = env.MODE === 'stage';
 
 const protocol = env.VITE_PROTOCOL;
 const host = env.VITE_HOST;
@@ -14,7 +13,6 @@ const endpoint = `${protocol}://${domain}`;
 export const configs = {
   isDev,
   isProd,
-  isStage,
   protocol,
   host,
   port,

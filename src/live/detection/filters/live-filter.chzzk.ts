@@ -1,9 +1,13 @@
-import { ChzzkLiveInfo } from '../../../platform/spec/raw/chzzk.js';
-import { LiveInfo } from '../../../platform/spec/wapper/live.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelFinder } from '../../../channel/service/channel.finder.js';
-import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
-import { ChzzkCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
+
+import { EnumCheckError } from '@/utils/errors/errors/EnumCheckError.js';
+
+import { ChzzkLiveInfo } from '@/platform/spec/raw/chzzk.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+
+import { ChzzkCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class ChzzkLiveFilter {

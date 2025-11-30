@@ -1,13 +1,16 @@
-import { oneNotNull } from '../../utils/list.js';
-import { db } from '../../infra/db/db.js';
-import { channelTable } from '../../infra/db/schema.js';
-import { eq } from 'drizzle-orm';
-import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
-import { ChannelQueryRepository } from './channel.query.js';
-import { ChannelEnt, channelEnt, ChannelEntAppend, ChannelEntUpdate } from '../spec/channel.entity.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { ChannelEnt, ChannelEntAppend, ChannelEntUpdate, channelEnt } from '@/channel/spec/channel.entity.schema.js';
+import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
 
 export interface UpdateOptions {
   refresh?: boolean;

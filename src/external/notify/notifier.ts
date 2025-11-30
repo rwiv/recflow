@@ -1,4 +1,4 @@
-import { LiveDto } from '../../live/spec/live.dto.schema.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 export abstract class Notifier {
   abstract notify(message: string): void;

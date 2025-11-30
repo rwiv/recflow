@@ -1,9 +1,10 @@
 import fs from 'fs/promises';
-import { describe, it, beforeAll } from 'vitest';
 import yaml from 'js-yaml';
-import { z } from 'zod';
 import path from 'path';
-import { readEnv, Env } from '../src/common/config/env.js';
+import { beforeAll, describe, it } from 'vitest';
+import { z } from 'zod';
+
+import { Env, readEnv } from '../src/common/config/env.js';
 import { RecnodeImpl } from '../src/external/recnode/client/recnode.client.impl.js';
 import { RecnodeRedisImpl } from '../src/external/recnode/redis/recnode.redis.impl.js';
 import { createRedisClient } from '../src/utils/redis.js';

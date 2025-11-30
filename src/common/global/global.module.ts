@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { GlobalController } from './global.controller.js';
+
+import { GlobalController } from '@/common/global/global.controller.js';
 
 @Module({
   controllers: [GlobalController],

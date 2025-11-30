@@ -1,8 +1,12 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { readEnv } from '../../../common/config/env.js';
-import { RecnodeRedisImpl } from './recnode.redis.impl.js';
-import { createRedisClient } from '../../../utils/redis.js';
-import { dummyLiveDto } from '../../../live/spec/live.dto.schema.dummy.js';
+import { beforeAll, describe, expect, it } from 'vitest';
+
+import { createRedisClient } from '@/utils/redis.js';
+
+import { readEnv } from '@/common/config/env.js';
+
+import { RecnodeRedisImpl } from '@/external/recnode/redis/recnode.redis.impl.js';
+
+import { dummyLiveDto } from '@/live/spec/live.dto.schema.dummy.js';
 
 describe.skip('RecnodeRedisImpl', () => {
   let client: RecnodeRedisImpl;

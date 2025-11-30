@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { nodeDto } from '../../node/spec/node.dto.schema.js';
-import { liveDto } from './live.dto.schema.js';
+
+import { nodeDto } from '@/node/spec/node.dto.schema.js';
+
+import { liveDto } from '@/live/spec/live.dto.schema.js';
 
 export const liveDtoMapped = liveDto.extend({
   nodes: z.array(nodeDto).optional(),

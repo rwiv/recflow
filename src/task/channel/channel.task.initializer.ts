@@ -1,13 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { CHANNEL_CACHE_CHECK_NAME, CHANNEL_REFRESH_NAME } from './channel.tasks.constants.js';
-import { ChannelCacheChecker } from '../../channel/service/channel.cache.checker.js';
-import { Task } from '../spec/task.interface.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
-import { TaskRunner } from '../schedule/task.runner.js';
-import { createWorker } from '../schedule/task.utils.js';
+
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { CHANNEL_CACHE_CHECK_NAME, CHANNEL_REFRESH_NAME } from '@/task/channel/channel.tasks.constants.js';
+import { TaskRunner } from '@/task/schedule/task.runner.js';
+import { createWorker } from '@/task/schedule/task.utils.js';
+import { Task } from '@/task/spec/task.interface.js';
+
+import { ChannelCacheChecker } from '@/channel/service/channel.cache.checker.js';
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
 
 @Injectable()
 export class ChannelTaskInitializer {

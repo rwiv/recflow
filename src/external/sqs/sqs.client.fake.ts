@@ -1,6 +1,7 @@
-import { SQSClient } from './sqs.client.js';
-import { log } from 'jslog';
 import { Injectable } from '@nestjs/common';
+import { log } from 'jslog';
+
+import { SQSClient } from '@/external/sqs/sqs.client.js';
 
 @Injectable()
 export class SQSClientFake extends SQSClient {

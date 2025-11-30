@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { NodeSelectorArgs } from '../../node/service/node.selector.js';
-import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
-import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
+
+import { ChannelDto } from '@/channel/spec/channel.dto.schema.js';
+
+import { CriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+
+import { NodeSelectorArgs } from '@/node/service/node.selector.js';
+
+import { LiveDtoMapped } from '@/live/spec/live.dto.schema.mapped.js';
 
 export interface NodeSelectArgs {
   ignoreNodeIds?: string[];

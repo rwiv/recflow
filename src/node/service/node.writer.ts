@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { NodeRepository } from '../storage/node.repository.js';
-import { NodeAppend, NodeDto, NodeUpdate } from '../spec/node.dto.schema.js';
-import { NodeEntAppend } from '../spec/node.entity.schema.js';
-import { db } from '../../infra/db/db.js';
-import { NodeMapper } from './node.mapper.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { LiveRepository } from '../../live/storage/live.repository.js';
-import { Tx } from '../../infra/db/types.js';
-import { LiveNodeRepository } from '../storage/live-node.repository.js';
 import { log } from 'jslog';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { NodeMapper } from '@/node/service/node.mapper.js';
+import { NodeAppend, NodeDto, NodeUpdate } from '@/node/spec/node.dto.schema.js';
+import { NodeEntAppend } from '@/node/spec/node.entity.schema.js';
+import { LiveNodeRepository } from '@/node/storage/live-node.repository.js';
+import { NodeRepository } from '@/node/storage/node.repository.js';
+
+import { LiveRepository } from '@/live/storage/live.repository.js';
 
 @Injectable()
 export class NodeWriter {

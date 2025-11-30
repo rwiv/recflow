@@ -1,16 +1,18 @@
 import {
+  SQSClient as AwsSQSClient,
   DeleteMessageBatchCommand,
   DeleteMessageCommand,
   ReceiveMessageCommand,
   SendMessageCommand,
-  SQSClient as AwsSQSClient,
 } from '@aws-sdk/client-sqs';
-import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { z } from 'zod';
 import { DeleteMessageBatchRequestEntry } from '@aws-sdk/client-sqs/dist-types/models/models_0.js';
-import { SQSClient } from './sqs.client.js';
+import { Inject, Injectable } from '@nestjs/common';
+import { z } from 'zod';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { SQSClient } from '@/external/sqs/sqs.client.js';
 
 const sqsMessage = z.object({
   id: z.string().nonempty(),

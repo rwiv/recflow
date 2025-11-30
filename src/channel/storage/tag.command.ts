@@ -1,22 +1,25 @@
-import { db } from '../../infra/db/db.js';
-import { channelTagMapTable, channelTagTable } from '../../infra/db/schema.js';
-import { and, eq } from 'drizzle-orm';
-import { oneNotNull } from '../../utils/list.js';
-import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
-import { TagQueryRepository } from './tag.query.js';
+import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelTagMapTable, channelTagTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
 import {
   ChannelsToTagsEnt,
-  channelsToTagsEnt,
   ChannelsToTagsEntAppend,
   TagEnt,
-  tagEnt,
   TagEntAppend,
   TagEntUpdate,
-} from '../spec/tag.entity.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { z } from 'zod';
+  channelsToTagsEnt,
+  tagEnt,
+} from '@/channel/spec/tag.entity.schema.js';
+import { TagQueryRepository } from '@/channel/storage/tag.query.js';
 
 const tagEntAppendReq = tagEnt.partial({ id: true, description: true, updatedAt: true });
 type TagEntAppendRequest = z.infer<typeof tagEntAppendReq>;

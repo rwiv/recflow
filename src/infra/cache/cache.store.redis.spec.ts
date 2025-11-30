@@ -1,7 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createRedisClient } from '../../utils/redis.js';
-import { readEnv } from '../../common/config/env.js';
-import { RedisCacheStore } from './cache.store.redis.js';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import { createRedisClient } from '@/utils/redis.js';
+
+import { readEnv } from '@/common/config/env.js';
+
+import { RedisCacheStore } from '@/infra/cache/cache.store.redis.js';
 
 describe.skip('RedisCacheStore', () => {
   let cache: RedisCacheStore;

@@ -1,29 +1,33 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
-import { LiveDetector } from '../../live/detection/live.detector.js';
-import { LiveRefresher } from '../../live/data/live.refresher.js';
-import { LiveCleaner } from '../../live/coord/live.cleaner.js';
-import { LiveRecoveryManager } from '../../live/coord/live.recovery.js';
+import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
+import { Redis } from 'ioredis';
+
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { LiveRegisterTask } from '@/task/live/live.register-task.js';
 import {
-  LIVE_REGISTER_FOLLOWED_NAME,
-  LIVE_REFRESH_NAME,
-  LIVE_RECOVERY_NAME,
-  LIVE_CLEANUP_NAME,
-  LIVE_STATE_CLEANUP_NAME,
   LIVE_ALLOCATION_NAME,
+  LIVE_CLEANUP_NAME,
   LIVE_FINISH_NAME,
   LIVE_INVALID_RECOVERY_NAME,
-} from './live.task.contants.js';
-import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
-import { LiveBalancer } from '../../live/coord/live.balancer.js';
-import { Task } from '../spec/task.interface.js';
-import { createWorker } from '../schedule/task.utils.js';
-import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
-import { TaskRunner } from '../schedule/task.runner.js';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
-import { Redis } from 'ioredis';
-import { LiveRegisterTask } from './live.register-task.js';
-import { LiveFinalizer, liveFinishRequest } from '../../live/register/live.finalizer.js';
+  LIVE_RECOVERY_NAME,
+  LIVE_REFRESH_NAME,
+  LIVE_REGISTER_FOLLOWED_NAME,
+  LIVE_STATE_CLEANUP_NAME,
+} from '@/task/live/live.task.contants.js';
+import { TaskRunner } from '@/task/schedule/task.runner.js';
+import { createWorker } from '@/task/schedule/task.utils.js';
+import { Task } from '@/task/spec/task.interface.js';
+
+import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
+
+import { LiveBalancer } from '@/live/coord/live.balancer.js';
+import { LiveCleaner } from '@/live/coord/live.cleaner.js';
+import { LiveRecoveryManager } from '@/live/coord/live.recovery.js';
+import { LiveRefresher } from '@/live/data/live.refresher.js';
+import { LiveStateCleaner } from '@/live/data/live.state.cleaner.js';
+import { LiveDetector } from '@/live/detection/live.detector.js';
+import { LiveFinalizer, liveFinishRequest } from '@/live/register/live.finalizer.js';
 
 @Injectable()
 export class LiveTaskInitializer {

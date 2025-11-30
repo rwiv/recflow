@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { LiveStreamService } from './live-stream.service.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { longRetryOpts, Stlink } from '../../platform/stlink/stlink.js';
-import { LiveStreamDto } from '../spec/live.dto.schema.js';
 import { log } from 'jslog';
-import { streamAttr } from '../../common/attr/attr.live.js';
-import { handleSettled } from '../../utils/log.js';
+
+import { handleSettled } from '@/utils/log.js';
+
+import { streamAttr } from '@/common/attr/attr.live.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { Stlink, longRetryOpts } from '@/platform/stlink/stlink.js';
+
+import { LiveStreamDto } from '@/live/spec/live.dto.schema.js';
+import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 export const BATCH_NUM = 10; // TODO: use config
 

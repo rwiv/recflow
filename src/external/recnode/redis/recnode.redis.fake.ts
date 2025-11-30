@@ -1,8 +1,9 @@
-import { RecnodeRedis } from './recnode.redis.js';
-import { liveDtoToState } from './recnode.redis.utils.js';
-import { LiveState, SegmentKeyword } from './recnode.redis.data.js';
-import { LiveDto } from '../../../live/spec/live.dto.schema.js';
-import { RecnodeLocationType } from '../common/recnode.types.js';
+import { RecnodeLocationType } from '@/external/recnode/common/recnode.types.js';
+import { LiveState, SegmentKeyword } from '@/external/recnode/redis/recnode.redis.data.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+import { liveDtoToState } from '@/external/recnode/redis/recnode.redis.utils.js';
+
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 export class RecnodeRedisFake extends RecnodeRedis {
   private liveStates: Map<string, LiveState> = new Map();

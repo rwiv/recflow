@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { LiveInfo } from '../../../platform/spec/wapper/live.js';
-import { ChannelFinder } from '../../../channel/service/channel.finder.js';
-import { EnumCheckError } from '../../../utils/errors/errors/EnumCheckError.js';
-import { SoopCriterionDto } from '../../../criterion/spec/criterion.dto.schema.js';
-import { SoopLiveInfo } from '../../../platform/spec/raw/soop.js';
+
+import { EnumCheckError } from '@/utils/errors/errors/EnumCheckError.js';
+
+import { SoopLiveInfo } from '@/platform/spec/raw/soop.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+
+import { SoopCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class SoopLiveFilter {

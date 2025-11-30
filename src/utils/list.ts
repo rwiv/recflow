@@ -1,5 +1,5 @@
-import { ValidationError } from './errors/errors/ValidationError.js';
-import { MissingValueError } from './errors/errors/MissingValueError.js';
+import { MissingValueError } from '@/utils/errors/errors/MissingValueError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
 
 export function oneNotNull<T>(list: T[]): T {
   if (list.length === 0) {

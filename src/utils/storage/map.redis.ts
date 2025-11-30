@@ -1,5 +1,6 @@
 import { RedisClientType } from 'redis';
-import { AsyncMap } from './interface.js';
+
+import { AsyncMap } from '@/utils/storage/interface.js';
 
 export class RedisMap<T> implements AsyncMap<string, T> {
   constructor(

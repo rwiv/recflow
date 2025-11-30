@@ -1,13 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NodeWriter } from '../../node/service/node.writer.js';
-import { Task } from '../spec/task.interface.js';
-import { NODE_RESET_NAME, NODE_DRAIN_NAME, NODE_LIVES_CHECK_NAME } from './node.tasks.constants.js';
-import { TaskRunner } from '../schedule/task.runner.js';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
-import { Redis } from 'ioredis';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
-import { createWorker } from '../schedule/task.utils.js';
-import { drainArgs, LiveDrainer } from '../../live/coord/live.drainer.js';
+import { Redis } from 'ioredis';
+
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { NODE_DRAIN_NAME, NODE_LIVES_CHECK_NAME, NODE_RESET_NAME } from '@/task/node/node.tasks.constants.js';
+import { TaskRunner } from '@/task/schedule/task.runner.js';
+import { createWorker } from '@/task/schedule/task.utils.js';
+import { Task } from '@/task/spec/task.interface.js';
+
+import { NodeWriter } from '@/node/service/node.writer.js';
+
+import { LiveDrainer, drainArgs } from '@/live/coord/live.drainer.js';
 
 @Injectable()
 export class NodeTaskInitializer {

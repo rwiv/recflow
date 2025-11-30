@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionRepository } from '../storage/criterion.repository.js';
-import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { CriterionRuleFinder } from '@/criterion/service/criterion.rule.finder.js';
 import {
   ChzzkCriterionAppend,
   ChzzkCriterionDto,
@@ -8,19 +16,15 @@ import {
   CriterionUpdate,
   SoopCriterionAppend,
   SoopCriterionDto,
-} from '../spec/criterion.dto.schema.js';
+} from '@/criterion/spec/criterion.dto.schema.js';
 import {
   CriterionEnt,
   CriterionRuleEnt,
   CriterionUnitEnt,
   CriterionUnitEntAppend,
-} from '../spec/criterion.entity.schema.js';
-import { db } from '../../infra/db/db.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { CriterionRuleFinder } from './criterion.rule.finder.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { Tx } from '../../infra/db/types.js';
+} from '@/criterion/spec/criterion.entity.schema.js';
+import { CriterionUnitRepository } from '@/criterion/storage/criterion-unit.repository.js';
+import { CriterionRepository } from '@/criterion/storage/criterion.repository.js';
 
 @Injectable()
 export class CriterionWriter {

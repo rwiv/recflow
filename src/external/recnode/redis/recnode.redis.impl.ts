@@ -1,11 +1,14 @@
-import { RecnodeRedis } from './recnode.redis.js';
-import { liveState, LiveState, SegmentKeyword } from './recnode.redis.data.js';
 import { RedisClientType } from 'redis';
-import { LiveDto } from '../../../live/spec/live.dto.schema.js';
-import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
-import { RecnodeLocationType } from '../common/recnode.types.js';
-import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { liveDtoToState } from './recnode.redis.utils.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { RecnodeLocationType } from '@/external/recnode/common/recnode.types.js';
+import { LiveState, SegmentKeyword, liveState } from '@/external/recnode/redis/recnode.redis.data.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+import { liveDtoToState } from '@/external/recnode/redis/recnode.redis.utils.js';
+
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 export const LIVE_PREFIX = 'live';
 export const LIVES_KEY = 'lives';

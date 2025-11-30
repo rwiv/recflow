@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { NodeRepository } from './node.repository.js';
-import { NodeGroupRepository } from './node-group.repository.js';
-import { LiveNodeRepository } from './live-node.repository.js';
+
+import { LiveNodeRepository } from '@/node/storage/live-node.repository.js';
+import { NodeGroupRepository } from '@/node/storage/node-group.repository.js';
+import { NodeRepository } from '@/node/storage/node.repository.js';
 
 @Module({
   imports: [],

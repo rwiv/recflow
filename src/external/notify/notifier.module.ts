@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config/config.module.js';
-import { Notifier } from './notifier.js';
-import { FakeNotifier } from './notifier.fake.js';
-import { UntfNotifier } from './notifier.untf.js';
+
+import { ConfigModule } from '@/common/config/config.module.js';
+
+import { FakeNotifier } from '@/external/notify/notifier.fake.js';
+import { Notifier } from '@/external/notify/notifier.js';
+import { UntfNotifier } from '@/external/notify/notifier.untf.js';
 
 @Module({
   imports: [ConfigModule],

@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { findMissingNums } from './numbers.js';
+import { describe, expect, it } from 'vitest';
+
+import { findMissingNums } from '@/utils/numbers.js';
 
 describe.skip('checkMissingNums', () => {
   it('should return an empty array for input with less than 2 elements', () => {

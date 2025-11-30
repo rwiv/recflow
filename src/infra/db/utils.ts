@@ -1,20 +1,22 @@
+import { drizzle } from 'drizzle-orm/node-postgres';
+
+import { readEnv } from '@/common/config/env.js';
+
 import {
-  channelTagMapTable,
-  channelTable,
-  channelTagTable,
   channelGradeTable,
-  platformTable,
-  nodeGroupTable,
-  nodeTable,
-  liveTable,
-  liveCriterionTable,
+  channelTable,
+  channelTagMapTable,
+  channelTagTable,
   liveCriterionRuleTable,
+  liveCriterionTable,
   liveCriterionUnitTable,
   liveNodeTable,
   liveStreamTable,
-} from './schema.js';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { readEnv } from '../../common/config/env.js';
+  liveTable,
+  nodeGroupTable,
+  nodeTable,
+  platformTable,
+} from '@/infra/db/schema.js';
 
 export async function dropTables() {
   const db = drizzle(readEnv().pg.url);

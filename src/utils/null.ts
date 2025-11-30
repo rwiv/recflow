@@ -1,4 +1,4 @@
-import { MissingValueError } from './errors/errors/MissingValueError.js';
+import { MissingValueError } from '@/utils/errors/errors/MissingValueError.js';
 
 export function notNull<T>(value: T | null | undefined, name: string | undefined = undefined): T {
   if (value === null || value === undefined) {

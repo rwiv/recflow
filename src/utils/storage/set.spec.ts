@@ -1,10 +1,12 @@
-import { describe, it, beforeAll, afterEach, expect } from 'vitest';
-import path from 'path';
 import dotenv from 'dotenv';
-import { AsyncSet } from './interface.js';
-import { RedisSet } from './set.redis.js';
-import { readRecnodeRedisMasterConfig } from '../../common/config/env.utils.js';
-import { createRedisClient } from '../redis.js';
+import path from 'path';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+
+import { createRedisClient } from '@/utils/redis.js';
+import { AsyncSet } from '@/utils/storage/interface.js';
+import { RedisSet } from '@/utils/storage/set.redis.js';
+
+import { readRecnodeRedisMasterConfig } from '@/common/config/env.utils.js';
 
 describe.skip('RedisSet', () => {
   let set: AsyncSet<string>;

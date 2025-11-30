@@ -1,5 +1,5 @@
-import { HttpRequestError } from './errors/errors/HttpRequestError.js';
-import { HttpError } from './errors/base/HttpError.js';
+import { HttpError } from '@/utils/errors/base/HttpError.js';
+import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
 
 export async function checkResponse(res: Response, attr?: Record<string, any>, message: string = 'Failed to request') {
   if (res.status >= 400) {

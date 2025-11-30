@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { LiveRegistrar } from '../register/live.registrar.js';
-import { ExitCmd } from '../spec/event.schema.js';
-import { handleSettled } from '../../utils/log.js';
+
+import { handleSettled } from '@/utils/log.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveRegistrar } from '@/live/register/live.registrar.js';
+import { ExitCmd } from '@/live/spec/event.schema.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 @Injectable()
 export class LiveCleaner {

@@ -3,24 +3,17 @@ import {
   CHANNEL_CACHE_CHECK_NAME,
   CHANNEL_REFRESH_DEF,
   CHANNEL_REFRESH_NAME,
-} from '../channel/channel.tasks.constants.js';
-import {
-  NODE_DRAIN_NAME,
-  NODE_LIVES_CHECK_DEF,
-  NODE_LIVES_CHECK_NAME,
-  NODE_RESET_DEF,
-  NODE_RESET_NAME,
-} from '../node/node.tasks.constants.js';
+} from '@/task/channel/channel.tasks.constants.js';
 import {
   LIVE_ALLOCATION_DEF,
   LIVE_ALLOCATION_NAME,
   LIVE_CLEANUP_DEF,
   LIVE_CLEANUP_NAME,
   LIVE_FINISH_NAME,
-  LIVE_RECOVERY_DEF,
-  LIVE_RECOVERY_NAME,
   LIVE_INVALID_RECOVERY_DEF,
   LIVE_INVALID_RECOVERY_NAME,
+  LIVE_RECOVERY_DEF,
+  LIVE_RECOVERY_NAME,
   LIVE_REFRESH_DEF,
   LIVE_REFRESH_NAME,
   LIVE_REGISTER_CRITERION_DEF,
@@ -33,8 +26,15 @@ import {
   LIVE_STREAM_AUDIT_NAME,
   LIVE_STREAM_DETECTION_DEF,
   LIVE_STREAM_DETECTION_NAME,
-} from '../live/live.task.contants.js';
-import { TaskDef } from './task.schema.js';
+} from '@/task/live/live.task.contants.js';
+import {
+  NODE_DRAIN_NAME,
+  NODE_LIVES_CHECK_DEF,
+  NODE_LIVES_CHECK_NAME,
+  NODE_RESET_DEF,
+  NODE_RESET_NAME,
+} from '@/task/node/node.tasks.constants.js';
+import { TaskDef } from '@/task/spec/task.schema.js';
 
 export type CronTaskDefs = Record<string, TaskDef>;
 export type TaskDefs = Record<string, TaskDef | null>;

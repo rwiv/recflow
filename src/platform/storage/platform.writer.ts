@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PlatformEntAppend, PlatformRepository } from './platform.repository.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { PlatformCacheStore } from './platform.cache.store.js';
-import { PlatformDto, platformDto } from '../spec/storage/platform.dto.schema.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformDto, platformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+import { PlatformCacheStore } from '@/platform/storage/platform.cache.store.js';
+import { PlatformEntAppend, PlatformRepository } from '@/platform/storage/platform.repository.js';
 
 @Injectable()
 export class PlatformWriter {

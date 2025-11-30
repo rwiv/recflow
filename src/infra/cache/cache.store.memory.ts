@@ -1,4 +1,4 @@
-import { CacheStore, SetOptions } from './cache.store.js';
+import { CacheStore, SetOptions } from '@/infra/cache/cache.store.js';
 
 export class MemoryCacheStore extends CacheStore {
   private readonly strMap: Map<string, string> = new Map();

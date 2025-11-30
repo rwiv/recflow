@@ -1,11 +1,14 @@
-import { log } from 'jslog';
 import { Injectable } from '@nestjs/common';
-import { NodeWriter } from '../../../node/service/node.writer.js';
-import { NodeAppend } from '../../../node/spec/node.dto.schema.js';
-import { notNull } from '../../../utils/null.js';
-import { NodeGroupService } from '../../../node/service/node-group.service.js';
+import { log } from 'jslog';
 import { z } from 'zod';
-import { nnint, nonempty } from '../../data/common.schema.js';
+
+import { notNull } from '@/utils/null.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
+
+import { NodeGroupService } from '@/node/service/node-group.service.js';
+import { NodeWriter } from '@/node/service/node.writer.js';
+import { NodeAppend } from '@/node/spec/node.dto.schema.js';
 
 const nodeBatchInsert = z.object({
   name: nonempty,

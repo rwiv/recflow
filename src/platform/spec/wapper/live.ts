@@ -1,8 +1,10 @@
-import { chzzkLiveInfo, ChzzkLiveInfo } from '../raw/chzzk.js';
-import { soopLiveInfo, SoopLiveInfo } from '../raw/soop.js';
-import { platformNameEnum } from '../storage/platform.enum.schema.js';
 import { z } from 'zod';
-import { nnint, nonempty } from '../../../common/data/common.schema.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
+
+import { ChzzkLiveInfo, chzzkLiveInfo } from '@/platform/spec/raw/chzzk.js';
+import { SoopLiveInfo, soopLiveInfo } from '@/platform/spec/raw/soop.js';
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
 
 export const liveInfo = z.object({
   type: platformNameEnum,

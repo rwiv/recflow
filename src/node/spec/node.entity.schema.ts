@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { uuid } from '../../common/data/common.schema.js';
+
+import { uuid } from '@/common/data/common.schema.js';
 
 export const nodeEnt = z.object({
   id: uuid,

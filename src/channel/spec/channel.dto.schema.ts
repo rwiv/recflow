@@ -1,8 +1,10 @@
 import { z } from 'zod';
-import { tagDto } from './tag.dto.schema.js';
-import { channelEnt, channelEntAppend, channelEntUpdate } from './channel.entity.schema.js';
-import { gradeDto } from './grade.schema.js';
-import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+
+import { platformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+
+import { channelEnt, channelEntAppend, channelEntUpdate } from '@/channel/spec/channel.entity.schema.js';
+import { gradeDto } from '@/channel/spec/grade.schema.js';
+import { tagDto } from '@/channel/spec/tag.dto.schema.js';
 
 export const channelDto = channelEnt.omit({ platformId: true, gradeId: true }).extend({
   platform: platformDto,

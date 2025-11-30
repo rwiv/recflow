@@ -1,8 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { LiveDto, LiveStreamDto } from './live.dto.schema.js';
-import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
-import { dummyChannelDto } from '../../channel/spec/channel.dto.schema.dummy.js';
-import { liveStatus } from './live.entity.schema.js';
+
+import { dummyPlatformDto } from '@/platform/spec/storage/platform.dto.schema.dummy.js';
+
+import { dummyChannelDto } from '@/channel/spec/channel.dto.schema.dummy.js';
+
+import { LiveDto, LiveStreamDto } from '@/live/spec/live.dto.schema.js';
+import { liveStatus } from '@/live/spec/live.entity.schema.js';
 
 export function dummyLiveStreamDto(overrides: Partial<LiveStreamDto> = {}): LiveStreamDto {
   return {

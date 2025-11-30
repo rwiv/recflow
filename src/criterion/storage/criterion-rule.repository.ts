@@ -1,13 +1,16 @@
-import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { criterionRuleEnt, CriterionRuleEntAppend } from '../spec/criterion.entity.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { liveCriterionRuleTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { criterionRuleNameUnion } from '../spec/criterion.rule.schema.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { liveCriterionRuleTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { CriterionRuleEntAppend, criterionRuleEnt } from '@/criterion/spec/criterion.entity.schema.js';
+import { criterionRuleNameUnion } from '@/criterion/spec/criterion.rule.schema.js';
 
 const criterionRuleEntReq = criterionRuleEnt
   .partial({ id: true, updatedAt: true })

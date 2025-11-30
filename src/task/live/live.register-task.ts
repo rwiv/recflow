@@ -1,9 +1,12 @@
-import { Task } from '../spec/task.interface.js';
-import { LiveDetector } from '../../live/detection/live.detector.js';
-import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
-import { LIVE_REGISTER_CRITERION_NAME } from './live.task.contants.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
+import { MissingValueError } from '@/utils/errors/errors/MissingValueError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { LIVE_REGISTER_CRITERION_NAME } from '@/task/live/live.task.contants.js';
+import { Task } from '@/task/spec/task.interface.js';
+
+import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
+
+import { LiveDetector } from '@/live/detection/live.detector.js';
 
 export class LiveRegisterTask implements Task {
   public readonly name: string = LIVE_REGISTER_CRITERION_NAME;

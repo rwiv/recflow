@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { LiveWebModule } from './web/live.web.module.js';
+
+import { LiveWebModule } from '@/live/web/live.web.module.js';
 
 @Module({
   imports: [LiveWebModule],

@@ -1,7 +1,8 @@
-import { z } from 'zod';
 import { log } from 'jslog';
-import { BaseError } from './errors/base/BaseError.js';
-import { stacktrace } from './errors/utils.js';
+import { z } from 'zod';
+
+import { BaseError } from '@/utils/errors/base/BaseError.js';
+import { stacktrace } from '@/utils/errors/utils.js';
 
 export const logLevel = z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']);
 export type LogLevel = z.infer<typeof logLevel>;

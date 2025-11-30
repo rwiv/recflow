@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../common/config/config.module.js';
-import { Env } from '../common/config/env.js';
-import { createIoRedisClient, createRedisClient } from '../utils/redis.js';
-import { RedisCacheStore } from './cache/cache.store.redis.js';
+
+import { createIoRedisClient, createRedisClient } from '@/utils/redis.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { RedisCacheStore } from '@/infra/cache/cache.store.redis.js';
 
 @Injectable()
 export class InfraFactory {

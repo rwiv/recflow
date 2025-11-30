@@ -1,12 +1,15 @@
-import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { liveNodeTable, nodeTable } from '../../infra/db/schema.js';
-import { nodeEnt, NodeEnt, NodeEntAppend, NodeEntUpdate } from '../spec/node.entity.schema.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { liveNodeTable, nodeTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { NodeEnt, NodeEntAppend, NodeEntUpdate, nodeEnt } from '@/node/spec/node.entity.schema.js';
 
 const nodeEntAppendReq = nodeEnt.partial({ id: true, description: true, updatedAt: true, lastAssignedAt: true });
 type NodeEntAppendRequest = z.infer<typeof nodeEntAppendReq>;

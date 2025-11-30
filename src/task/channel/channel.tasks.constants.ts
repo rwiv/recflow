@@ -1,4 +1,4 @@
-import { TaskDef } from '../spec/task.schema.js';
+import { TaskDef } from '@/task/spec/task.schema.js';
 
 export const CHANNEL_REFRESH_NAME = 'channel_refresh';
 export const CHANNEL_REFRESH_DEF: TaskDef = { delay: 2 * 1000, ex: 60 };

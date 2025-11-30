@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../common/config/config.module.js';
-import { InfraFactory } from './infra.factory.js';
-import { SERVER_REDIS, TASK_REDIS } from './infra.tokens.js';
+
+import { ConfigModule } from '@/common/config/config.module.js';
+
+import { InfraFactory } from '@/infra/infra.factory.js';
+import { SERVER_REDIS, TASK_REDIS } from '@/infra/infra.tokens.js';
 
 @Module({
   imports: [ConfigModule],

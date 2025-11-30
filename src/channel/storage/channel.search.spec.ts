@@ -1,16 +1,20 @@
-import { beforeAll, afterAll, describe, it } from 'vitest';
 import { TestingModule } from '@nestjs/testing';
 import assert from 'assert';
-import { dummyChannelAppend } from '../spec/channel.dto.schema.dummy.js';
-import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
-import { DevInitializer } from '../../common/init/dev-initializer.js';
-import { dropTables } from '../../infra/db/utils.js';
-import { ChannelFinder } from '../service/channel.finder.js';
-import { ChannelMapper } from '../service/channel.mapper.js';
-import { ChannelWriter } from '../service/channel.writer.js';
-import { GradeService } from '../service/grade.service.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { ChannelSearchRepository, ChannelTagSearchRequest } from './channel.search.js';
+import { afterAll, beforeAll, describe, it } from 'vitest';
+
+import { newTestingModuleRef } from '@/common/helpers/helper.app.js';
+import { DevInitializer } from '@/common/init/dev-initializer.js';
+
+import { dropTables } from '@/infra/db/utils.js';
+
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+import { ChannelMapper } from '@/channel/service/channel.mapper.js';
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+import { GradeService } from '@/channel/service/grade.service.js';
+import { dummyChannelAppend } from '@/channel/spec/channel.dto.schema.dummy.js';
+import { ChannelSearchRepository, ChannelTagSearchRequest } from '@/channel/storage/channel.search.js';
 
 describe.skip('ChannelSearchRepository', () => {
   let moduleRef: TestingModule;

@@ -1,8 +1,9 @@
+import { TestingModule } from '@nestjs/testing';
 import path from 'path';
 import { beforeAll, describe, it } from 'vitest';
-import { TestingModule } from '@nestjs/testing';
-import { newTestingModuleRef } from '../../helpers/helper.app.js';
-import { DevChannelInserter } from './insert.channel.js';
+
+import { newTestingModuleRef } from '@/common/helpers/helper.app.js';
+import { DevChannelInserter } from '@/common/init/insert/insert.channel.js';
 
 describe.skip('DevChannelInserter', () => {
   let moduleRef: TestingModule;

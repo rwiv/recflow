@@ -1,15 +1,21 @@
-import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
-import { LiveEnt } from '../spec/live.entity.schema.js';
-import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
 import { Injectable } from '@nestjs/common';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { NodeFieldsReq } from '../../node/spec/node.dto.schema.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
-import { LiveStreamDto } from '../spec/live.dto.schema.js';
-import { LiveStreamService } from '../stream/live-stream.service.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+
+import { NodeFinder } from '@/node/service/node.finder.js';
+import { NodeFieldsReq } from '@/node/spec/node.dto.schema.js';
+
+import { LiveStreamDto } from '@/live/spec/live.dto.schema.js';
+import { LiveDtoMapped } from '@/live/spec/live.dto.schema.mapped.js';
+import { LiveEnt } from '@/live/spec/live.entity.schema.js';
+import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 export interface LiveFieldsReq {
   nodes?: boolean;

@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { channelDto, ChannelDto } from '../spec/channel.dto.schema.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
-import { CacheStore } from '../../infra/cache/cache.store.js';
+
+import { CacheStore } from '@/infra/cache/cache.store.js';
+import { SERVER_REDIS } from '@/infra/infra.tokens.js';
+
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import { ChannelDto, channelDto } from '@/channel/spec/channel.dto.schema.js';
 
 export const CHANNEL_KEY_PREFIX = 'channel';
 export const CHANNELS_KEY_PREFIX = 'channels';

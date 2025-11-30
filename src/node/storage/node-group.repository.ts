@@ -1,12 +1,15 @@
-import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { nodeGroupEnt, NodeGroupEnt, NodeGroupEntAppend, NodeGroupEntUpdate } from '../spec/node.entity.schema.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { nodeGroupTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { nodeGroupTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { NodeGroupEnt, NodeGroupEntAppend, NodeGroupEntUpdate, nodeGroupEnt } from '@/node/spec/node.entity.schema.js';
 
 const nodeGroupEntAppendReq = nodeGroupEnt.partial({ id: true, description: true, updatedAt: true });
 type NodeGroupEntAppendRequest = z.infer<typeof nodeGroupEntAppendReq>;

@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ChannelStorageModule } from '../storage/channel.storage.module.js';
-import { ChannelWriter } from './channel.writer.js';
-import { PlatformModule } from '../../platform/platform.module.js';
-import { ChannelFinder } from './channel.finder.js';
-import { ChannelMapper } from './channel.mapper.js';
-import { ChannelSearcher } from './channel.searcher.js';
-import { TagWriter } from './tag.writer.js';
-import { TagFinder } from './tag.finder.js';
-import { GradeService } from './grade.service.js';
-import { ChannelCacheChecker } from './channel.cache.checker.js';
-import { LiveStorageModule } from '../../live/storage/live.storage.module.js';
+
+import { PlatformModule } from '@/platform/platform.module.js';
+
+import { ChannelCacheChecker } from '@/channel/service/channel.cache.checker.js';
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+import { ChannelMapper } from '@/channel/service/channel.mapper.js';
+import { ChannelSearcher } from '@/channel/service/channel.searcher.js';
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+import { GradeService } from '@/channel/service/grade.service.js';
+import { TagFinder } from '@/channel/service/tag.finder.js';
+import { TagWriter } from '@/channel/service/tag.writer.js';
+import { ChannelStorageModule } from '@/channel/storage/channel.storage.module.js';
+
+import { LiveStorageModule } from '@/live/storage/live.storage.module.js';
 
 @Module({
   imports: [PlatformModule, ChannelStorageModule, LiveStorageModule],

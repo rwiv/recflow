@@ -1,4 +1,4 @@
-import { ErrorType, HttpStatusCode } from './types.js';
+import { ErrorType, HttpStatusCode } from '@/utils/errors/types/types.js';
 
 export const ErrorTypeToHttpStatus: Record<ErrorType, HttpStatusCode> = {
   'Bad Request': 400,

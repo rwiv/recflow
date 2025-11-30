@@ -1,9 +1,10 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types.js';
-import { newTestingModuleRef, newTestApp } from '../src/common/helpers/helper.app.js';
+import { afterAll, beforeAll, describe, it } from 'vitest';
+
 import { GlobalModule } from '../src/common/global/global.module.js';
+import { newTestApp, newTestingModuleRef } from '../src/common/helpers/helper.app.js';
 
 describe.skip('AppController', () => {
   let app: INestApplication<App>;

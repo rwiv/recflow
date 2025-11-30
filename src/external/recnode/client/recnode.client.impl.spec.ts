@@ -1,6 +1,8 @@
-import { describe, it, beforeAll } from 'vitest';
-import { RecnodeImpl } from './recnode.client.impl.js';
-import { readEnv } from '../../../common/config/env.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { readEnv } from '@/common/config/env.js';
+
+import { RecnodeImpl } from '@/external/recnode/client/recnode.client.impl.js';
 
 describe.skip('RecnodeImpl', () => {
   let recnode: RecnodeImpl;

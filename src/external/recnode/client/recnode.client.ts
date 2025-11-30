@@ -1,12 +1,18 @@
 import { z } from 'zod';
-import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
-import { nnint, nonempty, uuid } from '../../../common/data/common.schema.js';
-import { NodeDto } from '../../../node/spec/node.dto.schema.js';
-import { ValidationError } from '../../../utils/errors/errors/ValidationError.js';
-import { recnodeLocationType } from '../common/recnode.types.js';
+
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { nnint, nonempty, uuid } from '@/common/data/common.schema.js';
+
+import { recnodeLocationType } from '@/external/recnode/common/recnode.types.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
 
 export abstract class Recnode {
   abstract getStatus(endpoint: string): Promise<RecordingStatus[]>;
+
   abstract getStatusWithStats(endpoint: string): Promise<RecordingStatus[]>;
 
   async findStatus(endpoint: string, liveId: string): Promise<RecordingStatus | null> {
@@ -39,6 +45,7 @@ export abstract class Recnode {
   }
 
   abstract startRecording(endpoint: string, recordId: string): Promise<void>;
+
   abstract cancelRecording(endpoint: string, recordId: string): Promise<void>;
 }
 

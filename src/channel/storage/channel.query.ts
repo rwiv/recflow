@@ -1,10 +1,13 @@
-import { db } from '../../infra/db/db.js';
-import { channelTagMapTable, channelTable } from '../../infra/db/schema.js';
-import { and, eq, like, sql } from 'drizzle-orm';
-import { Tx } from '../../infra/db/types.js';
 import { Injectable } from '@nestjs/common';
-import { oneNullable } from '../../utils/list.js';
-import { ChannelEnt } from '../spec/channel.entity.schema.js';
+import { and, eq, like, sql } from 'drizzle-orm';
+
+import { oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelTable, channelTagMapTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { ChannelEnt } from '@/channel/spec/channel.entity.schema.js';
 
 @Injectable()
 export class ChannelQueryRepository {
@@ -68,7 +71,10 @@ export class ChannelQueryRepository {
     return tx
       .select()
       .from(channelTable)
-      .orderBy(sql`${channelTable.lastRefreshedAt} ASC NULLS FIRST`)
+      .orderBy(
+        sql`${channelTable.lastRefreshedAt}
+      ASC NULLS FIRST`,
+      )
       .limit(limit);
   }
 }

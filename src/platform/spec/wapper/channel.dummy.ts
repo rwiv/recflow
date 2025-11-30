@@ -1,9 +1,9 @@
-import { ChzzkChannelInfo } from '../raw/chzzk.js';
-import { SoopChannelInfo } from '../raw/soop.js';
-import { dummyChzzkChannelInfo } from '../raw/chzzk.dummy.js';
-import { dummySoopChannelInfo } from '../raw/soop.dummy.js';
-import { channelFromChzzk, channelFromSoop, channelInfo, ChannelInfo } from './channel.js';
-import { LiveInfo } from './live.js';
+import { dummyChzzkChannelInfo } from '@/platform/spec/raw/chzzk.dummy.js';
+import { ChzzkChannelInfo } from '@/platform/spec/raw/chzzk.js';
+import { dummySoopChannelInfo } from '@/platform/spec/raw/soop.dummy.js';
+import { SoopChannelInfo } from '@/platform/spec/raw/soop.js';
+import { ChannelInfo, channelFromChzzk, channelFromSoop, channelInfo } from '@/platform/spec/wapper/channel.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
 
 export function dummyChannelInfoChzzk(
   overrides: Partial<ChzzkChannelInfo> = {},

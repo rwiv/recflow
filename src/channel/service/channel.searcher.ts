@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { channelPageResult, ChannelPageResult } from '../spec/channel.dto.schema.js';
-import { ChannelPageEntResult } from '../spec/channel.entity.schema.js';
-import { ChannelSearchRepository, ChannelSearchRequest, ChannelTagSearchRequest } from '../storage/channel.search.js';
-import { ChannelMapper } from './channel.mapper.js';
-import { ChannelMapOptions } from '../spec/channel.types.js';
+
+import { ChannelMapper } from '@/channel/service/channel.mapper.js';
+import { ChannelPageResult, channelPageResult } from '@/channel/spec/channel.dto.schema.js';
+import { ChannelPageEntResult } from '@/channel/spec/channel.entity.schema.js';
+import { ChannelMapOptions } from '@/channel/spec/channel.types.js';
+import {
+  ChannelSearchRepository,
+  ChannelSearchRequest,
+  ChannelTagSearchRequest,
+} from '@/channel/storage/channel.search.js';
 
 @Injectable()
 export class ChannelSearcher {

@@ -5,9 +5,22 @@
   "plugins": [
     "@trivago/prettier-plugin-sort-imports"
   ],
+  "importOrderParserPlugins": [
+    "typescript",
+    "decorators-legacy"
+  ],
   "importOrder": [
     "<THIRD_PARTY_MODULES>",
-    "^[../]",
+    "^@/utils/(.*)$",
+    "^@/common/(.*)$",
+    "^@/infra/(.*)$",
+    "^@/external/(.*)$",
+    "^@/task/(.*)$",
+    "^@/platform/(.*)$",
+    "^@/channel/(.*)$",
+    "^@/criterion/(.*)$",
+    "^@/node/(.*)$",
+    "^@/live/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,

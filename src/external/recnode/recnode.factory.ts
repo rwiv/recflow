@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { recnodeLocationType } from './common/recnode.types.js';
-import { RecnodeRedisImpl } from './redis/recnode.redis.impl.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { createRedisClient } from '../../utils/redis.js';
+
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+import { createRedisClient } from '@/utils/redis.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { recnodeLocationType } from '@/external/recnode/common/recnode.types.js';
+import { RecnodeRedisImpl } from '@/external/recnode/redis/recnode.redis.impl.js';
 
 @Injectable()
 export class RecnodeFactory {

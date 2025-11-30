@@ -1,5 +1,7 @@
 import { Controller, UseFilters } from '@nestjs/common';
-import { HttpErrorFilter } from '../error/error.filter.js';
+
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
 // import heapdump from 'heapdump';
 
 @UseFilters(HttpErrorFilter)

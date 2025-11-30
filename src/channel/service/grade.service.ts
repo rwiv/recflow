@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { GradeRepository } from '../storage/grade.repository.js';
-import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { GradeAppend, GradeDto, GradeUpdate } from '../spec/grade.schema.js';
-import { ChannelCacheStore } from '../storage/channel.cache.store.js';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { GradeAppend, GradeDto, GradeUpdate } from '@/channel/spec/grade.schema.js';
+import { ChannelCacheStore } from '@/channel/storage/channel.cache.store.js';
+import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
+import { GradeRepository } from '@/channel/storage/grade.repository.js';
 
 @Injectable()
 export class GradeService {

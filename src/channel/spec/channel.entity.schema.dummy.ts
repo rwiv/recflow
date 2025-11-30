@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { ChannelEnt } from './channel.entity.schema.js';
+
+import { ChannelEnt } from '@/channel/spec/channel.entity.schema.js';
 
 export function dummyChannelEnt(overrides: Partial<ChannelEnt> = {}): ChannelEnt {
   return {

@@ -1,14 +1,17 @@
-import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channelGradeTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { GradeEnt, gradeEnt, GradeEntAppend, GradeEntUpdate } from '../spec/grade.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { DEFAULT_PRIORITY_NAME } from '../spec/grade.constants.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelGradeTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { DEFAULT_PRIORITY_NAME } from '@/channel/spec/grade.constants.js';
+import { GradeEnt, GradeEntAppend, GradeEntUpdate, gradeEnt } from '@/channel/spec/grade.schema.js';
 
 const gradeEntAppendReq = gradeEnt.partial({ id: true, description: true, updatedAt: true });
 type GradeEntAppendRequest = z.infer<typeof gradeEntAppendReq>;

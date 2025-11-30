@@ -1,17 +1,26 @@
 import { log } from 'jslog';
-import { liveAttr } from '../../../common/attr/attr.live.js';
-import { LiveState, SegmentKeyword } from './recnode.redis.data.js';
-import { LiveDto } from '../../../live/spec/live.dto.schema.js';
+
+import { liveAttr } from '@/common/attr/attr.live.js';
+
+import { LiveState, SegmentKeyword } from '@/external/recnode/redis/recnode.redis.data.js';
+
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 export abstract class RecnodeRedis {
   abstract createLiveState(live: LiveDto): Promise<LiveState>;
+
   abstract getLiveState(id: string, useMaster: boolean): Promise<LiveState | null>;
+
   abstract getLiveStates(liveRecordIds: string[], useMaster: boolean): Promise<(LiveState | null)[]>;
+
   abstract deleteLiveState(id: string): Promise<void>;
 
   abstract getLivesIds(useMaster: boolean): Promise<string[]>;
+
   abstract getSegNums(liveId: string, keyword: SegmentKeyword, useMaster: boolean): Promise<string[]>;
+
   abstract deleteSegNumSet(liveId: string, keyword: SegmentKeyword): Promise<void>;
+
   abstract deleteSegmentStates(liveId: string, nums: string[]): Promise<void>;
 
   async isInvalidLive(live: LiveDto, useMaster: boolean = false): Promise<boolean> {

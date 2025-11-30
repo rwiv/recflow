@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { TagDto } from '../spec/tag.dto.schema.js';
-import { TagQueryRepository } from '../storage/tag.query.js';
+
+import { TagDto } from '@/channel/spec/tag.dto.schema.js';
+import { TagQueryRepository } from '@/channel/storage/tag.query.js';
 
 @Injectable()
 export class TagFinder {

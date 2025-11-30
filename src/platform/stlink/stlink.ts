@@ -1,16 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { PlatformName } from '../spec/storage/platform.enum.schema.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
-import { z } from 'zod';
-import { headers, nonempty, queryParams, RetryOptions } from '../../common/data/common.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { delay } from '../../utils/time.js';
-import { LiveDto, streamInfo, StreamInfo } from '../../live/spec/live.dto.schema.js';
-import { liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
 import { log } from 'jslog';
-import { LiveInfo } from '../spec/wapper/live.js';
+import { z } from 'zod';
+
+import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+import { delay } from '@/utils/time.js';
+
+import { liveInfoAttr } from '@/common/attr/attr.live.js';
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+import { RetryOptions, headers, nonempty, queryParams } from '@/common/data/common.schema.js';
+
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { StreamInfo, streamInfo } from '@/live/spec/live.dto.schema.js';
 
 export const stlinkStreamInfo = z.object({
   openLive: z.boolean(),

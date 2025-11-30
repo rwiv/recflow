@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { ChzzkFetcher } from './platforms/fetcher.chzzk.js';
-import { SoopFetcher } from './platforms/fetcher.soop.js';
-import { PlatformName } from '../spec/storage/platform.enum.schema.js';
-import { BaseError } from '../../utils/errors/base/BaseError.js';
-import {
-  PlatformCriterionDto,
-  chzzkCriterionDto,
-  soopCriterionDto,
-} from '../../criterion/spec/criterion.dto.schema.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
-import { getHttpRequestError } from '../../utils/http.js';
-import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
-import { PlatformFetcher } from './fetcher.js';
+
+import { BaseError } from '@/utils/errors/base/BaseError.js';
+import { EnumCheckError } from '@/utils/errors/errors/EnumCheckError.js';
+import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
+import { getHttpRequestError } from '@/utils/http.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { ChzzkFetcher } from '@/platform/fetcher/platforms/fetcher.chzzk.js';
+import { SoopFetcher } from '@/platform/fetcher/platforms/fetcher.soop.js';
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import { PlatformCriterionDto, chzzkCriterionDto, soopCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class PlatformFetcherImpl extends PlatformFetcher {

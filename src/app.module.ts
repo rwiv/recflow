@@ -1,22 +1,30 @@
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter.js';
+import { ExpressAdapter } from '@bull-board/express';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { BullModule } from '@nestjs/bullmq';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { ExpressAdapter } from '@bull-board/express';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter.js';
 import { join } from 'path';
-import { LiveModule } from './live/live.module.js';
-import { ChannelModule } from './channel/channel.module.js';
-import { InitModule } from './common/init/init.module.js';
-import { NodeModule } from './node/node.module.js';
-import { CriterionModule } from './criterion/criterion.module.js';
-import { TaskModule } from './task/task.module.js';
-import { PlatformModule } from './platform/platform.module.js';
-import { readEnv } from './common/config/env.js';
-import { createIoRedisClient } from './utils/redis.js';
-import { taskDefs } from './task/spec/task.queue-defs.js';
-import { GlobalModule } from './common/global/global.module.js';
+
+import { createIoRedisClient } from '@/utils/redis.js';
+
+import { readEnv } from '@/common/config/env.js';
+import { GlobalModule } from '@/common/global/global.module.js';
+import { InitModule } from '@/common/init/init.module.js';
+
+import { taskDefs } from '@/task/spec/task.queue-defs.js';
+import { TaskModule } from '@/task/task.module.js';
+
+import { PlatformModule } from '@/platform/platform.module.js';
+
+import { ChannelModule } from '@/channel/channel.module.js';
+
+import { CriterionModule } from '@/criterion/criterion.module.js';
+
+import { NodeModule } from '@/node/node.module.js';
+
+import { LiveModule } from '@/live/live.module.js';
 
 @Module({
   imports: [

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { GradeDto } from './grade.schema.js';
+
+import { GradeDto } from '@/channel/spec/grade.schema.js';
 
 export function dummyGradeDto(overrides: Partial<GradeDto> = {}): GradeDto {
   return {

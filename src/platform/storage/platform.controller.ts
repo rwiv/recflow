@@ -1,7 +1,9 @@
 import { Controller, Get, UseFilters } from '@nestjs/common';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { PlatformDto } from '../spec/storage/platform.dto.schema.js';
-import { PlatformFinder } from './platform.finder.js';
+
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { PlatformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/platforms')

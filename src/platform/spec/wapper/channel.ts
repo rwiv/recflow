@@ -1,9 +1,11 @@
-import { chzzkChannelInfo, ChzzkChannelInfo } from '../raw/chzzk.js';
-import { soopChannelInfo, SoopChannelInfo } from '../raw/soop.js';
-import { liveFromChzzk, liveFromSoop, liveInfo } from './live.js';
 import { z } from 'zod';
-import { platformNameEnum } from '../storage/platform.enum.schema.js';
-import { nnint, nonempty } from '../../../common/data/common.schema.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
+
+import { ChzzkChannelInfo, chzzkChannelInfo } from '@/platform/spec/raw/chzzk.js';
+import { SoopChannelInfo, soopChannelInfo } from '@/platform/spec/raw/soop.js';
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+import { liveFromChzzk, liveFromSoop, liveInfo } from '@/platform/spec/wapper/live.js';
 
 export const channelInfo = z.object({
   sourceId: nonempty,

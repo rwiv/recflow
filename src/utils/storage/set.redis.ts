@@ -1,5 +1,6 @@
 import { RedisClientType } from 'redis';
-import { AsyncSet } from './interface.js';
+
+import { AsyncSet } from '@/utils/storage/interface.js';
 
 export class RedisSet<T> implements AsyncSet<T> {
   constructor(

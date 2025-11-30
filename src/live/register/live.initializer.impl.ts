@@ -1,33 +1,41 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { GradeService } from '../../channel/service/grade.service.js';
-import { ChannelAppendWithInfo, ChannelDto } from '../../channel/spec/channel.dto.schema.js';
-import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/grade.constants.js';
-import { channelAttr, liveAttr, liveInfoAttr } from '../../common/attr/attr.live.js';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { db } from '../../infra/db/db.js';
-import { Tx } from '../../infra/db/types.js';
-import { Notifier } from '../../external/notify/notifier.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { NodeSelector } from '../../node/service/node.selector.js';
-import { ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { Stlink } from '../../platform/stlink/stlink.js';
-import { LogLevel } from '../../utils/log.js';
-import { LiveCreateArgs, LiveWriter } from '../data/live.writer.js';
-import { LiveDto, LiveStreamDto, StreamInfo } from '../spec/live.dto.schema.js';
-import { LiveStreamService } from '../stream/live-stream.service.js';
-import { LiveStreamQuery } from '../storage/live-stream.repository.js';
-import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveRegistrar } from './live.registrar.js';
-import { MissingValueError } from '../../utils/errors/errors/MissingValueError.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { LiveInitializer } from './live.initializer.js';
-import { LiveRegisterHelper } from './live.register-helper.js';
+
+import { MissingValueError } from '@/utils/errors/errors/MissingValueError.js';
+import { LogLevel } from '@/utils/log.js';
+
+import { channelAttr, liveAttr, liveInfoAttr } from '@/common/attr/attr.live.js';
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { Notifier } from '@/external/notify/notifier.js';
+
+import { ChannelLiveInfo } from '@/platform/spec/wapper/channel.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+import { Stlink } from '@/platform/stlink/stlink.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+import { GradeService } from '@/channel/service/grade.service.js';
+import { ChannelAppendWithInfo, ChannelDto } from '@/channel/spec/channel.dto.schema.js';
+import { DEFAULT_PRIORITY_NAME } from '@/channel/spec/grade.constants.js';
+
+import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
+import { CriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+
+import { NodeSelector } from '@/node/service/node.selector.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveCreateArgs, LiveWriter } from '@/live/data/live.writer.js';
+import { LiveInitializer } from '@/live/register/live.initializer.js';
+import { LiveRegisterHelper } from '@/live/register/live.register-helper.js';
+import { LiveRegistrar } from '@/live/register/live.registrar.js';
+import { LiveDto, LiveStreamDto, StreamInfo } from '@/live/spec/live.dto.schema.js';
+import { LiveStreamQuery } from '@/live/storage/live-stream.repository.js';
+import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 const NEW_LIVE_INIT_WAIT_MS = 10_000;
 

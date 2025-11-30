@@ -1,13 +1,22 @@
-import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
 import { and, asc, desc, eq, notExists, sql } from 'drizzle-orm';
-import { LiveStreamEnt, liveStreamEnt, LiveStreamEntAppend, LiveStreamEntUpdate } from '../spec/live.entity.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channelGradeTable, channelTable, liveStreamTable, liveTable, platformTable } from '../../infra/db/schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelGradeTable, channelTable, liveStreamTable, liveTable, platformTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import {
+  LiveStreamEnt,
+  LiveStreamEntAppend,
+  LiveStreamEntUpdate,
+  liveStreamEnt,
+} from '@/live/spec/live.entity.schema.js';
 
 const liveStreamEntAppendReq = liveStreamEnt.partial({ id: true });
 type LiveStreamEntAppendRequest = z.infer<typeof liveStreamEntAppendReq>;
@@ -68,7 +77,10 @@ export class LiveStreamRepository {
       .innerJoin(platformTable, eq(channelTable.platformId, platformTable.id))
       .innerJoin(channelGradeTable, eq(channelTable.gradeId, channelGradeTable.id))
       .where(and(eq(platformTable.name, platformName), eq(channelGradeTable.shouldSave, true), notExists(subQuery)))
-      .orderBy(sql`${channelTable.streamCheckedAt} ASC NULLS FIRST`)
+      .orderBy(
+        sql`${channelTable.streamCheckedAt}
+      ASC NULLS FIRST`,
+      )
       .limit(limit);
     return res.map((row) => row.channels);
   }

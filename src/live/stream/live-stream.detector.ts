@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { LiveStreamRepository } from '../storage/live-stream.repository.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
-import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { Stlink } from '../../platform/stlink/stlink.js';
-import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
-import { LiveStreamService } from './live-stream.service.js';
-import { liveInfoAttr } from '../../common/attr/attr.live.js';
-import { handleSettled } from '../../utils/log.js';
+
+import { handleSettled } from '@/utils/log.js';
+
+import { liveInfoAttr } from '@/common/attr/attr.live.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+import { ChannelInfo } from '@/platform/spec/wapper/channel.js';
+import { Stlink } from '@/platform/stlink/stlink.js';
+
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+
+import { LiveStreamRepository } from '@/live/storage/live-stream.repository.js';
+import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 export const QUERY_LIMIT = 10; // TODO: use config
 

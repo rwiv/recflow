@@ -1,8 +1,10 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { z } from 'zod';
-import { nnint, nonempty } from '../../data/common.schema.js';
-import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
 
 const criterionBatchInsert = z.object({
   name: nonempty,

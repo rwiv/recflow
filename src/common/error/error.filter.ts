@@ -1,9 +1,11 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Response } from 'express';
-import { HttpErrorResolver } from '../../utils/errors/resolver.http.js';
 import { log } from 'jslog';
-import { stacktrace } from '../../utils/errors/utils.js';
-import { ErrorResponse } from '../data/common.schema.js';
+
+import { HttpErrorResolver } from '@/utils/errors/resolver.http.js';
+import { stacktrace } from '@/utils/errors/utils.js';
+
+import { ErrorResponse } from '@/common/data/common.schema.js';
 
 @Catch(Error)
 export class HttpErrorFilter implements ExceptionFilter {

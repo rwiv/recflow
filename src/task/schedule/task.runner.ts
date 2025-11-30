@@ -1,11 +1,13 @@
-import { Task } from '../spec/task.interface.js';
-import { TaskErrorHandler } from './task.error-handler.js';
-import { TaskLockManager } from './task-lock.manager.js';
 import { Injectable } from '@nestjs/common';
-import { log } from 'jslog';
-import { LockSchema, taskMeta } from '../spec/task.schema.js';
-import { delay } from '../../utils/time.js';
 import { Job } from 'bullmq';
+import { log } from 'jslog';
+
+import { delay } from '@/utils/time.js';
+
+import { TaskLockManager } from '@/task/schedule/task-lock.manager.js';
+import { TaskErrorHandler } from '@/task/schedule/task.error-handler.js';
+import { Task } from '@/task/spec/task.interface.js';
+import { LockSchema, taskMeta } from '@/task/spec/task.schema.js';
 
 @Injectable()
 export class TaskRunner {

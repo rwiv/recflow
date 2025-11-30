@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { sortedByEarliestAssigned } from './node.selector.js';
+import { describe, expect, it } from 'vitest';
+
+import { sortedByEarliestAssigned } from '@/node/service/node.selector.js';
 
 describe('NodeSelector', () => {
   it('sortedByEarliestAssigned', () => {

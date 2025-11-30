@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CriterionStorageModule } from '../storage/criterion.storage.module.js';
-import { CriterionWriter } from './criterion.writer.js';
-import { CriterionFinder } from './criterion.finder.js';
-import { CriterionMapper } from './criterion.mapper.js';
-import { PlatformModule } from '../../platform/platform.module.js';
-import { CriterionRuleFinder } from './criterion.rule.finder.js';
+
+import { PlatformModule } from '@/platform/platform.module.js';
+
+import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
+import { CriterionMapper } from '@/criterion/service/criterion.mapper.js';
+import { CriterionRuleFinder } from '@/criterion/service/criterion.rule.finder.js';
+import { CriterionWriter } from '@/criterion/service/criterion.writer.js';
+import { CriterionStorageModule } from '@/criterion/storage/criterion.storage.module.js';
 
 @Module({
   imports: [CriterionStorageModule, PlatformModule],

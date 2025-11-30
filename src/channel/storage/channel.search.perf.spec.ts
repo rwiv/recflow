@@ -1,17 +1,22 @@
-import { describe, it, beforeAll } from 'vitest';
-import { TestingModule } from '@nestjs/testing';
-import { dummyChannelEntAppend } from '../spec/channel.dto.schema.dummy.js';
-import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
-import { DevInitializer } from '../../common/init/dev-initializer.js';
-import { dropTables } from '../../infra/db/utils.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
 import { faker } from '@faker-js/faker';
+import { TestingModule } from '@nestjs/testing';
 import assert from 'assert';
-import { subLists } from '../../utils/list.js';
-import { TagCommandRepository } from './tag.command.js';
-import { GradeService } from '../service/grade.service.js';
-import { ChannelCommandRepository } from './channel.command.js';
-import { ChannelSearchRepository, ChannelTagSearchRequest } from './channel.search.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { subLists } from '@/utils/list.js';
+
+import { newTestingModuleRef } from '@/common/helpers/helper.app.js';
+import { DevInitializer } from '@/common/init/dev-initializer.js';
+
+import { dropTables } from '@/infra/db/utils.js';
+
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { GradeService } from '@/channel/service/grade.service.js';
+import { dummyChannelEntAppend } from '@/channel/spec/channel.dto.schema.dummy.js';
+import { ChannelCommandRepository } from '@/channel/storage/channel.command.js';
+import { ChannelSearchRepository, ChannelTagSearchRequest } from '@/channel/storage/channel.search.js';
+import { TagCommandRepository } from '@/channel/storage/tag.command.js';
 
 describe.skip('ChannelSearchRepository perf', () => {
   let moduleRef: TestingModule;

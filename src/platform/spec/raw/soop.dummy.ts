@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { SoopChannelInfo, SoopLiveInfo } from './soop.js';
+
+import { SoopChannelInfo, SoopLiveInfo } from '@/platform/spec/raw/soop.js';
 
 export function dummySoopLiveInfo(overrides: Partial<SoopLiveInfo> = {}): SoopLiveInfo {
   return {

@@ -1,6 +1,8 @@
-import { describe, it, beforeAll } from 'vitest';
-import { readEnv } from '../../common/config/env.js';
-import { SQSClientImpl } from './sqs.client.impl.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { readEnv } from '@/common/config/env.js';
+
+import { SQSClientImpl } from '@/external/sqs/sqs.client.impl.js';
 
 describe.skip('SQSClientImpl', () => {
   let sqs: SQSClientImpl;

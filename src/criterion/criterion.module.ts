@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CriterionWebModule } from './web/criterion.web.module.js';
+
+import { CriterionWebModule } from '@/criterion/web/criterion.web.module.js';
 
 @Module({
   imports: [CriterionWebModule],

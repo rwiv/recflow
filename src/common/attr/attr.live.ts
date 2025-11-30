@@ -1,11 +1,16 @@
-import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
-import { GradeDto } from '../../channel/spec/grade.schema.js';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { LiveDto, LiveStreamDto } from '../../live/spec/live.dto.schema.js';
-import { NodeDtoMapped } from '../../node/spec/node.dto.schema.mapped.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { stacktrace } from '../../utils/errors/utils.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
+import { stacktrace } from '@/utils/errors/utils.js';
+
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { ChannelDto } from '@/channel/spec/channel.dto.schema.js';
+import { GradeDto } from '@/channel/spec/grade.schema.js';
+
+import { CriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
+import { NodeDtoMapped } from '@/node/spec/node.dto.schema.mapped.js';
+
+import { LiveDto, LiveStreamDto } from '@/live/spec/live.dto.schema.js';
 
 interface LiveAttr {
   platform: string;

@@ -1,7 +1,10 @@
 import { z } from 'zod';
-import { headers, nonempty, queryParams, uuid } from '../../../common/data/common.schema.js';
-import { platformNameEnum } from '../../../platform/spec/storage/platform.enum.schema.js';
-import { recnodeLocationType } from '../common/recnode.types.js';
+
+import { headers, nonempty, queryParams, uuid } from '@/common/data/common.schema.js';
+
+import { recnodeLocationType } from '@/external/recnode/common/recnode.types.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
 
 export const liveState = z.object({
   id: uuid,

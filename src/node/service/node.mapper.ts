@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { NodeEnt } from '../spec/node.entity.schema.js';
-import { NodeDto, NodeFieldsReq } from '../spec/node.dto.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeGroupRepository } from '../storage/node-group.repository.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { NodeDto, NodeFieldsReq } from '@/node/spec/node.dto.schema.js';
+import { NodeEnt } from '@/node/spec/node.entity.schema.js';
+import { NodeGroupRepository } from '@/node/storage/node-group.repository.js';
 
 @Injectable()
 export class NodeMapper {

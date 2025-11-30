@@ -1,13 +1,16 @@
-import { TagCommandRepository } from '../storage/tag.command.js';
-import { TagAppend, TagAttachment, TagDetachment, TagDto, TagUpdate } from '../spec/tag.dto.schema.js';
 import { Injectable } from '@nestjs/common';
-import { TagQueryRepository } from '../storage/tag.query.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { ChannelsToTagsEntAppend, TagEntAppend } from '../spec/tag.entity.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { ChannelCommandRepository } from '../storage/channel.command.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { TagAppend, TagAttachment, TagDetachment, TagDto, TagUpdate } from '@/channel/spec/tag.dto.schema.js';
+import { ChannelsToTagsEntAppend, TagEntAppend } from '@/channel/spec/tag.entity.schema.js';
+import { ChannelCommandRepository } from '@/channel/storage/channel.command.js';
+import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
+import { TagCommandRepository } from '@/channel/storage/tag.command.js';
+import { TagQueryRepository } from '@/channel/storage/tag.query.js';
 
 @Injectable()
 export class TagWriter {

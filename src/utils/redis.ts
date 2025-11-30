@@ -1,9 +1,10 @@
+import { RedisClientOptions } from '@redis/client';
 import fs from 'fs';
-import { createClient, RedisClientType } from 'redis';
 import { Redis } from 'ioredis';
 import { log } from 'jslog';
-import { RedisClientOptions } from '@redis/client';
-import { stacktrace } from './errors/utils.js';
+import { RedisClientType, createClient } from 'redis';
+
+import { stacktrace } from '@/utils/errors/utils.js';
 
 export interface RedisConfig {
   host: string;

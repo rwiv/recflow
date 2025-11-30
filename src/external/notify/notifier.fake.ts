@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { Notifier } from './notifier.js';
+
+import { Notifier } from '@/external/notify/notifier.js';
 
 @Injectable()
 export class FakeNotifier extends Notifier {

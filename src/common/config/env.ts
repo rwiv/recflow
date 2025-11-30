@@ -1,19 +1,21 @@
-import { UntfConfig, PostgresConfig, StreamqConfig, StlinkConfig, SQSConfig } from './config.types.js';
 import dotenv from 'dotenv';
 import { log } from 'jslog';
 import path from 'path';
+import { z } from 'zod';
+
+import { RedisConfig } from '@/utils/redis.js';
+
+import { PostgresConfig, SQSConfig, StlinkConfig, StreamqConfig, UntfConfig } from '@/common/config/config.types.js';
 import {
   readPgConfig,
-  readServerRedisConfig,
-  readSQSConfig,
   readRecnodeRedisMasterConfig,
   readRecnodeRedisReplicaConfig,
+  readSQSConfig,
+  readServerRedisConfig,
   readStlinkConfig,
   readStreamqConfig,
   readUntfConfig,
-} from './env.utils.js';
-import { z } from 'zod';
-import { RedisConfig } from '../../utils/redis.js';
+} from '@/common/config/env.utils.js';
 
 export const nodeEnvEnum = z.enum(['dev', 'test', 'prod']);
 export type NodeEnv = z.infer<typeof nodeEnvEnum>;

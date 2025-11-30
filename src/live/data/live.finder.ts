@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { LiveRepository } from '../storage/live.repository.js';
-import { LiveFieldsReq, LiveMapper } from './live.mapper.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { LiveFieldsReq, LiveMapper } from '@/live/data/live.mapper.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
+import { LiveRepository } from '@/live/storage/live.repository.js';
 
 export interface FindOptions extends LiveFieldsReq {
   forUpdate?: boolean;

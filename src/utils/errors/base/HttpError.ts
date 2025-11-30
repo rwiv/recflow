@@ -1,4 +1,4 @@
-import { BaseError, Details, Metadata } from './BaseError.js';
+import { BaseError, Details, Metadata } from '@/utils/errors/base/BaseError.js';
 
 export class HttpError extends BaseError {
   readonly status: number;

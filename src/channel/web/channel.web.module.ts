@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ChannelServiceModule } from '../service/channel.service.module.js';
-import { ChannelController } from './channel.controller.js';
-import { TagController } from './tag.controller.js';
-import { GradeController } from './grade.controller.js';
-import { ConfigModule } from '../../common/config/config.module.js';
+
+import { ConfigModule } from '@/common/config/config.module.js';
+
+import { ChannelServiceModule } from '@/channel/service/channel.service.module.js';
+import { ChannelController } from '@/channel/web/channel.controller.js';
+import { GradeController } from '@/channel/web/grade.controller.js';
+import { TagController } from '@/channel/web/tag.controller.js';
 
 @Module({
   imports: [ConfigModule, ChannelServiceModule],

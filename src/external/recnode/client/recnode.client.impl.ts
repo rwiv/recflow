@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RecordingStatus, nodeStatusResponse, Recnode } from './recnode.client.js';
-import { ENV } from '../../../common/config/config.module.js';
-import { Env } from '../../../common/config/env.js';
-import { checkResponse, getHttpRequestError } from '../../../utils/http.js';
+
+import { checkResponse, getHttpRequestError } from '@/utils/http.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { Recnode, RecordingStatus, nodeStatusResponse } from '@/external/recnode/client/recnode.client.js';
 
 @Injectable()
 export class RecnodeImpl extends Recnode {

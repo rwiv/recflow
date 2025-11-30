@@ -1,19 +1,24 @@
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { channelTagMapTable, channelTable } from '../../infra/db/schema.js';
+import { Injectable } from '@nestjs/common';
 import { and, desc, eq, exists, inArray, notExists, sql } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import type { SQLWrapper } from 'drizzle-orm/sql/sql';
-import { TagQueryRepository } from './tag.query.js';
-import { Injectable } from '@nestjs/common';
-import { GradeRepository } from './grade.repository.js';
-import { ChannelPageEntResult } from '../spec/channel.entity.schema.js';
-import { channelSortTypeEnum, ChannelSortType } from '../spec/channel.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { PageQuery } from '../../common/data/common.schema.js';
 import { PlatformName } from 'src/platform/spec/storage/platform.enum.schema.js';
-import { PlatformRepository } from '../../platform/storage/platform.repository.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { PageQuery } from '@/common/data/common.schema.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelTable, channelTagMapTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformRepository } from '@/platform/storage/platform.repository.js';
+
+import { ChannelSortType, channelSortTypeEnum } from '@/channel/spec/channel.dto.schema.js';
+import { ChannelPageEntResult } from '@/channel/spec/channel.entity.schema.js';
+import { GradeRepository } from '@/channel/storage/grade.repository.js';
+import { TagQueryRepository } from '@/channel/storage/tag.query.js';
 
 export interface ChannelSearchRequest {
   page?: PageQuery;
@@ -183,5 +188,12 @@ export class ChannelSearchRepository {
 }
 
 function getSubCountSQL(tags: string[], key: any) {
-  return sql<number>`COUNT(DISTINCT CASE WHEN ${key} IN ${tags} THEN ${key} END)`.mapWith(Number);
+  return sql<number>`COUNT(DISTINCT CASE WHEN
+  ${key}
+  IN
+  ${tags}
+  THEN
+  ${key}
+  END
+  )`.mapWith(Number);
 }

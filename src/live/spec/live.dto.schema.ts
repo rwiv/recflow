@@ -1,14 +1,18 @@
 import { z } from 'zod';
+
+import { headers, nonempty, queryParams } from '@/common/data/common.schema.js';
+
+import { platformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+
+import { channelDto } from '@/channel/spec/channel.dto.schema.js';
+
 import {
   liveEnt,
   liveEntUpdate,
   liveStreamEnt,
   liveStreamEntAppend,
   liveStreamEntUpdate,
-} from './live.entity.schema.js';
-import { channelDto } from '../../channel/spec/channel.dto.schema.js';
-import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
-import { headers, nonempty, queryParams } from '../../common/data/common.schema.js';
+} from '@/live/spec/live.entity.schema.js';
 
 export const streamInfo = z.object({
   url: nonempty,

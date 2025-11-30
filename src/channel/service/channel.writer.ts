@@ -1,35 +1,41 @@
-import { ChannelCommandRepository, UpdateOptions } from '../storage/channel.command.js';
-import { db } from '../../infra/db/db.js';
+import { Injectable } from '@nestjs/common';
+import { log } from 'jslog';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { hasDuplicates } from '@/utils/list.js';
+
+import { channelAttr } from '@/common/attr/attr.live.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { ChannelInfo } from '@/platform/spec/wapper/channel.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+import { ChannelMapper } from '@/channel/service/channel.mapper.js';
+import { TagWriter } from '@/channel/service/tag.writer.js';
 import {
+  ChannelAppend,
   ChannelAppendWithFetch,
   ChannelAppendWithInfo,
   ChannelDto,
-  ChannelAppend,
   ChannelUpdate,
   MappedChannelDto,
-} from '../spec/channel.dto.schema.js';
-import { TagDetachment, TagDto } from '../spec/tag.dto.schema.js';
-import { Injectable } from '@nestjs/common';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { TagWriter } from './tag.writer.js';
-import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { TagQueryRepository } from '../storage/tag.query.js';
-import { Tx } from '../../infra/db/types.js';
-import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
-import { ChannelMapper } from './channel.mapper.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { ChannelEntAppend } from '../spec/channel.entity.schema.js';
-import { hasDuplicates } from '../../utils/list.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { ChannelsToTagsEntAppend } from '../spec/tag.entity.schema.js';
-import { TagCommandRepository } from '../storage/tag.command.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { ChannelFinder } from './channel.finder.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
-import { log } from 'jslog';
-import { ChannelCacheStore } from '../storage/channel.cache.store.js';
-import { channelAttr } from '../../common/attr/attr.live.js';
-import { LiveStreamRepository } from '../../live/storage/live-stream.repository.js';
+} from '@/channel/spec/channel.dto.schema.js';
+import { ChannelEntAppend } from '@/channel/spec/channel.entity.schema.js';
+import { TagDetachment, TagDto } from '@/channel/spec/tag.dto.schema.js';
+import { ChannelsToTagsEntAppend } from '@/channel/spec/tag.entity.schema.js';
+import { ChannelCacheStore } from '@/channel/storage/channel.cache.store.js';
+import { ChannelCommandRepository, UpdateOptions } from '@/channel/storage/channel.command.js';
+import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
+import { TagCommandRepository } from '@/channel/storage/tag.command.js';
+import { TagQueryRepository } from '@/channel/storage/tag.query.js';
+
+import { LiveStreamRepository } from '@/live/storage/live-stream.repository.js';
 
 @Injectable()
 export class ChannelWriter {

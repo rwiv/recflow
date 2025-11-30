@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { NodeRepository } from '../storage/node.repository.js';
-import { NodeMapper } from './node.mapper.js';
-import { NodeFieldsReq } from '../spec/node.dto.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { NodeDtoMapped } from '../spec/node.dto.schema.mapped.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { NodeMapper } from '@/node/service/node.mapper.js';
+import { NodeFieldsReq } from '@/node/spec/node.dto.schema.js';
+import { NodeDtoMapped } from '@/node/spec/node.dto.schema.mapped.js';
+import { NodeRepository } from '@/node/storage/node.repository.js';
 
 @Injectable()
 export class NodeFinder {

@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { PlatformRepository } from './platform.repository.js';
-import { PlatformName } from '../spec/storage/platform.enum.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { platformDto } from '../spec/storage/platform.dto.schema.js';
-import { PlatformCacheStore } from './platform.cache.store.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { platformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+import { PlatformCacheStore } from '@/platform/storage/platform.cache.store.js';
+import { PlatformRepository } from '@/platform/storage/platform.repository.js';
 
 @Injectable()
 export class PlatformFinder {

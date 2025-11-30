@@ -1,7 +1,7 @@
-import { HttpError } from './base/HttpError.js';
-import { ErrorTypeToHttpStatus } from './types/records.js';
-import { HttpStatusCode } from './types/types.js';
-import { BaseErrorResolver } from './resolver.base.js';
+import { HttpError } from '@/utils/errors/base/HttpError.js';
+import { BaseErrorResolver } from '@/utils/errors/resolver.base.js';
+import { ErrorTypeToHttpStatus } from '@/utils/errors/types/records.js';
+import { HttpStatusCode } from '@/utils/errors/types/types.js';
 
 const DEFAULT_HTTP_ERROR_STATUS = 500;
 

@@ -1,21 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { LiveRegistrar } from '../register/live.registrar.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
-import { NodeWriter } from '../../node/service/node.writer.js';
-import { NodeGroupService } from '../../node/service/node-group.service.js';
-import { Recnode } from '../../external/recnode/client/recnode.client.js';
 import { log } from 'jslog';
-import { liveAttr } from '../../common/attr/attr.live.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { stacktrace } from '../../utils/errors/utils.js';
-import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
-import { delay } from '../../utils/time.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { nonempty } from '../../common/data/common.schema.js';
 import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+import { stacktrace } from '@/utils/errors/utils.js';
+import { delay } from '@/utils/time.js';
+
+import { liveAttr } from '@/common/attr/attr.live.js';
+import { nonempty } from '@/common/data/common.schema.js';
+
+import { Recnode } from '@/external/recnode/client/recnode.client.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+
+import { NodeGroupService } from '@/node/service/node-group.service.js';
+import { NodeFinder } from '@/node/service/node.finder.js';
+import { NodeWriter } from '@/node/service/node.writer.js';
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveRegistrar } from '@/live/register/live.registrar.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 const RECORDING_CLOSE_WAIT_TIMEOUT_MS = 60 * 1000; // 1 min
 const RECORDING_CLOSE_INTERVAL_DELAY_MS = 1000; // 1 sec

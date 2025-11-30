@@ -1,12 +1,15 @@
-import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { liveEnt, LiveEnt, LiveEntAppend, LiveEntUpdate } from '../spec/live.entity.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { channelTable, liveNodeTable, liveTable } from '../../infra/db/schema.js';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { channelTable, liveNodeTable, liveTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { LiveEnt, LiveEntAppend, LiveEntUpdate, liveEnt } from '@/live/spec/live.entity.schema.js';
 
 const liveEntAppendReq = liveEnt.partial({
   id: true,
@@ -90,7 +93,10 @@ export class LiveRepository {
     return tx
       .select()
       .from(liveTable)
-      .orderBy(sql`${liveTable.updatedAt} ASC NULLS FIRST`)
+      .orderBy(
+        sql`${liveTable.updatedAt}
+      ASC NULLS FIRST`,
+      )
       .limit(limit);
   }
 }

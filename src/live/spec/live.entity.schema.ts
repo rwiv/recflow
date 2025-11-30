@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { nnint, nonempty, uuid } from '../../common/data/common.schema.js';
-import { liveStatusEnum } from '../../infra/db/schema.js';
+
+import { nnint, nonempty, uuid } from '@/common/data/common.schema.js';
+
+import { liveStatusEnum } from '@/infra/db/schema.js';
 
 export const liveStatus = z.enum(liveStatusEnum);
 export type LiveStatus = z.infer<typeof liveStatus>;

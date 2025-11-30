@@ -1,30 +1,38 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
-import { exitCmd, ExitCmd } from '../spec/event.schema.js';
-import { RecordingStatus, Recnode } from '../../external/recnode/client/recnode.client.js';
-import { log } from 'jslog';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { liveAttr } from '../../common/attr/attr.live.js';
-import { delay } from '../../utils/time.js';
-import { LiveFinder } from '../data/live.finder.js';
 import assert from 'assert';
-import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
-import { z } from 'zod';
-import { uuid } from '../../common/data/common.schema.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { LiveWriter } from '../data/live.writer.js';
-import { db } from '../../infra/db/db.js';
-import { HttpError } from '../../utils/errors/base/HttpError.js';
-import { getHttpRequestError } from '../../utils/http.js';
-import { SQSClient } from '../../external/sqs/sqs.client.js';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
 import { Queue } from 'bullmq';
-import { LIVE_FINISH_NAME } from '../../task/live/live.task.contants.js';
 import { Redis } from 'ioredis';
-import { getJobOpts } from '../../task/schedule/task.utils.js';
+import { log } from 'jslog';
+import { z } from 'zod';
+
+import { HttpError } from '@/utils/errors/base/HttpError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+import { getHttpRequestError } from '@/utils/http.js';
+import { delay } from '@/utils/time.js';
+
+import { liveAttr } from '@/common/attr/attr.live.js';
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+import { uuid } from '@/common/data/common.schema.js';
+
+import { db } from '@/infra/db/db.js';
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { Recnode, RecordingStatus } from '@/external/recnode/client/recnode.client.js';
+import { SQSClient } from '@/external/sqs/sqs.client.js';
+
+import { LIVE_FINISH_NAME } from '@/task/live/live.task.contants.js';
+import { getJobOpts } from '@/task/schedule/task.utils.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveWriter } from '@/live/data/live.writer.js';
+import { ExitCmd, exitCmd } from '@/live/spec/event.schema.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
+import { LiveDtoMapped } from '@/live/spec/live.dto.schema.mapped.js';
 
 export const recnodeDoneStatusEnum = z.enum(['complete', 'canceled']);
 export type RecnodeDoneStatus = z.infer<typeof recnodeDoneStatusEnum>;

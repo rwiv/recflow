@@ -11,26 +11,30 @@ import {
   Query,
   UseFilters,
 } from '@nestjs/common';
-import { ChannelWriter } from '../service/channel.writer.js';
+
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { PageQuery, pageQuery } from '@/common/data/common.schema.js';
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+import { ChannelMapper } from '@/channel/service/channel.mapper.js';
+import { ChannelSearcher } from '@/channel/service/channel.searcher.js';
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+import { GradeService } from '@/channel/service/grade.service.js';
 import {
   ChannelAppendWithFetch,
+  ChannelSortType,
   ChannelUpdate,
-  channelUpdate,
   channelAppendWithFetch,
   channelPageResult,
   channelSortTypeEnum,
-  ChannelSortType,
-} from '../spec/channel.dto.schema.js';
-import { ChannelFinder } from '../service/channel.finder.js';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { ChannelSearcher } from '../service/channel.searcher.js';
-import { PageQuery, pageQuery } from '../../common/data/common.schema.js';
-import { GradeService } from '../service/grade.service.js';
-import { ChannelMapOptions } from '../spec/channel.types.js';
-import { ChannelMapper } from '../service/channel.mapper.js';
-import { ChannelSearchRequest, ChannelTagSearchRequest } from '../storage/channel.search.js';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
+  channelUpdate,
+} from '@/channel/spec/channel.dto.schema.js';
+import { ChannelMapOptions } from '@/channel/spec/channel.types.js';
+import { ChannelSearchRequest, ChannelTagSearchRequest } from '@/channel/storage/channel.search.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels')

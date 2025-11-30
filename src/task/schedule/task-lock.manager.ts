@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
-import { v4 } from 'uuid';
-import { cronTaskDefs } from '../spec/task.queue-defs.js';
 import { log } from 'jslog';
+import { v4 } from 'uuid';
+
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { cronTaskDefs } from '@/task/spec/task.queue-defs.js';
 
 @Injectable()
 export class TaskLockManager {

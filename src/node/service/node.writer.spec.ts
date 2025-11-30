@@ -1,14 +1,19 @@
-import { describe, it, beforeEach, afterAll, expect, beforeAll } from 'vitest';
 import { TestingModule } from '@nestjs/testing';
-import { dropTables } from '../../infra/db/utils.js';
-import { dummyNodeAppend } from '../spec/node.dto.schema.dummy.js';
-import { notNull } from '../../utils/null.js';
-import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
-import { DevInitializer } from '../../common/init/dev-initializer.js';
-import { NodeWriter } from './node.writer.js';
-import { NodeFinder } from './node.finder.js';
-import { NodeGroupRepository } from '../storage/node-group.repository.js';
-import { LiveStateCleaner } from '../../live/data/live.state.cleaner.js';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+
+import { notNull } from '@/utils/null.js';
+
+import { newTestingModuleRef } from '@/common/helpers/helper.app.js';
+import { DevInitializer } from '@/common/init/dev-initializer.js';
+
+import { dropTables } from '@/infra/db/utils.js';
+
+import { NodeFinder } from '@/node/service/node.finder.js';
+import { NodeWriter } from '@/node/service/node.writer.js';
+import { dummyNodeAppend } from '@/node/spec/node.dto.schema.dummy.js';
+import { NodeGroupRepository } from '@/node/storage/node-group.repository.js';
+
+import { LiveStateCleaner } from '@/live/data/live.state.cleaner.js';
 
 describe.skip('test NodeWriter', () => {
   let moduleRef: TestingModule;

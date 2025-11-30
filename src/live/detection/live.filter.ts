@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ChzzkLiveFilter } from './filters/live-filter.chzzk.js';
-import { SoopLiveFilter } from './filters/live-filter.soop.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
-import {
-  chzzkCriterionDto,
-  PlatformCriterionDto,
-  soopCriterionDto,
-} from '../../criterion/spec/criterion.dto.schema.js';
+
+import { EnumCheckError } from '@/utils/errors/errors/EnumCheckError.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { PlatformCriterionDto, chzzkCriterionDto, soopCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+
+import { ChzzkLiveFilter } from '@/live/detection/filters/live-filter.chzzk.js';
+import { SoopLiveFilter } from '@/live/detection/filters/live-filter.soop.js';
 
 @Injectable()
 export class PlatformLiveFilter {

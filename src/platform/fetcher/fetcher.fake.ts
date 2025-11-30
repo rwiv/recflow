@@ -1,9 +1,11 @@
-import { PlatformFetcher } from './fetcher.js';
-import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { PlatformName } from '../spec/storage/platform.enum.schema.js';
-import { LiveInfo } from '../spec/wapper/live.js';
-import { ChannelInfo } from '../spec/wapper/channel.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+import { ChannelInfo } from '@/platform/spec/wapper/channel.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { PlatformCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 export class PlatformFetcherFake extends PlatformFetcher {
   private lives: LiveInfo[] = [];

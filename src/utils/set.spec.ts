@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { processSets } from './set.js';
+import { describe, expect, it } from 'vitest';
+
+import { processSets } from '@/utils/set.js';
 
 describe('utils.set', () => {
   it('processSets', () => {

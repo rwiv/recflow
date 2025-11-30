@@ -1,7 +1,9 @@
-import { beforeAll, describe, it } from 'vitest';
 import { TestingModule } from '@nestjs/testing';
-import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
-import { LiveStateCleaner } from './live.state.cleaner.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { newTestingModuleRef } from '@/common/helpers/helper.app.js';
+
+import { LiveStateCleaner } from '@/live/data/live.state.cleaner.js';
 
 describe.skip('LiveStateCleaner', () => {
   let moduleRef: TestingModule;

@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { CriterionWriter } from '../../../criterion/service/criterion.writer.js';
+import { z } from 'zod';
+
+import { nonempty } from '@/common/data/common.schema.js';
+
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { CriterionWriter } from '@/criterion/service/criterion.writer.js';
 import {
-  chzzkCriterionAppend,
   ChzzkCriterionAppend,
   SoopCriterionAppend,
-} from '../../../criterion/spec/criterion.dto.schema.js';
-import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
-import { z } from 'zod';
-import { nonempty } from '../../data/common.schema.js';
+  chzzkCriterionAppend,
+} from '@/criterion/spec/criterion.dto.schema.js';
 
 const criterionBatchInsert = z.object({
   name: nonempty,

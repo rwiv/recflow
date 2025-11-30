@@ -1,6 +1,8 @@
 import { RedisClientType } from 'redis';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { CacheStore, SetOptions } from './cache.store.js';
+
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { CacheStore, SetOptions } from '@/infra/cache/cache.store.js';
 
 export class RedisCacheStore extends CacheStore {
   constructor(

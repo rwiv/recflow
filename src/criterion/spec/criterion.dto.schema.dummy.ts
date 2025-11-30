@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { CriterionUnitDto, PlatformCriterionDto } from './criterion.dto.schema.js';
-import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
+
+import { dummyPlatformDto } from '@/platform/spec/storage/platform.dto.schema.dummy.js';
+
+import { CriterionUnitDto, PlatformCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 export function dummyCriterionUnit(overrides: Partial<CriterionUnitDto> = {}): CriterionUnitDto {
   return {

@@ -1,22 +1,33 @@
 import { Body, Controller, Delete, Get, Inject, Post, Query, UseFilters } from '@nestjs/common';
-import { LiveRegistrar } from '../register/live.registrar.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { exitCmd } from '../spec/event.schema.js';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { liveAppendRequest, LiveAppendRequest, liveDeleteRequest, LiveDeleteRequest } from './live.web.schema.js';
-import { channelLiveInfo } from '../../platform/spec/wapper/channel.js';
-import { DrainArgs, drainArgs } from '../coord/live.drainer.js';
 import { Queue } from 'bullmq';
-import { getJobOpts } from '../../task/schedule/task.utils.js';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
 import { Redis } from 'ioredis';
-import { NODE_DRAIN_NAME } from '../../task/node/node.tasks.constants.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { LiveInitializer } from '../register/live.initializer.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { NODE_DRAIN_NAME } from '@/task/node/node.tasks.constants.js';
+import { getJobOpts } from '@/task/schedule/task.utils.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { channelLiveInfo } from '@/platform/spec/wapper/channel.js';
+
+import { DrainArgs, drainArgs } from '@/live/coord/live.drainer.js';
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveInitializer } from '@/live/register/live.initializer.js';
+import { LiveRegistrar } from '@/live/register/live.registrar.js';
+import { exitCmd } from '@/live/spec/event.schema.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
+import {
+  LiveAppendRequest,
+  LiveDeleteRequest,
+  liveAppendRequest,
+  liveDeleteRequest,
+} from '@/live/web/live.web.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/lives')

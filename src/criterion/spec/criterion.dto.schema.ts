@@ -1,7 +1,10 @@
 import { z } from 'zod';
-import { criterionEnt, criterionEntUpdate, criterionUnitEnt } from './criterion.entity.schema.js';
-import { nonempty, uuid } from '../../common/data/common.schema.js';
-import { platformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+
+import { nonempty, uuid } from '@/common/data/common.schema.js';
+
+import { platformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+
+import { criterionEnt, criterionEntUpdate, criterionUnitEnt } from '@/criterion/spec/criterion.entity.schema.js';
 
 export const criterionUnitDto = criterionUnitEnt;
 export type CriterionUnitDto = z.infer<typeof criterionUnitDto>;

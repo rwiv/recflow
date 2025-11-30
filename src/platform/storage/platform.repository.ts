@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
-import { platformTable } from '../../infra/db/schema.js';
 import { eq } from 'drizzle-orm';
-import { PlatformName, platformNameEnum } from '../spec/storage/platform.enum.schema.js';
 import { z } from 'zod';
-import { PlatformEnt, platformEnt } from './platform.entity.schema.js';
+
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { platformTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformName, platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+import { PlatformEnt, platformEnt } from '@/platform/storage/platform.entity.schema.js';
 
 export const platformEntAppend = platformEnt
   .partial({ id: true, createdAt: true, updatedAt: true })

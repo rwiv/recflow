@@ -1,17 +1,19 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, UseFilters } from '@nestjs/common';
-import { TagWriter } from '../service/tag.writer.js';
-import { TagFinder } from '../service/tag.finder.js';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
+
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { TagFinder } from '@/channel/service/tag.finder.js';
+import { TagWriter } from '@/channel/service/tag.writer.js';
 import {
-  tagAppend,
   TagAppend,
-  tagAttachment,
   TagAttachment,
-  tagDetachment,
   TagDetachment,
-  tagUpdate,
   TagUpdate,
-} from '../spec/tag.dto.schema.js';
+  tagAppend,
+  tagAttachment,
+  tagDetachment,
+  tagUpdate,
+} from '@/channel/spec/tag.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels/tags')

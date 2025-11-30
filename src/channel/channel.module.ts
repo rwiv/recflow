@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ChannelWebModule } from './web/channel.web.module.js';
+
+import { ChannelWebModule } from '@/channel/web/channel.web.module.js';
 
 @Module({
   imports: [ChannelWebModule],

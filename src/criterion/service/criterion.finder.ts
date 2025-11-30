@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionRepository } from '../storage/criterion.repository.js';
-import { CriterionMapper } from './criterion.mapper.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { ChzzkCriterionDto, PlatformCriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { EnumCheckError } from '../../utils/errors/errors/EnumCheckError.js';
-import { CriterionEnt } from '../spec/criterion.entity.schema.js';
-import { PlatformDto } from '../../platform/spec/storage/platform.dto.schema.js';
+
+import { EnumCheckError } from '@/utils/errors/errors/EnumCheckError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformDto } from '@/platform/spec/storage/platform.dto.schema.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { CriterionMapper } from '@/criterion/service/criterion.mapper.js';
+import { ChzzkCriterionDto, PlatformCriterionDto, SoopCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+import { CriterionEnt } from '@/criterion/spec/criterion.entity.schema.js';
+import { CriterionRepository } from '@/criterion/storage/criterion.repository.js';
 
 @Injectable()
 export class CriterionFinder {

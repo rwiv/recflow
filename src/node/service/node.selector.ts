@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { NodeFinder } from './node.finder.js';
-import { NodeDto } from '../spec/node.dto.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { NodeDtoMapped } from '../spec/node.dto.schema.mapped.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
+
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { NodeFinder } from '@/node/service/node.finder.js';
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
+import { NodeDtoMapped } from '@/node/spec/node.dto.schema.mapped.js';
 
 export interface NodeSelectorArgs {
   ignoreNodeIds: string[];

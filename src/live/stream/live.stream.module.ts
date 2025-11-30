@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-import { LiveStreamService } from './live-stream.service.js';
-import { LiveStreamMapper } from './live-stream.mapper.js';
-import { ChannelServiceModule } from '../../channel/service/channel.service.module.js';
-import { LiveStorageModule } from '../storage/live.storage.module.js';
-import { LiveStreamDetector } from './live-stream.detector.js';
-import { ChannelStorageModule } from '../../channel/storage/channel.storage.module.js';
-import { PlatformModule } from '../../platform/platform.module.js';
-import { LiveStreamAuditor } from './live-stream.auditor.js';
+
+import { PlatformModule } from '@/platform/platform.module.js';
+
+import { ChannelServiceModule } from '@/channel/service/channel.service.module.js';
+import { ChannelStorageModule } from '@/channel/storage/channel.storage.module.js';
+
+import { LiveStorageModule } from '@/live/storage/live.storage.module.js';
+import { LiveStreamAuditor } from '@/live/stream/live-stream.auditor.js';
+import { LiveStreamDetector } from '@/live/stream/live-stream.detector.js';
+import { LiveStreamMapper } from '@/live/stream/live-stream.mapper.js';
+import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 @Module({
   imports: [PlatformModule, ChannelServiceModule, ChannelStorageModule, LiveStorageModule],

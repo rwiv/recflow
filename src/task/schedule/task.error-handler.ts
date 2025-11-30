@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { BaseErrorResolver } from '../../utils/errors/resolver.base.js';
 import { log } from 'jslog';
-import { stacktrace } from '../../utils/errors/utils.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
+
+import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
+import { BaseErrorResolver } from '@/utils/errors/resolver.base.js';
+import { stacktrace } from '@/utils/errors/utils.js';
 
 @Injectable()
 export class TaskErrorHandler {

@@ -1,12 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { log } from 'jslog';
-import { RecordingStatus, Recnode } from './recnode.client.js';
-import { ENV } from '../../../common/config/config.module.js';
-import { Env } from '../../../common/config/env.js';
 import assert from 'assert';
-import { nodeDto } from '../../../node/spec/node.dto.schema.js';
-import { liveDto } from '../../../live/spec/live.dto.schema.js';
+import { log } from 'jslog';
 import { z } from 'zod';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { Recnode, RecordingStatus } from '@/external/recnode/client/recnode.client.js';
+
+import { nodeDto } from '@/node/spec/node.dto.schema.js';
+
+import { liveDto } from '@/live/spec/live.dto.schema.js';
 
 const FAILURE_CNT_THRESHOLD = 10;
 // const FAILURE_ENABLED = true;
@@ -18,6 +22,7 @@ const livesSchema = z.array(liveDto);
 @Injectable()
 export class RecnodeFake extends Recnode {
   private failureCnt: number = 0;
+
   constructor(@Inject(ENV) private readonly env: Env) {
     super();
   }

@@ -1,10 +1,14 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { Recnode } from '../../external/recnode/client/recnode.client.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { NodeFinder } from '../service/node.finder.js';
-import { NodeWriter } from '../service/node.writer.js';
-import { nodeAppend, NodeAppend, nodeUpdate, NodeUpdate } from '../spec/node.dto.schema.js';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { Recnode } from '@/external/recnode/client/recnode.client.js';
+
+import { NodeFinder } from '@/node/service/node.finder.js';
+import { NodeWriter } from '@/node/service/node.writer.js';
+import { NodeAppend, NodeUpdate, nodeAppend, nodeUpdate } from '@/node/spec/node.dto.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/nodes')

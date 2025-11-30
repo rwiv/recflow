@@ -1,6 +1,7 @@
-import { NodeGroupRepository } from '../storage/node-group.repository.js';
 import { Injectable } from '@nestjs/common';
-import { NodeGroupAppend, NodeGroupUpdate } from '../spec/node.entity.schema.js';
+
+import { NodeGroupAppend, NodeGroupUpdate } from '@/node/spec/node.entity.schema.js';
+import { NodeGroupRepository } from '@/node/storage/node-group.repository.js';
 
 @Injectable()
 export class NodeGroupService {

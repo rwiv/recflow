@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { nnint, nonempty } from '../../common/data/common.schema.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
 
 export const lockSchema = z.object({ name: nonempty, token: nonempty });
 export type LockSchema = z.infer<typeof lockSchema>;

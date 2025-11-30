@@ -1,6 +1,8 @@
-import { describe, it, beforeAll } from 'vitest';
-import { UntfNotifier } from './notifier.untf.js';
-import { readEnv } from '../../common/config/env.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { readEnv } from '@/common/config/env.js';
+
+import { UntfNotifier } from '@/external/notify/notifier.untf.js';
 
 describe.skip('UntfNotifier', () => {
   let notifier: UntfNotifier;

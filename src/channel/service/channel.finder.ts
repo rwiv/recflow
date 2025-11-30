@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { ChannelMapper } from './channel.mapper.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { ChannelDto } from '../spec/channel.dto.schema.js';
-import { ChannelCacheStore } from '../storage/channel.cache.store.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelMapper } from '@/channel/service/channel.mapper.js';
+import { ChannelDto } from '@/channel/spec/channel.dto.schema.js';
+import { ChannelCacheStore } from '@/channel/storage/channel.cache.store.js';
+import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
 
 @Injectable()
 export class ChannelFinder {

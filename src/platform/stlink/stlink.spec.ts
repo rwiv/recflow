@@ -1,6 +1,8 @@
-import { describe, it, beforeAll } from 'vitest';
-import { readEnv } from '../../common/config/env.js';
-import { Stlink } from './stlink.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { readEnv } from '@/common/config/env.js';
+
+import { Stlink } from '@/platform/stlink/stlink.js';
 
 describe.skip('Stlink', () => {
   let stlink: Stlink;

@@ -1,18 +1,22 @@
-import fs from 'fs';
-import { ChannelInfo } from '../../../platform/spec/wapper/channel.js';
-import { ChannelWriter } from '../../../channel/service/channel.writer.js';
-import { randomElem, shuffleArray } from '../../../utils/list.js';
-import { arrayElement, randomInt } from '../../../utils/random.js';
-import { ChannelAppend, channelAppend } from '../../../channel/spec/channel.dto.schema.js';
-import { PlatformFetcher } from '../../../platform/fetcher/fetcher.js';
 import { Injectable } from '@nestjs/common';
-import { readBatchConfig } from './insert.config.js';
-import { DevNodeInserter } from './insert.node.js';
-import { DevCriterionInserter } from './insert.criterion.js';
-import { PlatformFinder } from '../../../platform/storage/platform.finder.js';
-import { NotFoundError } from '../../../utils/errors/errors/NotFoundError.js';
-import { GradeService } from '../../../channel/service/grade.service.js';
-import { PlatformName } from '../../../platform/spec/storage/platform.enum.schema.js';
+import fs from 'fs';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { randomElem, shuffleArray } from '@/utils/list.js';
+import { arrayElement, randomInt } from '@/utils/random.js';
+
+import { readBatchConfig } from '@/common/init/insert/insert.config.js';
+import { DevCriterionInserter } from '@/common/init/insert/insert.criterion.js';
+import { DevNodeInserter } from '@/common/init/insert/insert.node.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { PlatformName } from '@/platform/spec/storage/platform.enum.schema.js';
+import { ChannelInfo } from '@/platform/spec/wapper/channel.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+import { GradeService } from '@/channel/service/grade.service.js';
+import { ChannelAppend, channelAppend } from '@/channel/spec/channel.dto.schema.js';
 
 @Injectable()
 export class DevChannelInserter {

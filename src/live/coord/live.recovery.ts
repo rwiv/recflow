@@ -1,26 +1,33 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { LiveFinder } from '../data/live.finder.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { NodeWriter } from '../../node/service/node.writer.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { LiveRegistrar } from '../register/live.registrar.js';
-import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
-import { log } from 'jslog';
-import { isValidRecStatus, RecordingStatus, Recnode } from '../../external/recnode/client/recnode.client.js';
-import { NodeFinder } from '../../node/service/node.finder.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
 import assert from 'assert';
-import { liveAttr } from '../../common/attr/attr.live.js';
-import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
-import { Notifier } from '../../external/notify/notifier.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { LogLevel, handleSettled } from '../../utils/log.js';
-import { stacktrace } from '../../utils/errors/utils.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveInitializer } from '../register/live.initializer.js';
+import { log } from 'jslog';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { stacktrace } from '@/utils/errors/utils.js';
+import { LogLevel, handleSettled } from '@/utils/log.js';
+
+import { liveAttr } from '@/common/attr/attr.live.js';
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { Notifier } from '@/external/notify/notifier.js';
+import { Recnode, RecordingStatus, isValidRecStatus } from '@/external/recnode/client/recnode.client.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+
+import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+
+import { NodeFinder } from '@/node/service/node.finder.js';
+import { NodeWriter } from '@/node/service/node.writer.js';
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
+import { LiveNodeRepository } from '@/node/storage/live-node.repository.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveInitializer } from '@/live/register/live.initializer.js';
+import { LiveRegistrar } from '@/live/register/live.registrar.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 interface InvalidNode {
   node: NodeDto;

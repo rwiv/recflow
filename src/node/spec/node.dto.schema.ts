@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { nodeEnt, nodeEntAppend, nodeEntUpdate, nodeGroupEnt } from './node.entity.schema.js';
+
+import { nodeEnt, nodeEntAppend, nodeEntUpdate, nodeGroupEnt } from '@/node/spec/node.entity.schema.js';
 
 export const nodeDto = nodeEnt.extend({
   group: nodeGroupEnt.optional(),

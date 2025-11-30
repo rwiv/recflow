@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
-import { LiveInitializer } from './live.initializer.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { NewLiveRequest } from './live.initializer.impl.js';
+
+import { NewLiveRequest } from '@/live/register/live.initializer.impl.js';
+import { LiveInitializer } from '@/live/register/live.initializer.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
 
 export class LiveInitializerMock extends LiveInitializer {
   _createNewLiveByLive = vi.fn();

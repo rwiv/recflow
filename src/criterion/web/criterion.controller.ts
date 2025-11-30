@@ -1,14 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
-import { CriterionFinder } from '../service/criterion.finder.js';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { CriterionWriter } from '../service/criterion.writer.js';
+
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
+import { CriterionWriter } from '@/criterion/service/criterion.writer.js';
 import {
   ChzzkCriterionAppend,
-  criterionUpdate,
   CriterionUpdate,
   SoopCriterionAppend,
-} from '../spec/criterion.dto.schema.js';
-import { CriterionUnitEntAppend } from '../spec/criterion.entity.schema.js';
+  criterionUpdate,
+} from '@/criterion/spec/criterion.dto.schema.js';
+import { CriterionUnitEntAppend } from '@/criterion/spec/criterion.entity.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/criteria')

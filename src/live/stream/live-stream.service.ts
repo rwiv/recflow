@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { LiveStreamAppend, LiveStreamDto, LiveStreamUpdate, StreamInfo } from '../spec/live.dto.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { LiveStreamQuery, LiveStreamRepository } from '../storage/live-stream.repository.js';
-import { LiveStreamMapper } from './live-stream.mapper.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { LiveStreamAppend, LiveStreamDto, LiveStreamUpdate, StreamInfo } from '@/live/spec/live.dto.schema.js';
+import { LiveStreamQuery, LiveStreamRepository } from '@/live/storage/live-stream.repository.js';
+import { LiveStreamMapper } from '@/live/stream/live-stream.mapper.js';
 
 export interface LiveStreamCreationArgs {
   streamInfo: StreamInfo;

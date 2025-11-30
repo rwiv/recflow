@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { MemoryCacheStore } from './cache.store.memory.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+
+import { MemoryCacheStore } from '@/infra/cache/cache.store.memory.js';
 
 describe('MemoryCacheStore', () => {
   let cache: MemoryCacheStore;

@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionEnt, criterionEnt, CriterionEntAppend, CriterionEntUpdate } from '../spec/criterion.entity.schema.js';
-import { db } from '../../infra/db/db.js';
-import { Tx } from '../../infra/db/types.js';
-import { z } from 'zod';
-import { liveCriterionTable } from '../../infra/db/schema.js';
-import { oneNotNull, oneNullable } from '../../utils/list.js';
 import { eq } from 'drizzle-orm';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
+import { z } from 'zod';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { oneNotNull, oneNullable } from '@/utils/list.js';
+
+import { db } from '@/infra/db/db.js';
+import { liveCriterionTable } from '@/infra/db/schema.js';
+import { Tx } from '@/infra/db/types.js';
+
+import {
+  CriterionEnt,
+  CriterionEntAppend,
+  CriterionEntUpdate,
+  criterionEnt,
+} from '@/criterion/spec/criterion.entity.schema.js';
 
 const criterionEntAppendReq = criterionEnt.partial({ id: true, description: true, updatedAt: true });
 type CriterionEntAppendReq = z.infer<typeof criterionEntAppendReq>;

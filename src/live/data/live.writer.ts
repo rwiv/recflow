@@ -1,23 +1,30 @@
-import { LiveRepository } from '../storage/live.repository.js';
 import { Inject, Injectable } from '@nestjs/common';
-import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { LiveEntAppend } from '../spec/live.entity.schema.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { LiveMapper } from './live.mapper.js';
-import { LiveDto, LiveStreamDto, LiveUpdate } from '../spec/live.dto.schema.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { getFormattedTimestamp } from '../../utils/time.js';
-import { LiveNodeRepository } from '../../node/storage/live-node.repository.js';
-import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { NodeRepository } from '../../node/storage/node.repository.js';
-import { LiveStreamService } from '../stream/live-stream.service.js';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { getFormattedTimestamp } from '@/utils/time.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+
+import { LiveNodeRepository } from '@/node/storage/live-node.repository.js';
+import { NodeRepository } from '@/node/storage/node.repository.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveMapper } from '@/live/data/live.mapper.js';
+import { LiveDto, LiveStreamDto, LiveUpdate } from '@/live/spec/live.dto.schema.js';
+import { LiveEntAppend } from '@/live/spec/live.entity.schema.js';
+import { LiveRepository } from '@/live/storage/live.repository.js';
+import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 export interface LiveCreationFields {
   channelId: string;

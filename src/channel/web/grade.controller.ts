@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
-import { HttpErrorFilter } from '../../common/error/error.filter.js';
-import { GradeService } from '../service/grade.service.js';
-import { gradeAppend, GradeAppend, GradeUpdate, gradeUpdate } from '../spec/grade.schema.js';
+
+import { HttpErrorFilter } from '@/common/error/error.filter.js';
+
+import { GradeService } from '@/channel/service/grade.service.js';
+import { GradeAppend, GradeUpdate, gradeAppend, gradeUpdate } from '@/channel/spec/grade.schema.js';
 
 @UseFilters(HttpErrorFilter)
 @Controller('/api/channels/grades')

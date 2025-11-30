@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { ChzzkChannelInfo, ChzzkLiveInfo } from './chzzk.js';
+
+import { ChzzkChannelInfo, ChzzkLiveInfo } from '@/platform/spec/raw/chzzk.js';
 
 export function dummyChzzkLiveInfo(overrides: Partial<ChzzkLiveInfo> = {}): ChzzkLiveInfo {
   return {

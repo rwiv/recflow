@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelCacheStore } from '../storage/channel.cache.store.js';
-import { ChannelQueryRepository } from '../storage/channel.query.js';
-import { isEqualSet } from '../../utils/set.js';
 import { log } from 'jslog';
+
+import { isEqualSet } from '@/utils/set.js';
+
+import { ChannelCacheStore } from '@/channel/storage/channel.cache.store.js';
+import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
 
 @Injectable()
 export class ChannelCacheChecker {

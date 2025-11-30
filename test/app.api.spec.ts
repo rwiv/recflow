@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
-import { describe, it, beforeAll } from 'vitest';
-import { readEnv, Env } from '../src/common/config/env.js';
+import { beforeAll, describe, it } from 'vitest';
+
+import { Env, readEnv } from '../src/common/config/env.js';
 
 describe.skip('app api', () => {
   let env: Env;

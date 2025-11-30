@@ -1,15 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { Recnode } from '../../external/recnode/client/recnode.client.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
-import { LiveRegistrar } from '../register/live.registrar.js';
 import { log } from 'jslog';
-import { liveAttr } from '../../common/attr/attr.live.js';
-import { LogLevel, handleSettled } from '../../utils/log.js';
-import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
-import { NodeRepository } from '../../node/storage/node.repository.js';
+
+import { LogLevel, handleSettled } from '@/utils/log.js';
+
+import { liveAttr } from '@/common/attr/attr.live.js';
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { Recnode } from '@/external/recnode/client/recnode.client.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+
+import { NodeRepository } from '@/node/storage/node.repository.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveRegistrar } from '@/live/register/live.registrar.js';
+import { LiveDtoMapped } from '@/live/spec/live.dto.schema.mapped.js';
 
 const INIT_THRESHOLD_SEC = 5 * 60; // 5 minutes
 

@@ -1,4 +1,4 @@
-import { ValidationError } from './errors/errors/ValidationError.js';
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
 
 export function randomInt(a: number, b: number): number {
   if (a > b) {

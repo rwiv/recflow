@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { NodeWebModule } from './web/node.web.module.js';
+
+import { NodeWebModule } from '@/node/web/node.web.module.js';
 
 @Module({
   imports: [NodeWebModule],

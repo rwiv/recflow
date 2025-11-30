@@ -1,4 +1,4 @@
-import { ErrorType } from '../types/types.js';
+import { ErrorType } from '@/utils/errors/types/types.js';
 
 export interface Details {
   cause?: unknown;

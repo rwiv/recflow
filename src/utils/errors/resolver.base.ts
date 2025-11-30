@@ -1,7 +1,8 @@
 import { ZodError } from 'zod';
-import { zodErrMsg } from '../zod.js';
-import { BaseError } from './base/BaseError.js';
-import { ErrorType } from './types/types.js';
+
+import { BaseError } from '@/utils/errors/base/BaseError.js';
+import { ErrorType } from '@/utils/errors/types/types.js';
+import { zodErrMsg } from '@/utils/zod.js';
 
 const BASE_ERROR_TYPE: ErrorType = 'Internal Server Error';
 

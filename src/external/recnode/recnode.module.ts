@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '../../common/config/config.module.js';
-import { RecnodeFactory } from './recnode.factory.js';
-import { Recnode } from './client/recnode.client.js';
-import { RecnodeImpl } from './client/recnode.client.impl.js';
-import { RecnodeFake } from './client/recnode.client.fake.js';
-import { RecnodeRedis } from './redis/recnode.redis.js';
+
+import { ConfigModule } from '@/common/config/config.module.js';
+
+import { RecnodeFake } from '@/external/recnode/client/recnode.client.fake.js';
+import { RecnodeImpl } from '@/external/recnode/client/recnode.client.impl.js';
+import { Recnode } from '@/external/recnode/client/recnode.client.js';
+import { RecnodeFactory } from '@/external/recnode/recnode.factory.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
 
 @Module({
   imports: [ConfigModule],

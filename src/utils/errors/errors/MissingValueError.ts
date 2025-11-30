@@ -1,4 +1,4 @@
-import { BaseError, Details } from '../base/BaseError.js';
+import { BaseError, Details } from '@/utils/errors/base/BaseError.js';
 
 export class MissingValueError extends BaseError {
   constructor(message: string, details?: Details) {

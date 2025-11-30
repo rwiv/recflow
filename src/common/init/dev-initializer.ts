@@ -1,16 +1,22 @@
-import path from 'path';
 import { Inject, Injectable } from '@nestjs/common';
-import { dropTables } from '../../infra/db/utils.js';
-import { DevChannelInserter } from './insert/insert.channel.js';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { NodeGroupRepository } from '../../node/storage/node-group.repository.js';
-import { CriterionRuleRepository } from '../../criterion/storage/criterion-rule.repository.js';
-import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../../criterion/spec/criterion.rule.schema.js';
-import { DEFAULT_PRIORITY_NAME } from '../../channel/spec/grade.constants.js';
-import { GradeService } from '../../channel/service/grade.service.js';
-import { PlatformWriter } from '../../platform/storage/platform.writer.js';
-import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { CacheStore } from '../../infra/cache/cache.store.js';
+import path from 'path';
+
+import { DevChannelInserter } from '@/common/init/insert/insert.channel.js';
+
+import { CacheStore } from '@/infra/cache/cache.store.js';
+import { dropTables } from '@/infra/db/utils.js';
+import { SERVER_REDIS } from '@/infra/infra.tokens.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+import { PlatformWriter } from '@/platform/storage/platform.writer.js';
+
+import { GradeService } from '@/channel/service/grade.service.js';
+import { DEFAULT_PRIORITY_NAME } from '@/channel/spec/grade.constants.js';
+
+import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '@/criterion/spec/criterion.rule.schema.js';
+import { CriterionRuleRepository } from '@/criterion/storage/criterion-rule.repository.js';
+
+import { NodeGroupRepository } from '@/node/storage/node-group.repository.js';
 
 @Injectable()
 export class DevInitializer {

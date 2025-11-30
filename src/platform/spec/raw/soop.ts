@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { nnint, nonempty } from '../../../common/data/common.schema.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
 
 export const soopLiveInfo = z.object({
   userId: nonempty,

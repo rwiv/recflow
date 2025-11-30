@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { SQSClient } from './sqs.client.js';
-import { SQSClientFake } from './sqs.client.fake.js';
-import { SQSClientImpl } from './sqs.client.impl.js';
-import { ConfigModule } from '../../common/config/config.module.js';
+
+import { ConfigModule } from '@/common/config/config.module.js';
+
+import { SQSClientFake } from '@/external/sqs/sqs.client.fake.js';
+import { SQSClientImpl } from '@/external/sqs/sqs.client.impl.js';
+import { SQSClient } from '@/external/sqs/sqs.client.js';
 
 @Module({
   imports: [ConfigModule],

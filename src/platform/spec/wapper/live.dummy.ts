@@ -1,8 +1,8 @@
-import { ChzzkLiveInfo } from '../raw/chzzk.js';
-import { dummyChzzkLiveInfo } from '../raw/chzzk.dummy.js';
-import { SoopLiveInfo } from '../raw/soop.js';
-import { dummySoopLiveInfo } from '../raw/soop.dummy.js';
-import { liveFromChzzk, liveFromSoop, LiveInfo } from './live.js';
+import { dummyChzzkLiveInfo } from '@/platform/spec/raw/chzzk.dummy.js';
+import { ChzzkLiveInfo } from '@/platform/spec/raw/chzzk.js';
+import { dummySoopLiveInfo } from '@/platform/spec/raw/soop.dummy.js';
+import { SoopLiveInfo } from '@/platform/spec/raw/soop.js';
+import { LiveInfo, liveFromChzzk, liveFromSoop } from '@/platform/spec/wapper/live.js';
 
 export function dummyLiveInfoChzzk(overrides: Partial<ChzzkLiveInfo> = {}): LiveInfo {
   return liveFromChzzk(dummyChzzkLiveInfo(overrides));

@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { tagEnt, TagEnt, tagEntAppend, tagEntUpdate } from './tag.entity.schema.js';
-import { uuid } from '../../common/data/common.schema.js';
+
+import { uuid } from '@/common/data/common.schema.js';
+
+import { TagEnt, tagEnt, tagEntAppend, tagEntUpdate } from '@/channel/spec/tag.entity.schema.js';
 
 export const tagDto = tagEnt;
 export type TagDto = TagEnt;

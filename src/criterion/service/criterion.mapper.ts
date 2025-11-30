@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CriterionUnitEnt } from '../spec/criterion.entity.schema.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { ChzzkCriterionDto, CriterionDto, SoopCriterionDto } from '../spec/criterion.dto.schema.js';
-import { CriterionUnitRepository } from '../storage/criterion-unit.repository.js';
-import { ValidationError } from '../../utils/errors/errors/ValidationError.js';
-import { CriterionRuleFinder } from './criterion.rule.finder.js';
+
+import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { CriterionRuleFinder } from '@/criterion/service/criterion.rule.finder.js';
+import { ChzzkCriterionDto, CriterionDto, SoopCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+import { CriterionUnitEnt } from '@/criterion/spec/criterion.entity.schema.js';
+import { CriterionUnitRepository } from '@/criterion/storage/criterion-unit.repository.js';
 
 @Injectable()
 export class CriterionMapper {

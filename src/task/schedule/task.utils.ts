@@ -1,9 +1,11 @@
 import { Worker } from 'bullmq';
-import { Task } from '../spec/task.interface.js';
 import { WorkerOptions } from 'bullmq/dist/esm/interfaces/index.js';
-import { TaskRunner } from './task.runner.js';
-import { Env } from '../../common/config/env.js';
 import { JobsOptions } from 'bullmq/dist/esm/types/index.js';
+
+import { Env } from '@/common/config/env.js';
+
+import { TaskRunner } from '@/task/schedule/task.runner.js';
+import { Task } from '@/task/spec/task.interface.js';
 
 export function createWorker(task: Task, opts: WorkerOptions, runner: TaskRunner) {
   return new Worker(

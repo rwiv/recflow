@@ -1,17 +1,23 @@
-import { describe, it, expect, afterAll, beforeAll, beforeEach } from 'vitest';
 import { TestingModule } from '@nestjs/testing';
-import { ChannelWriter } from '../../channel/service/channel.writer.js';
-import { GradeService } from '../../channel/service/grade.service.js';
-import { dummyChannelAppend } from '../../channel/spec/channel.dto.schema.dummy.js';
-import { newTestingModuleRef } from '../../common/helpers/helper.app.js';
-import { dummyLiveInfoChzzk } from '../../platform/spec/wapper/live.dummy.js';
-import { DevInitializer } from '../../common/init/dev-initializer.js';
-import { dropTables } from '../../infra/db/utils.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { LiveCreateArgs, LiveWriter } from './live.writer.js';
-import { ConflictError } from '../../utils/errors/errors/ConflictError.js';
-import { LiveFinder } from './live.finder.js';
 import assert from 'assert';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+
+import { ConflictError } from '@/utils/errors/errors/ConflictError.js';
+
+import { newTestingModuleRef } from '@/common/helpers/helper.app.js';
+import { DevInitializer } from '@/common/init/dev-initializer.js';
+
+import { dropTables } from '@/infra/db/utils.js';
+
+import { dummyLiveInfoChzzk } from '@/platform/spec/wapper/live.dummy.js';
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { ChannelWriter } from '@/channel/service/channel.writer.js';
+import { GradeService } from '@/channel/service/grade.service.js';
+import { dummyChannelAppend } from '@/channel/spec/channel.dto.schema.dummy.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveCreateArgs, LiveWriter } from '@/live/data/live.writer.js';
 
 describe.skip('ChannelService', () => {
   let moduleRef: TestingModule;

@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ChannelDto, MappedChannelDto } from '../spec/channel.dto.schema.js';
-import { ChannelEnt } from '../spec/channel.entity.schema.js';
-import { TagQueryRepository } from '../storage/tag.query.js';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { PlatformFinder } from '../../platform/storage/platform.finder.js';
-import { GradeService } from './grade.service.js';
-import { ChannelMapOptions } from '../spec/channel.types.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { PlatformFinder } from '@/platform/storage/platform.finder.js';
+
+import { GradeService } from '@/channel/service/grade.service.js';
+import { ChannelDto, MappedChannelDto } from '@/channel/spec/channel.dto.schema.js';
+import { ChannelEnt } from '@/channel/spec/channel.entity.schema.js';
+import { ChannelMapOptions } from '@/channel/spec/channel.types.js';
+import { TagQueryRepository } from '@/channel/storage/tag.query.js';
 
 @Injectable()
 export class ChannelMapper {

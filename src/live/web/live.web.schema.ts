@@ -1,8 +1,11 @@
 import { z } from 'zod';
-import { platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { exitCmd } from '../spec/event.schema.js';
-import { uuid } from '../../common/data/common.schema.js';
-import { streamInfo } from '../spec/live.dto.schema.js';
+
+import { uuid } from '@/common/data/common.schema.js';
+
+import { platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+
+import { exitCmd } from '@/live/spec/event.schema.js';
+import { streamInfo } from '@/live/spec/live.dto.schema.js';
 
 export const liveAppendRequest = z.object({
   sourceId: z.string().nonempty(),

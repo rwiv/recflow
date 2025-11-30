@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { NodeAppend, NodeDto } from './node.dto.schema.js';
+
+import { NodeAppend, NodeDto } from '@/node/spec/node.dto.schema.js';
 
 export function dummyNodeAppend(overrides: Partial<NodeAppend> = {}): NodeAppend {
   return {

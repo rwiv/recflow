@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { GradeDto } from '../../channel/spec/grade.schema.js';
-import { nnint, nonempty } from '../../common/data/common.schema.js';
-import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { PlatformName, platformNameEnum } from '../../platform/spec/storage/platform.enum.schema.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
-import { CacheStore, SetOptions } from '../../infra/cache/cache.store.js';
+
+import { nnint, nonempty } from '@/common/data/common.schema.js';
+
+import { CacheStore, SetOptions } from '@/infra/cache/cache.store.js';
+import { SERVER_REDIS } from '@/infra/infra.tokens.js';
+
+import { PlatformName, platformNameEnum } from '@/platform/spec/storage/platform.enum.schema.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
+
+import { GradeDto } from '@/channel/spec/grade.schema.js';
 
 export const LIVE_HISTORY_KEY_PREFIX = 'live:history';
 

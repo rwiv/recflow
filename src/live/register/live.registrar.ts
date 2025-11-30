@@ -1,23 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import assert from 'assert';
 import { log } from 'jslog';
-import { liveAttr } from '../../common/attr/attr.live.js';
-import { CriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { db } from '../../infra/db/db.js';
-import { Tx } from '../../infra/db/types.js';
-import { Notifier } from '../../external/notify/notifier.js';
-import { Recnode } from '../../external/recnode/client/recnode.client.js';
-import { RecnodeRedis } from '../../external/recnode/redis/recnode.redis.js';
-import { NodeSelector } from '../../node/service/node.selector.js';
-import { NodeDto } from '../../node/spec/node.dto.schema.js';
-import { logging, LogLevel } from '../../utils/log.js';
-import { LiveFinder } from '../data/live.finder.js';
-import { LiveWriter } from '../data/live.writer.js';
-import { ExitCmd } from '../spec/event.schema.js';
-import { LiveDtoMapped } from '../spec/live.dto.schema.mapped.js';
-import { LiveDto } from '../spec/live.dto.schema.js';
-import { LiveFinalizer } from './live.finalizer.js';
-import { LiveRegisterHelper, NodeSelectArgs } from './live.register-helper.js';
+
+import { LogLevel, logging } from '@/utils/log.js';
+
+import { liveAttr } from '@/common/attr/attr.live.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { Notifier } from '@/external/notify/notifier.js';
+import { Recnode } from '@/external/recnode/client/recnode.client.js';
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+
+import { CriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
+
+import { NodeSelector } from '@/node/service/node.selector.js';
+import { NodeDto } from '@/node/spec/node.dto.schema.js';
+
+import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveWriter } from '@/live/data/live.writer.js';
+import { LiveFinalizer } from '@/live/register/live.finalizer.js';
+import { LiveRegisterHelper, NodeSelectArgs } from '@/live/register/live.register-helper.js';
+import { ExitCmd } from '@/live/spec/event.schema.js';
+import { LiveDto } from '@/live/spec/live.dto.schema.js';
+import { LiveDtoMapped } from '@/live/spec/live.dto.schema.mapped.js';
 
 export interface LiveFinishRequest {
   recordId: string;

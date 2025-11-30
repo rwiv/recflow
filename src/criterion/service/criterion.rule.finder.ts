@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Tx } from '../../infra/db/types.js';
-import { db } from '../../infra/db/db.js';
-import { CriterionRuleRepository } from '../storage/criterion-rule.repository.js';
-import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '../spec/criterion.rule.schema.js';
+
+import { db } from '@/infra/db/db.js';
+import { Tx } from '@/infra/db/types.js';
+
+import { chzzkCriterionRuleNameEnum, soopCriterionRuleNameEnum } from '@/criterion/spec/criterion.rule.schema.js';
+import { CriterionRuleRepository } from '@/criterion/storage/criterion-rule.repository.js';
 
 @Injectable()
 export class CriterionRuleFinder {

@@ -1,6 +1,8 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { RecnodeRedisFake } from './recnode.redis.fake.js';
-import { dummyLiveDto } from '../../../live/spec/live.dto.schema.dummy.js';
+import { afterEach, describe, expect, it } from 'vitest';
+
+import { RecnodeRedisFake } from '@/external/recnode/redis/recnode.redis.fake.js';
+
+import { dummyLiveDto } from '@/live/spec/live.dto.schema.dummy.js';
 
 describe('RecnodeRedisFake', () => {
   const client = new RecnodeRedisFake('local');

@@ -1,9 +1,11 @@
 import { faker } from '@faker-js/faker';
-import { ChannelAppend, ChannelDto } from './channel.dto.schema.js';
-import { dummyGradeDto } from './grade.schema.dummy.js';
-import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
-import { ChannelEntAppend } from './channel.entity.schema.js';
-import { ChannelInfo } from '../../platform/spec/wapper/channel.js';
+
+import { dummyPlatformDto } from '@/platform/spec/storage/platform.dto.schema.dummy.js';
+import { ChannelInfo } from '@/platform/spec/wapper/channel.js';
+
+import { ChannelAppend, ChannelDto } from '@/channel/spec/channel.dto.schema.js';
+import { ChannelEntAppend } from '@/channel/spec/channel.entity.schema.js';
+import { dummyGradeDto } from '@/channel/spec/grade.schema.dummy.js';
 
 export function dummyChannelEntAppend(overrides: Partial<ChannelAppend> = {}): ChannelEntAppend {
   return {

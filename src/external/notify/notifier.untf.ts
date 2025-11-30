@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { Notifier } from './notifier.js';
-import { HttpRequestError } from '../../utils/errors/errors/HttpRequestError.js';
-import { errorResponse } from '../../common/data/common.schema.js';
 import { log } from 'jslog';
-import { stacktrace } from '../../utils/errors/utils.js';
+
+import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
+import { stacktrace } from '@/utils/errors/utils.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+import { errorResponse } from '@/common/data/common.schema.js';
+
+import { Notifier } from '@/external/notify/notifier.js';
 
 interface UntfSendRequest {
   topic: string;

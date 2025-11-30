@@ -1,4 +1,4 @@
-import { TaskDef } from '../spec/task.schema.js';
+import { TaskDef } from '@/task/spec/task.schema.js';
 
 export const LIVE_REGISTER_CRITERION_NAME = 'live_register_criterion';
 export const LIVE_REGISTER_CRITERION_DEF: TaskDef = { delay: 5 * 1000, ex: 2 * 60 };

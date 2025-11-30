@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SERVER_REDIS } from '../../infra/infra.tokens.js';
-import { CacheStore } from '../../infra/cache/cache.store.js';
-import { platformDto, PlatformDto } from '../spec/storage/platform.dto.schema.js';
+
+import { CacheStore } from '@/infra/cache/cache.store.js';
+import { SERVER_REDIS } from '@/infra/infra.tokens.js';
+
+import { PlatformDto, platformDto } from '@/platform/spec/storage/platform.dto.schema.js';
 
 export const KEY_PREFIX = 'platform';
 

@@ -1,21 +1,26 @@
-import { Cron } from '@nestjs/schedule';
 import { Inject, Injectable } from '@nestjs/common';
-import { TaskLockManager } from './task-lock.manager.js';
+import { Cron } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
-import { Redis } from 'ioredis';
-import { cronTaskDefs } from '../spec/task.queue-defs.js';
-import { LockSchema, TaskDef, TaskMeta } from '../spec/task.schema.js';
-import { NotFoundError } from '../../utils/errors/errors/NotFoundError.js';
-import { TASK_REDIS } from '../../infra/infra.tokens.js';
-import { ENV } from '../../common/config/config.module.js';
-import { Env } from '../../common/config/env.js';
-import { LIVE_REGISTER_CRITERION_DEF, LIVE_REGISTER_CRITERION_NAME } from '../live/live.task.contants.js';
 import { JobsOptions } from 'bullmq/dist/esm/types/index.js';
-import { CriterionFinder } from '../../criterion/service/criterion.finder.js';
-import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
-import { getJobOpts } from './task.utils.js';
-import { TaskErrorHandler } from './task.error-handler.js';
-import { handleSettled } from '../../utils/log.js';
+import { Redis } from 'ioredis';
+
+import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
+import { handleSettled } from '@/utils/log.js';
+
+import { ENV } from '@/common/config/config.module.js';
+import { Env } from '@/common/config/env.js';
+
+import { TASK_REDIS } from '@/infra/infra.tokens.js';
+
+import { LIVE_REGISTER_CRITERION_DEF, LIVE_REGISTER_CRITERION_NAME } from '@/task/live/live.task.contants.js';
+import { TaskLockManager } from '@/task/schedule/task-lock.manager.js';
+import { TaskErrorHandler } from '@/task/schedule/task.error-handler.js';
+import { getJobOpts } from '@/task/schedule/task.utils.js';
+import { cronTaskDefs } from '@/task/spec/task.queue-defs.js';
+import { LockSchema, TaskDef, TaskMeta } from '@/task/spec/task.schema.js';
+
+import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
+import { PlatformCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 @Injectable()
 export class TaskCronScheduler {

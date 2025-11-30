@@ -8,8 +8,8 @@ export default defineConfig([
     rules: {
       'fsd/public-api': 'off',
       'fsd/no-public-api-sidestep': 'off',
-      'fsd/no-segmentless-slices': 'off',
 
+      'fsd/no-segmentless-slices': 'error',
       'fsd/insignificant-slice': 'warn',
 
       'fsd/forbidden-imports': 'off',

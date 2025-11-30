@@ -1,6 +1,7 @@
-import { useNavigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
 import { css } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
+
 import {
   Select,
   SelectContent,
@@ -9,9 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/cn/select.tsx';
+
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
+
 import { fetchGrades } from '@/features/channel/grade/api/grade.client.ts';
+import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
 
 export function GradeSelect() {
   const navigate = useNavigate();

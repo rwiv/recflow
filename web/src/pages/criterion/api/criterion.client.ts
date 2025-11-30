@@ -1,14 +1,15 @@
 import { configs } from '@/shared/config/configs.ts';
 import { getIngredients, request } from '@/shared/lib/http/http_utils.ts';
 import { parseList } from '@/shared/lib/schema/schema_utils.ts';
+
 import {
   ChzzkCriterionAppend,
   ChzzkCriterionDto,
-  chzzkCriterionDto,
   CriterionUnitAppend,
   CriterionUpdate,
   SoopCriterionAppend,
   SoopCriterionDto,
+  chzzkCriterionDto,
   soopCriterionDto,
 } from '@/pages/criterion/api/criterion.schema.ts';
 

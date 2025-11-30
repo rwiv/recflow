@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { TagDto } from '@/entities/channel/tag/model/tag.schema.ts';
-import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
+
 import { fetchTags } from '@/features/channel/tag/api/tag.client.ts';
-import { TagTable } from '@/pages/channel/tag/ui/table/TagTable.tsx';
+import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
+
 import { PageHeaderTab } from '@/widgets/header/ui/PageHeaderTab.tsx';
+
+import { TagTable } from '@/pages/channel/tag/ui/table/TagTable.tsx';
 
 export function TagPage() {
   const { data: nodes } = useQuery<TagDto[]>({

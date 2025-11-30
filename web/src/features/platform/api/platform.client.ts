@@ -1,5 +1,6 @@
 import { configs } from '@/shared/config/configs.ts';
 import { request } from '@/shared/lib/http/http_utils.ts';
+
 import { PlatformDto } from '@/entities/platform/model/platform.schema.ts';
 
 export async function fetchPlatforms() {

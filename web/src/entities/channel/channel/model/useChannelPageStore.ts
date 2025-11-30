@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { ChannelPageState } from '@/entities/channel/channel/model/ChannelPageState.ts';
 
 interface GlobalState {

@@ -1,9 +1,12 @@
-import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
-import { Badge } from '@/shared/ui/cn/badge.tsx';
 import { useQueryClient } from '@tanstack/react-query';
+
+import { Badge } from '@/shared/ui/cn/badge.tsx';
+import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
+
+import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
+
 import { updateGrade } from '@/features/channel/grade/api/grade.client.ts';
 import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
-import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
 
 export function NotifyOnlyBadge({ grade }: { grade: GradeDto }) {
   const queryClient = useQueryClient();

@@ -1,16 +1,20 @@
-import { TableContent } from '@/shared/ui/table/TableContent.tsx';
-import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
-import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
-import { nodeColumns } from '@/pages/node/node/ui/table/columns/nodeColumns.tsx';
-import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
-import { NodeCreateButton } from '@/pages/node/node/ui/table/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteNode } from '@/features/node/node/api/node.client.ts';
-import { Button } from '@/shared/ui/cn/button.tsx';
+
 import { useTable } from '@/shared/model/useTable.ts';
+import { Button } from '@/shared/ui/cn/button.tsx';
+import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
+import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
+import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
+import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
+import { TableContent } from '@/shared/ui/table/TableContent.tsx';
+
+import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
+
+import { deleteNode } from '@/features/node/node/api/node.client.ts';
 import { NODES_QUERY_KEY } from '@/features/node/node/config/constants.ts';
+
+import { NodeCreateButton } from '@/pages/node/node/ui/table/NodeCreateButton.tsx';
+import { nodeColumns } from '@/pages/node/node/ui/table/columns/nodeColumns.tsx';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
   const queryClient = useQueryClient();

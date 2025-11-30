@@ -1,5 +1,7 @@
 import { z } from 'zod';
+
 import { nonempty, uuid } from '@/shared/lib/schema/schema_common.ts';
+
 import { nodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
 
 export const nodeDto = z.object({

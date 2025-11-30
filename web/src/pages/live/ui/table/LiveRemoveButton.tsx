@@ -1,13 +1,12 @@
-import { Table } from '@tanstack/react-table';
-import { LiveDto } from '@/pages/live/api/live.schema.ts';
+import { SerializedStyles, css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteLive } from '@/pages/live/api/live.client.ts';
+import { Table } from '@tanstack/react-table';
 import { RefObject, useRef, useState } from 'react';
-import { Button } from '@/shared/ui/cn/button.tsx';
+
 import {
-  AlertDialog as AlertDialogContainer,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialog as AlertDialogContainer,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -15,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/shared/ui/cn/alert-dialog.tsx';
+import { Button } from '@/shared/ui/cn/button.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,11 +23,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/ui/cn/dropdown-menu.tsx';
-import { Switch } from '@/shared/ui/cn/switch.tsx';
 import { Label } from '@/shared/ui/cn/label.tsx';
-import { css, SerializedStyles } from '@emotion/react';
-import { ExitCmd } from '@/pages/live/model/live_request.shema.ts';
+import { Switch } from '@/shared/ui/cn/switch.tsx';
+
+import { deleteLive } from '@/pages/live/api/live.client.ts';
+import { LiveDto } from '@/pages/live/api/live.schema.ts';
 import { LIVES_QUERY_KEY } from '@/pages/live/config/constants.ts';
+import { ExitCmd } from '@/pages/live/model/live_request.shema.ts';
 
 interface LiveRemoveButtonProps {
   table: Table<LiveDto>;

@@ -1,16 +1,19 @@
+import { css } from '@emotion/react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { css } from '@emotion/react';
-import { Form } from '@/shared/ui/cn/form.tsx';
+
 import { parse } from '@/shared/lib/schema/form_utils.ts';
+import { Form } from '@/shared/ui/cn/form.tsx';
 import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';
-import { tagAppend } from '@/entities/channel/tag/model/tag.schema.ts';
-import { createTag } from '@/features/channel/tag/api/tag.client.ts';
-import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
+
+import { tagAppend } from '@/entities/channel/tag/model/tag.schema.ts';
+
+import { createTag } from '@/features/channel/tag/api/tag.client.ts';
 import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
 
 export function TagCreateButton() {

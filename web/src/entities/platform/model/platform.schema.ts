@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { uuid } from '@/shared/lib/schema/schema_common.ts';
 
 export const platformNameEnum = z.enum(['chzzk', 'soop', 'twitch']);

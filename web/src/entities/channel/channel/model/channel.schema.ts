@@ -1,8 +1,10 @@
 import { z } from 'zod';
+
 import { nnint, nonempty, uuid } from '@/shared/lib/schema/schema_common.ts';
-import { platformDto } from '@/entities/platform/model/platform.schema.ts';
+
 import { gradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
 import { tagDto } from '@/entities/channel/tag/model/tag.schema.ts';
+import { platformDto } from '@/entities/platform/model/platform.schema.ts';
 
 export const channelDto = z.object({
   id: uuid,

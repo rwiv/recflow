@@ -1,5 +1,7 @@
 import { Link } from 'react-router';
+
 import { ChannelPageState } from '@/entities/channel/channel/model/ChannelPageState.ts';
+
 import { HeaderTabButton, HeaderTabList } from '@/widgets/header/ui/HeaderTab.tsx';
 
 interface HeaderTabProps {

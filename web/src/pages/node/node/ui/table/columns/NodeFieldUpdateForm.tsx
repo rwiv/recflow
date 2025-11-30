@@ -1,8 +1,11 @@
-import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
-import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { updateNode } from '@/features/node/node/api/node.client.ts';
+import { z } from 'zod';
+
+import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
+
 import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
+
+import { updateNode } from '@/features/node/node/api/node.client.ts';
 import { NODES_QUERY_KEY } from '@/features/node/node/config/constants.ts';
 
 type Type = 'name' | 'endpoint' | 'priority' | 'capacity' | 'failureCnt';

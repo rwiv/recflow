@@ -1,9 +1,10 @@
-import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
 import { SerializedStyles } from '@emotion/react';
-import { Input } from '@/shared/ui/cn/input.tsx';
-import { firstLetterUppercase } from '@/shared/lib/types/strings.ts';
+import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+
 import { formItemStyle } from '@/shared/lib/styles/form.ts';
+import { firstLetterUppercase } from '@/shared/lib/types/strings.ts';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
+import { Input } from '@/shared/ui/cn/input.tsx';
 
 interface TextFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;

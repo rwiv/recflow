@@ -1,6 +1,7 @@
-import { ReactNode, RefObject } from 'react';
-import { Button } from '@/shared/ui/cn/button.tsx';
 import { SerializedStyles } from '@emotion/react';
+import { ReactNode, RefObject } from 'react';
+
+import { Button } from '@/shared/ui/cn/button.tsx';
 import { DialogBase } from '@/shared/ui/dialog/DialogBase.tsx';
 
 interface DialogButtonProps {

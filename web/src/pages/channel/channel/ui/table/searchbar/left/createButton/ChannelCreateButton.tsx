@@ -1,30 +1,34 @@
-import { useRef, useState } from 'react';
-import { css, SerializedStyles } from '@emotion/react';
-import { z } from 'zod';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { SerializedStyles, css } from '@emotion/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
+import { UseFormReturn, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { nonempty, uuid } from '@/shared/lib/schema/schema_common.ts';
+import { formItemStyle } from '@/shared/lib/styles/form.ts';
+import { uppercase } from '@/shared/lib/types/strings.ts';
+import { Badge } from '@/shared/ui/cn/badge.tsx';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
 import { SelectItem } from '@/shared/ui/cn/select.tsx';
-import { Badge } from '@/shared/ui/cn/badge.tsx';
-import { fetchPlatforms } from '@/features/platform/api/platform.client.ts';
 import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';
-import { nonempty, uuid } from '@/shared/lib/schema/schema_common.ts';
-import { PlatformDto } from '@/entities/platform/model/platform.schema.ts';
-import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
-import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { ChannelAppend } from '@/entities/channel/channel/model/channel.schema.ts';
-import { SelectFormField } from '@/shared/ui/form/SelectFormField.tsx';
-import { uppercase } from '@/shared/lib/types/strings.ts';
-import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
-import { formItemStyle } from '@/shared/lib/styles/form.ts';
-import { TextAreaFormField } from '@/shared/ui/form/TextAreaFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
-import { PLATFORMS_QUERY_KEY } from '@/features/platform/config/constants.ts';
+import { SelectFormField } from '@/shared/ui/form/SelectFormField.tsx';
+import { TextAreaFormField } from '@/shared/ui/form/TextAreaFormField.tsx';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
+
+import { ChannelAppend } from '@/entities/channel/channel/model/channel.schema.ts';
+import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
+import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
+import { PlatformDto } from '@/entities/platform/model/platform.schema.ts';
+
 import { fetchGrades } from '@/features/channel/grade/api/grade.client.ts';
+import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
+import { fetchPlatforms } from '@/features/platform/api/platform.client.ts';
+import { PLATFORMS_QUERY_KEY } from '@/features/platform/config/constants.ts';
+
 import { createChannel } from '@/pages/channel/channel/api/channel.client.ts';
 import { TagCreateSelect } from '@/pages/channel/channel/ui/table/searchbar/left/createButton/TagCreateSelect.tsx';
-import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

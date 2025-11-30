@@ -1,8 +1,10 @@
-import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
-import { CriterionDto } from '@/pages/criterion/api/criterion.schema.ts';
-import { z } from 'zod';
-import { updateCriterion } from '@/pages/criterion/api/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+
+import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
+
+import { updateCriterion } from '@/pages/criterion/api/criterion.client.ts';
+import { CriterionDto } from '@/pages/criterion/api/criterion.schema.ts';
 import { CHZZK_CRITERIA_QUERY_KEY, SOOP_CRITERIA_QUERY_KEY } from '@/pages/criterion/config/constants.ts';
 
 type Type = 'minUserCnt';

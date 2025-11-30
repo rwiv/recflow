@@ -1,9 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { createSelectColumn, dateColumnDef, sortableColumnDef } from '@/shared/ui/table/column_utils.tsx';
+
 import { cn } from '@/shared/lib/styles/utils.ts';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
-import { LiveDtoWithNodes } from '@/pages/live/api/live.mapped.schema.ts';
+import { createSelectColumn, dateColumnDef, sortableColumnDef } from '@/shared/ui/table/column_utils.tsx';
+
 import { ChannelInfoCell } from '@/features/channel/channel/ui/ChannelInfoCell.tsx';
+
+import { LiveDtoWithNodes } from '@/pages/live/api/live.mapped.schema.ts';
 import { getLiveUrl } from '@/pages/live/lib/platform_utils.ts';
 
 export const selectCid = 'select';

@@ -1,19 +1,22 @@
+import { css } from '@emotion/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z, ZodError } from 'zod';
-import { Form, FormField } from '@/shared/ui/cn/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { fetchPlatforms } from '@/features/platform/api/platform.client.ts';
-import { soopCriterionAppend } from '@/pages/criterion/api/criterion.schema.ts';
+import { useForm } from 'react-hook-form';
+import { ZodError, z } from 'zod';
+
 import { nonempty } from '@/shared/lib/schema/schema_common.ts';
-import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
-import { CheckFormField } from '@/shared/ui/form/CheckFormField.tsx';
-import { css } from '@emotion/react';
-import { createSoopCriterion } from '@/pages/criterion/api/criterion.client.ts';
-import { InputListFormItem } from '@/shared/ui/form/InputListFormItem.tsx';
+import { Form, FormField } from '@/shared/ui/cn/form.tsx';
 import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';
+import { CheckFormField } from '@/shared/ui/form/CheckFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { InputListFormItem } from '@/shared/ui/form/InputListFormItem.tsx';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
+
+import { fetchPlatforms } from '@/features/platform/api/platform.client.ts';
+
+import { createSoopCriterion } from '@/pages/criterion/api/criterion.client.ts';
+import { soopCriterionAppend } from '@/pages/criterion/api/criterion.schema.ts';
 import { SOOP_CRITERIA_QUERY_KEY } from '@/pages/criterion/config/constants.ts';
 
 interface Unit {

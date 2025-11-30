@@ -1,17 +1,20 @@
-import { useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
+
+import { Badge } from '@/shared/ui/cn/badge.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/ui/cn/dropdown-menu.tsx';
-import { Badge } from '@/shared/ui/cn/badge.tsx';
-import { TagDto } from '@/entities/channel/tag/model/tag.schema.ts';
+import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
+
 import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
+import { TagDto } from '@/entities/channel/tag/model/tag.schema.ts';
+
 import { detachTag } from '@/features/channel/tag/api/tag.client.ts';
-import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
 import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
 
 interface TagBadgeProps {

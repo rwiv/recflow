@@ -1,6 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
+
 import { createSelectColumn } from '@/shared/ui/table/column_utils.tsx';
+
+import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
+
 import { NodeGroupBadge } from '@/pages/node/node/ui/table/columns/GroupUpdateDialog.tsx';
 import { NodeFieldUpdateForm } from '@/pages/node/node/ui/table/columns/NodeFieldUpdateForm.tsx';
 import { NodeCordonedBadge, NodeDomesticBadge } from '@/pages/node/node/ui/table/columns/nodeBadges.tsx';

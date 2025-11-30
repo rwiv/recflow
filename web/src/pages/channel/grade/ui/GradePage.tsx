@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
-import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
+
 import { fetchGrades } from '@/features/channel/grade/api/grade.client.ts';
-import { GradeTable } from '@/pages/channel/grade/ui/table/GradeTable.tsx';
+import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
+
 import { PageHeaderTab } from '@/widgets/header/ui/PageHeaderTab.tsx';
+
+import { GradeTable } from '@/pages/channel/grade/ui/table/GradeTable.tsx';
 
 export function GradePage() {
   const { data: nodes } = useQuery<GradeDto[]>({

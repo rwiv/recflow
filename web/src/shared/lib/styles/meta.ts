@@ -1,5 +1,5 @@
-import { Cell, Header } from '@tanstack/react-table';
 import { css } from '@emotion/react';
+import { Cell, Header } from '@tanstack/react-table';
 
 export interface ColumnMetaStyle {
   header?: StyleMeta;

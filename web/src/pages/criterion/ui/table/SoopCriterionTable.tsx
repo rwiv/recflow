@@ -1,16 +1,18 @@
-import { TableContent } from '@/shared/ui/table/TableContent.tsx';
-import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
-import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
-import { SoopCriterionDto } from '@/pages/criterion/api/criterion.schema.ts';
-import { soopCriterionColumns } from '@/pages/criterion/ui/table/soopCriterionColumns.tsx';
-import { SoopCriterionCreateButton } from '@/pages/criterion/ui/table/SoopCriterionCreateButton.tsx';
-import { Button } from '@/shared/ui/cn/button.tsx';
-import { deleteCriterion } from '@/pages/criterion/api/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
+
 import { useTable } from '@/shared/model/useTable.ts';
+import { Button } from '@/shared/ui/cn/button.tsx';
+import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
+import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
+import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
+import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
+import { TableContent } from '@/shared/ui/table/TableContent.tsx';
+
+import { deleteCriterion } from '@/pages/criterion/api/criterion.client.ts';
+import { SoopCriterionDto } from '@/pages/criterion/api/criterion.schema.ts';
 import { SOOP_CRITERIA_QUERY_KEY } from '@/pages/criterion/config/constants.ts';
+import { SoopCriterionCreateButton } from '@/pages/criterion/ui/table/SoopCriterionCreateButton.tsx';
+import { soopCriterionColumns } from '@/pages/criterion/ui/table/soopCriterionColumns.tsx';
 
 export function SoopCriterionTable({ data }: { data: SoopCriterionDto[] }) {
   const queryClient = useQueryClient();

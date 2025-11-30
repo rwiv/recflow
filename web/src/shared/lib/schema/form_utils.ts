@@ -1,5 +1,5 @@
-import { ZodError, ZodObject, ZodRawShape } from 'zod';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+import { ZodError, ZodObject, ZodRawShape } from 'zod';
 
 export function parse<A extends FieldValues, B extends ZodRawShape>(
   schema: ZodObject<B>,

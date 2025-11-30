@@ -1,12 +1,14 @@
-import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
-import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+
+import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
+
+import { NodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
+
 import {
   updateNodeGroupDescription,
   updateNodeGroupName,
 } from '@/features/node/group/api/node-group.client.ts';
-
-import { NodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
 import { NODE_GROUPS_QUERY_KEY } from '@/features/node/group/config/constants.ts';
 
 type Type = 'name' | 'description';

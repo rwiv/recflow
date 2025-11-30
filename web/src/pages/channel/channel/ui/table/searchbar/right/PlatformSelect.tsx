@@ -1,3 +1,7 @@
+import { css } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
+
 import {
   Select,
   SelectContent,
@@ -6,13 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/cn/select.tsx';
-import { css } from '@emotion/react';
+
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { useNavigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
+import { platformNameEnum } from '@/entities/platform/model/platform.schema.ts';
+
 import { fetchPlatforms } from '@/features/platform/api/platform.client.ts';
 import { PLATFORMS_QUERY_KEY } from '@/features/platform/config/constants.ts';
-import { platformNameEnum } from '@/entities/platform/model/platform.schema.ts';
 
 export function PlatformSelect() {
   const navigate = useNavigate();

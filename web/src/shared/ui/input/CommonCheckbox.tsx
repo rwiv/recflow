@@ -1,6 +1,7 @@
-import { Checkbox } from '@/shared/ui/cn/checkbox.tsx';
-import { cn } from '@/shared/lib/styles/utils.ts';
 import { CheckedState } from '@radix-ui/react-checkbox';
+
+import { cn } from '@/shared/lib/styles/utils.ts';
+import { Checkbox } from '@/shared/ui/cn/checkbox.tsx';
 
 interface CommonCheckboxProps {
   checkBoxId: string;

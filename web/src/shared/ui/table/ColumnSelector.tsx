@@ -1,12 +1,13 @@
 import { Table } from '@tanstack/react-table';
+import { ChevronDown } from 'lucide-react';
+
+import { Button } from '@/shared/ui/cn/button.tsx';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/shared/ui/cn/dropdown-menu.tsx';
-import { Button } from '@/shared/ui/cn/button.tsx';
-import { ChevronDown } from 'lucide-react';
 
 export function ColumnSelector<T>({ table }: { table: Table<T> }) {
   return (

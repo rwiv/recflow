@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+
 import { cn } from '@/shared/lib/styles/utils.ts';
 
 interface HeaderTabListProps {

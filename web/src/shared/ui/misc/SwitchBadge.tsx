@@ -1,5 +1,5 @@
-import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
+import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
 
 interface SwitchBadgeProps {
   onClick: () => void;

@@ -1,7 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
+
 import { createSelectColumn, dateColumnDef } from '@/shared/ui/table/column_utils.tsx';
-import { NodeGroupFieldUpdateForm } from '@/pages/node/group/ui/table/NodeGroupFieldUpdateForm.tsx';
+
 import { NodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
+
+import { NodeGroupFieldUpdateForm } from '@/pages/node/group/ui/table/NodeGroupFieldUpdateForm.tsx';
 
 const DEFAULT_WIDTH = '15rem';
 

@@ -1,16 +1,19 @@
-import { RefObject, useRef } from 'react';
-import { z } from 'zod';
 import { css } from '@emotion/react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
+import { RefObject, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import { Form } from '@/shared/ui/cn/form.tsx';
-import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { updateChannelDescription } from '@/pages/channel/channel/api/channel.client.ts';
-import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
 import { DialogWithTrigger } from '@/shared/ui/dialog/DialogWithTrigger.tsx';
-import { TextAreaFormField } from '@/shared/ui/form/TextAreaFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { TextAreaFormField } from '@/shared/ui/form/TextAreaFormField.tsx';
+
+import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
+import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
+
+import { updateChannelDescription } from '@/pages/channel/channel/api/channel.client.ts';
 
 interface ChannelUpdateDialogProps {
   channel: ChannelDto;

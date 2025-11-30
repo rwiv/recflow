@@ -1,15 +1,17 @@
-import { createCriterionUnit } from '@/pages/criterion/api/criterion.client.ts';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@/shared/ui/cn/form.tsx';
-import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
-import { useRef } from 'react';
-import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
-import { Badge } from '@/shared/ui/cn/badge.tsx';
-import { DialogWithTrigger } from '@/shared/ui/dialog/DialogWithTrigger.tsx';
+
 import { nonempty } from '@/shared/lib/schema/schema_common.ts';
+import { Badge } from '@/shared/ui/cn/badge.tsx';
+import { Form } from '@/shared/ui/cn/form.tsx';
+import { DialogWithTrigger } from '@/shared/ui/dialog/DialogWithTrigger.tsx';
+import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
+
+import { createCriterionUnit } from '@/pages/criterion/api/criterion.client.ts';
 
 interface CriterionUnitAddProps {
   criterionId: string;

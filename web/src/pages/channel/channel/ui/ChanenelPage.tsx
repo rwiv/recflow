@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
-import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { DEFAULT_CHANNEL_PAGE_NUMBER } from '@/pages/channel/channel/config/constants.ts';
+
 import { ChannelPageStateBuilder } from '@/entities/channel/channel/model/ChannelPageStateBuilder.ts';
+import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
 import { platformNameEnum } from '@/entities/platform/model/platform.schema.ts';
+
 import { PageHeaderTab } from '@/widgets/header/ui/PageHeaderTab.tsx';
+
+import { DEFAULT_CHANNEL_PAGE_NUMBER } from '@/pages/channel/channel/config/constants.ts';
 import { ChannelTable } from '@/pages/channel/channel/ui/table/table/ChannelTable.tsx';
 
 export function ChannelPage() {

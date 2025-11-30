@@ -1,4 +1,8 @@
+import { SerializedStyles } from '@emotion/react';
+import { DialogClose } from '@radix-ui/react-dialog';
 import { ReactNode, RefObject } from 'react';
+
+import { cn } from '@/shared/lib/styles/utils.ts';
 import {
   Dialog,
   DialogContent,
@@ -7,9 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/shared/ui/cn/dialog.tsx';
-import { DialogClose } from '@radix-ui/react-dialog';
-import { SerializedStyles } from '@emotion/react';
-import { cn } from '@/shared/lib/styles/utils.ts';
 
 interface DialogBaseProps {
   title: string;

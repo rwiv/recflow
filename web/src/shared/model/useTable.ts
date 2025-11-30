@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
-  VisibilityState,
 } from '@tanstack/react-table';
+import { useState } from 'react';
 
 export function useTable<T>(data: T[], columns: ColumnDef<T>[], pageSize: number = 12) {
   const [sorting, setSorting] = useState<SortingState>([]);

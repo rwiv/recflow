@@ -1,9 +1,12 @@
-import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
-import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+
+import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
+
 import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
-import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
+
 import { updateGrade } from '@/features/channel/grade/api/grade.client.ts';
+import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
 
 type Type = 'name' | 'description' | 'tier' | 'seq';
 

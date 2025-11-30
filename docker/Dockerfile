@@ -1,23 +1,19 @@
-FROM node:22.4.0-alpine AS guibuild
+FROM node:22.4.0-alpine AS base
 WORKDIR /app
 COPY . .
+RUN npm install -g pnpm
+
+FROM base AS guibuild
 WORKDIR /app/web
-RUN npm install -g pnpm
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
-FROM node:22.4.0-alpine AS serverbuild
-WORKDIR /app
-COPY . .
-RUN npm install -g pnpm
-RUN pnpm install
+FROM base AS serverbuild
+RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
-FROM node:22.4.0-alpine AS serverdeps
-WORKDIR /app
-COPY . .
-RUN npm install -g pnpm
-RUN pnpm install --prod
+FROM base AS serverdeps
+RUN pnpm install --prod --frozen-lockfile
 
 FROM node:22.4.0-alpine
 WORKDIR /app

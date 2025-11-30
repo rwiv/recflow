@@ -3,7 +3,7 @@ import { createSelectColumn, dateColumnDef, sortableColumnDef } from '@/shared/u
 import { cn } from '@/shared/lib/styles/utils.ts';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
 import { LiveDtoWithNodes } from '@/pages/live/api/live.mapped.schema.ts';
-import { ChannelInfoCell } from '@/entities/channel/channel/ui/ChannelInfoCell.tsx';
+import { ChannelInfoCell } from '@/features/channel/channel/ui/ChannelInfoCell.tsx';
 import { getLiveUrl } from '@/pages/live/lib/platform_utils.ts';
 
 export const selectCid = 'select';

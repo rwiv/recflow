@@ -6,7 +6,7 @@ import {
   ChannelDto,
   ChannelPageResult,
   ChannelUpdate,
-} from '@/entities/channel/channel/api/channel.types.ts';
+} from '@/entities/channel/channel/model/channel.schema.ts';
 
 export async function fetchChannels(pageState: ChannelPageState, withTags: boolean = true) {
   let qs = pageState.toQueryString();

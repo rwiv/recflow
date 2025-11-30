@@ -9,9 +9,9 @@ import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
 import { css } from '@emotion/react';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
 import { parse } from '@/shared/lib/schema/form_utils.ts';
-import { createNodeGroup } from '@/entities/node/group/api/node-group.client.ts';
-import { nodeGroupAppend } from '@/entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
+import { createNodeGroup } from '@/features/node/group/api/node-group.client.ts';
+import { nodeGroupAppend } from '@/entities/node/group/model/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/features/node/group/config/constants.ts';
 
 export function NodeGroupCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

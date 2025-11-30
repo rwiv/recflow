@@ -4,10 +4,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   updateNodeGroupDescription,
   updateNodeGroupName,
-} from '@/entities/node/group/api/node-group.client.ts';
+} from '@/features/node/group/api/node-group.client.ts';
 
-import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
+import { NodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/features/node/group/config/constants.ts';
 
 type Type = 'name' | 'description';
 

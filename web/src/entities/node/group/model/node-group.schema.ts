@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uuid } from '@/shared/lib/schema/schema_common';
+import { uuid } from '@/shared/lib/schema/schema_common.ts';
 
 export const nodeGroupDto = z.object({
   id: uuid,

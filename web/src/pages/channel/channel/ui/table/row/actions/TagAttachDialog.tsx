@@ -6,13 +6,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
 import { DialogWithTrigger } from '@/shared/ui/dialog/DialogWithTrigger.tsx';
-import { ChannelDto } from '@/entities/channel/channel/api/channel.types.ts';
+import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { attachTag } from '@/entities/channel/tag/api/tag.client.ts';
+import { attachTag } from '@/features/channel/tag/api/tag.client.ts';
 import { formItemStyle } from '@/shared/lib/styles/form.ts';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
 import { TagAttachSelect } from '@/pages/channel/channel/ui/table/row/actions/TagAttachSelect.tsx';
-import { TAGS_QUERY_KEY } from '@/entities/channel/tag/config/constants.ts';
+import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
 
 interface TagAttachDialogProps {
   channel: ChannelDto;

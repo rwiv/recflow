@@ -13,9 +13,9 @@ import {
 import { Button } from '@/shared/ui/cn/button.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/cn/popover.tsx';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { TAGS_QUERY_KEY } from '@/entities/channel/tag/config/constants.ts';
-import { TagDto } from '@/entities/channel/tag/api/tag.schema.ts';
-import { fetchTags } from '@/entities/channel/tag/api/tag.client.ts';
+import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
+import { TagDto } from '@/entities/channel/tag/model/tag.schema.ts';
+import { fetchTags } from '@/features/channel/tag/api/tag.client.ts';
 import { cn } from '@/shared/lib/styles/utils.ts';
 
 export function TagQuerySelect({ type }: { type: 'include' | 'exclude' }) {

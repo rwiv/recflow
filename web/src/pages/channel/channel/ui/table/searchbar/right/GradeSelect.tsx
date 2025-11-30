@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from '@/shared/ui/cn/select.tsx';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { GRADES_QUERY_KEY } from '@/entities/channel/grade/config/constants.ts';
-import { fetchGrades } from '@/entities/channel/grade/api/grade.client.ts';
+import { GRADES_QUERY_KEY } from '@/features/channel/grade/config/constants.ts';
+import { fetchGrades } from '@/features/channel/grade/api/grade.client.ts';
 
 export function GradeSelect() {
   const navigate = useNavigate();

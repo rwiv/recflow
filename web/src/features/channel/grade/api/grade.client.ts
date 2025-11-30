@@ -1,6 +1,6 @@
 import { configs } from '@/shared/config/configs.ts';
 import { getIngredients, request } from '@/shared/lib/http/http_utils.ts';
-import { GradeAppend, GradeDto, GradeUpdate } from '@/entities/channel/grade/api/grade.schema.ts';
+import { GradeAppend, GradeDto, GradeUpdate } from '@/entities/channel/grade/model/grade.schema.ts';
 
 export async function fetchGrades() {
   const res = await request(`${configs.endpoint}/api/channels/grades`);

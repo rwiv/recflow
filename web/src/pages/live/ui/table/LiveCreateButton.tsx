@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createLive } from '@/pages/live/api/live.client.ts';
 import { useRef } from 'react';
 import { SelectItem } from '@/shared/ui/cn/select.tsx';
-import { platformNameEnum } from '@/entities/platform/api/platform.schema.ts';
+import { platformNameEnum } from '@/entities/platform/model/platform.schema.ts';
 import { SelectFormField } from '@/shared/ui/form/SelectFormField.tsx';
 import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
 import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';

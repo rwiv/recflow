@@ -7,12 +7,12 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/cn/dropdown-menu.tsx';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
-import { TagDto } from '@/entities/channel/tag/api/tag.schema.ts';
-import { ChannelDto } from '@/entities/channel/channel/api/channel.types.ts';
+import { TagDto } from '@/entities/channel/tag/model/tag.schema.ts';
+import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { detachTag } from '@/entities/channel/tag/api/tag.client.ts';
+import { detachTag } from '@/features/channel/tag/api/tag.client.ts';
 import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
-import { TAGS_QUERY_KEY } from '@/entities/channel/tag/config/constants.ts';
+import { TAGS_QUERY_KEY } from '@/features/channel/tag/config/constants.ts';
 
 interface TagBadgeProps {
   tag: TagDto;

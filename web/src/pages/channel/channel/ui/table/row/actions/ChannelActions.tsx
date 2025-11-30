@@ -11,9 +11,9 @@ import {
 } from '@/shared/ui/cn/dropdown-menu.tsx';
 import { Button } from '@/shared/ui/cn/button.tsx';
 import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
-import { ChannelDto } from '@/entities/channel/channel/api/channel.types.ts';
+import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { deleteChannel, updateChannelIsFollowed } from '@/entities/channel/channel/api/channel.client.ts';
+import { deleteChannel, updateChannelIsFollowed } from '@/pages/channel/channel/api/channel.client.ts';
 import { TagAttachDialog } from '@/pages/channel/channel/ui/table/row/actions/TagAttachDialog.tsx';
 import { ChannelUpdateDialog } from '@/pages/channel/channel/ui/table/row/actions/ChannelUpdateDialog.tsx';
 

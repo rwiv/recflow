@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChannelPageState } from '@/entities/channel/channel/model/ChannelPageState.ts';
-import { fetchChannels } from '@/entities/channel/channel/api/channel.client.ts';
+import { fetchChannels } from '@/pages/channel/channel/api/channel.client.ts';
 import { DEFAULT_CHANNEL_PAGINATION_SIZE } from '@/pages/channel/channel/config/constants.ts';
 import { LoadingComponent } from '@/shared/ui/misc/LoadingComponent.tsx';
 import { ChannelSearchBar } from '@/pages/channel/channel/ui/table/searchbar/ChannelSearchBar.tsx';

@@ -4,7 +4,7 @@ import { z, ZodError } from 'zod';
 import { Form, FormField } from '@/shared/ui/cn/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { fetchPlatforms } from '@/entities/platform/api/platform.client.ts';
+import { fetchPlatforms } from '@/features/platform/api/platform.client.ts';
 import { chzzkCriterionAppend } from '@/pages/criterion/api/criterion.schema.ts';
 import { nonempty } from '@/shared/lib/schema/schema_common.ts';
 import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';

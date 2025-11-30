@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { createSelectColumn, dateColumnDef } from '@/shared/ui/table/column_utils.tsx';
 import { NotifyOnlyBadge } from '@/pages/channel/grade/ui/table/columns/NotifyOnlyBadge.tsx';
 import { GradeFieldUpdateForm } from '@/pages/channel/grade/ui/table/columns/GradeFieldUpdateForm.tsx';
-import { GradeDto } from '@/entities/channel/grade/api/grade.schema.ts';
+import { GradeDto } from '@/entities/channel/grade/model/grade.schema.ts';
 import { ShouldSaveBadge } from '@/pages/channel/grade/ui/table/columns/ShouldSaveBadge.tsx';
 
 const EDITABLE_WIDTH = '10rem';

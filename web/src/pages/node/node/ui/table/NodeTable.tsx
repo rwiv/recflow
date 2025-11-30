@@ -4,13 +4,13 @@ import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
 import { nodeColumns } from '@/pages/node/node/ui/table/columns/nodeColumns.tsx';
-import { NodeDto } from '@/entities/node/node/api/node.schema.ts';
+import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
 import { NodeCreateButton } from '@/pages/node/node/ui/table/NodeCreateButton.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteNode } from '@/entities/node/node/api/node.client.ts';
+import { deleteNode } from '@/features/node/node/api/node.client.ts';
 import { Button } from '@/shared/ui/cn/button.tsx';
 import { useTable } from '@/shared/model/useTable.ts';
-import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/features/node/node/config/constants.ts';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
   const queryClient = useQueryClient();

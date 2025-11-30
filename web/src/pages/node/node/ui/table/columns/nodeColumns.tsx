@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { NodeDto } from '@/entities/node/node/api/node.schema.ts';
+import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
 import { createSelectColumn } from '@/shared/ui/table/column_utils.tsx';
 import { NodeGroupBadge } from '@/pages/node/node/ui/table/columns/GroupUpdateDialog.tsx';
 import { NodeFieldUpdateForm } from '@/pages/node/node/ui/table/columns/NodeFieldUpdateForm.tsx';

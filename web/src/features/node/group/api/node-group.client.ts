@@ -5,7 +5,7 @@ import {
   NodeGroupAppend,
   NodeGroupDto,
   NodeGroupUpdate,
-} from '@/entities/node/group/api/node-group.schema.ts';
+} from '@/entities/node/group/model/node-group.schema.ts';
 
 export async function fetchNodeGroups() {
   const res = await request(`${configs.endpoint}/api/node-groups`);

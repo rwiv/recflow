@@ -6,7 +6,7 @@ import {
   TagDetachment,
   TagDto,
   TagUpdate,
-} from '@/entities/channel/tag/api/tag.schema.ts';
+} from '@/entities/channel/tag/model/tag.schema.ts';
 
 export async function fetchTags() {
   const res = await request(`${configs.endpoint}/api/channels/tags`);

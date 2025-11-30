@@ -7,12 +7,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/shared/ui/cn/button.tsx';
 import { NodeGroupCreateButton } from '@/pages/node/group/ui/table/NodeGroupCreateButton.tsx';
 import { nodeGroupColumns } from '@/pages/node/group/ui/table/nodeGroupColumns.tsx';
-import { deleteNodeGroup, drainNodeGroup } from '@/entities/node/group/api/node-group.client.ts';
-import { fetchNodes, updateNode } from '@/entities/node/node/api/node.client.ts';
-import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
+import { deleteNodeGroup, drainNodeGroup } from '@/features/node/group/api/node-group.client.ts';
+import { fetchNodes, updateNode } from '@/features/node/node/api/node.client.ts';
+import { NodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
 import { useTable } from '@/shared/model/useTable.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
-import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/features/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/features/node/node/config/constants.ts';
 
 interface NodeGroupTableProps {
   groups: NodeGroupDto[];

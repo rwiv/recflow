@@ -9,14 +9,14 @@ import { css } from '@emotion/react';
 import { SelectFormField } from '@/shared/ui/form/SelectFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
 import { DialogBase } from '@/shared/ui/dialog/DialogBase.tsx';
-import { NodeDto } from '@/entities/node/node/api/node.schema.ts';
-import { updateNode } from '@/entities/node/node/api/node.client.ts';
+import { NodeDto } from '@/entities/node/node/model/node.schema.ts';
+import { updateNode } from '@/features/node/node/api/node.client.ts';
 import { uuid } from '@/shared/lib/schema/schema_common.ts';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
-import { fetchNodeGroups } from '@/entities/node/group/api/node-group.client.ts';
-import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
-import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
+import { fetchNodeGroups } from '@/features/node/group/api/node-group.client.ts';
+import { NodeGroupDto } from '@/entities/node/group/model/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/features/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/features/node/node/config/constants.ts';
 
 export function NodeGroupBadge({ node }: { node: NodeDto }) {
   return (

@@ -1,9 +1,9 @@
 import { TableCell, TableRow } from '@/shared/ui/cn/table.tsx';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
 import { prettyDate } from '@/shared/lib/types/date.ts';
-import { ChannelDto } from '@/entities/channel/channel/api/channel.types.ts';
+import { ChannelDto } from '@/entities/channel/channel/model/channel.schema.ts';
 import { GradeUpdateDialog } from '@/pages/channel/channel/ui/table/row/GradeUpdateDialog.tsx';
-import { ChannelInfoCell } from '@/entities/channel/channel/ui/ChannelInfoCell.tsx';
+import { ChannelInfoCell } from '@/features/channel/channel/ui/ChannelInfoCell.tsx';
 import { ChannelActions } from '@/pages/channel/channel/ui/table/row/actions/ChannelActions.tsx';
 import { TagBadge } from '@/pages/channel/channel/ui/table/row/TagBadge.tsx';
 

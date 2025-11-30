@@ -9,7 +9,7 @@ import { SelectItem } from '@shared/ui/cn/select.tsx';
 import { uuid } from '@shared/lib/schema/schema_common';
 import { ChannelDto } from '@entities/channel/channel/api/channel.types';
 import { fetchGrades } from '@entities/channel/grade/api/grade.client';
-import { GRADES_QUERY_KEY } from '@entities/channel/grade/config/constants.ts';
+import { GRADES_QUERY_KEY } from '@pages/channel/grade/config/constants.ts';
 import { GradeDto } from '@entities/channel/grade/api/grade.schema.ts';
 import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore';
 import { DialogBase } from '@shared/ui/dialog/DialogBase';

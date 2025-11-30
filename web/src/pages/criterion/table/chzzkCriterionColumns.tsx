@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { ChzzkCriterionDto } from '@entities/criterion/api/criterion.schema.ts';
+import { ChzzkCriterionDto } from '@pages/criterion/api/criterion.schema.ts';
 import { createSelectColumn } from '@shared/ui/table/column_utils.tsx';
 import { CriterionFieldUpdateForm } from '@pages/criterion/table/units/CriterionFieldUpdateForm.tsx';
 import {

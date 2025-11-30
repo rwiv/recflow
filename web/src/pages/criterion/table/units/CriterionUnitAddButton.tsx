@@ -1,4 +1,4 @@
-import { createCriterionUnit } from '@entities/criterion/api/criterion.client.ts';
+import { createCriterionUnit } from '@pages/criterion/api/criterion.client.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

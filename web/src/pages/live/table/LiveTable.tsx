@@ -2,7 +2,7 @@ import { TableContent } from '@shared/ui/table/TableContent.tsx';
 import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
 import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { LiveDto } from '@entities/live/api/live.schema.ts';
+import { LiveDto } from '@pages/live/api/live.schema.ts';
 import { liveColumns } from '@pages/live/table/liveColumns.tsx';
 import { LiveRemoveButton } from '@pages/live/table/LiveRemoveButton.tsx';
 import { FilterInput } from '@shared/ui/table/FilterInput.tsx';

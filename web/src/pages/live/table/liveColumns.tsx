@@ -2,7 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { createSelectColumn, dateColumnDef, sortableColumnDef } from '@shared/ui/table/column_utils.tsx';
 import { cn } from '@shared/lib/styles/utils.ts';
 import { Badge } from '@shared/ui/cn/badge.tsx';
-import { LiveDtoWithNodes } from '@entities/live/api/live.mapped.schema.ts';
+import { LiveDtoWithNodes } from '@pages/live/api/live.mapped.schema.ts';
 import { ChannelInfoCell } from '@entities/channel/channel/ui/ChannelInfoCell';
 import { getLiveUrl } from '@pages/live/lib/platform_utils.ts';
 

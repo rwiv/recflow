@@ -24,7 +24,7 @@ import { PLATFORMS_QUERY_KEY } from '@entities/platform/config/constants.ts';
 import { fetchGrades } from '@entities/channel/grade/api/grade.client';
 import { createChannel } from '@entities/channel/channel/api/channel.client.ts';
 import { TagCreateSelect } from '@pages/channel/channel/table/searchbar/left/createButton/TagCreateSelect.tsx';
-import { GRADES_QUERY_KEY } from '@entities/channel/grade/config/constants.ts';
+import { GRADES_QUERY_KEY } from '@pages/channel/grade/config/constants.ts';
 
 export function ChannelCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

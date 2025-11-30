@@ -1,7 +1,7 @@
 import { Table } from '@tanstack/react-table';
-import { LiveDto } from '@entities/live/api/live.schema.ts';
+import { LiveDto } from '@pages/live/api/live.schema.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteLive } from '@entities/live/api/live.client.ts';
+import { deleteLive } from '@pages/live/api/live.client.ts';
 import { RefObject, useRef, useState } from 'react';
 import { Button } from '@shared/ui/cn/button.tsx';
 import {
@@ -26,7 +26,7 @@ import {
 import { Switch } from '@shared/ui/cn/switch.tsx';
 import { Label } from '@shared/ui/cn/label.tsx';
 import { css, SerializedStyles } from '@emotion/react';
-import { ExitCmd } from '@entities/live/model/live_request.shema.ts';
+import { ExitCmd } from '@pages/live/model/live_request.shema.ts';
 import { LIVES_QUERY_KEY } from '@pages/live/config/constants.ts';
 
 interface LiveRemoveButtonProps {

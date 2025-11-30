@@ -10,7 +10,7 @@ import {
   SoopCriterionAppend,
   SoopCriterionDto,
   soopCriterionDto,
-} from '@entities/criterion/api/criterion.schema.ts';
+} from '@pages/criterion/api/criterion.schema.ts';
 
 export async function fetchChzzkCriteria() {
   const res = await request(`${configs.endpoint}/api/criteria/chzzk`);

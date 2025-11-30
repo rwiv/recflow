@@ -1,5 +1,5 @@
-import { deleteCriterionUnit } from '@entities/criterion/api/criterion.client.ts';
-import { CriterionUnitDto } from '@entities/criterion/api/criterion.schema.ts';
+import { deleteCriterionUnit } from '@pages/criterion/api/criterion.client.ts';
+import { CriterionUnitDto } from '@pages/criterion/api/criterion.schema.ts';
 import { Badge } from '@shared/ui/cn/badge.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { DefaultAlertDialog } from '@shared/ui/dialog/AlertDialog.tsx';

@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { deleteNode } from '@/entities/node/node/api/node.client.ts';
 import { Button } from '@/shared/ui/cn/button.tsx';
 import { useTable } from '@/shared/model/useTable.ts';
-import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
 
 export function NodeTable({ data }: { data: NodeDto[] }) {
   const queryClient = useQueryClient();

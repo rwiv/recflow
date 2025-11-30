@@ -3,7 +3,7 @@ import { switchBadgeCn1 } from '@/shared/lib/styles/common.ts';
 import { updateNode } from '@/entities/node/node/api/node.client.ts';
 import { NodeDto } from '@/entities/node/node/api/node.schema.ts';
 import { SwitchBadge } from '@/shared/ui/misc/SwitchBadge.tsx';
-import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
 
 export function NodeCordonedBadge({ node }: { node: NodeDto }) {
   const queryClient = useQueryClient();

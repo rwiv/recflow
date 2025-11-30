@@ -11,8 +11,8 @@ import { deleteNodeGroup, drainNodeGroup } from '@/entities/node/group/api/node-
 import { fetchNodes, updateNode } from '@/entities/node/node/api/node.client.ts';
 import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
 import { useTable } from '@/shared/model/useTable.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
-import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
 
 interface NodeGroupTableProps {
   groups: NodeGroupDto[];

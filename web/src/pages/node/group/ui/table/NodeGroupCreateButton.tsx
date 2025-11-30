@@ -11,7 +11,7 @@ import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
 import { parse } from '@/shared/lib/schema/form_utils.ts';
 import { createNodeGroup } from '@/entities/node/group/api/node-group.client.ts';
 import { nodeGroupAppend } from '@/entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
 
 export function NodeGroupCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

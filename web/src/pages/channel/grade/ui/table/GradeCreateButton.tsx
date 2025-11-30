@@ -13,7 +13,7 @@ import { createGrade } from '@/entities/channel/grade/api/grade.client.ts';
 import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
 import { CheckFormField } from '@/shared/ui/form/CheckFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
-import { GRADES_QUERY_KEY } from '@/pages/channel/grade/config/constants.ts';
+import { GRADES_QUERY_KEY } from '@/entities/channel/grade/config/constants.ts';
 
 export function GradeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchNodeGroups } from '@/entities/node/group/api/node-group.client.ts';
 import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
 import { NodeGroupTable } from '@/pages/node/group/ui/table/NodeGroupTable.tsx';
 import { PageHeaderTab } from '@/widgets/header/ui/PageHeaderTab.tsx';
 

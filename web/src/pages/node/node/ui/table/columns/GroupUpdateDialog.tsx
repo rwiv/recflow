@@ -15,8 +15,8 @@ import { uuid } from '@/shared/lib/schema/schema_common.ts';
 import { Badge } from '@/shared/ui/cn/badge.tsx';
 import { fetchNodeGroups } from '@/entities/node/group/api/node-group.client.ts';
 import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
-import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/entities/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/entities/node/node/config/constants.ts';
 
 export function NodeGroupBadge({ node }: { node: NodeDto }) {
   return (

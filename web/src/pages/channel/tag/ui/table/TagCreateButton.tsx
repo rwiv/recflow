@@ -11,7 +11,7 @@ import { tagAppend } from '@/entities/channel/tag/api/tag.schema.ts';
 import { createTag } from '@/entities/channel/tag/api/tag.client.ts';
 import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
-import { TAGS_QUERY_KEY } from '@/pages/channel/tag/config/constants.ts';
+import { TAGS_QUERY_KEY } from '@/entities/channel/tag/config/constants.ts';
 
 export function TagCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

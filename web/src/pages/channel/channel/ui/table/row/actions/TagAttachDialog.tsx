@@ -12,7 +12,7 @@ import { attachTag } from '@/entities/channel/tag/api/tag.client.ts';
 import { formItemStyle } from '@/shared/lib/styles/form.ts';
 import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
 import { TagAttachSelect } from '@/pages/channel/channel/ui/table/row/actions/TagAttachSelect.tsx';
-import { TAGS_QUERY_KEY } from '@/pages/channel/tag/config/constants.ts';
+import { TAGS_QUERY_KEY } from '@/entities/channel/tag/config/constants.ts';
 
 interface TagAttachDialogProps {
   channel: ChannelDto;

@@ -8,7 +8,7 @@ import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
 import { TableContent } from '@/shared/ui/table/TableContent.tsx';
 import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
 import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
-import { TAGS_QUERY_KEY } from '@/pages/channel/tag/config/constants.ts';
+import { TAGS_QUERY_KEY } from '@/entities/channel/tag/config/constants.ts';
 import { TagCreateButton } from '@/pages/channel/tag/ui/table/TagCreateButton.tsx';
 import { tagColumns } from '@/pages/channel/tag/ui/table/tagColumns.tsx';
 

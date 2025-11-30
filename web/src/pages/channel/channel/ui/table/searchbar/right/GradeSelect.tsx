@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/shared/ui/cn/select.tsx';
 import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
-import { GRADES_QUERY_KEY } from '@/pages/channel/grade/config/constants.ts';
+import { GRADES_QUERY_KEY } from '@/entities/channel/grade/config/constants.ts';
 import { fetchGrades } from '@/entities/channel/grade/api/grade.client.ts';
 
 export function GradeSelect() {

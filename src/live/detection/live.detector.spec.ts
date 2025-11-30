@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it, MockInstance, vi } from 'vitest';
 import { dummyPlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.dummy.js';
 import { dummyPlatformDto } from '../../platform/spec/storage/platform.dto.schema.dummy.js';
 import { dummyChannelInfoChzzk } from '../../platform/spec/wapper/channel.dummy.js';
-import { LiveDetector } from './live.detector.js';
 import { LiveInitializerMock } from '../register/live.initializer.mock.js';
 import { PlatformFetcherFake } from '../../platform/fetcher/fetcher.fake.js';
 import { channelInfoToDto } from '../../channel/spec/channel.dto.schema.dummy.js';
 import { ChannelInfo, channelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveHistoryRepository } from '../storage/live.history.repository.js';
 import { MemoryCacheStore } from '../../infra/cache/cache.store.memory.js';
+import { LiveDetector } from '@/live/detection/live.detector.js';
 
 describe('LiveCoordinator', () => {
   let coordinator: LiveDetector;

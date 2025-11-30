@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
-import { ChannelFinder } from '../../channel/service/channel.finder.js';
-import { GradeDto } from '../../channel/spec/grade.schema.js';
-import { liveInfoAttr } from '../../common/attr/attr.live.js';
-import { PlatformCriterionDto } from '../../criterion/spec/criterion.dto.schema.js';
+import { ChannelFinder } from '@/channel/service/channel.finder.js';
+import { GradeDto } from '@/channel/spec/grade.schema.js';
+import { liveInfoAttr } from '@/common/attr/attr.live.js';
+import { PlatformCriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 import { PlatformFetcher } from '../../platform/fetcher/fetcher.js';
 import { PlatformName } from '../../platform/spec/storage/platform.enum.schema.js';
 import { channelLiveInfo, ChannelLiveInfo } from '../../platform/spec/wapper/channel.js';
 import { LiveFinder } from '../data/live.finder.js';
 import { LiveHistoryRepository } from '../storage/live.history.repository.js';
 import { PlatformLiveFilter } from './live.filter.js';
-import { LiveInfo } from '../../platform/spec/wapper/live.js';
+import { LiveInfo } from '@/platform/spec/wapper/live.js';
 import { ChannelDto } from '../../channel/spec/channel.dto.schema.js';
 import { LiveInitializer } from '../register/live.initializer.js';
-import { printError, handleSettled } from '../../utils/log.js';
+import { handleSettled, printError } from '../../utils/log.js';
 
 @Injectable()
 export class LiveDetector {

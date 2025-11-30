@@ -1,11 +1,11 @@
-import { configs } from '@shared/config/configs.ts';
-import { getIngredients, request } from '@shared/lib/http/http_utils.ts';
+import { configs } from '@/shared/config/configs.ts';
+import { getIngredients, request } from '@/shared/lib/http/http_utils.ts';
 
 import {
   NodeGroupAppend,
   NodeGroupDto,
   NodeGroupUpdate,
-} from '@entities/node/group/api/node-group.schema.ts';
+} from '@/entities/node/group/api/node-group.schema.ts';
 
 export async function fetchNodeGroups() {
   const res = await request(`${configs.endpoint}/api/node-groups`);

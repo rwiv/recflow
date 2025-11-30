@@ -1,7 +1,7 @@
-import { PlatformName } from '@entities/platform/api/platform.schema.ts';
-import { CHANNELS_QUERY_KEY } from '@entities/channel/channel/config/constants.ts';
-import { ChannelSortType } from '@entities/channel/channel/model/channel_query.schema.ts';
-import { ChannelPageStateBuilder } from '@entities/channel/channel/model/ChannelPageStateBuilder.ts';
+import { PlatformName } from '@/entities/platform/api/platform.schema.ts';
+import { CHANNELS_QUERY_KEY } from '@/entities/channel/channel/config/constants.ts';
+import { ChannelSortType } from '@/entities/channel/channel/model/channel_query.schema.ts';
+import { ChannelPageStateBuilder } from '@/entities/channel/channel/model/ChannelPageStateBuilder.ts';
 
 export class ChannelPageState {
   curPageNum: number;

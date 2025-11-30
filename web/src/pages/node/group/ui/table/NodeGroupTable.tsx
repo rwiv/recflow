@@ -1,18 +1,18 @@
-import { TableContent } from '@shared/ui/table/TableContent.tsx';
-import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
-import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
+import { TableContent } from '@/shared/ui/table/TableContent.tsx';
+import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
+import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
+import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
+import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button } from '@shared/ui/cn/button.tsx';
-import { NodeGroupCreateButton } from '@pages/node/group/ui/table/NodeGroupCreateButton.tsx';
-import { nodeGroupColumns } from '@pages/node/group/ui/table/nodeGroupColumns.tsx';
-import { deleteNodeGroup, drainNodeGroup } from '@entities/node/group/api/node-group.client.ts';
-import { fetchNodes, updateNode } from '@entities/node/node/api/node.client.ts';
-import { NodeGroupDto } from '@entities/node/group/api/node-group.schema.ts';
-import { useTable } from '@shared/model/useTable.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@pages/node/group/config/constants.ts';
-import { NODES_QUERY_KEY } from '@pages/node/node/config/constants.ts';
+import { Button } from '@/shared/ui/cn/button.tsx';
+import { NodeGroupCreateButton } from '@/pages/node/group/ui/table/NodeGroupCreateButton.tsx';
+import { nodeGroupColumns } from '@/pages/node/group/ui/table/nodeGroupColumns.tsx';
+import { deleteNodeGroup, drainNodeGroup } from '@/entities/node/group/api/node-group.client.ts';
+import { fetchNodes, updateNode } from '@/entities/node/node/api/node.client.ts';
+import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
+import { useTable } from '@/shared/model/useTable.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
 
 interface NodeGroupTableProps {
   groups: NodeGroupDto[];

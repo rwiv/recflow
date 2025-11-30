@@ -4,8 +4,8 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@shared/ui/cn/dropdown-menu.tsx';
-import { Button } from '@shared/ui/cn/button.tsx';
+} from '@/shared/ui/cn/dropdown-menu.tsx';
+import { Button } from '@/shared/ui/cn/button.tsx';
 import { ChevronDown } from 'lucide-react';
 
 export function ColumnSelector<T>({ table }: { table: Table<T> }) {

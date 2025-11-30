@@ -1,4 +1,4 @@
-import { env } from '@shared/config/env.ts';
+import { env } from '@/shared/config/env.ts';
 
 const isDev = env.MODE === 'development';
 const isProd = env.MODE === 'production';

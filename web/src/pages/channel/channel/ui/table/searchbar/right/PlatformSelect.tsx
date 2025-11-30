@@ -5,14 +5,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@shared/ui/cn/select.tsx';
+} from '@/shared/ui/cn/select.tsx';
 import { css } from '@emotion/react';
-import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { fetchPlatforms } from '@entities/platform/api/platform.client.ts';
-import { PLATFORMS_QUERY_KEY } from '@entities/platform/config/constants.ts';
-import { platformNameEnum } from '@entities/platform/api/platform.schema.ts';
+import { fetchPlatforms } from '@/entities/platform/api/platform.client.ts';
+import { PLATFORMS_QUERY_KEY } from '@/entities/platform/config/constants.ts';
+import { platformNameEnum } from '@/entities/platform/api/platform.schema.ts';
 
 export function PlatformSelect() {
   const navigate = useNavigate();

@@ -1,10 +1,10 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { SerializedStyles } from '@emotion/react';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@shared/ui/cn/form.tsx';
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@shared/ui/cn/select.tsx';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
+import { Select, SelectContent, SelectTrigger, SelectValue } from '@/shared/ui/cn/select.tsx';
 import { ReactNode } from 'react';
-import { firstLetterUppercase } from '@shared/lib/types/strings.ts';
-import { formItemStyle } from '@shared/lib/styles/form.ts';
+import { firstLetterUppercase } from '@/shared/lib/types/strings.ts';
+import { formItemStyle } from '@/shared/lib/styles/form.ts';
 
 interface SelectFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;

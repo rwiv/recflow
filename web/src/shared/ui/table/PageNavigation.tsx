@@ -1,5 +1,5 @@
 import { Table } from '@tanstack/react-table';
-import { Button } from '@shared/ui/cn/button.tsx';
+import { Button } from '@/shared/ui/cn/button.tsx';
 
 export function PageNavigation<T>({ table }: { table: Table<T> }) {
   return (

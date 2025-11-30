@@ -1,9 +1,9 @@
-import { TextUpdateForm } from '@shared/ui/form/TextUpdateForm.tsx';
+import { TextUpdateForm } from '@/shared/ui/form/TextUpdateForm.tsx';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { updateNode } from '@entities/node/node/api/node.client.ts';
-import { NodeDto } from '@entities/node/node/api/node.schema.ts';
-import { NODES_QUERY_KEY } from '@pages/node/node/config/constants.ts';
+import { updateNode } from '@/entities/node/node/api/node.client.ts';
+import { NodeDto } from '@/entities/node/node/api/node.schema.ts';
+import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
 
 type Type = 'name' | 'endpoint' | 'priority' | 'capacity' | 'failureCnt';
 

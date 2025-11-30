@@ -4,16 +4,16 @@ import { useForm } from 'react-hook-form';
 import { css } from '@emotion/react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@shared/ui/cn/form.tsx';
-import { parse } from '@shared/lib/schema/form_utils.ts';
-import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
-import { gradeAppend } from '@entities/channel/grade/api/grade.schema.ts';
-import { nonempty } from '@shared/lib/schema/schema_common.ts';
-import { createGrade } from '@entities/channel/grade/api/grade.client.ts';
-import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
-import { CheckFormField } from '@shared/ui/form/CheckFormField.tsx';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { GRADES_QUERY_KEY } from '@pages/channel/grade/config/constants.ts';
+import { Form } from '@/shared/ui/cn/form.tsx';
+import { parse } from '@/shared/lib/schema/form_utils.ts';
+import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';
+import { gradeAppend } from '@/entities/channel/grade/api/grade.schema.ts';
+import { nonempty } from '@/shared/lib/schema/schema_common.ts';
+import { createGrade } from '@/entities/channel/grade/api/grade.client.ts';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
+import { CheckFormField } from '@/shared/ui/form/CheckFormField.tsx';
+import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { GRADES_QUERY_KEY } from '@/pages/channel/grade/config/constants.ts';
 
 export function GradeCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

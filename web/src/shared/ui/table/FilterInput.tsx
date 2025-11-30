@@ -1,5 +1,5 @@
 import { Table } from '@tanstack/react-table';
-import { Input } from '@shared/ui/cn/input.tsx';
+import { Input } from '@/shared/ui/cn/input.tsx';
 
 interface FilterInputProps<T> {
   table: Table<T>;

@@ -13,6 +13,14 @@ export default defineConfig([
       'fsd/insignificant-slice': 'warn',
 
       'fsd/forbidden-imports': 'off',
+      'fsd/no-cross-imports': 'error',
+      'fsd/no-higher-level-imports': 'error',
+    },
+  },
+  {
+    files: ['./src/entities/**'],
+    rules: {
+      'fsd/forbidden-imports': 'off',
       'fsd/no-cross-imports': 'off',
       'fsd/no-higher-level-imports': 'error',
     },

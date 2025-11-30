@@ -1,11 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Checkbox } from '@shared/ui/cn/checkbox.tsx';
-import { Button } from '@shared/ui/cn/button.tsx';
+import { Checkbox } from '@/shared/ui/cn/checkbox.tsx';
+import { Button } from '@/shared/ui/cn/button.tsx';
 import { ArrowUpDown } from 'lucide-react';
-import { prettyDate } from '@shared/lib/types/date.ts';
-import { firstLetterUppercase } from '@shared/lib/types/strings.ts';
-import { cn } from '@shared/lib/styles/utils.ts';
-import { ColumnMetaStyle } from '@shared/lib/styles/meta.ts';
+import { prettyDate } from '@/shared/lib/types/date.ts';
+import { firstLetterUppercase } from '@/shared/lib/types/strings.ts';
+import { cn } from '@/shared/lib/styles/utils.ts';
+import { ColumnMetaStyle } from '@/shared/lib/styles/meta.ts';
 
 export function sortableColumnDef<T>(
   cid: string,

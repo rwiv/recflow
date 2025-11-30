@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { css } from '@emotion/react';
 import { Search } from 'lucide-react';
-import { Input } from '@shared/ui/cn/input.tsx';
+import { Input } from '@/shared/ui/cn/input.tsx';
 import {
   Select,
   SelectContent,
@@ -9,10 +9,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@shared/ui/cn/select.tsx';
+} from '@/shared/ui/cn/select.tsx';
 import { Dispatch, KeyboardEventHandler, SetStateAction, useState } from 'react';
-import { checkType } from '@shared/lib/types/union.ts';
-import { Button } from '@shared/ui/cn/button.tsx';
+import { checkType } from '@/shared/lib/types/union.ts';
+import { Button } from '@/shared/ui/cn/button.tsx';
 
 type Criteria = 'sourceId' | 'username';
 

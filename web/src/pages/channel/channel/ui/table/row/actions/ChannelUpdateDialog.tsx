@@ -4,13 +4,13 @@ import { css } from '@emotion/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@shared/ui/cn/form.tsx';
-import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore.ts';
-import { updateChannelDescription } from '@entities/channel/channel/api/channel.client.ts';
-import { ChannelDto } from '@entities/channel/channel/api/channel.types.ts';
-import { DialogWithTrigger } from '@shared/ui/dialog/DialogWithTrigger.tsx';
-import { TextAreaFormField } from '@shared/ui/form/TextAreaFormField.tsx';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
+import { Form } from '@/shared/ui/cn/form.tsx';
+import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
+import { updateChannelDescription } from '@/entities/channel/channel/api/channel.client.ts';
+import { ChannelDto } from '@/entities/channel/channel/api/channel.types.ts';
+import { DialogWithTrigger } from '@/shared/ui/dialog/DialogWithTrigger.tsx';
+import { TextAreaFormField } from '@/shared/ui/form/TextAreaFormField.tsx';
+import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
 
 interface ChannelUpdateDialogProps {
   channel: ChannelDto;

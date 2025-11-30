@@ -1,10 +1,10 @@
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { useState } from 'react';
-import { FormControl, FormItem, FormLabel, FormMessage } from '@shared/ui/cn/form.tsx';
-import { formItemStyle } from '@shared/lib/styles/form.ts';
-import { Input } from '@shared/ui/cn/input.tsx';
-import { Button } from '@shared/ui/cn/button.tsx';
-import { Badge } from '@shared/ui/cn/badge.tsx';
+import { FormControl, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
+import { formItemStyle } from '@/shared/lib/styles/form.ts';
+import { Input } from '@/shared/ui/cn/input.tsx';
+import { Button } from '@/shared/ui/cn/button.tsx';
+import { Badge } from '@/shared/ui/cn/badge.tsx';
 import { SerializedStyles } from '@emotion/react';
 
 interface InputListFormItemProps<T extends FieldValues> {

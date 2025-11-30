@@ -1,16 +1,16 @@
-import { TableContent } from '@shared/ui/table/TableContent.tsx';
-import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { LiveDto } from '@pages/live/api/live.schema.ts';
-import { liveColumns } from '@pages/live/ui/table/liveColumns.tsx';
-import { LiveRemoveButton } from '@pages/live/ui/table/LiveRemoveButton.tsx';
-import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
-import { LiveCreateButton } from '@pages/live/ui/table/LiveCreateButton.tsx';
-import { Switch } from '@shared/ui/cn/switch.tsx';
-import { Label } from '@shared/ui/cn/label.tsx';
+import { TableContent } from '@/shared/ui/table/TableContent.tsx';
+import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
+import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
+import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
+import { LiveDto } from '@/pages/live/api/live.schema.ts';
+import { liveColumns } from '@/pages/live/ui/table/liveColumns.tsx';
+import { LiveRemoveButton } from '@/pages/live/ui/table/LiveRemoveButton.tsx';
+import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
+import { LiveCreateButton } from '@/pages/live/ui/table/LiveCreateButton.tsx';
+import { Switch } from '@/shared/ui/cn/switch.tsx';
+import { Label } from '@/shared/ui/cn/label.tsx';
 import { Dispatch, SetStateAction } from 'react';
-import { useTable } from '@shared/model/useTable.ts';
+import { useTable } from '@/shared/model/useTable.ts';
 
 interface LiveTableProps {
   lives: LiveDto[];

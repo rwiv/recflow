@@ -1,10 +1,10 @@
 import { KeyboardEventHandler, MouseEventHandler, ReactNode, useEffect, useRef, useState } from 'react';
 import { css } from '@emotion/react';
 import { ZodError } from 'zod';
-import { zodErrMsg } from '@shared/lib/schema/schema_utils.ts';
-import { Input } from '@shared/ui/cn/input.tsx';
-import { DefaultAlertDialog } from '@shared/ui/dialog/AlertDialog.tsx';
-import { toast } from '@shared/model/use-toast.ts';
+import { zodErrMsg } from '@/shared/lib/schema/schema_utils.ts';
+import { Input } from '@/shared/ui/cn/input.tsx';
+import { DefaultAlertDialog } from '@/shared/ui/dialog/AlertDialog.tsx';
+import { toast } from '@/shared/model/use-toast.ts';
 
 interface TextUpdateFormProps {
   submit: (value: string) => void;

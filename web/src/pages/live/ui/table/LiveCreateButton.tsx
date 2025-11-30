@@ -1,19 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Form } from '@shared/ui/cn/form.tsx';
+import { Form } from '@/shared/ui/cn/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { createLive } from '@pages/live/api/live.client.ts';
+import { createLive } from '@/pages/live/api/live.client.ts';
 import { useRef } from 'react';
-import { SelectItem } from '@shared/ui/cn/select.tsx';
-import { platformNameEnum } from '@entities/platform/api/platform.schema.ts';
-import { SelectFormField } from '@shared/ui/form/SelectFormField.tsx';
-import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
-import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { StreamInfo } from '@pages/live/api/live.schema.ts';
-import { headers, queryParams } from '@shared/lib/schema/schema_common.ts';
-import { LIVES_QUERY_KEY } from '@pages/live/config/constants.ts';
+import { SelectItem } from '@/shared/ui/cn/select.tsx';
+import { platformNameEnum } from '@/entities/platform/api/platform.schema.ts';
+import { SelectFormField } from '@/shared/ui/form/SelectFormField.tsx';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
+import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';
+import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { StreamInfo } from '@/pages/live/api/live.schema.ts';
+import { headers, queryParams } from '@/shared/lib/schema/schema_common.ts';
+import { LIVES_QUERY_KEY } from '@/pages/live/config/constants.ts';
 
 const formSchema = z.object({
   type: platformNameEnum,

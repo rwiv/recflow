@@ -1,12 +1,12 @@
-import { configs } from '@shared/config/configs.ts';
-import { getIngredients, request } from '@shared/lib/http/http_utils.ts';
-import { ChannelPageState } from '@entities/channel/channel/model/ChannelPageState.ts';
+import { configs } from '@/shared/config/configs.ts';
+import { getIngredients, request } from '@/shared/lib/http/http_utils.ts';
+import { ChannelPageState } from '@/entities/channel/channel/model/ChannelPageState.ts';
 import {
   ChannelAppend,
   ChannelDto,
   ChannelPageResult,
   ChannelUpdate,
-} from '@entities/channel/channel/api/channel.types.ts';
+} from '@/entities/channel/channel/api/channel.types.ts';
 
 export async function fetchChannels(pageState: ChannelPageState, withTags: boolean = true) {
   let qs = pageState.toQueryString();

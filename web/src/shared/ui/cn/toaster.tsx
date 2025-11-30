@@ -1,4 +1,4 @@
-import { useToast } from '@shared/model/use-toast.ts';
+import { useToast } from '@/shared/model/use-toast.ts';
 import {
   Toast,
   ToastClose,
@@ -6,7 +6,7 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from '@shared/ui/cn/toast.tsx';
+} from '@/shared/ui/cn/toast.tsx';
 
 export function Toaster() {
   const { toasts } = useToast();

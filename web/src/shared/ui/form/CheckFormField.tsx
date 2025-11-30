@@ -1,9 +1,9 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { SerializedStyles } from '@emotion/react';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@shared/ui/cn/form.tsx';
-import { Checkbox } from '@shared/ui/cn/checkbox.tsx';
-import { formItemStyle } from '@shared/lib/styles/form.ts';
-import { firstLetterUppercase } from '@shared/lib/types/strings.ts';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/ui/cn/form.tsx';
+import { Checkbox } from '@/shared/ui/cn/checkbox.tsx';
+import { formItemStyle } from '@/shared/lib/styles/form.ts';
+import { firstLetterUppercase } from '@/shared/lib/types/strings.ts';
 
 interface TextFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;

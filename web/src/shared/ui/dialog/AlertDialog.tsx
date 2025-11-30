@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@shared/ui/cn/alert-dialog.tsx';
+} from '@/shared/ui/cn/alert-dialog.tsx';
 
 interface DefaultAlertDialogProps {
   onAction: () => void;

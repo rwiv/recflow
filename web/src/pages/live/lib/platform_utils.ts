@@ -1,4 +1,4 @@
-import { PlatformName } from '@entities/platform/api/platform.schema.ts';
+import { PlatformName } from '@/entities/platform/api/platform.schema.ts';
 
 export function getLiveUrl(type: PlatformName, channelId: string) {
   switch (type) {

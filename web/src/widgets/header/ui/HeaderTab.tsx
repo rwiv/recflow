@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { cn } from '@shared/lib/styles/utils.ts';
+import { cn } from '@/shared/lib/styles/utils.ts';
 
 interface HeaderTabListProps {
   children: ReactNode;

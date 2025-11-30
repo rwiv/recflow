@@ -5,10 +5,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@shared/ui/cn/select.tsx';
+} from '@/shared/ui/cn/select.tsx';
 import { css } from '@emotion/react';
 import { useNavigate } from 'react-router';
-import { useChannelPageStore } from '@entities/channel/channel/model/useChannelPageStore.ts';
+import { useChannelPageStore } from '@/entities/channel/channel/model/useChannelPageStore.ts';
 
 export function SortSelect() {
   const navigate = useNavigate();

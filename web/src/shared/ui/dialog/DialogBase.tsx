@@ -6,10 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@shared/ui/cn/dialog.tsx';
+} from '@/shared/ui/cn/dialog.tsx';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { SerializedStyles } from '@emotion/react';
-import { cn } from '@shared/lib/styles/utils.ts';
+import { cn } from '@/shared/lib/styles/utils.ts';
 
 interface DialogBaseProps {
   title: string;

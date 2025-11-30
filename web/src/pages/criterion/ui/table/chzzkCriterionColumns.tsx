@@ -1,15 +1,15 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { ChzzkCriterionDto } from '@pages/criterion/api/criterion.schema.ts';
-import { createSelectColumn } from '@shared/ui/table/column_utils.tsx';
-import { CriterionFieldUpdateForm } from '@pages/criterion/ui/table/units/CriterionFieldUpdateForm.tsx';
+import { ChzzkCriterionDto } from '@/pages/criterion/api/criterion.schema.ts';
+import { createSelectColumn } from '@/shared/ui/table/column_utils.tsx';
+import { CriterionFieldUpdateForm } from '@/pages/criterion/ui/table/units/CriterionFieldUpdateForm.tsx';
 import {
   CriterionActivationBadge,
   CriterionEnforceCredentialsBadge,
   CriterionLoggingOnlyBadge,
-} from '@pages/criterion/ui/table/units/criterion_badges.tsx';
-import { CriterionUnit } from '@pages/criterion/ui/table/units/CriterionUnit.tsx';
-import { CriterionUnitAddButton } from '@pages/criterion/ui/table/units/CriterionUnitAddButton.tsx';
-import { CHZZK_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
+} from '@/pages/criterion/ui/table/units/criterion_badges.tsx';
+import { CriterionUnit } from '@/pages/criterion/ui/table/units/CriterionUnit.tsx';
+import { CriterionUnitAddButton } from '@/pages/criterion/ui/table/units/CriterionUnitAddButton.tsx';
+import { CHZZK_CRITERIA_QUERY_KEY } from '@/pages/criterion/config/constants.ts';
 
 const NORMAL_WIDTH = '7rem';
 const NAME_WIDTH = '10rem';

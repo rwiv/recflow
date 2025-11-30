@@ -6,8 +6,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@shared/ui/cn/pagination.tsx';
-import { ChannelPageState } from '@entities/channel/channel/model/ChannelPageState.ts';
+} from '@/shared/ui/cn/pagination.tsx';
+import { ChannelPageState } from '@/entities/channel/channel/model/ChannelPageState.ts';
 
 interface PageNavigationProps {
   pageState: ChannelPageState;

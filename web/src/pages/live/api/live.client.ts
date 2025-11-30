@@ -1,10 +1,10 @@
-import { configs } from '@shared/config/configs.ts';
-import { getIngredients, request } from '@shared/lib/http/http_utils.ts';
-import { PlatformName } from '@entities/platform/api/platform.schema.ts';
-import { liveDtoWithNodes } from '@pages/live/api/live.mapped.schema.ts';
-import { parseList } from '@shared/lib/schema/schema_utils.ts';
-import { StreamInfo } from '@pages/live/api/live.schema.ts';
-import { ExitCmd } from '@pages/live/model/live_request.shema.ts';
+import { configs } from '@/shared/config/configs.ts';
+import { getIngredients, request } from '@/shared/lib/http/http_utils.ts';
+import { PlatformName } from '@/entities/platform/api/platform.schema.ts';
+import { liveDtoWithNodes } from '@/pages/live/api/live.mapped.schema.ts';
+import { parseList } from '@/shared/lib/schema/schema_utils.ts';
+import { StreamInfo } from '@/pages/live/api/live.schema.ts';
+import { ExitCmd } from '@/pages/live/model/live_request.shema.ts';
 
 export async function fetchAllLives() {
   const res = await request(`${configs.endpoint}/api/lives/all`);

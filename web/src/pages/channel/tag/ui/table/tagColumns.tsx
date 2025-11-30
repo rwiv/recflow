@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { createSelectColumn, dateColumnDef } from '@shared/ui/table/column_utils.tsx';
-import { TagDto } from '@entities/channel/tag/api/tag.schema.ts';
-import { TagFieldUpdateForm } from '@pages/channel/tag/ui/table/TagFieldUpdateForm.tsx';
+import { createSelectColumn, dateColumnDef } from '@/shared/ui/table/column_utils.tsx';
+import { TagDto } from '@/entities/channel/tag/api/tag.schema.ts';
+import { TagFieldUpdateForm } from '@/pages/channel/tag/ui/table/TagFieldUpdateForm.tsx';
 
 const DEFAULT_WIDTH = '15rem';
 

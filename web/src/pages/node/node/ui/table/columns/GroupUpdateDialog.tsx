@@ -1,22 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Form } from '@shared/ui/cn/form.tsx';
+import { Form } from '@/shared/ui/cn/form.tsx';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ReactNode, useRef } from 'react';
-import { SelectItem } from '@shared/ui/cn/select.tsx';
+import { SelectItem } from '@/shared/ui/cn/select.tsx';
 import { css } from '@emotion/react';
-import { SelectFormField } from '@shared/ui/form/SelectFormField.tsx';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { DialogBase } from '@shared/ui/dialog/DialogBase.tsx';
-import { NodeDto } from '@entities/node/node/api/node.schema.ts';
-import { updateNode } from '@entities/node/node/api/node.client.ts';
-import { uuid } from '@shared/lib/schema/schema_common.ts';
-import { Badge } from '@shared/ui/cn/badge.tsx';
-import { fetchNodeGroups } from '@entities/node/group/api/node-group.client.ts';
-import { NodeGroupDto } from '@entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@pages/node/group/config/constants.ts';
-import { NODES_QUERY_KEY } from '@pages/node/node/config/constants.ts';
+import { SelectFormField } from '@/shared/ui/form/SelectFormField.tsx';
+import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { DialogBase } from '@/shared/ui/dialog/DialogBase.tsx';
+import { NodeDto } from '@/entities/node/node/api/node.schema.ts';
+import { updateNode } from '@/entities/node/node/api/node.client.ts';
+import { uuid } from '@/shared/lib/schema/schema_common.ts';
+import { Badge } from '@/shared/ui/cn/badge.tsx';
+import { fetchNodeGroups } from '@/entities/node/group/api/node-group.client.ts';
+import { NodeGroupDto } from '@/entities/node/group/api/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
+import { NODES_QUERY_KEY } from '@/pages/node/node/config/constants.ts';
 
 export function NodeGroupBadge({ node }: { node: NodeDto }) {
   return (

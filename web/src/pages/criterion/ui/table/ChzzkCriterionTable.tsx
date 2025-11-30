@@ -1,16 +1,16 @@
-import { TableContent } from '@shared/ui/table/TableContent.tsx';
-import { FilterInput } from '@shared/ui/table/FilterInput.tsx';
-import { ColumnSelector } from '@shared/ui/table/ColumnSelector.tsx';
-import { SelectedRowCount } from '@shared/ui/table/SelectedRowCount.tsx';
-import { PageNavigation } from '@shared/ui/table/PageNavigation.tsx';
-import { ChzzkCriterionDto } from '@pages/criterion/api/criterion.schema.ts';
-import { chzzkCriterionColumns } from '@pages/criterion/ui/table/chzzkCriterionColumns.tsx';
-import { ChzzkCriterionCreateButton } from '@pages/criterion/ui/table/ChzzkCriterionCreateButton.tsx';
-import { deleteCriterion } from '@pages/criterion/api/criterion.client.ts';
-import { Button } from '@shared/ui/cn/button.tsx';
+import { TableContent } from '@/shared/ui/table/TableContent.tsx';
+import { FilterInput } from '@/shared/ui/table/FilterInput.tsx';
+import { ColumnSelector } from '@/shared/ui/table/ColumnSelector.tsx';
+import { SelectedRowCount } from '@/shared/ui/table/SelectedRowCount.tsx';
+import { PageNavigation } from '@/shared/ui/table/PageNavigation.tsx';
+import { ChzzkCriterionDto } from '@/pages/criterion/api/criterion.schema.ts';
+import { chzzkCriterionColumns } from '@/pages/criterion/ui/table/chzzkCriterionColumns.tsx';
+import { ChzzkCriterionCreateButton } from '@/pages/criterion/ui/table/ChzzkCriterionCreateButton.tsx';
+import { deleteCriterion } from '@/pages/criterion/api/criterion.client.ts';
+import { Button } from '@/shared/ui/cn/button.tsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { CHZZK_CRITERIA_QUERY_KEY } from '@pages/criterion/config/constants.ts';
-import { useTable } from '@shared/model/useTable.ts';
+import { CHZZK_CRITERIA_QUERY_KEY } from '@/pages/criterion/config/constants.ts';
+import { useTable } from '@/shared/model/useTable.ts';
 
 export function ChzzkCriterionTable({ data }: { data: ChzzkCriterionDto[] }) {
   const queryClient = useQueryClient();

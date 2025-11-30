@@ -1,6 +1,6 @@
 import { flexRender, Table as TableType } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@shared/ui/cn/table.tsx';
-import { getStyleCell, getStyleHeader } from '@shared/lib/styles/meta.ts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/cn/table.tsx';
+import { getStyleCell, getStyleHeader } from '@/shared/lib/styles/meta.ts';
 import { css } from '@emotion/react';
 
 interface TableContentProps<T> {

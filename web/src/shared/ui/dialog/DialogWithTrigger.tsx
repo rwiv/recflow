@@ -1,6 +1,6 @@
 import { ReactNode, RefObject } from 'react';
 import { SerializedStyles } from '@emotion/react';
-import { DialogBase } from '@shared/ui/dialog/DialogBase.tsx';
+import { DialogBase } from '@/shared/ui/dialog/DialogBase.tsx';
 
 interface DialogButtonProps {
   title: string;

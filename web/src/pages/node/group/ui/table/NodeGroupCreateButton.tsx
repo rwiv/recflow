@@ -1,17 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Form } from '@shared/ui/cn/form.tsx';
+import { Form } from '@/shared/ui/cn/form.tsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { DialogButton } from '@shared/ui/dialog/DialogButton.tsx';
-import { TextFormField } from '@shared/ui/form/TextFormField.tsx';
+import { DialogButton } from '@/shared/ui/dialog/DialogButton.tsx';
+import { TextFormField } from '@/shared/ui/form/TextFormField.tsx';
 import { css } from '@emotion/react';
-import { FormSubmitButton } from '@shared/ui/form/FormSubmitButton.tsx';
-import { parse } from '@shared/lib/schema/form_utils.ts';
-import { createNodeGroup } from '@entities/node/group/api/node-group.client.ts';
-import { nodeGroupAppend } from '@entities/node/group/api/node-group.schema.ts';
-import { NODE_GROUPS_QUERY_KEY } from '@pages/node/group/config/constants.ts';
+import { FormSubmitButton } from '@/shared/ui/form/FormSubmitButton.tsx';
+import { parse } from '@/shared/lib/schema/form_utils.ts';
+import { createNodeGroup } from '@/entities/node/group/api/node-group.client.ts';
+import { nodeGroupAppend } from '@/entities/node/group/api/node-group.schema.ts';
+import { NODE_GROUPS_QUERY_KEY } from '@/pages/node/group/config/constants.ts';
 
 export function NodeGroupCreateButton() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);

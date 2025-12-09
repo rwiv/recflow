@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { handleSettled } from '@/utils/log.js';
 
+import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
+
 import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
 
 import { LiveFinder } from '@/live/data/live.finder.js';
@@ -15,6 +17,7 @@ export class LiveCleaner {
     private readonly liveFinder: LiveFinder,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly fetcher: PlatformFetcher,
+    private readonly recnodeRedis: RecnodeRedis,
   ) {}
 
   async cleanup() {
@@ -26,6 +29,10 @@ export class LiveCleaner {
   }
 
   private async finishLive(live: LiveDto) {
+    if (await this.recnodeRedis.isInvalidLive(live)) {
+      return await this.liveRegistrar.finishLive({ recordId: live.id, isPurge: true, exitCmd: 'finish' });
+    }
+
     const channelInfo = await this.fetcher.fetchChannel(live.platform.name, live.channel.sourceId, false);
     if (channelInfo?.openLive) {
       return;

@@ -7,6 +7,14 @@ import { liveStatusEnum } from '@/infra/db/schema.js';
 export const liveStatus = z.enum(liveStatusEnum);
 export type LiveStatus = z.infer<typeof liveStatus>;
 
+export function isDisableRequested(status: LiveStatus) {
+  return status === 'finalizing' || status === 'deleted';
+}
+
+export function isFinished(status: LiveStatus) {
+  return status === 'deleted';
+}
+
 export const liveEnt = z.object({
   id: uuid,
   channelId: uuid,
@@ -20,7 +28,6 @@ export const liveEnt = z.object({
   viewCnt: nnint,
   isAdult: z.boolean(),
   status: liveStatus,
-  isDisabled: z.boolean(),
   domesticOnly: z.boolean(),
   overseasFirst: z.boolean(),
   createdAt: z.coerce.date(),
@@ -32,7 +39,6 @@ export type LiveEnt = z.infer<typeof liveEnt>;
 export const liveEntAppend = liveEnt.partial({
   id: true,
   status: true,
-  isDisabled: true,
   createdAt: true,
   updatedAt: true,
   deletedAt: true,

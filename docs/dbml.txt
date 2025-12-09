@@ -115,7 +115,6 @@ Table live {
   view_cnt integer [not null]
   is_adult boolean [not null]
   status text [not null]
-  is_disabled boolean [not null]
   domestic_only boolean [not null]
   overseas_first boolean [not null]
   created_at timestamp [not null]

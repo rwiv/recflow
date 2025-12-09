@@ -25,7 +25,6 @@ export class LiveRepository {
       ...append,
       id: append.id,
       status: append.status ?? 'initializing',
-      isDisabled: append.isDisabled ?? false,
       createdAt: append.createdAt ?? new Date(),
     };
     const ent = await tx.insert(liveTable).values(liveEntAppendReq.parse(req)).returning();
@@ -53,8 +52,20 @@ export class LiveRepository {
     return oneNullable(await tx.select().from(liveTable).where(eq(liveTable.id, id)).for('update'));
   }
 
-  async findByIsDisabled(isDisabled: boolean, tx: Tx = db) {
-    return tx.select().from(liveTable).where(eq(liveTable.isDisabled, isDisabled)).orderBy(asc(liveTable.createdAt));
+  async findAllActives(tx: Tx = db) {
+    return tx
+      .select()
+      .from(liveTable)
+      .where(and(eq(liveTable.status, 'initializing'), eq(liveTable.status, 'recording')))
+      .orderBy(asc(liveTable.createdAt));
+  }
+
+  async findByIsDisabled(tx: Tx = db) {
+    return tx
+      .select()
+      .from(liveTable)
+      .where(and(eq(liveTable.status, 'finalizing'), eq(liveTable.status, 'deleted')))
+      .orderBy(asc(liveTable.createdAt));
   }
 
   async findByChannelSourceId(channelSourceId: string, tx: Tx = db) {
@@ -95,7 +106,7 @@ export class LiveRepository {
       .from(liveTable)
       .orderBy(
         sql`${liveTable.updatedAt}
-      ASC NULLS FIRST`,
+        ASC NULLS FIRST`,
       )
       .limit(limit);
   }

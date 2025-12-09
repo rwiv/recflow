@@ -55,14 +55,15 @@ export class TagWriter {
   detach(detach: TagDetachment, tx: Tx = db) {
     return tx.transaction(async (txx) => {
       await this.tagCmd.unbind(detach.channelId, detach.tagId, txx);
-      if ((await this.chQuery.findByTagId(detach.tagId, 1, txx)).length === 0) {
-        await this.tagCmd.delete(detach.tagId, txx);
-      }
       await this.chCmd.setUpdatedAtNow(detach.channelId, tx);
     });
   }
 
   update(id: string, update: TagUpdate, tx: Tx = db) {
     return this.tagCmd.update(id, update, tx);
+  }
+
+  delete(id: string, tx: Tx = db) {
+    return this.tagCmd.delete(id, tx);
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseFilters } from '@nestjs/common';
 
 import { HttpErrorFilter } from '@/common/error/error.filter.js';
 
@@ -47,5 +47,10 @@ export class TagController {
   update(@Param('tagId') tagId: string, @Body() req: TagUpdate) {
     const update = tagUpdate.parse(req);
     return this.tagWriter.update(tagId, update);
+  }
+
+  @Delete('/:tagId')
+  deleteChannel(@Param('tagId') tagId: string) {
+    return this.tagWriter.delete(tagId);
   }
 }

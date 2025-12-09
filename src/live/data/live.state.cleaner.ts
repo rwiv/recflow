@@ -58,7 +58,7 @@ export class LiveStateCleaner {
       if (exists.nodes.length > 0) {
         continue;
       }
-      if (exists.isDisabled && exists.deletedAt && exists.deletedAt < threshold) {
+      if (exists.isFinished && exists.deletedAt && exists.deletedAt < threshold) {
         targetIds.push(liveState.id);
       }
     }
@@ -67,7 +67,7 @@ export class LiveStateCleaner {
 
   async clearLive(liveId: string) {
     const exists = await this.liveFinder.findById(liveId);
-    if (exists && !exists.isDisabled) {
+    if (exists && !exists.isFinished) {
       log.error('Live still exists', liveAttr(exists));
       return;
     }

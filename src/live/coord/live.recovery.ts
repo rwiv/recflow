@@ -25,6 +25,7 @@ import { NodeDto } from '@/node/spec/node.dto.schema.js';
 import { LiveNodeRepository } from '@/node/storage/live-node.repository.js';
 
 import { LiveFinder } from '@/live/data/live.finder.js';
+import { LiveWriter } from '@/live/data/live.writer.js';
 import { LiveInitializer } from '@/live/register/live.initializer.js';
 import { LiveRegistrar } from '@/live/register/live.registrar.js';
 import { LiveDto } from '@/live/spec/live.dto.schema.js';
@@ -46,6 +47,7 @@ export class LiveRecoveryManager {
   constructor(
     @Inject(ENV) private readonly env: Env,
     private readonly liveFinder: LiveFinder,
+    private readonly liveWriter: LiveWriter,
     private readonly liveInitializer: LiveInitializer,
     private readonly liveRegistrar: LiveRegistrar,
     private readonly liveNodeRepo: LiveNodeRepository,
@@ -88,7 +90,7 @@ export class LiveRecoveryManager {
       return;
     }
     // Skip already finished live
-    if (live.isDisabled) {
+    if (live.isDisableRequested) {
       log.debug('Live is already disabled', liveAttr(live));
       return;
     }
@@ -106,6 +108,8 @@ export class LiveRecoveryManager {
       return;
     }
     if (live.sourceId !== liveInfo.liveUid) {
+      await this.liveWriter.update(live.id, { sourceId: liveInfo.liveUid });
+      live.sourceId = liveInfo.liveUid; // TODO: danger
       await this.finishLiveWithRestart(live, 'Delete restarted live', 'warn');
       return;
     }
@@ -155,7 +159,7 @@ export class LiveRecoveryManager {
       return;
     }
     // Skip already finished live
-    if (live.isDisabled) {
+    if (live.isDisableRequested) {
       log.error('Live is already disabled', liveAttr(live, { node: invalidNode }));
       return;
     }

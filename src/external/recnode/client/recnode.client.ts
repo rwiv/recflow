@@ -72,5 +72,5 @@ export const nodeStatusResponse = z.object({
 export type NodeStatusResponse = z.infer<typeof nodeStatusResponse>;
 
 export function isValidRecStatus(recStatus: RecordingStatus): boolean {
-  return ['recording', 'completed'].includes(recStatus.status);
+  return recStatus.status === 'recording' || recStatus.status === 'completed';
 }

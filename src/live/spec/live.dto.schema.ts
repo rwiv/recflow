@@ -41,6 +41,8 @@ export const liveDto = liveEnt
     platform: platformDto,
     channel: channelDto,
     stream: liveStreamDto.nullable(),
+    isDisableRequested: z.boolean(),
+    isFinished: z.boolean(),
   });
 export type LiveDto = z.infer<typeof liveDto>;
 

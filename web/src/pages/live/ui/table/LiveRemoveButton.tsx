@@ -60,28 +60,28 @@ export function LiveRemoveButton({ table }: LiveRemoveButtonProps) {
     if (selected.length === 0) {
       return true;
     }
-    const isDisabledLive = selected[0].isDisabled;
+    const isDisableRequested = selected[0].isDisableRequested;
     for (const live of selected) {
-      if (live.isDisabled !== isDisabledLive) {
+      if (live.isDisableRequested !== isDisableRequested) {
         return true;
       }
     }
     return false;
   };
 
-  const isDisabledLives = () => {
+  const isDisableRequestedLives = () => {
     const selected = getSelectedItems();
     if (selected.length === 0) {
       return false;
     }
     for (const live of selected) {
-      if (live.isDisabled) {
+      if (live.isDisableRequested) {
         return true;
       }
     }
     return false;
   };
-  const isDisabled = isDisabledLives();
+  const isDisableRequested = isDisableRequestedLives();
 
   return (
     <div>
@@ -104,17 +104,17 @@ export function LiveRemoveButton({ table }: LiveRemoveButtonProps) {
       <AlertDialog
         onAction={(isPurge) => remove('delete', isPurge)}
         triggerRef={deleteRef}
-        isDisabledLives={isDisabled}
+        isDisableRequested={isDisableRequested}
       />
       <AlertDialog
         onAction={(isPurge) => remove('finish', isPurge)}
         triggerRef={finishRef}
-        isDisabledLives={isDisabled}
+        isDisableRequested={isDisableRequested}
       />
       <AlertDialog
         onAction={(isPurge) => remove('cancel', isPurge)}
         triggerRef={cancelRef}
-        isDisabledLives={isDisabled}
+        isDisableRequested={isDisableRequested}
         fontStyle={css({ color: 'red' })}
       />
     </div>
@@ -124,18 +124,18 @@ export function LiveRemoveButton({ table }: LiveRemoveButtonProps) {
 interface AlertDialogProps {
   onAction: (isPurge: boolean) => void;
   triggerRef: RefObject<HTMLButtonElement>;
-  isDisabledLives: boolean;
+  isDisableRequested: boolean;
   fontStyle?: SerializedStyles;
 }
 
-export function AlertDialog({ onAction, triggerRef, isDisabledLives, fontStyle }: AlertDialogProps) {
+export function AlertDialog({ onAction, triggerRef, isDisableRequested, fontStyle }: AlertDialogProps) {
   return (
     <AlertDialogContainer>
       <AlertDialogTrigger asChild>
         <button ref={triggerRef} />
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <DialogContent onAction={onAction} isDisabledLives={isDisabledLives} fontStyle={fontStyle} />
+        <DialogContent onAction={onAction} isDisableRequested={isDisableRequested} fontStyle={fontStyle} />
       </AlertDialogContent>
     </AlertDialogContainer>
   );
@@ -143,20 +143,20 @@ export function AlertDialog({ onAction, triggerRef, isDisabledLives, fontStyle }
 
 interface DialogContentProps {
   onAction: (isPurge: boolean) => void;
-  isDisabledLives: boolean;
+  isDisableRequested: boolean;
   titleStyle?: SerializedStyles;
   descriptionStyle?: SerializedStyles;
   fontStyle?: SerializedStyles;
 }
 
 // You can initialize the isPurge state every time by extracting the corresponding component separately and dynamically loading it.
-function DialogContent({ onAction, isDisabledLives, fontStyle }: DialogContentProps) {
+function DialogContent({ onAction, isDisableRequested, fontStyle }: DialogContentProps) {
   const cancelText = 'Cancel';
   const actionText = 'Remove';
   const title = 'Are you absolutely sure?';
   const description = 'This action cannot be undone. This will permanently delete data.';
 
-  const [isPurge, setIsPurge] = useState(isDisabledLives);
+  const [isPurge, setIsPurge] = useState(isDisableRequested);
   return (
     <>
       <AlertDialogHeader>
@@ -166,7 +166,7 @@ function DialogContent({ onAction, isDisabledLives, fontStyle }: DialogContentPr
       <div className="flex items-center space-x-2 mt-1 mb-1.5">
         <Switch
           id="isPurge"
-          disabled={isDisabledLives}
+          disabled={isDisableRequested}
           checked={isPurge}
           onCheckedChange={() => setIsPurge((prev) => !prev)}
         />

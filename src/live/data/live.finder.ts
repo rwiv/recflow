@@ -47,7 +47,7 @@ export class LiveFinder {
   }
 
   async findAllActives(opts: LiveFieldsReq = {}, tx: Tx = db) {
-    return this.mapper.mapAll(await this.liveRepo.findByIsDisabled(false), tx, opts);
+    return this.mapper.mapAll(await this.liveRepo.findAllActives(), tx, opts);
   }
 
   async findEarliestUpdatedOne(tx: Tx = db): Promise<LiveDto | null> {

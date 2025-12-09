@@ -14,7 +14,7 @@ import { NodeFieldsReq } from '@/node/spec/node.dto.schema.js';
 
 import { LiveStreamDto } from '@/live/spec/live.dto.schema.js';
 import { LiveDtoMapped } from '@/live/spec/live.dto.schema.mapped.js';
-import { LiveEnt } from '@/live/spec/live.entity.schema.js';
+import { LiveEnt, LiveStatus, isDisableRequested, isFinished } from '@/live/spec/live.entity.schema.js';
 import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 export interface LiveFieldsReq {
@@ -53,6 +53,8 @@ export class LiveMapper {
       channel,
       platform,
       stream,
+      isDisableRequested: isDisableRequested(liveEnt.status),
+      isFinished: isFinished(liveEnt.status),
     };
 
     if (opt.nodes) {

@@ -22,7 +22,7 @@ import { NodeRepository } from '@/node/storage/node.repository.js';
 import { LiveFinder } from '@/live/data/live.finder.js';
 import { LiveMapper } from '@/live/data/live.mapper.js';
 import { LiveDto, LiveStreamDto, LiveUpdate } from '@/live/spec/live.dto.schema.js';
-import { LiveEntAppend } from '@/live/spec/live.entity.schema.js';
+import { LiveEntAppend, isDisableRequested, isFinished } from '@/live/spec/live.entity.schema.js';
 import { LiveRepository } from '@/live/storage/live.repository.js';
 import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
@@ -61,7 +61,6 @@ export class LiveWriter {
     const req: LiveEntAppend = {
       ...baseEnt,
       status: 'initializing',
-      isDisabled: false,
       videoName: getFormattedTimestamp(),
     };
     delete req.id;
@@ -103,11 +102,18 @@ export class LiveWriter {
       liveDetails: null,
       videoName,
       fsName: this.env.fsName,
-      status: 'initializing',
+      status: args.fields.isDisabled ? 'deleted' : 'initializing',
     };
     const ent = await this.liveRepo.create(req, tx);
 
-    return { ...ent, channel, platform, stream };
+    return {
+      ...ent,
+      channel,
+      platform,
+      stream,
+      isDisableRequested: isDisableRequested(ent.status),
+      isFinished: isFinished(ent.status),
+    };
   }
 
   async bind(req: { liveId: string; nodeId: string }, tx: Tx = db) {
@@ -174,7 +180,7 @@ export class LiveWriter {
           await this.unbind({ liveId, nodeId: node.id }, txx);
         }
       }
-      const update: LiveUpdate = { isDisabled: true, status: 'deleted' };
+      const update: LiveUpdate = { status: 'deleted' };
       if (finished) {
         update.deletedAt = new Date();
       }

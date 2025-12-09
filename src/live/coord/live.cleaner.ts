@@ -38,7 +38,7 @@ export class LiveCleaner {
       return;
     }
     let exitCmd: ExitCmd = 'finish';
-    if (live.isDisabled) {
+    if (live.isFinished) {
       exitCmd = 'delete';
     }
     await this.liveRegistrar.finishLive({ recordId: live.id, isPurge: true, exitCmd });

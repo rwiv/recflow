@@ -23,7 +23,9 @@ const channelColumn: ColumnDef<LiveDtoWithNodes> = {
   header: () => <div className="">Channel</div>,
   cell: ({ row }) => {
     const live = row.original;
-    return <ChannelInfoCell channel={live.channel} className={live.isDisabled ? DISABLED_CN : undefined} />;
+    return (
+      <ChannelInfoCell channel={live.channel} className={live.isDisableRequested ? DISABLED_CN : undefined} />
+    );
   },
   filterFn: (rows, _, filterValue) => {
     return rows.original.channel.username.includes(filterValue);
@@ -51,7 +53,7 @@ const titleColumn: ColumnDef<LiveDtoWithNodes> = {
   cell: ({ row }) => {
     const live = row.original;
     return (
-      <div className={cn('my-1', live.isDisabled && DISABLED_CN)}>
+      <div className={cn('my-1', live.isDisableRequested && DISABLED_CN)}>
         <a href={getLiveUrl(live.platform.name, live.channel.sourceId)}>{live.liveTitle}</a>
       </div>
     );
@@ -72,7 +74,10 @@ const nodeColumn: ColumnDef<LiveDtoWithNodes> = {
     }
     return nodes.map((node) => {
       return (
-        <span key={node.id} className={cn('my-1 mx-1 justify-self-center', live.isDisabled && DISABLED_CN)}>
+        <span
+          key={node.id}
+          className={cn('my-1 mx-1 justify-self-center', live.isDisableRequested && DISABLED_CN)}
+        >
           <Badge variant="outline" className="cursor-pointer">
             {node.name}
           </Badge>
@@ -91,7 +96,7 @@ export const liveColumns: ColumnDef<LiveDtoWithNodes>[] = [
   sortableColumnDef(
     viewCntCid,
     'Viewers',
-    (live) => (live.isDisabled ? DISABLED_CN : undefined),
+    (live) => (live.isDisableRequested ? DISABLED_CN : undefined),
     DEFAULT_WIDTH,
   ),
   dateColumnDef<LiveDtoWithNodes>(
@@ -99,7 +104,7 @@ export const liveColumns: ColumnDef<LiveDtoWithNodes>[] = [
     'CreatedAt',
     (elem) => new Date(elem.createdAt),
     DEFAULT_WIDTH,
-    (live) => (live.isDisabled ? DISABLED_CN : undefined),
+    (live) => (live.isDisableRequested ? DISABLED_CN : undefined),
   ),
   nodeColumn,
 ];

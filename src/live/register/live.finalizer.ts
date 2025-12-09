@@ -129,11 +129,8 @@ export class LiveFinalizer {
           await this.liveWriter.delete(live.id, true, true);
           return;
         }
-        log.warn(`Retrying to finish live`, {
-          ...liveAttr(live, { err }),
-          cmd: req.exitCmd,
-          attempt: retryCnt + 1,
-        });
+        const attr = { ...liveAttr(live, { err }), cmd: req.exitCmd, attempt: retryCnt + 1 };
+        log.warn(`Retrying to finish live`, attr);
         await delay(RETRY_DELAY_MS);
       }
     }
@@ -175,7 +172,6 @@ export class LiveFinalizer {
     };
 
     log.debug(`Start adding RecnodeDone task`, liveAttr(live));
-
     const startTime = Date.now();
     while (true) {
       if (Date.now() - startTime > this.env.liveFinishTimeoutSec * 1000) {

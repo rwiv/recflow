@@ -21,7 +21,7 @@ export function LivePage() {
     if (withDisabled) {
       setTargetLives(lives);
     } else {
-      setTargetLives(lives.filter((live) => !live.isDisabled));
+      setTargetLives(lives.filter((live) => !live.isDisableRequested));
     }
   }, [lives, withDisabled]);
 

@@ -26,7 +26,7 @@ export function dummyLiveDto(overrides: Partial<LiveDto> = {}): LiveDto {
   const platform = dummyPlatformDto();
   const stream = dummyLiveStreamDto();
   const channel = stream.channel;
-  return {
+  const base = {
     id: faker.string.uuid(),
     channel,
     platform,
@@ -40,12 +40,16 @@ export function dummyLiveDto(overrides: Partial<LiveDto> = {}): LiveDto {
     viewCnt: 0,
     isAdult: faker.datatype.boolean(),
     status: faker.helpers.arrayElement(liveStatus.options),
-    isDisabled: faker.datatype.boolean(),
     domesticOnly: faker.datatype.boolean(),
     overseasFirst: faker.datatype.boolean(),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     deletedAt: faker.date.recent(),
     ...overrides,
+  };
+  return {
+    ...base,
+    isDisableRequested: base.status === 'finalizing' || base.status === 'deleted',
+    isFinished: base.status === 'deleted',
   };
 }

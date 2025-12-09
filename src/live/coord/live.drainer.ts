@@ -102,8 +102,8 @@ export class LiveDrainer {
       return;
     }
 
-    // Skip already finished live
-    if (live.isDisabled) {
+    // Skip already disabled live
+    if (live.isDisableRequested) {
       log.error('Live is disabled', liveAttr(live));
       return;
     }

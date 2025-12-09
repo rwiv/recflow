@@ -39,7 +39,7 @@ export class LiveBalancer {
 
   private async checkOne(live: LiveDtoMapped) {
     // Check if live is disabled or too recently created
-    if (live.isDisabled) {
+    if (live.isDisableRequested) {
       return;
     }
     if (!live.stream) {

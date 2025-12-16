@@ -29,7 +29,7 @@ SQL 기반 채널 쿼리 예시 (+태그 필터링, 팔로워 순 정렬, 페이
 <img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/nodes.png">
 
 - 고가용성 + 네트워크 부하 분산을 위해 n개의 recording nodes에 동시 녹화 요청
-    - redis로 구현된 글로벌 락을 통한 중복 세그먼트 다운로드 제거
+    - 글로벌 락(redis로 구현됨)을 통한 중복 세그먼트 다운로드 차단
 - 녹화 중 배포의 용이함을 위해 recording nodes를 그룹별로 묶어서 관리
     - 예: 그룹1 종료 후 배포 -> 그룹2 종료 후 배포 -> 그룹3 종료 후 배포
 

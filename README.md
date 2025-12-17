@@ -26,23 +26,23 @@ SQL 기반 채널 쿼리 예시 (+태그 필터링, 팔로워 순 정렬, 페이
 
 ### Live Stream Recording
 
-<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/recording_lives.png">
-
 - 특정 조건(criterion)을 만족하는 라이브를 자동으로 감지해 [recnode](https://github.com/rwiv/recnode) 노드에게 녹화 요청을 전송
     - 예: 제목에 '마인크래프트'가 포함된 시청자 500명 이상 방송
 - 녹화 실패 감지/복구 기능
     - 장애 노드 감지 시 새로운 노드 할당
 
+<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/recording_lives.png">
+
 ### Multi-Node Allocation
-
-<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/diagrams/recflow-node.png">
-
-<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/nodes.png">
 
 - 고가용성 + 네트워크 부하 분산을 위해 n개의 recording nodes에 동시 녹화 요청
     - 글로벌 락(redis로 구현됨)을 통한 중복 세그먼트 다운로드 차단
 - 녹화 중 배포의 용이함을 위해 recording nodes를 그룹별로 묶어서 관리
     - 예: 그룹1 종료 후 배포 -> 그룹2 종료 후 배포 -> 그룹3 종료 후 배포
+
+<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/diagrams/recflow-node.png">
+
+<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/nodes.png">
 
 ## ERD
 

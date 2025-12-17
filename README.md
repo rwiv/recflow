@@ -1,6 +1,6 @@
 # recflow
 
-라이브 채널 데이터 관리 + 라이브 녹화 오케스트레이션 서버
+라이브 녹화 오케스트레이션 서버
 
 ## Tech Stack
 
@@ -18,31 +18,34 @@
 
 ## Features
 
+### Live Stream Recording
+
+<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/recording_lives.png">
+
+- 특정 조건(criterion)을 만족하는 라이브를 자동으로 감지해 [recnode](https://github.com/rwiv/recnode) 노드에게 녹화 요청을 전송
+    - 예: 제목에 '마인크래프트'가 포함된 시청자 500명 이상 라이브
+- 녹화 종료 이벤트: [recnode](https://github.com/rwiv/recnode) 노드에게 종료 요청 → AWS SQS에 녹화 종료 이벤트 발행
+    - 라이브 종료가 식별되면 자동으로 실행. 직접 종료하는 것도 가능.
+    - 직접 종료 시 동영상 저장/삭제 선택 가능 → 실제 처리는 [vodify](https://github.com/rwiv/vodify) worker에서 수행
+
+### Multi-Node Allocation
+
+- 고가용성 + 네트워크 부하 분산을 위해 n개의 [recnode](https://github.com/rwiv/recnode) 노드에 동시 녹화 요청
+    - 글로벌 락(redis로 구현됨)을 통한 중복 세그먼트 다운로드 차단
+- 주기적으로 녹화중인 노드 상태 체크 → 장애 노드 감지 시 장애복구 로직 실행
+    - 장애복구 (Failover) 로직: 새로운 최적 노드 검색 → 라이브에 할당
+- 녹화 중 배포의 용이함을 위해 [recnode](https://github.com/rwiv/recnode) 노드를 그룹별로 묶어서 관리
+    - 예: 그룹1/그룹2 종료 후 배포 → 그룹3/그룹4 종료 후 배포
+
+<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/diagrams/recflow-node.png">
+
+<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/nodes.png">
+
 ### Channel Data Management
 
 <img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/channel_query.gif">
 
 SQL 기반 채널 쿼리 예시 (+태그 필터링, 팔로워 순 정렬, 페이지네이션...)
-
-### Live Stream Recording
-
-- 특정 조건(criterion)을 만족하는 라이브를 자동으로 감지해 [recnode](https://github.com/rwiv/recnode) 노드에게 녹화 요청을 전송
-    - 예: 제목에 '마인크래프트'가 포함된 시청자 500명 이상 방송
-- 녹화 실패 감지/복구 기능
-    - 장애 노드 감지 시 새로운 노드 할당
-
-<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/recording_lives.png">
-
-### Multi-Node Allocation
-
-- 고가용성 + 네트워크 부하 분산을 위해 n개의 recording nodes에 동시 녹화 요청
-    - 글로벌 락(redis로 구현됨)을 통한 중복 세그먼트 다운로드 차단
-- 녹화 중 배포의 용이함을 위해 recording nodes를 그룹별로 묶어서 관리
-    - 예: 그룹1 종료 후 배포 -> 그룹2 종료 후 배포 -> 그룹3 종료 후 배포
-
-<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/diagrams/recflow-node.png">
-
-<img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/imgs/recflow/nodes.png">
 
 ## ERD
 

@@ -1,6 +1,6 @@
 # recflow
 
-라이브 녹화 오케스트레이션 서버
+Live Recording Orchestration Server
 
 ## Tech Stack
 
@@ -12,9 +12,11 @@
 
 <img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/diagrams/recflow-infra.png">
 
-- [recflow](https://github.com/rwiv/recflow)
-- [recnode](https://github.com/rwiv/recnode)
-- [vodify](https://github.com/rwiv/vodify)
+- [recnode](https://github.com/rwiv/recnode): 실질적인 녹화 작업을 처리하는 node cluster
+- [vodify](https://github.com/rwiv/vodify): 비디오 후처리 작업 (e.g. transcoding, loss check)을 수행하는 task queue service
+- streamq: 여러 라이브 플랫폼(e.g. chzzk, soop)의 통일된 스키마를 제공하는 platfrom api gateway server
+
+이러한 3개의 서비스는 다른 서비스들의 존재를 인지하지 못하며, 주어진 요청을 처리하는 작업만을 수행합니다. 오직 recflow만이 각 서비스의 존재를 인지합니다.
 
 ## Features
 

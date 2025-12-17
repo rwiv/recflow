@@ -53,11 +53,11 @@ SQL 기반 채널 쿼리 예시 (+태그 필터링, 팔로워 순 정렬, 페이
 
 <img src="https://raw.githubusercontent.com/rwiv/stdocs/refs/heads/main/diagrams/recflow_erd.png">
 
-- `Channel` domain
-    - tables: platform, channel, channel_grade, channel_tag, channel_tag_map
-- `Live` domain
-    - tables: live, live_stream
-- `Node` domain
-    - tables: node_group, node, live_node
-- `Criterion` domain
-    - tables: live_criterion, live_criterion_rule, live_criterion_unit
+- Channel domain tables
+    - `platform`, `channel`, `channel_grade`, `channel_tag`, `channel_tag_map`
+- Live domain tables
+    - `live`, `live_stream`
+- Node domain tables
+    - `node_group`, `node`, `live_node`
+- Criterion domain tables
+    - `live_criterion`, `live_criterion_rule`, `live_criterion_unit`

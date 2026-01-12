@@ -1,6 +1,8 @@
 # recflow
 
-Live Recording Orchestration Server
+**Live Recording Orchestration Server**
+
+recflow는 분산 환경에서 고가용성을 보장하는 라이브 스트리밍 자동 녹화 및 후처리 시스템입니다.
 
 ## Tech Stack
 

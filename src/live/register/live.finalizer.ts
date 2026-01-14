@@ -111,7 +111,7 @@ export class LiveFinalizer {
       }
 
       try {
-        if (this.env.nodeEnv === 'prod') {
+        if (this.env.nodeEnv === 'prod' || this.env.nodeEnv === 'test') {
           await this._finishLive(live, req.exitCmd);
         }
         await db.transaction(async (tx) => {

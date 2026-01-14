@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { NotFoundError } from '@/utils/errors/errors/NotFoundError.js';
@@ -56,7 +56,7 @@ export class LiveRepository {
     return tx
       .select()
       .from(liveTable)
-      .where(and(eq(liveTable.status, 'initializing'), eq(liveTable.status, 'recording')))
+      .where(or(eq(liveTable.status, 'initializing'), eq(liveTable.status, 'recording')))
       .orderBy(asc(liveTable.createdAt));
   }
 
@@ -64,7 +64,7 @@ export class LiveRepository {
     return tx
       .select()
       .from(liveTable)
-      .where(and(eq(liveTable.status, 'finalizing'), eq(liveTable.status, 'deleted')))
+      .where(or(eq(liveTable.status, 'finalizing'), eq(liveTable.status, 'deleted')))
       .orderBy(asc(liveTable.createdAt));
   }
 

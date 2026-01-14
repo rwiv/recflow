@@ -59,26 +59,28 @@ export class LiveRecoveryManager {
     private readonly notifier: Notifier,
   ) {}
 
-  async checkInvalidLives() {
-    const lives = await this.liveFinder.findAllActives();
-    const liveIds = lives.map((live) => live.id);
-    const states = await this.recnodeRedis.getLiveStates(liveIds, false);
-    const ps = [];
-    for (const state of states.filter((s) => s !== null)) {
-      if (state.isInvalid) {
-        const live = lives.find((live) => live.id === state.id);
-        if (!live) throw NotFoundError.from('Live', 'id', state.id);
-        this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
-        ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error'));
-      }
-    }
-    handleSettled(await Promise.allSettled(ps));
-  }
-
   async checkLives() {
     const ps = [];
     for (const live of await this.retrieveInvalidNodes()) {
       ps.push(this.checkInvalidLive(live));
+    }
+    handleSettled(await Promise.allSettled(ps));
+  }
+
+  async checkInvalidLives() {
+    const lives = await this.liveFinder.findAllActives();
+    const liveIds = lives.map((live) => live.id);
+    const states = await this.recnodeRedis.getLiveStates(liveIds, false);
+
+    const ps = [];
+    for (const state of states.filter((s) => s !== null)) {
+      if (!state.isInvalid) continue;
+
+      const live = lives.find((live) => live.id === state.id);
+      if (!live) throw NotFoundError.from('Live', 'id', state.id);
+
+      this.notifier.notify(`Live is invalid: channel=${live.channel.username}, title=${live.liveTitle}`);
+      ps.push(this.finishLiveWithRestart(live, 'Delete invalid live', 'error'));
     }
     handleSettled(await Promise.allSettled(ps));
   }
@@ -202,7 +204,7 @@ export class LiveRecoveryManager {
         }
         const liveNode = await this.liveNodeRepo.findByLiveIdAndNodeId(live.id, node.id);
         if (!liveNode) {
-          log.error('LiveNode Not Found', liveAttr(live, { node }));
+          log.error('Already removed live node', liveAttr(live, { node }));
           continue;
         }
         if (liveNode.createdAt >= threshold) {

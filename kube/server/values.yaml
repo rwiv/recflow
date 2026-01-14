@@ -4,7 +4,7 @@ global:
 
 image:
   repository: harbor.rwiv.xyz/private/recflow
-  tag: 2.5.4
+  tag: 2.5.5
   pullSecret: image-pull-secret
 
 affinity: ~

@@ -13,7 +13,7 @@ export class TaskErrorHandler {
     const resolved = this.resolver.resolve(err);
     const attr = { ...resolved.attr, stack_trace: stacktrace(resolved) };
     if (err instanceof HttpRequestError) {
-      log.debug(resolved.message, attr);
+      log.warn(resolved.message, attr);
     } else {
       log.error(resolved.message, attr);
     }

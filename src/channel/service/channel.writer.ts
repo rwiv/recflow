@@ -193,7 +193,7 @@ export class ChannelWriter {
   async refreshOne(
     channelId: string,
     info: ChannelInfo,
-    opts: { streamCheck?: boolean },
+    opts: { streamCheck?: boolean; streamCheckedAt?: Date },
     tx: Tx = db,
   ): Promise<ChannelDto> {
     const updateReq: ChannelUpdate = {

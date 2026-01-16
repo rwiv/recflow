@@ -17,6 +17,7 @@ import { LiveStreamRepository } from '@/live/storage/live-stream.repository.js';
 import { LiveStreamService } from '@/live/stream/live-stream.service.js';
 
 export const QUERY_LIMIT = 10; // TODO: use config
+export const STREAM_INACCESSIBLE_DELAY_MS = 1000 * 60 * 60; // 1 hour
 
 @Injectable()
 export class LiveStreamDetector {
@@ -32,6 +33,9 @@ export class LiveStreamDetector {
     const channels = await this.streamRepo.findChannelsForCheckStream(platform, QUERY_LIMIT);
     const ps = [];
     for (const channel of channels) {
+      if (channel.streamCheckedAt && channel.streamCheckedAt > new Date()) {
+        continue;
+      }
       ps.push(this.checkOne(platform, channel.id, channel.sourceId));
     }
     handleSettled(await Promise.allSettled(ps));
@@ -50,9 +54,10 @@ export class LiveStreamDetector {
     const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, info.liveInfo.isAdult);
     const streamInfo = this.stlink.toStreamInfo(stRes, info.liveInfo);
     if (streamInfo instanceof CheckedError) {
-      throw streamInfo;
+      const streamCheckedAt = new Date(Date.now() + STREAM_INACCESSIBLE_DELAY_MS);
+      return this.updateChannel(channelId, info, streamCheckedAt);
     }
-    if (!streamInfo) {
+    if (streamInfo === null) {
       return this.updateChannel(channelId, info);
     }
     const attr = { ...liveInfoAttr(info.liveInfo), stream_url: streamInfo.url };
@@ -68,7 +73,11 @@ export class LiveStreamDetector {
     log.debug('Live Stream Detected', attr);
   }
 
-  private updateChannel(channelId: string, info: ChannelInfo) {
-    return this.channelWriter.refreshOne(channelId, info, { streamCheck: true });
+  private updateChannel(channelId: string, info: ChannelInfo, streamCheckedAt: Date | null = null) {
+    const opts: { streamCheck: boolean; streamCheckedAt?: Date } = { streamCheck: true };
+    if (streamCheckedAt) {
+      opts.streamCheckedAt = streamCheckedAt;
+    }
+    return this.channelWriter.refreshOne(channelId, info, opts);
   }
 }

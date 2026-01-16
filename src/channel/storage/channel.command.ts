@@ -15,6 +15,7 @@ import { ChannelQueryRepository } from '@/channel/storage/channel.query.js';
 export interface UpdateOptions {
   refresh?: boolean;
   streamCheck?: boolean;
+  streamCheckedAt?: Date;
 }
 
 const channelEntAppendReq = channelEnt.partial({
@@ -66,6 +67,9 @@ export class ChannelCommandRepository {
     const now = new Date();
     if (opts.streamCheck) {
       req.streamCheckedAt = now;
+    }
+    if (opts.streamCheckedAt) {
+      req.streamCheckedAt = opts.streamCheckedAt;
     }
     if (opts.refresh) {
       req.lastRefreshedAt = now;

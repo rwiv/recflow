@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 
+import { CheckedError } from '@/utils/errors/errors/CheckedError.js';
 import { MissingValueError } from '@/utils/errors/errors/MissingValueError.js';
 import { LogLevel } from '@/utils/log.js';
 
@@ -105,7 +106,12 @@ export class LiveInitializerImpl extends LiveInitializer {
     }
 
     const stream = await this.getLiveStream(req, liveInfo, channel);
-    if (!stream) return null;
+    if (stream instanceof CheckedError) {
+      return this.createDisabledLive(liveInfo, channel, undefined, stream.message, false, cr);
+    }
+    if (stream === null) {
+      return null;
+    }
 
     const selectArgs = this.helper.getNodeSelectArgs({}, channel, undefined, cr);
     let node = await this.nodeSelector.match(selectArgs);
@@ -140,7 +146,7 @@ export class LiveInitializerImpl extends LiveInitializer {
     req: NewLiveRequest,
     liveInfo: LiveInfo,
     channel: ChannelDto,
-  ): Promise<LiveStreamDto | null> {
+  ): Promise<LiveStreamDto | null | CheckedError> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveUid, channelId: channel.id };
     const exists = await this.streamService.findByQueryLatestOne(query);
     // TODO: fix this (await this.stlink.fetchM3u8(exists))
@@ -171,6 +177,9 @@ export class LiveInitializerImpl extends LiveInitializer {
     const { platform, sourceId } = req.channelInfo;
     const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, withAuth);
     const streamInfo = this.stlink.toStreamInfo(stRes, liveInfo);
+    if (streamInfo instanceof CheckedError) {
+      return streamInfo;
+    }
     if (!streamInfo) {
       return null;
     }

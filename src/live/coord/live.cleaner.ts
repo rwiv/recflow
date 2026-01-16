@@ -10,6 +10,7 @@ import { LiveFinder } from '@/live/data/live.finder.js';
 import { LiveRegistrar } from '@/live/register/live.registrar.js';
 import { ExitCmd } from '@/live/spec/event.schema.js';
 import { LiveDto } from '@/live/spec/live.dto.schema.js';
+import { isDisableRequested } from '@/live/spec/live.entity.schema.js';
 
 @Injectable()
 export class LiveCleaner {
@@ -29,7 +30,7 @@ export class LiveCleaner {
   }
 
   private async finishLive(live: LiveDto) {
-    if (await this.recnodeRedis.isInvalidLive(live)) {
+    if (!isDisableRequested(live.status) && (await this.recnodeRedis.isInvalidLive(live))) {
       return await this.liveRegistrar.finishLive({ recordId: live.id, isPurge: true, exitCmd: 'finish' });
     }
 

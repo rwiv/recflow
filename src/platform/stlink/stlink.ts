@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 import { z } from 'zod';
 
+import { CheckedError } from '@/utils/errors/errors/CheckedError.js';
 import { HttpRequestError } from '@/utils/errors/errors/HttpRequestError.js';
 import { ValidationError } from '@/utils/errors/errors/ValidationError.js';
 import { delay } from '@/utils/time.js';
@@ -55,11 +56,10 @@ export class Stlink {
     }
   }
 
-  toStreamInfo(res: StlinkStreamInfo, liveInfo: LiveInfo): StreamInfo | null {
+  toStreamInfo(res: StlinkStreamInfo, liveInfo: LiveInfo): StreamInfo | null | CheckedError {
     if (!res.openLive) {
       log.debug('This live is inaccessible', liveInfoAttr(liveInfo));
-      // live record is not created as it may normalize later
-      return null;
+      return new CheckedError('This live is inaccessible');
     }
     if (!res.best || !res.headers) {
       log.error('Stream info is not available', liveInfoAttr(liveInfo));

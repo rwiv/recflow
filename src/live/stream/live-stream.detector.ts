@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { log } from 'jslog';
 
+import { CheckedError } from '@/utils/errors/errors/CheckedError.js';
 import { handleSettled } from '@/utils/log.js';
 
 import { liveInfoAttr } from '@/common/attr/attr.live.js';
@@ -48,6 +49,9 @@ export class LiveStreamDetector {
 
     const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, info.liveInfo.isAdult);
     const streamInfo = this.stlink.toStreamInfo(stRes, info.liveInfo);
+    if (streamInfo instanceof CheckedError) {
+      throw streamInfo;
+    }
     if (!streamInfo) {
       return this.updateChannel(channelId, info);
     }

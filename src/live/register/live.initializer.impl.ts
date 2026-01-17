@@ -106,7 +106,9 @@ export class LiveInitializerImpl extends LiveInitializer {
     }
 
     const stream = await this.getLiveStream(req, liveInfo, channel);
-    if (!stream) {
+    if (stream === null || stream instanceof CheckedError) {
+      // inaccessible 라이브 발생(CheckedError) 시 disabledLive를 생성한다면 리방 직후 라이브를 스킵하는 치명적인 이슈가 발생할 수 있음
+      // 따라서 일단 null을 반환해 실패 처리하고, 재시도를 유도한다.
       return null;
     }
 
@@ -143,7 +145,7 @@ export class LiveInitializerImpl extends LiveInitializer {
     req: NewLiveRequest,
     liveInfo: LiveInfo,
     channel: ChannelDto,
-  ): Promise<LiveStreamDto | null> {
+  ): Promise<LiveStreamDto | null | CheckedError> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveUid, channelId: channel.id };
     const exists = await this.streamService.findByQueryLatestOne(query);
     // TODO: fix this (await this.stlink.fetchM3u8(exists))
@@ -175,7 +177,7 @@ export class LiveInitializerImpl extends LiveInitializer {
     const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, withAuth);
     const streamInfo = this.stlink.toStreamInfo(stRes, liveInfo);
     if (!streamInfo || streamInfo instanceof CheckedError) {
-      return null;
+      return streamInfo;
     }
 
     // If m3u8 is not available (e.g. soop standby mode)

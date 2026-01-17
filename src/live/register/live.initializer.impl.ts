@@ -106,10 +106,7 @@ export class LiveInitializerImpl extends LiveInitializer {
     }
 
     const stream = await this.getLiveStream(req, liveInfo, channel);
-    if (stream instanceof CheckedError) {
-      return this.createDisabledLive(liveInfo, channel, undefined, stream.message, false, cr);
-    }
-    if (stream === null) {
+    if (!stream) {
       return null;
     }
 
@@ -146,7 +143,7 @@ export class LiveInitializerImpl extends LiveInitializer {
     req: NewLiveRequest,
     liveInfo: LiveInfo,
     channel: ChannelDto,
-  ): Promise<LiveStreamDto | null | CheckedError> {
+  ): Promise<LiveStreamDto | null> {
     const query: LiveStreamQuery = { sourceId: liveInfo.liveUid, channelId: channel.id };
     const exists = await this.streamService.findByQueryLatestOne(query);
     // TODO: fix this (await this.stlink.fetchM3u8(exists))
@@ -177,10 +174,7 @@ export class LiveInitializerImpl extends LiveInitializer {
     const { platform, sourceId } = req.channelInfo;
     const stRes = await this.stlink.fetchStreamInfo(platform, sourceId, withAuth);
     const streamInfo = this.stlink.toStreamInfo(stRes, liveInfo);
-    if (streamInfo instanceof CheckedError) {
-      return streamInfo;
-    }
-    if (!streamInfo) {
+    if (!streamInfo || streamInfo instanceof CheckedError) {
       return null;
     }
 

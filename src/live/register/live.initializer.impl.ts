@@ -24,7 +24,6 @@ import { GradeService } from '@/channel/service/grade.service.js';
 import { ChannelAppendWithInfo, ChannelDto } from '@/channel/spec/channel.dto.schema.js';
 import { DEFAULT_PRIORITY_NAME } from '@/channel/spec/grade.constants.js';
 
-import { CriterionFinder } from '@/criterion/service/criterion.finder.js';
 import { CriterionDto } from '@/criterion/spec/criterion.dto.schema.js';
 
 import { NodeSelector } from '@/node/service/node.selector.js';
@@ -64,7 +63,6 @@ export class LiveInitializerImpl extends LiveInitializer {
     private readonly liveWriter: LiveWriter,
     private readonly streamService: LiveStreamService,
     private readonly registrar: LiveRegistrar,
-    private readonly crFinder: CriterionFinder,
     private readonly helper: LiveRegisterHelper,
     private readonly notifier: Notifier,
     private readonly stlink: Stlink,

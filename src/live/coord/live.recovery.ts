@@ -18,6 +18,7 @@ import { Recnode, RecordingStatus, isValidRecStatus } from '@/external/recnode/c
 import { RecnodeRedis } from '@/external/recnode/redis/recnode.redis.js';
 
 import { PlatformFetcher } from '@/platform/fetcher/fetcher.js';
+import { Stlink } from '@/platform/stlink/stlink.js';
 
 import { NodeFinder } from '@/node/service/node.finder.js';
 import { NodeWriter } from '@/node/service/node.writer.js';
@@ -56,6 +57,7 @@ export class LiveRecoveryManager {
     private readonly fetcher: PlatformFetcher,
     private readonly recnode: Recnode,
     private readonly recnodeRedis: RecnodeRedis,
+    private readonly stlink: Stlink,
     private readonly notifier: Notifier,
   ) {}
 
@@ -102,12 +104,20 @@ export class LiveRecoveryManager {
       return;
     }
 
-    // Finish if live is restarted
-    const chanInfo = await this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
+    assert(live.stream);
+    const ps1 = this.fetcher.fetchChannelNotNull(live.platform.name, live.channel.sourceId, true);
+    const ps2 = this.stlink.fetchM3u8(live.stream);
+    const results = await Promise.allSettled([ps1, ps2]);
+    if (results[0].status === 'rejected' || results[1].status === 'rejected') {
+      return await this.finishLive(live.id, 'Delete invalid live (request failure)', 'error');
+    }
+    const chanInfo = results[0].value;
     const liveInfo = chanInfo.liveInfo;
     if (!liveInfo) {
-      await this.finishLive(live.id, 'Delete uncleaned live', 'warn');
-      return;
+      return await this.finishLive(live.id, 'Delete uncleaned live', 'warn');
+    }
+    if (!results[1].value) {
+      return await this.finishLive(live.id, 'Delete invalid live (M3U8 not available)', 'error');
     }
     if (live.sourceId !== liveInfo.liveUid) {
       await this.liveWriter.update(live.id, { sourceId: liveInfo.liveUid });
@@ -117,19 +127,20 @@ export class LiveRecoveryManager {
     }
 
     // Finish if live is fatal
-    assert(live.nodes);
-    let allFailed = true;
-    for (const nodeRecs of await this.recnode.getNodeRecorderStatusList(live.nodes)) {
-      const recStatus = nodeRecs.find((status) => status.id === live.id);
-      if (recStatus && isValidRecStatus(recStatus)) {
-        allFailed = false;
-        break;
-      }
-    }
-    if (allFailed) {
-      await this.finishLive(live.id, 'Delete fatal live', 'info');
-      return;
-    }
+    // 복구 가능한 케이스에서도 finishLive를 수행하는 경우가 관찰되어 일단 주석 처리. 대신 안전성을 위해 m3u8 체크 로직을 추가함
+    // assert(live.nodes);
+    // let allFailed = true;
+    // for (const nodeRecs of await this.recnode.getNodeRecorderStatusList(live.nodes)) {
+    //   const recStatus = nodeRecs.find((status) => status.id === live.id);
+    //   if (recStatus && isValidRecStatus(recStatus)) {
+    //     allFailed = false;
+    //     break;
+    //   }
+    // }
+    // if (allFailed) {
+    //   await this.finishLive(live.id, 'Delete fatal live', 'info');
+    //   return;
+    // }
 
     // Recovery invalid nodes in live
     const ps = invalidLive.invalidNodes.map((ivNode) => this.checkInvalidNode(live, ivNode.node));
